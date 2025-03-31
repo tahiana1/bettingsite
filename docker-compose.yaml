@@ -1,0 +1,64 @@
+services:
+  frontend:
+    build:
+      context: ./frontend/src
+      dockerfile: Dockerfile
+    ports:
+      - "30003:3000"
+    environment:
+      API_ADDR: localhost
+      API_PORT: 30000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: always
+
+  backend:
+    build:
+      context: ./backend/src
+      dockerfile: Dockerfile
+    ports:
+      - "30000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      BACKEND_DB_URL: postgres://postgres:postgres@postgres:25432/betting
+      BACKEND_DB_NAME: betting
+      BACKEND_DB_USER: postgres
+      BACKEND_DB_PASSWORD: postgres
+      BACKEND_DB_HOST: postgres
+      BACKEND_DB_PORT: 5432
+      JWT_SECRET: your-secret-key-change-me
+    networks:
+      - app-network
+    restart: always
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    # ports:
+    #   - "25432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=betting
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge

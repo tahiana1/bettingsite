@@ -1,0 +1,61 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: betting
+build:
+  artifacts:
+  - image: go-betting-backend
+    context: backend/src
+    docker:
+      dockerfile: Dockerfile
+  # - image: betting-frontend
+  #   context: frontend/src
+  #   docker:
+  #     dockerfile: Dockerfile
+manifests:
+  rawYaml:
+
+  # - frontend/k8s/*.yaml
+  # - backend/templates/*.yaml
+  helm:
+    releases:
+    - name: postgresql
+      chartPath: backend/charts/postgresql
+      valuesFiles:
+      - backend/charts/postgresql/values.yaml
+      setValues:
+        testJob.enabled: true
+      wait: true
+
+    - name: backend
+      chartPath: backend/charts/backend
+      valuesFiles:
+      - backend/charts/backend/values.yaml
+      version: 0.1.0
+      wait: true
+
+profiles:
+- name: mix-deploy
+  patches:
+  - op: remove
+    path: /manifests/helm
+  deploy:
+    helm:
+      releases:
+      - name: postgresql
+        chartPath: backend/charts/postgresql
+        valuesFiles:
+        - backend/charts/postgresql/values.yaml
+        wait: true
+
+      - name: backend
+        chartPath: backend/charts/backend
+        valuesFiles:
+        - backend/charts/backend/values.yaml
+        version: 0.1.0
+        wait: true
+
+portForward:
+- resourceType: service
+  resourceName: go-betting-backend
+  port: 8080

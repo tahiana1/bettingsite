@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  replicas: {{ .Values.backend.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: postgres:16
+        command: ['sh', '-c', 'until pg_isready -h go-betting-postgresql -p 5432; do sleep 2; done']
+        env:
+        - name: PG_USER
+          valueFrom:
+            secretKeyRef:
+              name: go-betting-postgresql-secret
+              key: postgres-username
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: go-betting-postgresql-secret
+              key: postgres-password
+
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.backend.image }}
+        ports:
+          - name: http-server
+            containerPort: {{ .Values.backend.service.port }}
+          # - name: debug
+          #  containerPort: {{ .Values.backend.service.nodePort }}
+        env:
+          - name: APP_PORT
+            value: '{{ .Values.backend.service.port }}'
+          - name: BACKEND_DB_NAME
+            value: {{ .Values.backend.env.BACKEND_DB_NAME }}
+          - name: BACKEND_DB_USER
+            value: {{ .Values.backend.env.BACKEND_DB_USER }}
+          - name: BACKEND_DB_PASSWORD
+            value: {{ .Values.backend.env.BACKEND_DB_PASSWORD }}
+          - name: BACKEND_DB_HOST
+            value: {{ .Values.backend.env.BACKEND_DB_HOST }}
+          - name: BACKEND_DB_PORT
+            value: '{{ .Values.backend.env.BACKEND_DB_PORT }}'
+          - name: BACKEND_DB_URL
+            value: {{ .Values.backend.env.BACKEND_DB_URL }}
+          - name: JWT_SECRET
+            value: {{ .Values.backend.env.JWT_SECRET }}

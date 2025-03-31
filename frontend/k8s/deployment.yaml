@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: betting-frontend
+  labels:
+    app: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: betting-frontend
+        ports:
+        - name: http-server
+          containerPort: 3000
+        - name: debug
+          containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: API_URL
+          value: betting-backend:8080

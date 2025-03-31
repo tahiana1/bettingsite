@@ -1,0 +1,22 @@
+postgresql:
+  host: "go-betting-postgresql"
+  username: "postgres"
+  password: "postgres"
+  dbname: "betting"
+  replicaCount: 1
+  service:
+    port: 5432
+    nodePort: 30001
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 15 # PostgreSQL can take time to start
+    periodSeconds: 5
+    timeoutSeconds: 3
+    command: [ "pg_isready", "-U", "postgres" ]
+
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: "standard" # or your preferred storage class
+    accessModes:
+    - ReadWriteOnce
