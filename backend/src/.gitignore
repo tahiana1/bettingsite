@@ -27,7 +27,6 @@ gen
 /logs/
 /sql/
 /out/
-/db/
 /conf/conf.ini
 /conf/conf.conf
 /conf/conf.json
