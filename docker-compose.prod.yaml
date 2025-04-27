@@ -4,10 +4,10 @@ services:
       context: ./frontend/src
       dockerfile: Dockerfile
     ports:
-      - "30003:3000"
+      - "80:3000"
     environment:
-      API_ADDR: localhost
-      API_PORT: 30000
+      API_ADDR: backend
+      API_PORT: 8080
     depends_on:
       - backend
     networks:
@@ -19,7 +19,7 @@ services:
       context: ./backend/src
       dockerfile: Dockerfile
     ports:
-      - "30000:8080"
+      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -27,7 +27,7 @@ services:
         condition: service_healthy
 
     environment:
-      BACKEND_DB_URL: postgres://postgres:postgres@postgres:25432/betting
+      BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting
       BACKEND_DB_NAME: betting
       BACKEND_DB_USER: postgres
       BACKEND_DB_PASSWORD: postgres
@@ -70,6 +70,15 @@ services:
       - redis_data:/data
     command: redis-server --requirepass myredispass
     restart: always
+    networks:
+      - app-network    
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 
 volumes:
   postgres_data:
