@@ -1,3 +1,4 @@
 postgres-data/
 get_helm.sh
 .env
+redis-data/

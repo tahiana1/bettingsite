@@ -4,7 +4,9 @@ services:
       context: ./frontend/src
       dockerfile: Dockerfile
     ports:
-      - "80:3000"
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app
     environment:
       API_ADDR: backend
       API_PORT: 8080
@@ -25,7 +27,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-
+    volumes:
+      - ./backend/src:/app
     environment:
       BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting
       BACKEND_DB_NAME: betting
@@ -46,7 +49,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
     restart: always
@@ -67,7 +70,7 @@ services:
     ports:
       - "6379:6379"  # Exposes Redis on localhost:6379
     volumes:
-      - redis_data:/data
+      - ./redis-data:/data
     command: redis-server --requirepass myredispass
     restart: always
     networks:
@@ -81,8 +84,8 @@ services:
 
 
 volumes:
-  postgres_data:
-  redis_data:
+  postgres-data:
+  redis-data:
 
 networks:
   app-network:

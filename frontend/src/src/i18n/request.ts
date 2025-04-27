@@ -9,7 +9,6 @@ export default getRequestConfig(async ({ locale }) => {
   console.log({ backendURL }, `${backendURL}/lang/${lang}.json`);
   const res = await fetch(`${backendURL}/lang/${lang}.json`);
   const data = await res.json();
-  console.log(data)
   return {
     locale: lang,
     messages: data,

@@ -112,6 +112,7 @@ func GetLeagues(c *gin.Context) {
 				return db.Preload("Market")
 			})
 		}).
+		Order("order_num asc").
 		Find(&leagues).Error
 
 	if err != nil {

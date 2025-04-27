@@ -12,6 +12,7 @@ type League struct {
 	// Foreign Keys
 	NationID uint   `json:"nationId"`
 	Nation   Nation `gorm:"foreignKey:NationID" json:"nation"`
+	OrderNum uint   `json:"orderNum" gorm:"default:1"`
 
 	SportID uint  `json:"sportId"`
 	Sport   Sport `gorm:"foreignKey:SportID" json:"sport"`
