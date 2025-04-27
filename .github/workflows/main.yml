@@ -30,6 +30,15 @@ jobs:
         GOOS=linux GOARCH=amd64 go build main.go
         GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
+    # Create .env file for frontend
+    - name: Create .env for frontend
+      working-directory: frontend/src
+      run: |
+        echo "API_ADDR=${{ secrets.API_ADDR }}" > .env
+        echo "API_PORT=${{ secrets.API_PORT }}" >> .env
+        echo "NEXT_PUBLIC_API_ADDR=${{ secrets.API_ADDR }}" >> .env
+        echo "NEXT_PUBLIC_API_PORT=${{ secrets.API_PORT }}" >> .env
+
     - name: Install frontend dependencies
       working-directory: frontend/src
       run: yarn install
@@ -44,7 +53,7 @@ jobs:
         mkdir deploy/frontend deploy/backend
         cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json  frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
 
-        cp -r main migrate deploy/backend
+        cp -r backend/src/main backend/src/migrate deploy/backend
 
         cp docker-compose.prod.yml deploy/
 
