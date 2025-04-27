@@ -29,7 +29,7 @@ jobs:
     - name: Create frontend artifact
       run: |
         mkdir deploy
-        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json  frontend/src/yarn-lock.json frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/
         cd deploy
         zip -r ../frontend-artifact.zip .
         
