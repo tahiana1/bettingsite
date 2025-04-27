@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: ./frontend/src
+      context: ./frontend
       dockerfile: Dockerfile.prod
     ports:
       - "80:3000"
@@ -16,7 +16,7 @@ services:
 
   backend:
     build:
-      context: ./backend/src
+      context: ./backend
       dockerfile: Dockerfile.prod
     ports:
       - "8080:8080"

@@ -53,7 +53,7 @@ jobs:
         mkdir deploy/frontend deploy/backend
         cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json  frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
 
-        cp -r backend/src/main backend/src/migrate deploy/backend
+        cp -r backend/src/main backend/src/migrate  backend/src/static deploy/backend
 
         cp docker-compose.prod.yaml deploy/
 
