@@ -1,5 +1,5 @@
 postgresql:
-  host: "go-betting-postgresql"
+  host: "betting-postgresql"
   username: "postgres"
   password: "postgres"
   dbname: "betting"

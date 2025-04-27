@@ -1,5 +1,5 @@
 {
-  "name": "leadopt-frontend",
+  "name": "betting-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,12 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "antd": "^5.20.5",
+    "@fingerprintjs/fingerprintjs": "^4.6.2",
+    "@tailwindcss/postcss": "^4.1.4",
+    "antd": "^5.24.7",
+    "jotai": "^2.12.3",
     "moment": "^2.30.1",
-    "next": "14.2.8",
-    "next-ws": "^1.1.1",
+    "next": "^15.3.1",
+    "next-intl": "^4.0.3",
+    "next-ws": "^2.0.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-fast-marquee": "^1.6.5",
+    "react-hook-form": "^7.56.1",
     "react-icons": "^5.3.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-markdown": "^9.0.1",
@@ -24,7 +30,8 @@
     "smooth-scrollbar-react": "^2.4.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
@@ -35,7 +42,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.8",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^4.1",
     "typescript": "^5"
   }
 }

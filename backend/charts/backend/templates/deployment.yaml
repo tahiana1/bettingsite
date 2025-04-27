@@ -17,17 +17,17 @@ spec:
       initContainers:
       - name: wait-for-postgres
         image: postgres:16
-        command: ['sh', '-c', 'until pg_isready -h go-betting-postgresql -p 5432; do sleep 2; done']
+        command: ['sh', '-c', 'until pg_isready -h betting-postgresql -p 5432; do sleep 2; done']
         env:
         - name: PG_USER
           valueFrom:
             secretKeyRef:
-              name: go-betting-postgresql-secret
+              name: betting-postgresql-secret
               key: postgres-username
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
-              name: go-betting-postgresql-secret
+              name: betting-postgresql-secret
               key: postgres-password
 
       containers:
@@ -39,7 +39,7 @@ spec:
           # - name: debug
           #  containerPort: {{ .Values.backend.service.nodePort }}
         env:
-          - name: APP_PORT
+          - name: PORT
             value: '{{ .Values.backend.service.port }}'
           - name: BACKEND_DB_NAME
             value: {{ .Values.backend.env.BACKEND_DB_NAME }}

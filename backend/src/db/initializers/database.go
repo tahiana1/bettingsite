@@ -6,12 +6,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
+
+type Policy interface {
+	Resolve([]gorm.ConnPool) gorm.ConnPool
+}
 
 func ConnectDB() {
 	var err error
@@ -48,6 +51,7 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatalf("❌ Failed to connect DB object: %v", err)
 	}
+
 	// Create the database if it does not exist
 	sqlDB, err := DB.DB()
 	if err != nil {
@@ -55,9 +59,11 @@ func ConnectDB() {
 	}
 	// Execute the query to create the database
 	_, err = sqlDB.Exec(fmt.Sprintf(`CREATE DATABASE  %s;`, dbName))
+
 	if err != nil {
-		fmt.Printf("❌ Failed to create database: %v", err)
+		fmt.Printf("❌ Failed to create database: %v\n", err)
 	}
+
 	fmt.Printf("✅ Database '%s' created (if it did not already exist)\n", dbName)
 
 	// Now reconnect to the newly created database
@@ -68,19 +74,27 @@ func ConnectDB() {
 		log.Fatalf("❌ Failed to connect to database: %v", err)
 	}
 
+	// DB.Use(dbresolver.Register(dbresolver.Config{
+	// 	Sources: []gorm.Dialector{postgres.Open(dsn)},
+	// 	Replicas: []gorm.Dialector{postgres.Open(fmt.Sprintf("postgres://%s:%s@%s:%s/?sslmode=disable",
+	// 		dbUser, dbPass, dbHost, "5433"))},
+	// 	Policy:            dbresolver.RandomPolicy{},
+	// 	TraceResolverMode: true,
+	// }))
+
 	fmt.Println("✅ Successfully connected to the database!")
-	if err != nil {
-		panic("Database connection failed!")
-	}
+	// if err != nil {
+	// 	panic("Database connection failed!")
+	// }
 	// Migration
 	// err = DB.Migrator().DropTable(models.User{}, models.Category{}, models.Post{}, models.Comment{})
 	// if err != nil {
 	// 	log.Fatal("Table dropping failed")
 	// }
 
-	err = DB.AutoMigrate(models.User{}, models.Category{}, models.Post{}, models.Comment{})
+	// err = DB.AutoMigrate(models.User{}, models.Category{}, models.Post{}, models.Comment{})
 
-	if err != nil {
-		log.Fatal("Migration failed")
-	}
+	// if err != nil {
+	// 	log.Fatal("Migration failed")
+	// }
 }

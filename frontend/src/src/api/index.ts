@@ -1,12 +1,13 @@
-"use client";
-
-
 let host = process.env.NEXT_PUBLIC_API_ADDR;
-// if (typeof window !== 'undefined') {
-//   host  = window?.location.hostname;
-// }
-export const baseURL = `http://${host}:${process.env.NEXT_PUBLIC_API_PORT}/api/`;
+if (typeof window !== "undefined") {
+  host = window?.location.hostname;
+}
+console.log(process.env.NEXT_PUBLIC_API_ADDR)
+export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
+export const backendURL = `http://${process.env.NEXT_PUBLIC_API_ADDR}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
 export const wsURL = `ws://${host}:${process.env.NEXT_PUBLIC_API_PORT}/ws`;
+console.log({ backendURL });
+
 export default function api(url: string, config?: any) {
   return fetch(baseURL + url, {
     ...config,

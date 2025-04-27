@@ -19,16 +19,16 @@ RUN go mod tidy
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -mod=readonly -v -o /app/backend .
 
 # Now create separate deployment image
-# FROM gcr.io/distroless/base
-# FROM alpine:latest as base
+FROM gcr.io/distroless/base
 # Definition of this variable is used by 'skaffold debug' to identify a golang binary.
 # Default behavior - a failure prints a stack trace for the current goroutine.
 # See https://golang.org/pkg/runtime/
-# ENV GOTRACEBACK=single
+ENV GOTRACEBACK=single
 
-# WORKDIR /app
-# COPY --from=build /app/backend /app/backend
+WORKDIR /app
+COPY --from=build /app/static /app/static
+COPY --from=build /app/backend /app/backend
+COPY --from=build /app/.env /app/.env
 
 
 ENTRYPOINT ["/app/backend"]
-# CMD ["/app/backend"]

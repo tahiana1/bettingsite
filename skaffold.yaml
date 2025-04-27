@@ -4,18 +4,17 @@ metadata:
   name: betting
 build:
   artifacts:
-  - image: go-betting-backend
+  - image: betting-backend
     context: backend/src
     docker:
       dockerfile: Dockerfile
-  # - image: betting-frontend
-  #   context: frontend/src
-  #   docker:
-  #     dockerfile: Dockerfile
+  - image: betting-frontend
+    context: frontend/src
+    docker:
+      dockerfile: Dockerfile
 manifests:
   rawYaml:
-
-  # - frontend/k8s/*.yaml
+  - frontend/k8s/*.yaml
   # - backend/templates/*.yaml
   helm:
     releases:
@@ -57,5 +56,13 @@ profiles:
 
 portForward:
 - resourceType: service
-  resourceName: go-betting-backend
+  resourceName: betting-backend
   port: 8080
+
+- resourceType: service
+  resourceName: betting-postgresql
+  port: 5432
+
+- resourceType: service
+  resourceName: betting-frontend
+  port: 3000

@@ -1,0 +1,43 @@
+{
+  "home/majorEvent": "国际重大赛事",
+  "home/todaysMatch": "今日国际赛程",
+  "home/title": "你好，世界！",
+  "lang/th": "TH ภาษาไทย",
+  "lang/cn": "CN 中文",
+  "lang/en": "EN English",
+  "lang/label": "语言选择",
+  "menu/international": "国际赛事",
+  "menu/national": "国内赛事",
+  "menu/live": "实时",
+  "menu/special": "专用",
+  "americanFootball": "美式橄榄球",
+  "volleyball": "排球",
+
+  "auth/login": "登录",
+  "auth/register": "注册",
+  "auth/logout": "退出",
+
+  "billing/depositRequest": "存款请求",
+  "billing/withdrawRequest": "提现请求",
+  "billing/depositAmount": "存款金额",
+  "billing/rechargeAmount": "充值金额",
+  "billing/rechargeBonus": "充值奖励",
+  "billing/applyDeposit": "申请存款",
+
+  "profile": "个人资料",
+  "profile/balance": "余额",
+  "profile/xp": "经验",
+  "profile/comp": "补偿",
+  "betting/cart": "投注车",
+
+  "betting/singleMaxBettingAmount": "单注最高投注额",
+  "betting/singleMaxWinningAmount": "单注最高赢额",
+  "betting/multiMaxBettingAmount": "多注最高投注额",
+  "betting/multiMaxWinningAmount": "多注最高赢额",
+  "betting/expectedWinningAmount": "预期获胜金额",
+  "betting/placeBet": "下注",
+  "betting/amount": "投注金额",
+
+  "delete": "删除",
+  "deleteAll": "全部删除"
+}

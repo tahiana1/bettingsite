@@ -1,6 +1,8 @@
 package pagination
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 // PaginateResult represents the pagination metadata and data
 type PaginateResult struct {
@@ -14,7 +16,7 @@ type PaginateResult struct {
 }
 
 // Paginate returns a function that performs pagination on GORM queries
-func Paginate(db *gorm.DB, page, limit int, rawFunc func(*gorm.DB) *gorm.DB, output interface{}) (PaginateResult, error) {
+func Paginate(db *gorm.DB, page, limit int, rawFunc func(*gorm.DB) *gorm.DB, output interface{}, model ...interface{}) (PaginateResult, error) {
 	offset := (page - 1) * limit
 
 	query := db
@@ -23,7 +25,11 @@ func Paginate(db *gorm.DB, page, limit int, rawFunc func(*gorm.DB) *gorm.DB, out
 	}
 
 	var total int64
-	query.Model(output).Count(&total)
+	if model != nil {
+		query.Model(model).Count(&total)
+	} else {
+		query.Model(output).Count(&total)
+	}
 
 	err := query.Offset(offset).Limit(limit).Find(output).Error
 	if err != nil {

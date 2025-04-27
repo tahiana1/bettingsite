@@ -30,6 +30,7 @@ gen
 /conf/conf.ini
 /conf/conf.conf
 /conf/conf.json
+/tmp/
 __debug_bin
 main
 github.com

@@ -1,0 +1,48 @@
+{
+  "home/majorEvent": "Major Events",
+  "home/todaysMatch": "Today's Matches",
+  "home/title": "Hello world!",
+
+  "partnerPage": "Logout",
+
+  "lang/th": "TH ภาษาไทย",
+  "lang/cn": "CN 中文",
+  "lang/en": "EN English",
+  "lang/label": "Language",
+
+  "menu/international": "International",
+  "menu/national": "National",
+  "menu/live": "Live",
+  "menu/special": "Special",
+
+  "americanFootball": "American Football",
+  "volleyball": "Volleyball",
+
+  "auth/login": "Login",
+  "auth/register": "Register",
+  "auth/logout": "Logout",
+
+  "billing/depositRequest": "Deposit Request",
+  "billing/withdrawRequest": "Withdraw Request",
+  "billing/depositAmount": "Deposit Amount",
+  "billing/rechargeAmount": "Recharge Amount",
+  "billing/rechargeBonus": "Recharge Bonus",
+  "billing/applyDeposit": "Apply Deposit",
+
+  "profile": "My profile",
+  "profile/balance": "Balance",
+  "profile/xp": "XP",
+  "profile/comp": "Comp",
+
+  "betting/cart": "Betting Cart",
+  "betting/singleMaxBettingAmount": "Single Max Betting Amount",
+  "betting/singleMaxWinningAmount": "Single Max Winning Amount",
+  "betting/multiMaxBettingAmount": "Multi Max Betting Amount",
+  "betting/multiMaxWinningAmount": "Multie Max Winning Amount",
+  "betting/amount": "Betting Amount",
+  "betting/placeBet": "Place a Bet",
+  "betting/expectedWinningAmount": "Expected Winning Amount",
+
+  "delete": "Delete",
+  "deleteAll": "Delete All"
+}

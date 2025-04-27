@@ -1,0 +1,42 @@
+{
+  "home/majorEvent": "กิจกรรมสำคัญระดับโลก",
+  "home/todaysMatch": "การแข่งขันวันนี้ (ระดับนานาชาติ)",
+  "home/title": "สวัสดีชาวโลก!",
+  "lang/th": "TH ภาษาไทย",
+  "lang/cn": "CN 中文",
+  "lang/en": "EN English",
+  "lang/label": "เลือกภาษา",
+  "menu/international": "การแข่งขันนานาชาติ",
+  "menu/national": "การแข่งขันในประเทศ",
+  "menu/live": "กีฬาสด",
+  "menu/special": "พิเศษ",
+  "americanFootball": "อเมริกันฟุตบอล",
+  "volleyball": "วอลเลย์บอล",
+  "profile": "โปรไฟล์ของฉัน",
+  "profile/balance": "สมดุล",
+  "profile/xp": "XP",
+  "profile/comp": "องค์ประกอบ",
+
+  "auth/login": "เข้าสู่ระบบ",
+  "auth/register": "ลงทะเบียน",
+  "auth/logout": "ออกจากระบบ",
+
+  "billing/depositRequest": "คำขอฝากเงิน",
+  "billing/withdrawRequest": "คำขอถอนเงิน",
+  "billing/depositAmount": "จำนวนเงินฝาก",
+  "billing/rechargeAmount": "จำนวนเงินฝากใหม่",
+  "billing/rechargeBonus": "โบนัสเงินฝากใหม่",
+  "billing/applyDeposit": "ฝากเงิน",
+
+  "betting/cart": "รถเข็นพนัน",
+  "betting/singleMaxBettingAmount": "จำนวนเงินเดิมพันสูงสุดครั้งเดียว",
+  "betting/singleMaxWinningAmount": "จำนวนเงินที่ชนะสูงสุดครั้งเดียว",
+  "betting/multiMaxBettingAmount": "จำนวนเงินเดิมพันสูงสุดหลายครั้ง",
+  "betting/multiMaxWinningAmount": "จำนวนเงินที่ชนะสูงสุดหลายครั้ง",
+  "betting/amount": "จำนวนเงินเดิมพัน",
+  "betting/placeBet": "วางเดิมพัน",
+  "betting/expectedWinningAmount": "จำนวนเงินที่คาดว่าจะชนะ",
+
+  "delete": "ลบ",
+  "deleteAll": "ลบทั้งหมด"
+}

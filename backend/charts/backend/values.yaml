@@ -1,5 +1,5 @@
 backend:
-  image: go-betting-backend
+  image: betting-backend
   replicaCount: 1
   service:
     port: 8080
@@ -8,7 +8,7 @@ backend:
     BACKEND_DB_NAME: "betting"
     BACKEND_DB_USER: "postgres"
     BACKEND_DB_PASSWORD: "postgres"
-    BACKEND_DB_HOST: "go-betting-postgresql"
+    BACKEND_DB_HOST: "betting-postgresql"
     BACKEND_DB_PORT: "5432"
-    BACKEND_DB_URL: "postgres://postgres:postgres@go-betting-postgresql:5432/betting?sslmode=disable"
+    BACKEND_DB_URL: "postgres://postgres:postgres@betting-postgresql:5432/betting?sslmode=disable"
     JWT_SECRET: "your-secret-key-change-me"

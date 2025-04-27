@@ -20,8 +20,8 @@ spec:
         ports:
         - name: http-server
           containerPort: 3000
-        - name: debug
-          containerPort: 3000
+        # - name: debug
+        #   containerPort: 3000
         env:
         - name: PORT
           value: "3000"
