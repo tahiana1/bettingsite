@@ -55,7 +55,7 @@ jobs:
 
         cp -r backend/src/main backend/src/migrate deploy/backend
 
-        cp docker-compose.prod.yml deploy/
+        cp docker-compose.prod.yaml deploy/
 
         cd deploy
         zip -r ../artifact.zip .
