@@ -81,17 +81,17 @@ jobs:
           unzip -o artifact.zip
 
           # Create .env file for backend from secrets
-          echo "PORT=${{ secrets.PORT }}" >> /root/backend/.env
-          echo "BACKEND_DB_USER=${{ secrets.BACKEND_DB_USER }}" > /root/backend/.env
+          echo "PORT=${{ secrets.PORT }}" > /root/backend/.env
+          echo "BACKEND_DB_USER=${{ secrets.BACKEND_DB_USER }}" >> /root/backend/.env
           echo "BACKEND_DB_PASSWORD=${{ secrets.BACKEND_DB_PASSWORD }}" >> /root/backend/.env
-          echo "BACKEND_DB_PORT=${{ secrets.BACKEND_DB_PORT }}" > /root/backend/.env
-          echo "BACKEND_DB_HOST=${{ secrets.BACKEND_DB_HOST }}" > /root/backend/.env
-          echo "BACKEND_DB_URL=${{ secrets.BACKEND_DB_URL }}" > /root/backend/.env
+          echo "BACKEND_DB_PORT=${{ secrets.BACKEND_DB_PORT }}" >> /root/backend/.env
+          echo "BACKEND_DB_HOST=${{ secrets.BACKEND_DB_HOST }}" >> /root/backend/.env
+          echo "BACKEND_DB_URL=${{ secrets.BACKEND_DB_URL }}" >> /root/backend/.env
           echo "BACKEND_DB_NAME=${{ secrets.BACKEND_DB_NAME }}" >> /root/backend/.env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" > /root/backend/.env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" > /root/backend/.env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" > /root/backend/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > /root/backend/.env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> /root/backend/.env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /root/backend/.env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> /root/backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/backend/.env
 
 
           # Create .env file for frontend from secrets

@@ -5,10 +5,11 @@ FROM gcr.io/distroless/base
 # See https://golang.org/pkg/runtime/
 ENV GOTRACEBACK=single
 
-WORKDIR /app
+WORKDIR /app 
+
 COPY . .
 
-RUN /app/migrate
+EXPOSE 8080
 
 
 ENTRYPOINT ["/app/main"]
