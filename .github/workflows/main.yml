@@ -13,10 +13,22 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Setup Golang
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.23.3'
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22' # or whatever version your Next.js app uses
+
+    - name: Build Go Backend
+      working-directory: backend/src
+      run: |
+        go mod tidy
+        GOOS=linux GOARCH=amd64 go build main.go
+        GOOS=linux GOARCH=amd64 go build db/migrate.go
 
     - name: Install frontend dependencies
       working-directory: frontend/src
@@ -28,10 +40,15 @@ jobs:
 
     - name: Create frontend artifact
       run: |
-        mkdir deploy
-        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json  frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/
+        mkdir deploy/frontend deploy/backend
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json  frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
+
+        cp -r main migrate deploy/backend
+
+        cp docker-compose.prod.yml deploy/
+
         cd deploy
-        zip -r ../frontend-artifact.zip .
+        zip -r ../artifact.zip .
 
     - name: Upload artifact to VPS
       uses: appleboy/scp-action@v0.1.4
@@ -39,8 +56,8 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
-        source: frontend-artifact.zip
-        target: /root/frontend/
+        source: artifact.zip
+        target: /root
 
     - name: SSH and Deploy
       uses: appleboy/ssh-action@v0.1.10
@@ -49,12 +66,29 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-          cd /root/frontend
-          rm -rf src || true
-          mkdir src
-          unzip -o frontend-artifact.zip -d src
-          cd src
-          npm install --production
+          cd /root
+          rm -rf frontend backend docker-compose.prod.yaml || true
+          unzip -o artifact.zip
+
+          # Create .env file for backend from secrets
+          echo "PORT=${{ secrets.PORT }}" >> /root/backend/.env
+          echo "BACKEND_DB_USER=${{ secrets.BACKEND_DB_USER }}" > /root/backend/.env
+          echo "BACKEND_DB_PASSWORD=${{ secrets.BACKEND_DB_PASSWORD }}" >> /root/backend/.env
+          echo "BACKEND_DB_PORT=${{ secrets.BACKEND_DB_PORT }}" > /root/backend/.env
+          echo "BACKEND_DB_HOST=${{ secrets.BACKEND_DB_HOST }}" > /root/backend/.env
+          echo "BACKEND_DB_URL=${{ secrets.BACKEND_DB_URL }}" > /root/backend/.env
+          echo "BACKEND_DB_NAME=${{ secrets.BACKEND_DB_NAME }}" >> /root/backend/.env
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" > /root/backend/.env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" > /root/backend/.env
+          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" > /root/backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > /root/backend/.env
+
+
+          # Create .env file for frontend from secrets
+          echo "API_ADDR=${{ secrets.API_ADDR }}" > /root/frontend/.env
+          echo "API_PORT=${{ secrets.API_PORT }}" >> /root/frontend/.env
+
+
           cd /root
           docker compose -f docker-compose.prod.yaml down 
           docker compose -f docker-compose.prod.yaml  up -d --build
