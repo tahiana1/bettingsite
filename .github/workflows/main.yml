@@ -1,0 +1,60 @@
+name: Deploy Next.js App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22' # or whatever version your Next.js app uses
+
+    - name: Install frontend dependencies
+      working-directory: frontend/src
+      run: npm install
+
+    - name: Build frontend
+      working-directory: frontend/src
+      run: npm run build
+
+    - name: Create frontend artifact
+      run: |
+        mkdir deploy
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/
+        cd deploy
+        zip -r ../frontend-artifact.zip .
+        
+    - name: Upload artifact to VPS
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        source: frontend-artifact.zip
+        target: /root/frontend/
+        
+    - name: SSH and Deploy
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        script: |
+          cd /root/frontend
+          rm -rf src || true
+          mkdir src
+          unzip -o frontend-artifact.zip -d src
+          cd src
+          npm install --production
+          cd /root
+          docker-compose -f docker-compose.prod.yaml down 
+          docker-compose -f docker-compose.prod.yaml  up -d --build
