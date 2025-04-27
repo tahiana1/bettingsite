@@ -28,7 +28,7 @@ jobs:
       run: |
         go mod tidy
         GOOS=linux GOARCH=amd64 go build main.go
-        GOOS=linux GOARCH=amd64 go build db/migrate.go
+        GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
     - name: Install frontend dependencies
       working-directory: frontend/src
