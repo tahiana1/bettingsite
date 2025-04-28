@@ -81,28 +81,12 @@ jobs:
           unzip -o artifact.zip
 
           # Create .env file for backend from secrets
-          echo "PORT=${{ secrets.PORT }}" > /root/backend/.env
-          echo "BACKEND_DB_USER=${{ secrets.BACKEND_DB_USER }}" >> /root/backend/.env
-          echo "BACKEND_DB_PASSWORD=${{ secrets.BACKEND_DB_PASSWORD }}" >> /root/backend/.env
-          echo "BACKEND_DB_PORT=${{ secrets.BACKEND_DB_PORT }}" >> /root/backend/.env
-          echo "BACKEND_DB_HOST=${{ secrets.BACKEND_DB_HOST }}" >> /root/backend/.env
-          echo "BACKEND_DB_URL=${{ secrets.BACKEND_DB_URL }}" >> /root/backend/.env
-          echo "BACKEND_DB_NAME=${{ secrets.BACKEND_DB_NAME }}" >> /root/backend/.env
+          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 
 
-          echo "FRONTEND_HOST=${{ secrets.FRONTEND_HOST }}" >> /root/backend/.env
-          echo "FRONTEND_PORT=${{ secrets.FRONTEND_PORT }}" >> /root/backend/.env
+          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env 
 
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> /root/backend/.env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /root/backend/.env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> /root/backend/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> /root/backend/.env
-
-
-          # Create .env file for frontend from secrets
-          echo "API_ADDR=${{ secrets.API_ADDR }}" > /root/frontend/.env
-          echo "API_PORT=${{ secrets.API_PORT }}" >> /root/frontend/.env
 
 
           cd /root
           docker compose -f docker-compose.prod.yaml down 
-          docker compose -f docker-compose.prod.yaml  up -d --build
+          docker compose -f docker-compose.prod.yaml up -d --build
