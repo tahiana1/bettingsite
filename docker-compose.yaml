@@ -6,10 +6,7 @@ services:
     # ports:
     #   - "3000:3000"
     volumes:
-      - ./frontend/src:/app
-    # environment:
-    #   API_ADDR: backend
-    #   API_PORT: 8080    
+      - ./frontend/src:/app  
     # depends_on:
       # backend:
       #   condition: service_healthy
@@ -45,17 +42,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
-
-    # environment:
-    #   BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting
-    #   BACKEND_DB_NAME: betting
-    #   BACKEND_DB_USER: postgres
-    #   BACKEND_DB_PASSWORD: postgres
-    #   BACKEND_DB_HOST: postgres
-    #   BACKEND_DB_PORT: 5432
-    #   REDIS_HOST: redis
-    #   REDIS_PORT: 6379
-    #   JWT_SECRET: your-secret-key-change-me
     networks:
       - app-network
     restart: always
@@ -84,8 +70,8 @@ services:
   redis:
     image: redis:8.0-rc1
     container_name: redis
-    ports:
-      - "6379:6379"  # Exposes Redis on localhost:6379
+    # ports:
+    #   - "6379:6379"
     volumes:
       - ./redis-data:/data
     command: redis-server --requirepass myredispass
