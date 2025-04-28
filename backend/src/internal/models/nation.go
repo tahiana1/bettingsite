@@ -11,6 +11,7 @@ type Nation struct {
 
 	Code     string `json:"code" gorm:"size:10"`
 	Name     string `json:"name" gorm:"size:100"`
+	Alias    string `json:"alias" gorm:"size:8"`
 	Flag     string `json:"flag" gorm:"size:200"`
 	OrderNum int    `json:"orderNum"`
 
