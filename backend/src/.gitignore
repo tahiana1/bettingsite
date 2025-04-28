@@ -33,10 +33,10 @@ gen
 /tmp/
 __debug_bin
 main
+migrate
 github.com
 .all-contributorsrc
 dist
-DappsterOS
 /codegen
 
 # System Files
