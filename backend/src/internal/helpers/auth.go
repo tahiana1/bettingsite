@@ -1,16 +1,19 @@
 package helpers
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/hotbrainy/go-betting/backend/api/middleware"
+	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
 // GetAuthUser returns the authenticated user details from the Gin context
-func GetAuthUser(c *gin.Context) *middleware.AuthUser {
+func GetAuthUser(c *gin.Context) *models.User {
 	authUser, exists := c.Get("authUser")
-
+	str, err := (json.Marshal(authUser))
+	fmt.Println(string(str), err)
 	if !exists {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get the user",
@@ -18,7 +21,7 @@ func GetAuthUser(c *gin.Context) *middleware.AuthUser {
 		return nil
 	}
 
-	if user, ok := authUser.(middleware.AuthUser); ok {
+	if user, ok := authUser.(models.User); ok {
 		return &user
 	}
 

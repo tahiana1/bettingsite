@@ -1,22 +1,39 @@
-let host = process.env.NEXT_PUBLIC_API_ADDR;
-if (typeof window !== "undefined") {
-  host = window?.location.hostname;
-}
-console.log(process.env.NEXT_PUBLIC_API_ADDR)
-export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
-export const backendURL = `http://${process.env.NEXT_PUBLIC_API_ADDR}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
-export const wsURL = `ws://${host}:${process.env.NEXT_PUBLIC_API_PORT}/ws`;
-console.log({ backendURL });
+// import { message } from "antd";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 
-export default function api(url: string, config?: any) {
-  return fetch(baseURL + url, {
+let host = process.env.NEXT_PUBLIC_API_ADDR; 
+if (typeof window !== "undefined") {
+  host = window?.location.hostname; 
+} 
+export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
+export const wsURL = `ws://${host}:${process.env.NEXT_PUBLIC_API_PORT}/ws`;
+
+export default function api(url: string, config?: AxiosRequestConfig) {
+  const requestURL = url.startsWith("http") ? url : `${baseURL}${url}`; 
+  return axios(requestURL, {
     ...config,
     headers: {
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3NTMzNTA3LCJpYXQiOjE3MjY5Mjg3MDcsImp0aSI6IjZmNmEyYTEzYTVkMzQ4MTdiMWZiMTRlYmEzOWNjNTlhIiwidXNlcl9pZCI6MX0.SJC7ADDb-Fi57EtTHo9JUFAMl6j7Pa1Y1aXcb2dj_Qk",
+      Authorization: localStorage.getItem("token"),
       "Content-Type": "application/json",
+      ...config?.headers,
     },
-  }).then((res) => {
-    return res.json();
-  });
+  })
+    .then((res) => {
+      if (res.config.method?.toLowerCase() != "get") {
+        // const response = res.data;
+        // if (response.title || response.message) {
+        //   message.success(response.title ?? "SUCCESS", response.message);
+        // }
+      }
+      return res.data;
+    })
+    .catch((err: AxiosError) => {
+      const response = err?.response?.data as any;
+      console.log({ response });
+      // message.error(
+      //   response?.title ?? "ERROR",
+      //   response?.message ?? err.message ?? "Unknown error occurred."
+      // );
+      throw JSON.stringify(response);
+    });
 }

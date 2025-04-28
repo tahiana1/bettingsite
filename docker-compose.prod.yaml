@@ -3,13 +3,20 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
-    ports:
-      - "80:3000"
+    # ports:
+    #   - "80:3000"
     environment:
       API_ADDR: backend
       API_PORT: 8080
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://frontend:3000/api/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     networks:
       - app-network
     restart: always
@@ -19,12 +26,19 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     ports:
-      - "8080:8080"
+      - "80:8080"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://backend:8080/api/v1/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
     environment:
       BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting

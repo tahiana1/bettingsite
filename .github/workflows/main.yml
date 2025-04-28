@@ -1,4 +1,4 @@
-name: Deploy Next.js App
+name: Deploy Betting Site
 
 on:
   push:
@@ -88,6 +88,10 @@ jobs:
           echo "BACKEND_DB_HOST=${{ secrets.BACKEND_DB_HOST }}" >> /root/backend/.env
           echo "BACKEND_DB_URL=${{ secrets.BACKEND_DB_URL }}" >> /root/backend/.env
           echo "BACKEND_DB_NAME=${{ secrets.BACKEND_DB_NAME }}" >> /root/backend/.env
+
+          echo "FRONTEND_HOST=${{ secrets.FRONTEND_HOST }}" >> /root/backend/.env
+          echo "FRONTEND_PORT=${{ secrets.FRONTEND_PORT }}" >> /root/backend/.env
+
           echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> /root/backend/.env
           echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /root/backend/.env
           echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> /root/backend/.env

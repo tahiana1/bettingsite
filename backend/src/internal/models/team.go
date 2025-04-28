@@ -1,9 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Team struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 
 	Code     string `json:"code" gorm:"size:50;unique" validate:"required,min=2"`
 	Name     string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
@@ -21,4 +25,8 @@ type Team struct {
 
 	HomeFixtures []Fixture `json:"homeFixtures" gorm:"foreignKey:HomeTeamID"`
 	AwayFixtures []Fixture `json:"awayFixtures" gorm:"foreignKey:AwayTeamID"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
 }

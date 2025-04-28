@@ -3,8 +3,7 @@
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
-
-console.log(process.env);
+ 
 
 const nextConfig = {
   env: {
@@ -13,18 +12,18 @@ const nextConfig = {
     NEXT_PUBLIC_PORT: process.env.PORT,
   },
 
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/api/:path*`,
-      },
-      {
-        source: "/resources/:path*",
-        destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/resources/:path*`,
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/:path*",
+  //       destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/api/:path*`,
+  //     },
+  //     {
+  //       source: "/resources/:path*",
+  //       destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/resources/:path*`,
+  //     },
+  //   ];
+  // },
   output: "standalone",
 };
 

@@ -87,7 +87,7 @@ func GetPosts(c *gin.Context) {
 			return db.Select("id, name, slug")
 		}).Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id, name")
-		})
+		}).Preload("Comments")
 	}
 
 	result, err := pagination.Paginate(initializers.DB, page, perPage, preloadFunc, &posts)

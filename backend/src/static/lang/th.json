@@ -2,20 +2,36 @@
   "home/majorEvent": "กิจกรรมสำคัญระดับโลก",
   "home/todaysMatch": "การแข่งขันวันนี้ (ระดับนานาชาติ)",
   "home/title": "สวัสดีชาวโลก!",
+  "home/hideToday": "อย่าแสดงกล่องโต้ตอบนี้ในวันนี้",
+
   "lang/th": "TH ภาษาไทย",
   "lang/cn": "CN 中文",
   "lang/en": "EN English",
   "lang/label": "เลือกภาษา",
+
   "menu/international": "การแข่งขันนานาชาติ",
   "menu/national": "การแข่งขันในประเทศ",
   "menu/live": "กีฬาสด",
   "menu/special": "พิเศษ",
+
+  "menu/deposit": "ฝากเงิน",
+  "menu/withdraw": "ถอนเงิน",
+  "menu/history": "ประวัติการโอน",
+  "menu/invest": "ลงทุน",
+  "menu/events": "กิจกรรม",
+  "menu/notifications": "การแจ้งเตือน",
+  "menu/livechat": "การสนับสนุน",
+
   "americanFootball": "อเมริกันฟุตบอล",
   "volleyball": "วอลเลย์บอล",
+
   "profile": "โปรไฟล์ของฉัน",
   "profile/balance": "สมดุล",
   "profile/xp": "XP",
   "profile/comp": "องค์ประกอบ",
+  "profile/attends": "ผู้เข้าร่วม",
+  "profile/roulette": "รูเล็ต",
+  "profile/inbox": "กล่องจดหมาย",
 
   "auth/login": "เข้าสู่ระบบ",
   "auth/register": "ลงทะเบียน",
@@ -27,6 +43,8 @@
   "billing/rechargeAmount": "จำนวนเงินฝากใหม่",
   "billing/rechargeBonus": "โบนัสเงินฝากใหม่",
   "billing/applyDeposit": "ฝากเงิน",
+  "billing/applyWithdraw": "สมัครถอนเงิน",
+  "billing/withdrawAmount": "จำนวนเงินที่ถอน",
 
   "betting/cart": "รถเข็นพนัน",
   "betting/singleMaxBettingAmount": "จำนวนเงินเดิมพันสูงสุดครั้งเดียว",
@@ -37,6 +55,7 @@
   "betting/placeBet": "วางเดิมพัน",
   "betting/expectedWinningAmount": "จำนวนเงินที่คาดว่าจะชนะ",
 
+  "reset": "รีเซ็ต",
   "delete": "ลบ",
   "deleteAll": "ลบทั้งหมด"
 }

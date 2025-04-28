@@ -80,25 +80,6 @@ func CreateLeague(c *gin.Context) {
 
 // Get fetch the all categories
 func GetLeagues(c *gin.Context) {
-	// Get the categories
-	// var categories []models.League
-
-	// pageStr := c.DefaultQuery("page", "1")
-	// page, _ := strconv.Atoi(pageStr)
-
-	// perPageStr := c.DefaultQuery("perPage", "5")
-	// perPage, _ := strconv.Atoi(perPageStr)
-
-	// preloadFunc := func(query *gorm.DB) *gorm.DB {
-	// 	return query.Preload("Nation", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Select("id, name")
-	// 	}).Preload("Sport", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Select("id, name")
-	// 	}).Preload("Fixtures", func(db *gorm.DB) *gorm.DB {
-	// 		return db.Preload("HomeTeam").Preload("AwayTeam")
-	// 	})
-	// }
-	// result, err := pagination.Paginate(initializers.DB, page, perPage, preloadFunc, &categories)
 	var leagues []responses.League
 
 	err := initializers.DB.Model(&models.League{}).Preload("Sport", func(db *gorm.DB) *gorm.DB {

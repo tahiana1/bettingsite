@@ -9,6 +9,7 @@ import (
 func GetUserRoute(r *gin.RouterGroup) {
 
 	r.Use(middleware.RequireAuth)
+	r.POST("/me", controllers.Me)
 	// Category routes
 	catRouter := r.Group("/categories")
 	{

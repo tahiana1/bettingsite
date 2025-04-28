@@ -7,7 +7,7 @@ import (
 )
 
 type Transaction struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 
 	UserID uint `json:"userId"`
 	User   User `gorm:"foreignKey:UserID"`
@@ -17,4 +17,8 @@ type Transaction struct {
 	BalanceAfter  float64   `json:"balanceAfter"`           // User's balance after the transaction
 	Status        string    `json:"status" gorm:"size:20"`  // e.g., "pending", "completed", "failed"
 	TransactionAt time.Time `json:"transactionAt" gorm:"autoCreateTime"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
 }

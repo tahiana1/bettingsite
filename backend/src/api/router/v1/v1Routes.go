@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/api/controllers"
 	"github.com/hotbrainy/go-betting/backend/api/middleware"
@@ -11,11 +13,26 @@ import (
 )
 
 func GetV1Route(r *gin.RouterGroup) {
+
+	r.Any("/hello", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"message": "API RUNNING",
+		})
+	})
+
+	r.Any("/healthz", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"ok":      true,
+			"message": "API RUNNING",
+		})
+	})
 	// User routes
 	authRouter := r.Group("/auth")
 	{
 		authRouter.POST("/signup", controllers.Signup)
 		authRouter.POST("/login", controllers.Login)
+		authRouter.POST("/logout", controllers.Logout)
 	}
 
 	r.GET("/lang/:locale", controllers.GetLang)

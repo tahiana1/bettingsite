@@ -61,14 +61,8 @@ func RequirePartnerAuth(c *gin.Context) {
 			return
 		}
 
-		authUser := AuthUser{
-			ID:    user.ID,
-			Name:  user.Name,
-			Email: user.Email,
-		}
-
 		// Attach the user to request
-		c.Set("authUser", authUser)
+		c.Set("authUser", user)
 
 		// Continue
 		c.Next()

@@ -32,8 +32,12 @@ import LangSwitcher from "./Common/LangSwitcher";
 import { useLocale, useTranslations } from "next-intl";
 import { IoBasketball, IoFootball } from "react-icons/io5";
 import { ImFeed } from "react-icons/im";
-import { MdSportsVolleyball } from "react-icons/md";
+import { MdEvent, MdSportsVolleyball } from "react-icons/md";
 import RecoilContextProvider from "@/contexts/JotaiContextProvider";
+import { BiMoneyWithdraw, BiNotification } from "react-icons/bi";
+import { CiMoneyBill } from "react-icons/ci";
+import { BsChat } from "react-icons/bs";
+import WebSocketTracker from "./Common/WebSocketTracker";
 
 const { Header } = Layout;
 
@@ -71,6 +75,36 @@ export default function RootLayout({
       key: "special",
       label: t("menu/special"),
       icon: <MdSportsVolleyball />,
+    },
+    {
+      key: "history",
+      label: t("menu/invest"),
+      icon: <MdSportsVolleyball />,
+    },
+    {
+      key: "billing/deposit",
+      label: t("menu/deposit"),
+      icon: <CiMoneyBill />,
+    },
+    {
+      key: "billing/withdraw",
+      label: t("menu/withdraw"),
+      icon: <BiMoneyWithdraw />,
+    },
+    {
+      key: "events",
+      label: t("menu/events"),
+      icon: <MdEvent />,
+    },
+    {
+      key: "notifications",
+      label: t("menu/notifications"),
+      icon: <BiNotification />,
+    },
+    {
+      key: "livechat",
+      label: t("menu/livechat"),
+      icon: <BsChat />,
     },
   ];
 
@@ -124,6 +158,7 @@ export default function RootLayout({
           value={{ isDarkTheme, collapsed, setCollapsed }}
         >
           <Layout>
+            <WebSocketTracker />
             <Layout className="min-h-screen">
               <Header
                 className="w-full flex !h-10 items-center !leading-10"
@@ -171,6 +206,7 @@ export default function RootLayout({
                     menu={{ items: profileItems }}
                     placement="bottomRight"
                     trigger={["click"]}
+                    className="!hidden"
                   >
                     <Avatar src={<UserOutlined />} className="w-8 h-8" />
                   </Dropdown>

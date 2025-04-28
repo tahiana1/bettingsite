@@ -5,8 +5,8 @@ import { Space } from "antd";
 
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
-import ProfileCard from "@/components/Home/ProfileCard";
-import BettingCart from "@/components/Home/BettingCart";
+import ProfileCard from "@/components/Profile/ProfileCard";
+import BettingCart from "@/components/Home/BettingCart"; 
 
 const BettingSidebar: React.FC = () => {
   const [user] = useAtom<any>(userState);

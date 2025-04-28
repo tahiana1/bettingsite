@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
+	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
 	"golang.org/x/crypto/bcrypt"
@@ -20,9 +21,18 @@ import (
 func Signup(c *gin.Context) {
 	// Get the name, email and password from request
 	var userInput struct {
-		Name     string `json:"name" binding:"required,min=2,max=50"`
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=6"`
+		Name          string    `json:"name" binding:"required,min=2,max=50"`
+		HolderName    string    `json:"holderName"`
+		Email         string    `json:"email" binding:"required,email"`
+		Password      string    `json:"password" binding:"required,min=6"`
+		SecPassword   string    `json:"securityPassword" binding:"required,min=6"`
+		USDTAddress   string    `json:"usdtAddress"`
+		AccountNumber string    `json:"accountNumber"`
+		Bank          string    `json:"bank"`
+		Birthday      time.Time `json:"birthday"`
+		Phone         string    `json:"phone"`
+		Referral      string    `json:"referral"`
+		Favorites     string    `json:"favorites"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -70,9 +80,11 @@ func Signup(c *gin.Context) {
 	}
 
 	user := models.User{
-		Name:     userInput.Name,
-		Email:    userInput.Email,
-		Password: string(hashPassword),
+		Name:        userInput.Name,
+		Email:       userInput.Email,
+		Password:    string(hashPassword),
+		SecPassword: userInput.SecPassword,
+		USDTAddress: userInput.USDTAddress,
 	}
 
 	// Create the user
@@ -85,6 +97,25 @@ func Signup(c *gin.Context) {
 
 	// Return the user
 	//user.Password = ""
+	profile := &models.Profile{
+		UserID:        user.ID,
+		Name:          userInput.Name,
+		Nickname:      userInput.Name,
+		BankName:      userInput.Bank,
+		HolderName:    userInput.HolderName,
+		AccountNumber: userInput.AccountNumber,
+		Birthday:      userInput.Birthday,
+		PhoneNumber:   userInput.Phone,
+		Favorites:     userInput.Favorites,
+		Referral:      userInput.Referral,
+	}
+
+	pr := initializers.DB.Create(&profile)
+
+	if err := pr.Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
@@ -149,7 +180,8 @@ func Login(c *gin.Context) {
 	// Set expiry time and send the token back
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString})
+	c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString,
+		"data": user})
 }
 
 // Logout function is used to log out a user
@@ -160,4 +192,44 @@ func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"successMessage": "Logout successful",
 	})
+}
+
+func Me(c *gin.Context) {
+
+	// Create a post
+	user := helpers.GetAuthUser(c)
+
+	if user != nil {
+
+		// Generate a JWT token
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"sub": user.ID,
+			"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
+			"ip":  c.ClientIP(),
+		})
+
+		// Sign in and get the complete encoded token as a string using the .env secret
+		tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Failed to create token",
+				"message": err.Error(),
+			})
+			return
+		}
+
+		// Set expiry time and send the token back
+		c.SetSameSite(http.SameSiteLaxMode)
+		c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
+		c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString,
+			"data": user})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error":   "Failed to create token",
+			"message": "Unauthorized",
+		})
+		return
+	}
+
 }

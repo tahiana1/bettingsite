@@ -2,6 +2,8 @@
   "home/majorEvent": "国际重大赛事",
   "home/todaysMatch": "今日国际赛程",
   "home/title": "你好，世界！",
+  "home/hideToday": "今天不显示此对话框.",
+
   "lang/th": "TH ภาษาไทย",
   "lang/cn": "CN 中文",
   "lang/en": "EN English",
@@ -10,6 +12,14 @@
   "menu/national": "国内赛事",
   "menu/live": "实时",
   "menu/special": "专用",
+  "menu/deposit": "存款",
+  "menu/withdraw": "提现",
+  "menu/invest": "投资",
+  "menu/history": "交易历史",
+  "menu/events": "事件",
+  "menu/notifications": "通知",
+  "menu/livechat": "客服",
+
   "americanFootball": "美式橄榄球",
   "volleyball": "排球",
 
@@ -23,12 +33,17 @@
   "billing/rechargeAmount": "充值金额",
   "billing/rechargeBonus": "充值奖励",
   "billing/applyDeposit": "申请存款",
+  "billing/applyWithdraw": "申请提现",
+  "billing/withdrawAmount": "提现金额",
 
   "profile": "个人资料",
   "profile/balance": "余额",
   "profile/xp": "经验",
   "profile/comp": "补偿",
   "betting/cart": "投注车",
+  "profile/attends": "参加",
+  "profile/roulette": "轮盘赌",
+  "profile/inbox": "收件箱",
 
   "betting/singleMaxBettingAmount": "单注最高投注额",
   "betting/singleMaxWinningAmount": "单注最高赢额",
@@ -38,6 +53,7 @@
   "betting/placeBet": "下注",
   "betting/amount": "投注金额",
 
+  "reset": "重置",
   "delete": "删除",
   "deleteAll": "全部删除"
 }

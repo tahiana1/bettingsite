@@ -2,6 +2,7 @@
   "home/majorEvent": "Major Events",
   "home/todaysMatch": "Today's Matches",
   "home/title": "Hello world!",
+  "home/hideToday": "Don't show this dialog again today.",
 
   "partnerPage": "Logout",
 
@@ -14,6 +15,13 @@
   "menu/national": "National",
   "menu/live": "Live",
   "menu/special": "Special",
+  "menu/deposit": "Deposit",
+  "menu/withdraw": "Withdraw",
+  "menu/history": "Trans History",
+  "menu/invest": "Invest",
+  "menu/events": "Events",
+  "menu/notifications": "Notifications",
+  "menu/livechat": "Support",
 
   "americanFootball": "American Football",
   "volleyball": "Volleyball",
@@ -28,11 +36,16 @@
   "billing/rechargeAmount": "Recharge Amount",
   "billing/rechargeBonus": "Recharge Bonus",
   "billing/applyDeposit": "Apply Deposit",
+  "billing/applyWithdraw": "Apply for Withdraw",
+  "billing/withdrawAmount": "Withdraw Amount",
 
   "profile": "My profile",
   "profile/balance": "Balance",
   "profile/xp": "XP",
   "profile/comp": "Comp",
+  "profile/attends": "Attends",
+  "profile/roulette": "Roulette",
+  "profile/inbox": "Inbox",
 
   "betting/cart": "Betting Cart",
   "betting/singleMaxBettingAmount": "Single Max Betting Amount",
@@ -43,6 +56,7 @@
   "betting/placeBet": "Place a Bet",
   "betting/expectedWinningAmount": "Expected Winning Amount",
 
+  "reset": "Reset",
   "delete": "Delete",
   "deleteAll": "Delete All"
 }

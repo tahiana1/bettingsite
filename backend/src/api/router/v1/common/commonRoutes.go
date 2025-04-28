@@ -8,14 +8,19 @@ import (
 func GetCommonRoute(r *gin.RouterGroup) {
 
 	// leagues routes
-	leaguesRouter := r.Group("/leagues")
+	leagueRouter := r.Group("/leagues")
 	{
-		leaguesRouter.GET("", controllers.GetLeagues)
+		leagueRouter.GET("", controllers.GetLeagues)
 	}
 	// sports routes
-	sportsRouter := r.Group("/sports")
+	sportRouter := r.Group("/sports")
 	{
-		sportsRouter.GET("", controllers.GetSports)
+		sportRouter.GET("", controllers.GetSports)
 	}
 
+	// sports routes
+	notificationRouter := r.Group("/notifications")
+	{
+		notificationRouter.GET("", controllers.GetNotifications)
+	}
 }

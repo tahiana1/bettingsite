@@ -1,9 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Sport struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 
 	Code       string `json:"code" gorm:"size:50;unique" validate:"required,min=2"`
 	Name       string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
@@ -12,5 +16,10 @@ type Sport struct {
 	OrderNum   uint   `json:"orderNum" gorm:"default:1"`
 	ShowYn     bool   `json:"showYn" gorm:"default:true"`
 
-	Leagues []League `json:"leagues" gorm:"foreignKey:SportID"`
+	Leagues []League `json:"leagues"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
+
 }

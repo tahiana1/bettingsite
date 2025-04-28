@@ -1,9 +1,14 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Post struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
+
 	CategoryID uint     `gorm:"foreignkey:CategoryID" json:"categoryID"`
 	Title      string   `gorm:"not null" json:"title"`
 	Body       string   `gorm:"type:text" json:"body"`
@@ -11,4 +16,8 @@ type Post struct {
 	Category   Category `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // Ensures FK constraints
 	User       User     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Comments   []Comment
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
 }

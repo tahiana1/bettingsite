@@ -7,7 +7,7 @@ import (
 )
 
 type Fixture struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 
 	SportID uint  `json:"sportId"`
 	Sport   Sport `gorm:"foreignKey:SportID" json:"sport"`
@@ -35,4 +35,8 @@ type Fixture struct {
 	OrigRateInfo *string   `json:"origRateInfo"` // Can be changed depending on actual type
 	GroupCnt     int       `json:"groupCnt"`
 	Rates        []Rate    `gorm:"foreignKey:FixtureID;" json:"rates"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
 }

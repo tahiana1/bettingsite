@@ -12,12 +12,6 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
-type AuthUser struct {
-	ID    uint   `json:"ID"`
-	Name  string `json:"Name"`
-	Email string `json:"Email"`
-}
-
 func RequireAuth(c *gin.Context) {
 	// Get the cookie from the request
 	tokenString, err := c.Cookie("Authorization")
@@ -27,6 +21,7 @@ func RequireAuth(c *gin.Context) {
 	}
 	if err != nil {
 		c.AbortWithStatus(http.StatusUnauthorized)
+		return
 	}
 
 	// Decode and validate it
@@ -55,7 +50,9 @@ func RequireAuth(c *gin.Context) {
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
+		fmt.Println(claims)
 		// Find the user with token sub
 		var user models.User
 		initializers.DB.Find(&user, claims["sub"])
@@ -67,18 +64,13 @@ func RequireAuth(c *gin.Context) {
 			return
 		}
 
-		authUser := AuthUser{
-			ID:    user.ID,
-			Name:  user.Name,
-			Email: user.Email,
-		}
-
 		// Attach the user to request
-		c.Set("authUser", authUser)
+		c.Set("authUser", user)
 
 		// Continue
 		c.Next()
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
+		return
 	}
 }

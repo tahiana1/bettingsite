@@ -1,9 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Rate struct {
-	gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 
 	// Foreign Keys
 	FixtureID uint    `json:"fixtureId" gorm:"index"`
@@ -43,4 +47,9 @@ type Rate struct {
 	AwayBase     float64 `json:"awayBase"`
 	AwayLine     string  `json:"awayLine"`
 	AwayRate     float64 `json:"awayRate"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
+
 }
