@@ -34,10 +34,7 @@ jobs:
     - name: Create .env for frontend
       working-directory: frontend/src
       run: |
-        echo "API_ADDR=${{ secrets.API_ADDR }}" > .env
-        echo "API_PORT=${{ secrets.API_PORT }}" >> .env
-        echo "NEXT_PUBLIC_API_ADDR=${{ secrets.API_ADDR }}" >> .env
-        echo "NEXT_PUBLIC_API_PORT=${{ secrets.API_PORT }}" >> .env
+        echo "${{ secrets.FRONTEND_ENV }}" > .env
 
     - name: Install frontend dependencies
       working-directory: frontend/src
