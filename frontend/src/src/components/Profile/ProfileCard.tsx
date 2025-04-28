@@ -28,6 +28,7 @@ const ProfileCard: React.FC = () => {
       setProfile({});
       
       api("auth/logout", { method: "POST" }).then((res) => {
+        console.log({res})
         localStorage.removeItem("token");
       });
     }
