@@ -9,21 +9,9 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_ADDR: process.env.API_ADDR,
     NEXT_PUBLIC_API_PORT: process.env.API_PORT,
+    NEXT_PUBLIC_PROXY_PORT: process.env.PROXY_PORT,
     NEXT_PUBLIC_PORT: process.env.PORT,
   },
-
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: "/api/:path*",
-  //       destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/api/:path*`,
-  //     },
-  //     {
-  //       source: "/resources/:path*",
-  //       destination: `http://${process.env.API_ADDR}:${process.env.API_PORT}/resources/:path*`,
-  //     },
-  //   ];
-  // },
   output: "standalone",
 };
 

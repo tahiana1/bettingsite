@@ -2,3 +2,5 @@ postgres-data/
 get_helm.sh
 .env
 redis-data/
+frontend/src/.env
+frontend/src/.env

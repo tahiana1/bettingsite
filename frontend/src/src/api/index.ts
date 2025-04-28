@@ -9,8 +9,8 @@ if (typeof window !== "undefined") {
     isSSL = "s";
   }
 }
-export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_API_PORT}/api/v1`;
-export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_API_PORT}/ws`;
+export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
+export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/ws`;
 
 export default function api(url: string, config?: AxiosRequestConfig) {
   const requestURL = url.startsWith("http") ? url : `${baseURL}${url}`;
