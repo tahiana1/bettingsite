@@ -37,16 +37,16 @@ services:
       retries: 5
       start_period: 5s
 
-    environment:
-      BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting
-      BACKEND_DB_NAME: betting
-      BACKEND_DB_USER: postgres
-      BACKEND_DB_PASSWORD: postgres
-      BACKEND_DB_HOST: postgres
-      BACKEND_DB_PORT: 5432
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: your-secret-key-change-me
+    # environment:
+    #   BACKEND_DB_URL: postgres://postgres:postgres@postgres:5432/betting
+    #   BACKEND_DB_NAME: betting
+    #   BACKEND_DB_USER: postgres
+    #   BACKEND_DB_PASSWORD: postgres
+    #   BACKEND_DB_HOST: postgres
+    #   BACKEND_DB_PORT: 5432
+    #   REDIS_HOST: redis
+    #   REDIS_PORT: 6379
+    #   JWT_SECRET: your-secret-key-change-me
     networks:
       - app-network
     restart: always
@@ -55,7 +55,7 @@ services:
     image: postgres:16
     container_name: postgres
     ports:
-      - "5432:5432"
+      - "25432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -75,8 +75,8 @@ services:
   redis:
     image: redis:8.0-rc1
     container_name: redis
-    ports:
-      - "6379:6379"  # Exposes Redis on localhost:6379
+    # ports:
+    #   - "6379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --requirepass myredispass
