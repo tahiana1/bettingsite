@@ -16,6 +16,7 @@ import {
 } from "@/state/state";
 import Link from "next/link";
 import { ROUTES } from "@/routes";
+import Image from "next/image";
 
 const EventSidebar: React.FC = () => {
   const t = useTranslations();
@@ -93,8 +94,15 @@ const EventSidebar: React.FC = () => {
               onClick={() => onSelectLeague(item)}
             >
               <div className="w-full flex justify-between items-center gap-2 select-none px-2">
-                <BiFootball className="w-4 h-4" /> &gt;&gt;
-                <div className="w-full overflow-hidden whitespace-nowrap text-ellipsis">
+                <BiFootball className="w-4 h-4" />
+                <div className="w-full  overflow-hidden whitespace-nowrap text-ellipsis">
+                  <Image
+                    src={`/img/flags/${item.nation?.flag}`}
+                    width={16}
+                    height={16}
+                    alt={item.nation?.name}
+                    className="inline-block"
+                  />{" "}
                   {t.has(item.name) ? t(item.name) : item.name}
                 </div>
                 <Tag className="rounded-none !m-0" color={"green"}>
