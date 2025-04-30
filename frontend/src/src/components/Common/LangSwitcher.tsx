@@ -60,7 +60,7 @@ const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
   };
 
   return (
-    <Dropdown menu={{ items }}>
+    <Dropdown menu={{ items }} className="!h-10">
       <Button type="text">
         {(items.find((i) => i?.key == lang) as MenuItemType)?.icon}
         {(items.find((i) => i?.key == lang) as MenuItemType)?.label}

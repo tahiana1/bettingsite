@@ -7,13 +7,16 @@ import { z } from "zod";
 import Link from "next/link";
 import { ROUTES } from "@/routes";
 import api from "@/api";
+import { useTranslations } from "next-intl";
 const UserSchema = z.object({
-  email: z.string().optional(),
+  userid: z.string().optional(),
   password: z.string().optional(),
-  remember: z.string().optional(),
 });
 type User = z.infer<typeof UserSchema>;
 const Login: React.FC = () => {
+
+  const t = useTranslations();
+
   const [, setUser] = useAtom<any>(userState);
 
   const { register } = useForm<User>();
@@ -27,7 +30,6 @@ const Login: React.FC = () => {
         localStorage.setItem("token", result.token);
       })
       .catch((err) => {
-        console.log({ err });
         notiApi.error({
           message: "Error",
           description: `Some error occurred! ${err}`,
@@ -48,7 +50,7 @@ const Login: React.FC = () => {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
-      {contextHolder}
+      {contextHolder}      
       <Card
         title={"Login"}
         className="w-full"
@@ -57,13 +59,12 @@ const Login: React.FC = () => {
         }}
       >
         <Form.Item<User>
-          label="Email"
-          {...register("email")}
+          label="UserID"
+          {...register("userid")}
           rules={[
             {
-              type: "email",
               required: true,
-              message: "Please input your corret email!",
+              message: "Please input your corret userid!",
             },
           ]}
         >
@@ -78,15 +79,6 @@ const Login: React.FC = () => {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item<User>
-          name="remember"
-          valuePropName="checked"
-          label={null}
-          className="!px-2"
-        >
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-
         <Form.Item label={null} className="w-full ">
           <Button
             variant="solid"
@@ -94,13 +86,13 @@ const Login: React.FC = () => {
             htmlType="submit"
             className="w-full"
           >
-            Login
+            {t("auth/login")}
           </Button>
         </Form.Item>
         <Form.Item label={null} className="w-full ">
           <Link href={ROUTES.signup}>
             <Button type="primary" htmlType="button" className="w-full">
-              Sign Up
+              {t("auth/register")}
             </Button>
           </Link>
         </Form.Item>

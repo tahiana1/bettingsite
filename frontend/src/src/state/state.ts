@@ -6,6 +6,10 @@ export const textState = atom<any>("1");
 
 export const userState = atom<any>({});
 
+export const currentAdminTheme = atomWithStorage<any>("adminTheme", false);
+
+export const currentTheme = atomWithStorage<any>("theme", true);
+
 export const notiState = atomWithStorage<any>("notifications", []);
 
 export const notificationState = atom<any[]>([]);

@@ -1,90 +1,283 @@
 "use client";
+import React from "react";
 
-import { wsURL } from "@/api";
-import { Button, Input, Layout } from "antd";
+import {
+  Layout,
+  Button,
+  Col,
+  Row,
+  Statistic,
+  Space,
+  Card,
+  Divider,
+  Table,
+  Tag,
+} from "antd";
+import type { TableProps } from "antd";
+
 import { Content } from "antd/es/layout/layout";
-import React, { useEffect, useRef, useState } from "react";
 
-const Index: React.FC = () => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [text, setText] = useState<string>("");
-  const ws = useRef<WebSocket | null>(null);
-  const retryTimeout = useRef<NodeJS.Timeout | null>(null);
-  const retries = useRef(0);
-  const maxRetries = 5;
+import {
+  DollarCircleOutlined,
+  LikeOutlined,
+  UserAddOutlined,
+  UsergroupAddOutlined,
+  UserOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons";
+import { useTranslations } from "next-intl";
 
-  const connect = () => {
-    if (retries.current >= maxRetries) return;
+import { Line, Column } from "@ant-design/charts";
+import { MdTrendingFlat } from "react-icons/md";
+import { BsEyeglasses } from "react-icons/bs";
+import { SiClickhouse } from "react-icons/si";
 
-    ws.current = new WebSocket(wsURL);
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+  tags: string[];
+}
 
-    ws.current.onopen = () => {
-      console.log("WebSocket connected");
-      retries.current = 0; // reset retry count
-    };
+const columns: TableProps<DataType>["columns"] = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+    render: (text) => <a>{text}</a>,
+  },
+  {
+    title: "Age",
+    dataIndex: "age",
+    key: "age",
+  },
+  {
+    title: "Address",
+    dataIndex: "address",
+    key: "address",
+  },
+  {
+    title: "Tags",
+    key: "tags",
+    dataIndex: "tags",
+    render: (_, { tags }) => (
+      <>
+        {tags.map((tag) => {
+          let color = tag.length > 5 ? "geekblue" : "green";
+          if (tag === "loser") {
+            color = "volcano";
+          }
+          return (
+            <Tag color={color} key={tag}>
+              {tag.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </>
+    ),
+  },
+  {
+    title: "Action",
+    key: "action",
+    render: (_, record) => (
+      <Space size="middle">
+        <a>Invite {record.name}</a>
+        <a>Delete</a>
+      </Space>
+    ),
+  },
+];
 
-    ws.current.onmessage = (event) => {
-      console.log({ event });
-      try {
-        const data = JSON.parse(event.data);
-        setMessages(data);
-      } catch (e) {}
-    };
+const data: DataType[] = [
+  {
+    key: "1",
+    name: "John Brown",
+    age: 32,
+    address: "New York No. 1 Lake Park",
+    tags: ["nice", "developer"],
+  },
+  {
+    key: "2",
+    name: "Jim Green",
+    age: 42,
+    address: "London No. 1 Lake Park",
+    tags: ["loser"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sydney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+];
 
-    ws.current.onclose = () => {
-      console.log("WebSocket closed. Reconnecting...");
-      retryReconnect();
-    };
-
-    ws.current.onerror = (err: any) => {
-      console.error("WebSocket error", err);
-      ws.current?.close(); // close to trigger reconnect
-    };
+const Dashboard: React.FC = () => {
+  const t = useTranslations();
+  const config1 = {
+    data: [
+      { name: "04/21", action: "Deposit", pv: 2030 },
+      { name: "04/21", action: "Withdraw", pv: 2500 },
+      { name: "04/22", action: "Deposit", pv: 2030 },
+      { name: "04/22", action: "Withdraw", pv: 2500 },
+      { name: "04/23", action: "Deposit", pv: 3030 },
+      { name: "04/23", action: "Withdraw", pv: 3500 },
+      { name: "Today", action: "Deposit", pv: 2300 },
+      { name: "Today", action: "Withdraw", pv: 2500 },
+    ],
+    group: true,
+    xField: "name",
+    yField: "pv",
+    colorField: "action",
+    label: {
+      text: (d: any) => d.pv,
+      textBaseline: "bottom",
+    },
+    height: 200,
+    style: {
+      inset: 5,
+      maxWidth: 30,
+    },
+    // conversionTag: {
+    //   size: 40,
+    //   spacing: 4,
+    //   text: {
+    //     formatter: (prev: number, next: number) =>
+    //       `${((next / prev) * 100).toFixed(1)}%`,
+    //   },
+    // },
   };
-
-  const retryReconnect = () => {
-    const delay = Math.min(1000 * 2 ** retries.current, 10000); // exponential backoff up to 10s
-    retries.current += 1;
-
-    retryTimeout.current = setTimeout(() => {
-      connect();
-    }, delay);
+  const config2 = {
+    data: [
+      { name: "04/21", action: "Betting", pv: 2030 },
+      { name: "04/21", action: "Win", pv: 2500 },
+      { name: "04/22", action: "Betting", pv: 2030 },
+      { name: "04/22", action: "Win", pv: 2500 },
+      { name: "04/23", action: "Betting", pv: 3030 },
+      { name: "04/23", action: "Win", pv: 3500 },
+      { name: "Today", action: "Betting", pv: 2300 },
+      { name: "Today", action: "Win", pv: 2500 },
+    ],
+    group: true,
+    xField: "name",
+    yField: "pv",
+    colorField: "action",
+    label: {
+      text: (d: any) => d.pv,
+      textBaseline: "bottom",
+    },
+    height: 200,
+    style: {
+      inset: 5,
+      maxWidth: 30,
+    },
+    // conversionTag: {
+    //   size: 40,
+    //   spacing: 4,
+    //   text: {
+    //     formatter: (prev: number, next: number) =>
+    //       `${((next / prev) * 100).toFixed(1)}%`,
+    //   },
+    // },
   };
-
-  useEffect(() => {
-    if (ws.current?.OPEN || ws.current?.CONNECTING) {
-    } else {
-      connect();
-    }
-
-    return () => {
-      ws.current?.close();
-      if (retryTimeout.current) clearTimeout(retryTimeout.current);
-    };
-  }, []);
-
-  const onSend = () => {
-    ws.current?.send(text);
-  };
-
-  const onChangeText: React.ChangeEventHandler<HTMLTextAreaElement> = (e) => {
-    setText(e.target.value);
-  };
-
   return (
     <Layout>
-      <Content className="p-8">
-        <Input.TextArea onChange={onChangeText}></Input.TextArea>
-        <Button onClick={onSend}>Send</Button>
-        <h2>Messages:</h2>
-        <ul>
-          {messages.map((m) => (
-            <li key={m.id}>{m.sportsName}</li>
-          ))}
-        </ul>
+      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+        <Card title={t("admin/todayStatistics")} className="!mb-2">
+          <Space wrap className="w-full justify-between">
+            <Statistic
+              title="Withdraw"
+              value={1128}
+              prefix={<DollarCircleOutlined />}
+            />
+            <Statistic
+              title="User Deposit"
+              value={93}
+              prefix={<DollarCircleOutlined />}
+            />
+            <Statistic
+              title="User Withdraw"
+              value={1128}
+              prefix={<DollarCircleOutlined />}
+            />
+            <Statistic
+              prefix={<DollarCircleOutlined />}
+              title="Total Deposit"
+              value={93}
+            />
+            <Statistic
+              title="Total Withdraw"
+              value={1128}
+              prefix={<DollarCircleOutlined />}
+            />
+          </Space>
+          <Divider />
+          <Space wrap className="w-full justify-between">
+            <Statistic
+              title="Betting"
+              value={1128}
+              prefix={<DollarCircleOutlined />}
+            />
+            <Statistic
+              prefix={<DollarCircleOutlined />}
+              title="Prize"
+              value={93}
+            />
+            <Statistic
+              prefix={<UserOutlined />}
+              title="Betting Users"
+              value={93}
+              suffix="/ 100"
+            />
+            <Statistic
+              title="Registered Users"
+              value={1128}
+              prefix={<UserAddOutlined />}
+            />
+            <Statistic
+              title="Number of visiters"
+              value={1128}
+              prefix={<UserSwitchOutlined />}
+            />
+          </Space>
+        </Card>
+        <Space.Compact className="w-full gap-2">
+          <Space direction="vertical" className="w-full flex-1">
+            <Card title={t("admin/todayDepositWithdraw")}>
+              <Column {...config1} />
+            </Card>
+            <Card title={t("admin/todayDepositWithdraw")}>
+              <Column {...config2} />
+            </Card>
+          </Space>
+          <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
+            <Space wrap align="start" className="w-full">
+              <Card title={t("admin/todayDepositWithdraw")}>
+                membership point
+              </Card>
+              <Card title={t("admin/todayDepositWithdraw")}>total points</Card>
+              <Card title={t("admin/todayDepositWithdraw")}>
+                Rolling the total
+              </Card>
+              <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
+            </Space>
+            <Space.Compact className="w-full">
+              <Card title={"Recent user deposits and withdrawals"} classNames={{
+                body:"!p-0"
+              }}>
+                <Table<DataType>
+                  columns={columns}
+                  dataSource={data}
+                  className="w-full" 
+                />
+              </Card>
+            </Space.Compact>
+          </Space.Compact>
+        </Space.Compact>
       </Content>
     </Layout>
   );
 };
 
-export default Index;
+export default Dashboard;

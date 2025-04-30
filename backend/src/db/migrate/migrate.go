@@ -21,6 +21,8 @@ func main() {
 
 	err := initializers.DB.AutoMigrate(
 		models.User{},
+		models.Event{},
+		models.Domain{},
 		models.Category{},
 		models.Post{},
 		models.Comment{},
@@ -34,6 +36,12 @@ func main() {
 		models.Market{},
 		models.Team{},
 		models.Transaction{},
+		models.Announcement{},
+		models.Attendance{},
+		models.Bet{},
+		models.Inbox{},
+		models.Notification{},
+		models.Menu{},
 	)
 
 	if err != nil {

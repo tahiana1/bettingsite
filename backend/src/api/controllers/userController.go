@@ -19,11 +19,11 @@ import (
 
 // Signup function is used to create a user or signup a user
 func Signup(c *gin.Context) {
-	// Get the name, email and password from request
+	// Get the name, userid and password from request
 	var userInput struct {
 		Name          string    `json:"name" binding:"required,min=2,max=50"`
 		HolderName    string    `json:"holderName"`
-		Email         string    `json:"email" binding:"required,email"`
+		Userid        string    `json:"userid" binding:"required,userid"`
 		Password      string    `json:"password" binding:"required,min=6"`
 		SecPassword   string    `json:"securityPassword" binding:"required,min=6"`
 		USDTAddress   string    `json:"usdtAddress"`
@@ -49,24 +49,11 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	// Email unique validation
-	if validations.IsUniqueValue("users", "email", userInput.Email) {
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"validations": map[string]interface{}{
-				"Email": "The email is already exist!",
-			},
-		})
+	// Userid unique validation
+	if validations.IsUniqueValue("users", "userid", userInput.Userid) {
+		c.JSON(http.StatusUnprocessableEntity, "The userid is already exist!")
 		return
 	}
-	//if err := initializers.DB.Where("email = ?", userInput.Email).First(&models.User{}).Error; err == nil {
-	//	c.JSON(http.StatusConflict, gin.H{
-	//		"validations": map[string]interface{}{
-	//			"Email": "The email is already exist!",
-	//		},
-	//	})
-	//
-	//	return
-	//}
 
 	// Hash the password
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
@@ -81,7 +68,7 @@ func Signup(c *gin.Context) {
 
 	user := models.User{
 		Name:        userInput.Name,
-		Email:       userInput.Email,
+		Userid:      userInput.Userid,
 		Password:    string(hashPassword),
 		SecPassword: userInput.SecPassword,
 		USDTAddress: userInput.USDTAddress,
@@ -124,9 +111,9 @@ func Signup(c *gin.Context) {
 
 // Login function is used to log in a user
 func Login(c *gin.Context) {
-	// Get the email and password from the request
+	// Get the userid and password from the request
 	var userInput struct {
-		Email    string `json:"email" binding:"required,email"`
+		Userid   string `json:"userid" binding:"required"`
 		Password string `json:"password" binding:"required"`
 	}
 
@@ -138,13 +125,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Find the user by email
+	// Find the user by userid
 	var user models.User
-	initializers.DB.First(&user, "email = ?", userInput.Email)
+	initializers.DB.First(&user, "userid = ?", userInput.Userid)
 	fmt.Println(user)
 	if user.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password 0",
+			"error": "Invalid userid or password 0",
 		})
 
 		return
@@ -154,7 +141,7 @@ func Login(c *gin.Context) {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid email or password",
+			"error": "Invalid userid or password",
 		})
 
 		return

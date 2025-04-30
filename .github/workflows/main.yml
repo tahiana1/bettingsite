@@ -85,5 +85,13 @@ jobs:
 
 
           cd /root
+
           docker compose -f docker-compose.prod.yaml down 
+
+          docker system prune -a -f
+
           docker compose -f docker-compose.prod.yaml up -d --build
+
+          docker exec -it root-backend-1 migrate
+
+          echo "🚀 Server is running!!!"

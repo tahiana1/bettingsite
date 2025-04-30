@@ -41,8 +41,8 @@ func FormatValidationErrors(errs validator.ValidationErrors) map[string]string {
 		switch err.Tag() {
 		case "required":
 			errorMessages[err.Field()] = fmt.Sprintf("%s is required", err.Field())
-		case "email":
-			errorMessages[err.Field()] = fmt.Sprintf("%s must be a valid email address", err.Field())
+		case "userid":
+			errorMessages[err.Field()] = fmt.Sprintf("%s must be a valid userid", err.Field())
 		case "min":
 			errorMessages[err.Field()] = fmt.Sprintf("%s must have at least %s characters", err.Field(), err.Param())
 		case "max":

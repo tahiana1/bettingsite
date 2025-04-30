@@ -65,8 +65,8 @@ func UpdateUser(c *gin.Context) {
 
 	// Get the name, email and password from request
 	var userInput struct {
-		Name  string `json:"name" binding:"required,min=2,max=50"`
-		Email string `json:"email" binding:"required,email"`
+		Name   string `json:"name" binding:"required,min=2,max=50"`
+		Userid string `json:"email" binding:"required,email"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -92,11 +92,11 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	// Email unique validation
-	if user.Email != userInput.Email && validations.IsUniqueValue("users", "email", userInput.Email) {
+	// Userid unique validation
+	if user.Userid != userInput.Userid && validations.IsUniqueValue("users", "email", userInput.Userid) {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
 			"validations": map[string]interface{}{
-				"Email": "The email is already exist!",
+				"Userid": "The email is already exist!",
 			},
 		})
 		return
@@ -104,8 +104,8 @@ func UpdateUser(c *gin.Context) {
 
 	// Prepare data to update
 	updateUser := models.User{
-		Name:  userInput.Name,
-		Email: userInput.Email,
+		Name:   userInput.Name,
+		Userid: userInput.Userid,
 	}
 
 	// Update the user

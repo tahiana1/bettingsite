@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"os"
 
 	"github.com/gin-contrib/cors"
@@ -9,13 +10,19 @@ import (
 	"github.com/hotbrainy/go-betting/backend/api/router"
 	"github.com/hotbrainy/go-betting/backend/config"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	"github.com/hotbrainy/go-betting/backend/internal/fetcher"
+	"github.com/hotbrainy/go-betting/backend/internal/kafka"
 	"github.com/hotbrainy/go-betting/backend/internal/redis"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 func init() {
 	config.LoadEnvVariables()
 	initializers.ConnectDB()
+	kafka.InitKafka()
 	redis.InitRedis()
+	fetcher.StartPolling()
 }
 
 func main() {
@@ -29,5 +36,13 @@ func main() {
 	r.GET("/ws", controllers.Upgrade)
 	router.GetAPIRoute(r)
 	port := os.Getenv("PORT")
-	r.Run("0.0.0.0:" + port)
+
+	h2s := &http2.Server{}
+
+	server := &http.Server{
+		Addr:    "0.0.0.0:" + port,
+		Handler: h2c.NewHandler(r, h2s),
+	}
+
+	server.ListenAndServe()
 }

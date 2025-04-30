@@ -10,10 +10,10 @@ type User struct {
 	ID uint `json:"id"`
 
 	Name     string `json:"name"`
-	Email    string `json:"email" gorm:"unique;not null"`
+	Userid   string `json:"userid" gorm:"unique;not null"`
 	Password string `json:"-"`
 
-	EmailVerified        bool       `json:"emailVerified" gorm:"default:false"`
+	PhoneVerified        bool       `json:"phoneVerified" gorm:"default:false"`
 	Role                 string     `json:"role" gorm:"default:'user'"` // partner, admin
 	PasswordResetToken   string     `json:"-" gorm:"size:255"`          // Token used for password reset
 	PasswordResetExpires *time.Time `json:"-"`                          // Expiration time for the password reset token

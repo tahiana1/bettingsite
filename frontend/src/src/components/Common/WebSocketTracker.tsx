@@ -10,7 +10,7 @@ const WebSocketTracker: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
   const [connected, setConnected] = useState<number>(0);
 
-  const [, setUser] = useAtom<any>(userState);
+  const [user, setUser] = useAtom<any>(userState);
 
   const ws = useRef<WebSocket | null>(null);
   const retryTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -18,9 +18,14 @@ const WebSocketTracker: React.FC = () => {
   const maxRetries = 500;
   const connectStatus = ["red", "green", "yellow"];
   const connect = () => {
+    cleanWS();
     if (retries.current >= maxRetries) return;
 
-    ws.current = new WebSocket(wsURL);
+    // ws.current = new WebSocket(`${wsURL}`);
+    console.log({ user });
+    ws.current = new WebSocket(
+      `${wsURL}${user?.id ? "/info?userId=" + user.id : ""}`
+    );
 
     ws.current.onopen = () => {
       console.log("WebSocket connected");
@@ -32,6 +37,7 @@ const WebSocketTracker: React.FC = () => {
       console.log({ event });
       try {
         const data = JSON.parse(event.data);
+        data.data
         setMessages(data);
       } catch (e) {}
     };
@@ -44,40 +50,58 @@ const WebSocketTracker: React.FC = () => {
 
     ws.current.onerror = (err: any) => {
       console.error("WebSocket error", err);
-      setConnected(2);
-      ws.current?.close(); // close to trigger reconnect
+      setConnected(0);
+      retryReconnect();
     };
   };
-
+  const cleanWS = () => {
+    if (ws.current) {
+      ws.current.onopen = null;
+      ws.current.onmessage = null;
+      ws.current.onclose = null;
+      ws.current.onerror = null;
+      ws.current.close();
+      ws.current = null;
+    }
+  };
   const retryReconnect = () => {
     const delay = Math.min(1000 * 2 ** retries.current, 10000); // exponential backoff up to 10s
     retries.current += 1;
-
+    console.log({ delay });
     retryTimeout.current = setTimeout(() => {
       connect();
     }, delay);
   };
 
   useEffect(() => {
-    if (ws.current?.OPEN || ws.current?.CONNECTING) {
+    if (ws.current?.OPEN) {
       setConnected(1);
     } else {
       connect();
     }
 
-    api("user/me", { method: "POST" })
-      .then((result) => {
-        setUser(result.data);
-        localStorage.setItem("token", result.token);
-      })
-      .then((err) => {
-        console.log({ err });
-      });
     return () => {
       setConnected(0);
-      ws.current?.close();
-      if (retryTimeout.current) clearTimeout(retryTimeout.current);
+      if (ws.current) {
+        ws.current.onopen = null;
+        ws.current.onmessage = null;
+        ws.current.onclose = null;
+        ws.current.onerror = null;
+        ws.current.close();
+        ws.current = null;
+      }
+      if (retryTimeout.current) {
+        clearTimeout(retryTimeout.current);
+        retryTimeout.current = null;
+      }
     };
+  }, [user]);
+
+  useEffect(() => {
+    api("user/me", { method: "POST" }).then((result) => {
+      setUser(result.data);
+      localStorage.setItem("token", result.token);
+    });
   }, []);
 
   return (

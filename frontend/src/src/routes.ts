@@ -9,4 +9,9 @@ export const ROUTES = {
   inbox: "/profile/inbox",
   attends: "/profile/attends",
   roulette: "/profile/roulette",
+
+  admin: {
+    home: "/admin",
+    login: "/admin",
+  },
 };

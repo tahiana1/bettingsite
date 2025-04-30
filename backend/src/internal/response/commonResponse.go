@@ -23,10 +23,10 @@ type Notification struct {
 type User struct {
 	ID uint `json:"id"`
 
-	Name  string `json:"name"`
-	Email string `json:"email" gorm:"unique;not null"`
+	Name   string `json:"name"`
+	Userid string `json:"userid" gorm:"unique;not null"`
 
-	EmailVerified        bool       `json:"emailVerified" gorm:"default:false"`
+	UseridVerified       bool       `json:"useridVerified" gorm:"default:false"`
 	Role                 string     `json:"role" gorm:"default:'user'"` // partner, admin
 	AvatarURL            string     `json:"avatarUrl,omitempty" gorm:"size:255"`
 	Bio                  string     `json:"bio,omitempty" gorm:"size:512"`

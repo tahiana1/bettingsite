@@ -9,8 +9,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/hotbrainy/go-betting/backend/db/initializers"
-	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"github.com/hotbrainy/go-betting/backend/internal/redis"
 )
 
@@ -25,6 +23,8 @@ type Client struct {
 
 var clients = make(map[string]*Client)
 var clientsMu sync.RWMutex
+
+var lock sync.Mutex
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -51,12 +51,16 @@ func Upgrade(c *gin.Context) {
 	go func() {
 		for msg := range ch {
 			fmt.Println((msg.Payload))
-			var leagues []models.League
-			initializers.DB.Find(&leagues)
-
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
 				log.Println(err)
 				return
+			}
+
+			for _, client := range clients {
+				if err := client.Conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
+					log.Println(err)
+					return
+				}
 			}
 			// leaguesBytes, err := json.Marshal(leagues)
 			// if err != nil {
@@ -156,4 +160,21 @@ func Info(c *gin.Context) {
 		data, _ := json.Marshal(msgData.Data)
 		rdb.Publish(c, "private:"+msgData.Sender, data)
 	}
+}
+
+func Broadcast(msg []byte) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	for userID, client := range clients {
+		if err := client.Conn.WriteMessage(websocket.TextMessage, msg); err != nil {
+			log.Println(err)
+			if err != nil {
+				client.Conn.Close()
+				delete(clients, userID)
+			}
+			return
+		}
+	}
+
 }

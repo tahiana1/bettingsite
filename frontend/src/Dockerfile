@@ -3,7 +3,7 @@ FROM node:current-alpine AS deps
 WORKDIR /app
 
 EXPOSE 3000
-COPY . .
+COPY package.json yarn.lock ./
 RUN \
     if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
     elif [ -f package-lock.json ]; then npm ci; \

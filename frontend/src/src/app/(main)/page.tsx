@@ -101,7 +101,7 @@ const Index: React.FC = () => {
         <Carousel autoplay>
           <div>
             <Image
-              className="w-full"
+              // className="w-full"
               style={contentStyle}
               alt=""
               src={stream1}
@@ -109,7 +109,7 @@ const Index: React.FC = () => {
           </div>
           <div>
             <Image
-              className="w-full"
+              // className="w-full"
               style={contentStyle}
               alt=""
               src={stream2}
@@ -117,7 +117,7 @@ const Index: React.FC = () => {
           </div>
           <div>
             <Image
-              className="w-full"
+              // className="w-full"
               style={contentStyle}
               alt=""
               src={stream3}
@@ -125,7 +125,7 @@ const Index: React.FC = () => {
           </div>
           <div>
             <Image
-              className="w-full"
+              // className="w-full"
               style={contentStyle}
               alt=""
               src={stream4}
