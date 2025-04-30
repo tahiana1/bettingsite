@@ -67,7 +67,9 @@ export default function RootLayout({
 
   const onLogout = () => {
     api("auth/logout", { method: "POST" }).then((res) => {
-      setProfile({});
+      if (res) {
+        setProfile({});
+      }
     });
   };
 

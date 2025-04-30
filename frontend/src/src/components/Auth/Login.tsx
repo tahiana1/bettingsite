@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Checkbox, Form, Input, notification } from "antd";
+import { Button, Card, Form, Input, notification } from "antd";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import { useForm, SubmitHandler } from "react-hook-form";

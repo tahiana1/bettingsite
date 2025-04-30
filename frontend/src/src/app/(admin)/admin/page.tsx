@@ -3,9 +3,6 @@ import React from "react";
 
 import {
   Layout,
-  Button,
-  Col,
-  Row,
   Statistic,
   Space,
   Card,
@@ -19,18 +16,13 @@ import { Content } from "antd/es/layout/layout";
 
 import {
   DollarCircleOutlined,
-  LikeOutlined,
   UserAddOutlined,
-  UsergroupAddOutlined,
   UserOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
 import { useTranslations } from "next-intl";
 
-import { Line, Column } from "@ant-design/charts";
-import { MdTrendingFlat } from "react-icons/md";
-import { BsEyeglasses } from "react-icons/bs";
-import { SiClickhouse } from "react-icons/si";
+import { Column } from "@ant-design/charts";
 
 interface DataType {
   key: string;
@@ -263,7 +255,7 @@ const Dashboard: React.FC = () => {
               <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
             </Space>
             <Space.Compact className="w-full">
-              <Card title={"Recent user deposits and withdrawals"} classNames={{
+              <Card title={t("Recent user deposits and withdrawals")} classNames={{
                 body:"!p-0"
               }}>
                 <Table<DataType>

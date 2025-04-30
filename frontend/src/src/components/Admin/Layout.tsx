@@ -27,18 +27,12 @@ import {
   UserOutlined,
   LogoutOutlined,
   CalculatorOutlined,
-  FundOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
 
 import {
   BsRobot,
-  BsSpeedometer2,
-  BsShield,
-  BsNewspaper,
-  BsCheck2Square,
-  BsPeopleFill,
-  BsCalendar2Check,
+  BsSpeedometer2
 } from "react-icons/bs";
 import LayoutContext from "@/contexts/LayoutContextProvider";
 
@@ -51,8 +45,8 @@ import { ROUTES } from "@/routes";
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
 import { FaFootball, FaUsersGear } from "react-icons/fa6";
-import { MdAnnouncement, MdPending } from "react-icons/md";
-import { SiDistrokid, SiStatuspage } from "react-icons/si";
+import { MdAnnouncement } from "react-icons/md";
+import { SiDistrokid } from "react-icons/si";
 import { BiDiamond, BiSupport } from "react-icons/bi";
 
 const { Header, Sider } = Layout;

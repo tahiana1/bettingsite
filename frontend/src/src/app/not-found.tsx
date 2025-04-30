@@ -17,6 +17,7 @@ export default function GlobalError({
     console.error(error);
   }, [error]);
   const goBack = () => {
+    reset();
     router.back();
   };
   return (

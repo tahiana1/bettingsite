@@ -12,15 +12,15 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-
   const router = useRouter();
-  
+
   useEffect(() => {
     // Optional: log error to your monitoring service
     console.error(error);
   }, [error]);
 
   const goBack = () => {
+    reset();
     router.back();
   };
   return (
@@ -28,7 +28,11 @@ export default function GlobalError({
       status="500"
       title="500"
       subTitle={error.message}
-      extra={<Button type="primary">Back Home</Button>}
+      extra={
+        <Button type="primary" onClick={goBack}>
+          Back Home
+        </Button>
+      }
     />
   );
 }
