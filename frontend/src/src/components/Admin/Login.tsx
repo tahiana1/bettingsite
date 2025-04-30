@@ -16,7 +16,7 @@ type User = z.infer<typeof UserSchema>;
 const Login: React.FC = () => {
   const t = useTranslations();
   const router = useRouter();
-  const [user, setUser] = useAtom<any>(userState);
+  const [, setUser] = useAtom<any>(userState);
 
   const { register } = useForm<User>();
 
