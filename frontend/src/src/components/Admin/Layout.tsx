@@ -30,10 +30,7 @@ import {
   InboxOutlined,
 } from "@ant-design/icons";
 
-import {
-  BsRobot,
-  BsSpeedometer2
-} from "react-icons/bs";
+import { BsRobot, BsSpeedometer2 } from "react-icons/bs";
 import LayoutContext from "@/contexts/LayoutContextProvider";
 
 import { useLocale, useTranslations } from "next-intl";
@@ -92,14 +89,19 @@ export default function AdminRootLayout({
         console.log({ result });
         localStorage.setItem("token", result.token);
       })
-      .then((err) => {
-        console.log({ err });
+      .catch((err) => {
+        console.log({ err }, ROUTES.admin.login);
+        router.push(ROUTES.admin.login);
       });
     return () => {};
   }, []);
 
   const onLogout = () => {
-    api("/auth/logout");
+    api("auth/logout", { method: "POST" }).then(() => {
+      setUser({});
+      localStorage.removeItem("token");
+      router.push(ROUTES.admin.login);
+    });
   };
   const sideBarItems: MenuProps["items"] = [
     {
@@ -331,6 +333,13 @@ export default function AdminRootLayout({
     setDarkTheme(false);
     document.documentElement.classList.remove("dark");
   }, []);
+  useEffect(() => {
+    if (currentUser?.role === "admin") {
+      setAdmin(true);
+    } else {
+      setAdmin(false);
+    }
+  }, [currentUser]);
   return mounted ? (
     <ConfigProvider
       theme={{

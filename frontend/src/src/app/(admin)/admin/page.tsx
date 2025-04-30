@@ -1,15 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import {
-  Layout,
-  Statistic,
-  Space,
-  Card,
-  Divider,
-  Table,
-  Tag,
-} from "antd";
+import { Layout, Statistic, Space, Card, Divider, Table, Tag } from "antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -107,6 +99,7 @@ const data: DataType[] = [
 
 const Dashboard: React.FC = () => {
   const t = useTranslations();
+  const [mount, setMount] = useState<boolean>(false);
   const config1 = {
     data: [
       { name: "04/21", action: "Deposit", pv: 2030 },
@@ -173,7 +166,10 @@ const Dashboard: React.FC = () => {
     //   },
     // },
   };
-  return (
+  useEffect(() => {
+    setMount(true);
+  }, []);
+  return mount ? (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card title={t("admin/todayStatistics")} className="!mb-2">
@@ -243,7 +239,10 @@ const Dashboard: React.FC = () => {
               <Column {...config2} />
             </Card>
           </Space>
-          <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
+          <Space.Compact
+            direction="vertical"
+            className="w-full flex-2 p-0 gap-2"
+          >
             <Space wrap align="start" className="w-full">
               <Card title={t("admin/todayDepositWithdraw")}>
                 membership point
@@ -255,13 +254,16 @@ const Dashboard: React.FC = () => {
               <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
             </Space>
             <Space.Compact className="w-full">
-              <Card title={t("Recent user deposits and withdrawals")} classNames={{
-                body:"!p-0"
-              }}>
+              <Card
+                title={t("Recent user deposits and withdrawals")}
+                classNames={{
+                  body: "!p-0",
+                }}
+              >
                 <Table<DataType>
                   columns={columns}
                   dataSource={data}
-                  className="w-full" 
+                  className="w-full"
                 />
               </Card>
             </Space.Compact>
@@ -269,7 +271,7 @@ const Dashboard: React.FC = () => {
         </Space.Compact>
       </Content>
     </Layout>
-  );
+  ) : null;
 };
 
 export default Dashboard;

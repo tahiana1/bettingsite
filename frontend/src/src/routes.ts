@@ -12,6 +12,6 @@ export const ROUTES = {
 
   admin: {
     home: "/admin",
-    login: "/admin",
+    login: "/admin/auth/login",
   },
 };
