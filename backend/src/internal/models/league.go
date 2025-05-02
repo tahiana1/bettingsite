@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type League struct {
@@ -25,7 +23,7 @@ type League struct {
 	// One-to-Many Relationship
 	Fixtures []Fixture `gorm:"foreignKey:LeagueID" json:"fixtures"`
 
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `gorm:"index" json:"deletedAt,omitempty"`
 }

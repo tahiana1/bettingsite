@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 export default function GlobalError({
   error,
-  reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
@@ -14,10 +13,9 @@ export default function GlobalError({
   const router = useRouter();
   useEffect(() => {
     // Optional: log error to your monitoring service
-    console.error(error);
+    console.log(error);
   }, [error]);
   const goBack = () => {
-    reset();
     router.back();
   };
   return (

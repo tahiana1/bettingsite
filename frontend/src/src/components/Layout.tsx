@@ -23,6 +23,9 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 
+import { ApolloProvider } from "@apollo/client";
+import client from "@/api/apollo-client-ws";
+
 import LayoutContext from "@/contexts/LayoutContextProvider";
 // import { wsURL } from "@/api";
 
@@ -139,7 +142,7 @@ export default function RootLayout({
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: `Profile`,
+      label: t(`profile`),
       onClick: (e: MenuInfo) => {
         console.log({ e });
         setSelectedkeys(e.keyPath);
@@ -149,12 +152,12 @@ export default function RootLayout({
     {
       key: "setting",
       icon: <SettingOutlined />,
-      label: `Setting`,
+      label: t(`setting`),
     },
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: `Logout`,
+      label: t(`auth/logout`),
       onClick: onLogout,
     },
   ];
@@ -164,82 +167,93 @@ export default function RootLayout({
     console.log({ profile });
   }, []);
 
+  useEffect(() => {
+    if (isDarkTheme) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkTheme]);
   return mounted ? (
-    <ConfigProvider
-      theme={{
-        token: {
-          borderRadius: 0,
-          motion: false,
-        },
-        algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-    >
-      <LayoutContext.Provider value={{ isDarkTheme, collapsed, setCollapsed }}>
-        <Layout>
-          <WebSocketTracker />
-          <Layout className="min-h-screen">
-            <Header
-              className="w-full flex !h-10 items-center !leading-10"
-              style={{
-                background: isDarkTheme ? "" : token.colorBgContainer,
-                position: "sticky",
-                top: 0,
-                zIndex: 1000,
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Link href={"/"}>
-                <div className="p-4">Logo</div>
-              </Link>
-              {/* <Button
+    <ApolloProvider client={client}>
+      <ConfigProvider
+        theme={{
+          token: {
+            borderRadius: 0,
+            motion: false,
+          },
+          algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        }}
+      >
+        <LayoutContext.Provider
+          value={{ isDarkTheme, collapsed, setCollapsed }}
+        >
+          <Layout>
+            <WebSocketTracker />
+            <Layout className="min-h-screen">
+              <Header
+                className="w-full flex !h-10 items-center !leading-10"
+                style={{
+                  background: isDarkTheme ? "" : token.colorBgContainer,
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 1000,
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Link href={"/"}>
+                  <div className="p-4">Logo</div>
+                </Link>
+                {/* <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
                 className="!w-10 h-10 text-base invisible lg:visible"
               /> */}
-              <Menu
-                theme={isDarkTheme ? "dark" : "light"}
-                mode="horizontal"
-                defaultSelectedKeys={["event"]}
-                selectedKeys={selectedkeys}
-                items={sideBarItems}
-                onClick={onMenuClick}
-                className="w-full"
-              />
-              <Flex
-                align="flex-end"
-                justify="space-between"
-                className="gap-2 items-center"
-              >
-                <LangSwitcher locale={locale} />
-                <Button
-                  type="text"
-                  icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
-                  onClick={onThemeChange}
-                  className="!h-10 text-base"
+                <Menu
+                  theme={isDarkTheme ? "dark" : "light"}
+                  mode="horizontal"
+                  defaultSelectedKeys={["event"]}
+                  selectedKeys={selectedkeys}
+                  items={sideBarItems}
+                  onClick={onMenuClick}
+                  className="w-full"
                 />
-                {profile?.id ? (
-                  <Dropdown
-                    menu={{ items: profileItems }}
-                    placement="bottomRight"
-                    trigger={["click"]}
-                    // className="!hidden"
-                    className="w-32 flex gap-2 items-center"
-                  >
-                    <Button type="text" className="!h-10">
-                      <Avatar icon={<UserOutlined />} className="w-8 h-8" />
-                      {profile.name}
-                    </Button>
-                  </Dropdown>
-                ) : null}
-              </Flex>
-            </Header>
-            <Content>{children}</Content>
+                <Flex
+                  align="flex-end"
+                  justify="space-between"
+                  className="gap-2 items-center"
+                >
+                  <LangSwitcher locale={locale} />
+                  <Button
+                    type="text"
+                    icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
+                    onClick={onThemeChange}
+                    className="!w-10 !h-10 text-base"
+                  />
+                  {profile?.id ? (
+                    <Dropdown
+                      menu={{ items: profileItems }}
+                      placement="bottomRight"
+                      trigger={["click"]}
+                      // className="!hidden"
+                      className="w-32 flex gap-2 items-center"
+                    >
+                      <Button type="text" className="!h-10">
+                        <Avatar icon={<UserOutlined />} className="w-8 h-8" />
+                        {profile.name}
+                      </Button>
+                    </Dropdown>
+                  ) : null}
+                </Flex>
+              </Header>
+              <Content>{children}</Content>
+            </Layout>
           </Layout>
-        </Layout>
-      </LayoutContext.Provider>
-    </ConfigProvider>
+        </LayoutContext.Provider>
+      </ConfigProvider>
+    </ApolloProvider>
   ) : null;
 }

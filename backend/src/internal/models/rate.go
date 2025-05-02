@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Rate struct {
@@ -48,8 +46,7 @@ type Rate struct {
 	AwayLine     string  `json:"awayLine"`
 	AwayRate     float64 `json:"awayRate"`
 
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
-
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `gorm:"index" json:"deletedAt,omitempty"`
 }

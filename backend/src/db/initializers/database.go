@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -57,15 +58,30 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatalf("❌ Failed to get SQL DB object: %v", err)
 	}
-	// Execute the query to create the database
-	_, err = sqlDB.Exec(fmt.Sprintf(`CREATE DATABASE  %s;`, dbName))
 
+	query := "SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname = '%s');"
+	result, err := sqlDB.Exec(fmt.Sprintf(query, dbName))
 	if err != nil {
-		fmt.Printf("❌ Failed to create database: %v\n", err)
+		log.Fatal(err)
 	}
 
-	fmt.Printf("✅ Database '%s' created (if it did not already exist)\n", dbName)
+	d, err := result.RowsAffected()
 
+	if err != nil {
+		log.Fatal(err)
+	}
+	if d > 0 {
+		fmt.Printf("ℹ️  Database '%s' is already existing (%d)\n", dbName, d)
+	} else {
+		// Execute the query to create the database
+		_, err = sqlDB.Exec(fmt.Sprintf(`CREATE DATABASE  %s;`, dbName))
+		if err != nil {
+			fmt.Printf("⚠️ Failed to create database: %v\n", err)
+			log.Fatal(err)
+		} else {
+			fmt.Printf("✅ Database '%s' created (if it did not already exist)\n", dbName)
+		}
+	}
 	// Now reconnect to the newly created database
 	dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPass, dbHost, dbPort, dbName)
 	// Now connect to the newly created database
@@ -83,18 +99,36 @@ func ConnectDB() {
 	// }))
 
 	fmt.Println("✅ Successfully connected to the database!")
-	// if err != nil {
-	// 	panic("Database connection failed!")
-	// }
-	// Migration
-	// err = DB.Migrator().DropTable(models.User{}, models.Category{}, models.Post{}, models.Comment{})
-	// if err != nil {
-	// 	log.Fatal("Table dropping failed")
-	// }
 
-	// err = DB.AutoMigrate(models.User{}, models.Category{}, models.Post{}, models.Comment{})
+	err = DB.AutoMigrate(
+		models.User{},
+		models.Event{},
+		models.Domain{},
+		models.Category{},
+		models.Post{},
+		models.Comment{},
+		models.Sport{},
+		models.Rate{},
+		models.Category{},
+		models.League{},
+		models.Nation{},
+		models.Bet{},
+		models.Fixture{},
+		models.Market{},
+		models.Team{},
+		models.Transaction{},
+		models.Announcement{},
+		models.Attendance{},
+		models.Bet{},
+		models.Inbox{},
+		models.Notification{},
+		models.Menu{},
+	)
 
-	// if err != nil {
-	// 	log.Fatal("Migration failed")
-	// }
+	if err != nil {
+		log.Fatal("⛔ Migration failed")
+	} else {
+		fmt.Println("🟢 Successfully migrated!")
+	}
+
 }

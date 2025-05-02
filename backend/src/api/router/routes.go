@@ -21,7 +21,6 @@ func GetAPIRoute(r *gin.Engine) {
 	frontendURL, _ := url.Parse("http://frontend:3000")
 	proxy := httputil.NewSingleHostReverseProxy(frontendURL)
 
-	// proxy := httputil.NewSingleHostReverseProxy(remote)
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
 		fmt.Println(path)

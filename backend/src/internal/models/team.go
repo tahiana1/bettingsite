@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Team struct {
@@ -26,7 +24,7 @@ type Team struct {
 	HomeFixtures []Fixture `json:"homeFixtures" gorm:"foreignKey:HomeTeamID"`
 	AwayFixtures []Fixture `json:"awayFixtures" gorm:"foreignKey:AwayTeamID"`
 
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `gorm:"index" json:"deletedAt,omitempty"`
 }

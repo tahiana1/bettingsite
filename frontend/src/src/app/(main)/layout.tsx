@@ -33,7 +33,7 @@ export default function RootLayout({
           style={{
             scrollbarWidth: "inherit",
           }}
-          className="!pr-2 h-[calc(100vh-40px)] bg-white dark:bg-black"
+          className="!pr-2 h-[calc(100vh-40px)]"
           collapsible
         >
           <EventSidebar />
@@ -53,7 +53,7 @@ export default function RootLayout({
           defaultSize="20%"
           min="20%"
           max="40%"
-          className="h-[calc(100vh-40px)] bg-white dark:bg-black"
+          className="h-[calc(100vh-40px)]"
           collapsible={true}
         >
           <ProfileCard />

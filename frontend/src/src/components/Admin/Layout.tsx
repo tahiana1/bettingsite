@@ -72,7 +72,7 @@ export default function AdminRootLayout({
   const [currentUser, setUser] = useAtom<any>(userState);
 
   useEffect(() => {
-    api("user/me", { method: "POST" })
+    api("user/me")
       .then((result) => {
         setUser(result.data);
         if (result.data.role == "admin") {
@@ -83,7 +83,7 @@ export default function AdminRootLayout({
           router.push(ROUTES.admin.login);
           notiApi.error({
             message: "Error",
-            description: "",
+            description: "You are not able to access to Admin page!",
           });
         }
         console.log({ result });
@@ -110,12 +110,12 @@ export default function AdminRootLayout({
       type: "group",
     },
     {
-      key: "admin",
+      key: "admin/settlements",
       label: t("admin/menu/settlements"),
       icon: <CalculatorOutlined />,
       children: [
         {
-          key: "",
+          key: "admin/settlements/",
           label: `Home`,
         },
       ],
@@ -143,17 +143,17 @@ export default function AdminRootLayout({
       icon: <SiDistrokid />,
       children: [
         {
-          key: "/",
+          key: "admin/partners/",
           // icon: <BsRobot />,
           label: t("admin/menu/partners"),
         },
         {
-          key: "status",
+          key: "admin/partners/status",
           // icon: <MdPending />,
           label: t("admin/menu/partnerStatus"),
         },
         {
-          key: "domain",
+          key: "admin/partners/domain",
           // icon: <SiStatuspage />,
           label: t("admin/menu/partnerDomain"),
         },
@@ -165,22 +165,22 @@ export default function AdminRootLayout({
       icon: <FaUsersGear />,
       children: [
         {
-          key: "",
+          key: "admin/users/",
           // icon: <BsRobot />,
           label: t("admin/menu/users"),
         },
         {
-          key: "pending",
+          key: "admin/users/pending",
           // icon: <MdPending />,
           label: `Pendings`,
         },
         {
-          key: "status",
+          key: "admin/users/status",
           // icon: <SiStatuspage />,
           label: `User Status`,
         },
         {
-          key: "logs",
+          key: "admin/users/logs",
           // icon: <SiStatuspage />,
           label: `Auth Logs`,
         },
@@ -192,39 +192,39 @@ export default function AdminRootLayout({
       icon: <SettingOutlined />,
       children: [
         {
-          key: "site",
+          key: "admin/settings/site",
           label: t("admin/menu/siteSetting"),
         },
         {
-          key: "global",
+          key: "admin/settings/global",
           label: t("admin/menu/globalSetting"),
         },
         {
-          key: "design",
+          key: "admin/settings/design",
           label: t("admin/menu/designSetting"),
         },
         {
-          key: "menu",
+          key: "admin/settings/menu",
           label: t("admin/menu/menuSetting"),
         },
         {
-          key: "domain",
+          key: "admin/settings/domain",
           label: t("admin/menu/domainSetting"),
         },
         {
-          key: "auth",
+          key: "admin/settings/auth",
           label: t("admin/menu/authSetting"),
         },
         {
-          key: "alarm",
+          key: "admin/settings/alarm",
           label: t("admin/menu/alarmSetting"),
         },
         {
-          key: "popup",
+          key: "admin/settings/popup",
           label: t("admin/menu/popupSetting"),
         },
         {
-          key: "bank",
+          key: "admin/settings/bank",
           label: t("admin/menu/bankSetting"),
         },
       ],
@@ -240,7 +240,7 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "",
+          key: "admin/game/sports/",
           label: t("admin/menu/sports"),
         },
       ],
@@ -256,11 +256,11 @@ export default function AdminRootLayout({
       icon: <MdAnnouncement />,
       children: [
         {
-          key: "announcements",
+          key: "admin/board/announcements",
           label: t("admin/menu/announcements"),
         },
         {
-          key: "events",
+          key: "admin/board/events",
           label: t("admin/menu/events"),
         },
       ],
@@ -271,11 +271,11 @@ export default function AdminRootLayout({
       icon: <BiSupport />,
       children: [
         {
-          key: "p2p",
+          key: "admin/support/p2p",
           label: t("admin/menu/p2p"),
         },
         {
-          key: "events",
+          key: "admin/support/events",
           label: t("admin/menu/events"),
         },
       ],
@@ -286,11 +286,11 @@ export default function AdminRootLayout({
       icon: <InboxOutlined />,
       children: [
         {
-          key: "p2p",
+          key: "admin/inbox/p2p",
           label: t("admin/menu/inbox"),
         },
         {
-          key: "events",
+          key: "admin/inbox/events",
           label: t("admin/menu/inbox"),
         },
       ],
@@ -325,7 +325,9 @@ export default function AdminRootLayout({
   };
   const onMenuClick = (e: MenuInfo) => {
     setSelectedkeys(e.keyPath);
-    router.push("/" + e.keyPath.reverse().join("/"));
+    console.log({ e });
+    router.push("/" + e.key);
+    // router.push("/" + e.keyPath.reverse().join("/"));
   };
 
   useEffect(() => {
@@ -412,7 +414,7 @@ export default function AdminRootLayout({
               <Menu
                 theme="dark"
                 mode="inline"
-                defaultSelectedKeys={["home"]}
+                defaultSelectedKeys={["admin"]}
                 selectedKeys={selectedkeys}
                 items={sideBarItems}
                 onClick={onMenuClick}

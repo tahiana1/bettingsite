@@ -9,7 +9,9 @@ import (
 func GetUserRoute(r *gin.RouterGroup) {
 
 	r.Use(middleware.RequireAuth)
-	r.POST("/me", controllers.Me)
+	r.GET("/me", controllers.Me)
+	r.GET("/myprofile", controllers.GetMyProfile)
+	r.POST("/me", controllers.UpdateMe)
 	// Category routes
 	catRouter := r.Group("/categories")
 	{

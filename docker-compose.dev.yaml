@@ -3,6 +3,7 @@ services:
     build:
       context: ./frontend/src
       dockerfile: Dockerfile.prod
+    container_name: betting-frontend
     # ports:
     #   - "80:3000"
     # environment:
@@ -27,8 +28,11 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - "8080:8080"
+    container_name: betting-backend
     depends_on:
       postgres:
+        condition: service_healthy
+      kafka:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -56,9 +60,9 @@ services:
 
   postgres:
     image: postgres:16
-    container_name: postgres
+    container_name: betting-postgres
     ports:
-      - "5432:5432"
+      - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -75,11 +79,49 @@ services:
       timeout: 5s
       retries: 5
   
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: betting-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app-network    
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z zookeeper 2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: betting-kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    ports:
+      - "9092:9092"
+    networks:
+      - app-network    
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD", "bash", "-c", "nc -z kafka 9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:8.0-rc1
-    container_name: redis
-    ports:
-      - "6379:6379"  # Exposes Redis on localhost:6379
+    container_name: betting-redis
+    # ports:
+    #   - "6379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --requirepass myredispass

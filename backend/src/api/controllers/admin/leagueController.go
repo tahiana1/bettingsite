@@ -101,7 +101,7 @@ func CreateLeague(c *gin.Context) {
 	//
 	//	return
 	//}
-	// authID := helpers.GetAuthUser(c).ID
+	// authID := helpers.GetGinAuthUser(c).ID
 
 	// Create the sport family
 	league := models.League{
@@ -170,7 +170,7 @@ func UpdateLeague(c *gin.Context) {
 	//
 	//	return
 	//}
-	// authID := helpers.GetAuthUser(c).ID
+	// authID := helpers.GetGinAuthUser(c).ID
 
 	// Create the sport family
 	league := models.League{

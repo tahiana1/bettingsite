@@ -20,6 +20,7 @@ func RequirePartnerAuth(c *gin.Context) {
 		tokenString = t
 	}
 	if err != nil {
+		fmt.Println("❌ Auth Failed ")
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
 
@@ -28,26 +29,28 @@ func RequirePartnerAuth(c *gin.Context) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Validate the alg
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			fmt.Println("❌ Auth Failed ")
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil || !token.Valid {
+		fmt.Println("❌ Auth Failed ")
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()
 		return
 	}
-	fmt.Println(token.Claims)
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check the expiration time
-		fmt.Println(c.ClientIP(), claims)
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
+			fmt.Println("❌ Auth Failed ")
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
+			fmt.Println("❌ Auth Failed ")
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
 		// Find the user with token sub
@@ -55,18 +58,27 @@ func RequirePartnerAuth(c *gin.Context) {
 		initializers.DB.Find(&user, claims["sub"])
 
 		if user.ID == 0 {
+			fmt.Println("❌ Auth Failed ")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "Unauthorized",
 			})
 			return
 		}
 
-		// Attach the user to request
-		c.Set("authUser", user)
+		if user.Role == "partner" {
+			// Attach the user to request
+			c.Set("authUser", user)
 
-		// Continue
-		c.Next()
+			fmt.Println("✅ Partner Auth Passed!")
+
+			// Continue
+			c.Next()
+		} else {
+			fmt.Println("❌ Partner Auth Failed ")
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
 	} else {
+		fmt.Println("❌ Auth Failed ")
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
 }

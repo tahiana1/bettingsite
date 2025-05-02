@@ -1,27 +1,11 @@
-import React, { useState } from "react";
-import {
-  AutoComplete,
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-} from "antd";
+import React from "react";
+import { Button, Card, Form, Input, Select, Space } from "antd";
 import { useTranslations } from "next-intl";
-const { Option } = Select;
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
+import { useAtom } from "jotai";
+import { userState } from "@/state/state";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_PROFILE, UPDATE_PROFILE } from "@/actions/profile";
+
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
@@ -37,128 +21,175 @@ const tailFormItemLayout = {
 const ProfileForm = () => {
   const t = useTranslations();
   const [form] = Form.useForm();
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const [user] = useAtom<any>(userState);
+  const { loading, error, data } = useQuery(GET_PROFILE);
+  const [updateProfile, updateResult] = useMutation(UPDATE_PROFILE);
+  console.log({ loading, error }, updateResult);
+  const onFinish = async (values: any) => {
+    // console.log("Received values of form: ", values);
+    const u = {
+      userId: user.id,
+      ...values,
+    };
+    delete values["agreement"];
+    delete values["holderName"];
+    updateProfile({
+      variables: {
+        input: values,
+      },
+    }).then((res) => {
+      console.log({ res });
+    });
+    console.log({ u });
   };
-  const prefixSelector = (
-    <Form.Item name="prefix" noStyle>
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    </Form.Item>
-  ); 
-  const [autoCompleteResult, setAutoCompleteResult] = useState<any[]>([]);
-  const onWebsiteChange = (value: any) => {
-    if (!value) {
-      setAutoCompleteResult([]);
-    } else {
-      setAutoCompleteResult(
-        [".com", ".org", ".net"].map((domain: any) => `${value}${domain}`)
-      );
-    }
-  };
-  const websiteOptions = autoCompleteResult.map((website) => ({
-    label: website,
-    value: website,
-  }));
+  // console.log({ loading, error }, data?.profile);
   return (
-    <Card title={t("auth/register")}>
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="register"
-        onFinish={onFinish}
-        initialValues={{
-          prefix: "86",
-        }}
-        scrollToFirstError
-      >
-        <Row className="!w-full">
-          <Col span={12}>
+    <Card title={t("profile")}>
+      {user.id && data?.profile?.id ? (
+        <Form
+          // {...formItemLayout}
+          form={form}
+          layout="vertical"
+          name="register"
+          onFinish={onFinish}
+          initialValues={{
+            ...user,
+            ...data?.profile,
+          }}
+          scrollToFirstError
+        >
+          <Space.Compact className="w-full gap-2">
             <Form.Item
-              name="email"
-              label="E-mail"
+              name="userid"
+              className="w-full"
+              label={t("ID")}
               rules={[
                 {
-                  type: "email",
-                  message: "The input is not valid E-mail!",
-                },
-                {
                   required: true,
-                  message: "Please input your E-mail!",
                 },
               ]}
             >
               <Input />
             </Form.Item>
-
             <Form.Item
-              name="password"
-              label="Password"
+              name="nickname"
+              className="w-full"
+              label={t("nickname")}
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
-                },
-              ]}
-              hasFeedback
-            >
-              <Input.Password />
-            </Form.Item>
-
-            <Form.Item
-              name="bank"
-              label="Saving Bank"
-              rules={[{ required: true, message: "Please input bank!" }]}
-            >
-              <AutoComplete
-                options={websiteOptions}
-                onChange={onWebsiteChange}
-                placeholder="bank"
-              >
-                <Input />
-              </AutoComplete>
-            </Form.Item>
-
-            <Form.Item
-              name="phone"
-              label="Phone Number"
-              rules={[
-                { required: true, message: "Please input your phone number!" },
-              ]}
-            >
-              <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="username"
-              label="Username"
-              tooltip="What do you want others to call you?"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your username!",
                   whitespace: true,
                 },
               ]}
             >
               <Input />
             </Form.Item>
+          </Space.Compact>
+          <Space.Compact className="w-full gap-2">
             <Form.Item
-              name="confirm"
-              label="Password2"
+              className="w-full"
+              name="accountNumber"
+              label={t("bank")}
+              rules={[{ required: true }]}
+            >
+              <Space.Compact>
+                <Form.Item
+                  name="bankName"
+                  noStyle
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Select
+                    // defaultValue="SB"
+                    style={{ width: 120 }}
+                    // onChange={handleChange}
+                    options={[
+                      { value: "SB", label: "SB" },
+                      { value: "CK", label: "CK" },
+                      { value: "CN", label: "CN" },
+                    ]}
+                  />
+                </Form.Item>
+                <Input />
+              </Space.Compact>
+            </Form.Item>
+            <Form.Item
+              name="holderName"
+              className="w-full"
+              label={t("holderName")}
+              // rules={[{ required: true }]}
+            >
+              <Input disabled />
+            </Form.Item>
+          </Space.Compact>
+
+          <Space.Compact className="w-full gap-2">
+            <Form.Item
+              name="accountNumber"
+              className="w-full"
+              label={t("accountNumber")}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="phone"
+              className="w-full"
+              label={t("phone")}
+              rules={[{ required: true }]}
+            >
+              <Input style={{ width: "100%" }} />
+            </Form.Item>
+          </Space.Compact>
+          <Space.Compact className="w-full gap-2">
+            <Form.Item
+              name="currentPassword"
+              className="w-full"
+              label={t("currentPassword")}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password />
+            </Form.Item>
+          </Space.Compact>
+          <Space.Compact className="w-full gap-2">
+            <Form.Item
+              name="newPassword"
+              className="w-full"
+              label={t("newPassword")}
+              rules={[
+                {
+                  // required: true,
+                },
+              ]}
+              hasFeedback
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              name="confirmPassword"
+              className="w-full"
+              label={t("password2")}
               dependencies={["password"]}
               hasFeedback
               rules={[
                 {
-                  required: true,
-                  message: "Please confirm your password!",
+                  // required: true,
                 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
+                    if (!value || getFieldValue("newPassword") === value) {
                       return Promise.resolve();
                     }
                     return Promise.reject(
@@ -172,89 +203,40 @@ const ProfileForm = () => {
             >
               <Input.Password />
             </Form.Item>
+          </Space.Compact>
 
-            <Form.Item
-              name="role"
-              label="Role"
-              rules={[{ required: true, message: "Please input role!" }]}
+          {/*  <Form.Item
+            name="agreement"
+            valuePropName="checked"
+            rules={[
+              {
+                validator: (_, value) =>
+                  value
+                    ? Promise.resolve()
+                    : Promise.reject(new Error("Should accept agreement")),
+              },
+            ]}
+            {...tailFormItemLayout}
+          >
+            <Checkbox>{t("tos")}</Checkbox>
+          </Form.Item> */}
+          <Form.Item {...tailFormItemLayout}>
+            <Button type="primary" htmlType="submit">
+              {t("submit")}
+            </Button>{" "}
+            <Button
+              type="default"
+              color="red"
+              variant="outlined"
+              htmlType="reset"
             >
-              <AutoComplete
-                options={websiteOptions}
-                onChange={onWebsiteChange}
-                placeholder="role"
-              >
-                <Input />
-              </AutoComplete>
-            </Form.Item>
-            <Form.Item
-              name="mobile"
-              label="Mobile"
-              rules={[
-                { required: true, message: "Please input your phone number!" },
-              ]}
-            >
-              <Input addonBefore={prefixSelector} style={{ width: "100%" }} />
-            </Form.Item>
-
-            {/* <Form.Item
-          label="Captcha"
-          extra="We must make sure that your are a human."
-        >
-          <Row gutter={8}>
-            <Col span={12}>
-              <Form.Item
-                name="captcha"
-                noStyle
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the captcha you got!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Button>Get captcha</Button>
-            </Col>
-          </Row>
-        </Form.Item>
- */}
-          </Col>
-        </Row>
-
-        <Form.Item
-          name="intro"
-          label="Intro"
-          rules={[{ required: true, message: "Please input Intro" }]}
-        >
-          <Input.TextArea showCount maxLength={100} />
-        </Form.Item>
-
-        <Form.Item
-          name="agreement"
-          valuePropName="checked"
-          rules={[
-            {
-              validator: (_, value) =>
-                value
-                  ? Promise.resolve()
-                  : Promise.reject(new Error("Should accept agreement")),
-            },
-          ]}
-          {...tailFormItemLayout}
-        >
-          <Checkbox>
-            I have read the <a href="">agreement</a>
-          </Checkbox>
-        </Form.Item>
-        <Form.Item {...tailFormItemLayout}>
-          <Button type="primary" htmlType="submit">
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
+              {t("reset")}
+            </Button>
+          </Form.Item>
+        </Form>
+      ) : (
+        ""
+      )}
     </Card>
   );
 };

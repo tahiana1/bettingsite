@@ -49,13 +49,17 @@ func CreatePost(c *gin.Context) {
 	}
 
 	// Create a post
-	authID := helpers.GetAuthUser(c).ID
+	authUser, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
 
 	post := models.Post{
 		Title:      userInput.Title,
 		Body:       userInput.Body,
 		CategoryID: userInput.CategoryId,
-		UserID:     authID,
+		UserID:     authUser.ID,
 	}
 
 	result := initializers.DB.Create(&post)
@@ -186,12 +190,16 @@ func UpdatePost(c *gin.Context) {
 	}
 
 	// Prepare data to update
-	authID := helpers.GetAuthUser(c).ID
+	authUser, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
 	updatePost := models.Post{
 		Title:      userInput.Title,
 		Body:       userInput.Body,
 		CategoryID: userInput.CategoryId,
-		UserID:     authID,
+		UserID:     authUser.ID,
 	}
 
 	// Update the post

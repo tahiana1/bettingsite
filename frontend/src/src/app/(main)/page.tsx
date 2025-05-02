@@ -47,6 +47,7 @@ const gridStyle: React.CSSProperties = {
   textAlign: "center",
   padding: 0,
 };
+
 const Index: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();

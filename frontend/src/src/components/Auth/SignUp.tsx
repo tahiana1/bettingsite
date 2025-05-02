@@ -14,7 +14,6 @@ import {
 } from "antd";
 import { useTranslations } from "next-intl";
 import api from "@/api";
-const { Option } = Select;
 
 const SignUp = () => {
   const t = useTranslations();
@@ -35,7 +34,7 @@ const SignUp = () => {
       data,
     })
       .then((result) => {
-        console.log({result})
+        console.log({ result });
         notiApi.info({
           message: "Welcome!",
           description: "Your information was registered successfully!",
@@ -43,7 +42,7 @@ const SignUp = () => {
         });
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         notiApi.error({
           message: "Error",
           description: `Some error occurred! ${err}`,
@@ -78,7 +77,6 @@ const SignUp = () => {
     <Card title={t("auth/register")}>
       {contextHolder}
       <Form
-        // {...formItemLayout}
         form={form}
         layout="vertical"
         labelWrap
@@ -86,23 +84,21 @@ const SignUp = () => {
         onFinish={onFinish}
         initialValues={{
           bank: "SB",
-          phone_prefix: "86",
         }}
         scrollToFirstError
       >
         <Space.Compact className="w-full gap-2">
           <Form.Item
             className="w-full"
-            name="email"
-            label="E-mail"
+            name="userId"
+            label="UserID"
             rules={[
               {
-                type: "email",
-                message: "The input is not valid E-mail!",
+                required: true,
               },
               {
-                required: true,
-                message: "Please input your E-mail!",
+                min: 6,
+                message: "UserID must be at least 6 characters.",
               },
             ]}
           >
@@ -115,7 +111,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your name!",
                 whitespace: true,
               },
             ]}
@@ -131,7 +126,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your password!",
               },
             ]}
             hasFeedback
@@ -147,7 +141,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please confirm your password!",
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -169,7 +162,7 @@ const SignUp = () => {
             className="w-full"
             name="account_number"
             label="Saving Bank"
-            rules={[{ required: true, message: "Please input bank!" }]}
+            rules={[{ required: true }]}
           >
             <Space.Compact>
               <Form.Item
@@ -178,7 +171,6 @@ const SignUp = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please select your bank!",
                   },
                 ]}
               >
@@ -200,7 +192,7 @@ const SignUp = () => {
             className="w-full"
             name="holderName"
             label="Holder Name"
-            rules={[{ required: true, message: "Please input holder name!" }]}
+            rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
@@ -211,22 +203,9 @@ const SignUp = () => {
             className="w-full"
             name="phone"
             label="Phone Number"
-            rules={[
-              { required: true, message: "Please input your phone number!" },
-            ]}
+            rules={[{ required: true }]}
           >
-            <Input.Search
-              addonBefore={
-                <Form.Item name="phone_prefix" noStyle initialValue={"86"}>
-                  <Select style={{ width: 70 }}>
-                    <Option value="86">+86</Option>
-                    <Option value="87">+87</Option>
-                  </Select>
-                </Form.Item>
-              }
-              enterButton={"SendSMS"}
-              style={{ width: "100%" }}
-            />
+            <Input.Search enterButton={"SendSMS"} style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item
             className="w-full"
@@ -235,7 +214,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your birthday!",
               },
             ]}
           >
@@ -250,7 +228,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your Security Password!",
                 whitespace: true,
               },
             ]}
@@ -265,14 +242,12 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your referral!",
                 whitespace: true,
               },
             ]}
           >
             <Input />
           </Form.Item>
-          
         </Space.Compact>
 
         <Space.Compact className="w-full gap-2">
@@ -280,7 +255,7 @@ const SignUp = () => {
             className="w-full"
             name="favorites"
             label="Favourite Items"
-            rules={[{ required: true, message: "Please input favorites" }]}
+            rules={[{ required: true }]}
           >
             <Checkbox.Group
               options={options}
@@ -295,7 +270,6 @@ const SignUp = () => {
             rules={[
               {
                 required: true,
-                message: "Please input your USDT Address number!",
               },
             ]}
           >
@@ -313,8 +287,7 @@ const SignUp = () => {
                 noStyle
                 rules={[
                   {
-                    required: true,
-                    message: "Please input the captcha you got!",
+                    required: true, 
                   },
                 ]}
               >

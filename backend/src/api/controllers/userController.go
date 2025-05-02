@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -18,12 +17,12 @@ import (
 )
 
 // Signup function is used to create a user or signup a user
-func Signup(c *gin.Context) {
+func SignUp(c *gin.Context) {
 	// Get the name, userid and password from request
 	var userInput struct {
 		Name          string    `json:"name" binding:"required,min=2,max=50"`
 		HolderName    string    `json:"holderName"`
-		Userid        string    `json:"userid" binding:"required,userid"`
+		Userid        string    `json:"userid" binding:"required,min=6"`
 		Password      string    `json:"password" binding:"required,min=6"`
 		SecPassword   string    `json:"securityPassword" binding:"required,min=6"`
 		USDTAddress   string    `json:"usdtAddress"`
@@ -92,7 +91,7 @@ func Signup(c *gin.Context) {
 		HolderName:    userInput.HolderName,
 		AccountNumber: userInput.AccountNumber,
 		Birthday:      userInput.Birthday,
-		PhoneNumber:   userInput.Phone,
+		Phone:         userInput.Phone,
 		Favorites:     userInput.Favorites,
 		Referral:      userInput.Referral,
 	}
@@ -128,7 +127,6 @@ func Login(c *gin.Context) {
 	// Find the user by userid
 	var user models.User
 	initializers.DB.First(&user, "userid = ?", userInput.Userid)
-	fmt.Println(user)
 	if user.ID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid userid or password 0",
@@ -184,7 +182,11 @@ func Logout(c *gin.Context) {
 func Me(c *gin.Context) {
 
 	// Create a post
-	user := helpers.GetAuthUser(c)
+	user, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
 
 	if user != nil {
 
@@ -211,6 +213,48 @@ func Me(c *gin.Context) {
 		c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 		c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString,
 			"data": user})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error":   "Failed to create token",
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+}
+
+func GetMyProfile(c *gin.Context) {
+
+	// Create a post
+	user, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+	initializers.DB.Model(user).Preload("Profile").Find(user, "userid = ?", user.Userid)
+	if user != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": user})
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error":   "Failed to create token",
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+}
+
+func UpdateMe(c *gin.Context) {
+
+	// Create a post
+	user, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	if user != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "data": user})
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":   "Failed to create token",

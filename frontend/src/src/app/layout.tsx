@@ -3,10 +3,17 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+
 import localFont from "next/font/local";
 import "@/styles/globals.css";
+import "@ant-design/v5-patch-for-react-19";
 import { ConfigProvider } from "antd";
 import JotaiContextProvider from "@/contexts/JotaiContextProvider";
+
+import zhCN from "antd/locale/zh_CN";
+import enUS from "antd/locale/en_US";
+import thTH from "antd/locale/th_TH";
 
 const geistSans = localFont({
   src: "../assets/fonts/GeistVF.woff",
@@ -31,18 +38,25 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getLocale();
+  const locales: any = {
+    cn: zhCN,
+    en: enUS,
+    th: thTH,
+  };
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <JotaiContextProvider>
-          <NextIntlClientProvider locale={locale}>
-            <ConfigProvider locale={{ locale }}>
-              {children}
-            </ConfigProvider>
-          </NextIntlClientProvider>
-        </JotaiContextProvider>
+        <AntdRegistry>
+          <JotaiContextProvider>
+            <NextIntlClientProvider locale={locale}>
+              <ConfigProvider locale={locales[locale]}>
+                {children}
+              </ConfigProvider>
+            </NextIntlClientProvider>
+          </JotaiContextProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

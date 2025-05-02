@@ -1,0 +1,80 @@
+type User {
+  id: ID!
+  name: String!
+  userid: String!
+  phoneVerified: Boolean!
+  role: String!
+  usdtAddress: String!
+  profile: Profile
+  lastLoginAt: Time
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+type Profile {
+  id: ID!
+  userId: ID!
+  name: String!
+  nickname: String!
+  bankName: String
+  holderName: String
+  accountNumber: String
+  birthday: Time
+  phone: String
+  mobile: String
+  balance: Float!
+  point: Int!
+  comp: Int!
+  favorites: String
+  referral: String
+  avatarUrl: String
+  bio: String
+  socialLinks: String
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input NewProfile {
+  userId: ID!
+  name: String!
+  nickname: String!
+  bankName: String
+  holderName: String
+  accountNumber: String
+  birthday: Time
+  phone: String
+  mobile: String
+  balance: Float
+  point: Int
+  comp: Int
+  favorites: String
+  referral: String
+  avatarUrl: String
+  bio: String
+  socialLinks: String
+}
+
+input UpdateProfile {
+  userid: String
+  name: String
+  nickname: String
+  bankName: String
+  holderName: String
+  accountNumber: String
+  birthday: Time
+  phone: String
+  mobile: String
+  balance: Float
+  point: Int
+  comp: Int
+  favorites: String
+  referral: String
+  avatarUrl: String
+  bio: String
+  socialLinks: String
+  currentPassword: String!
+  confirmPassword: String
+  newPassword: String
+}

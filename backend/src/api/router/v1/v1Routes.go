@@ -13,25 +13,27 @@ import (
 )
 
 func GetV1Route(r *gin.RouterGroup) {
-
-	r.Any("/hello", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"message": "API RUNNING",
-		})
-	})
+	r.Use(middleware.CheckAuth)
 
 	r.Any("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"ok":      true,
-			"message": "API RUNNING",
+			"success": true,
+			"message": "BACKEND API RUNNING",
 		})
 	})
+
+	gqlRouter := r.Group("/graphql")
+	{
+		gqlRouter.Any("", controllers.GraphqlHandler())
+		gqlRouter.Any("/playground", controllers.PlaygroundHandler())
+	}
+
 	// User routes
 	authRouter := r.Group("/auth")
 	{
-		authRouter.POST("/signup", controllers.Signup)
+		authRouter.POST("/signup", controllers.SignUp)
 		authRouter.POST("/login", controllers.Login)
+		authRouter.Use(middleware.RequireAuth)
 		authRouter.POST("/logout", controllers.Logout)
 	}
 

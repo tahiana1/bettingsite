@@ -1,31 +1,29 @@
 package helpers
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
 // GetAuthUser returns the authenticated user details from the Gin context
-func GetAuthUser(c *gin.Context) *models.User {
-	authUser, exists := c.Get("authUser")
-	str, err := (json.Marshal(authUser))
-	fmt.Println(string(str), err)
+func GetAuthUser(ctx context.Context) (*models.User, error) {
+	user, ok := ctx.Value("authUser").(*models.User)
+	if !ok || user == nil {
+		return nil, fmt.Errorf("unauthorized")
+	}
+	return user, nil
+}
+
+// GetAuthUser returns the authenticated user details from the Gin context
+func GetGinAuthUser(c *gin.Context) (*models.User, error) {
+	user, exists := c.Get("authUser")
 	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to get the user",
-		})
-		return nil
+		return nil, fmt.Errorf("Failed to get the user")
 	}
-
-	if user, ok := authUser.(models.User); ok {
-		return &user
-	}
-
-	return nil
+	return user.(*models.User), nil
 }
 
 //func getAuthId(c *gin.Context) (uint, bool) {

@@ -6,10 +6,13 @@
       "esnext"
     ],
     "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "maxNodeModuleJsDepth": 10,
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

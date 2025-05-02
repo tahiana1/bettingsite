@@ -47,11 +47,15 @@ func CommentOnPost(c *gin.Context) {
 	}
 
 	// Store the comment
-	authId := helpers.GetAuthUser(c).ID
+	authUser, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
 
 	comment := models.Comment{
 		PostID: userInput.PostId,
-		UserID: authId,
+		UserID: authUser.ID,
 		Body:   userInput.Body,
 	}
 

@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Bet struct {
@@ -29,7 +27,7 @@ type Bet struct {
 	PlacedAt  time.Time  `json:"placedAt" gorm:"autoCreateTime"` // Auto-filled by GORM
 	SettledAt *time.Time `json:"settledAt"`                      // Null until resolved
 
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
+	CreatedAt time.Time  `json:"createdAt"`
+	UpdatedAt time.Time  `json:"updatedAt"`
+	DeletedAt *time.Time `gorm:"index" json:"deletedAt,omitempty"`
 }

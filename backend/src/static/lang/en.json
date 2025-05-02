@@ -4,7 +4,7 @@
   "home/title": "Hello world!",
   "home/hideToday": "Don't show this dialog again today.",
 
-  "partnerPage": "Logout",
+  "partnerPage": "Partner Page",
 
   "lang/th": "TH ภาษาไทย",
   "lang/cn": "CN 中文",
@@ -46,6 +46,24 @@
   "profile/attends": "Attends",
   "profile/roulette": "Roulette",
   "profile/inbox": "Inbox",
+  "setting": "Settings",
+  "ID": "ID",
+  "password": "Password",
+  "password2": "Password2",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "username": "Username",
+  "nickname": "Nickname",
+  "bank": "Bank",
+  "holderName": "Holder Name",
+  "accountNumber": "Account Number",
+  "role": "Role",
+  "phone": "Phone",
+  "mobile": "Mobile",
+  "tos": "I have read the aggrement.",
+  "intro": "Intro",
+
+  "Recent user deposits and withdrawals": "Recent user deposits and withdrawals",
 
   "betting/cart": "Betting Cart",
   "betting/singleMaxBettingAmount": "Single Max Betting Amount",
@@ -89,6 +107,7 @@
   "admin/todayStatistics": "Today's Statistics",
   "admin/todayDepositWithdraw": "Today's Deposit/Withdraw",
 
+  "submit": "Submit",
   "reset": "Reset",
   "delete": "Delete",
   "deleteAll": "Delete All"

@@ -14,43 +14,19 @@ const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
     {
       key: "en",
       label: "EN",
-      icon: (
-        <Image
-          src={eNFlag.src}
-          width={24}
-          height={12}
-          className="aspect-square !w-6"
-          alt="en"
-        />
-      ),
+      icon: <Image src={eNFlag.src} width={24} height={12} alt="en" />,
       onClick: (info) => handleChange(info.key),
     },
     {
       key: "cn",
       label: "CN",
-      icon: (
-        <Image
-          src={cnFlag.src}
-          width={24}
-          height={12}
-          className="aspect-square !w-6"
-          alt="cn"
-        />
-      ),
+      icon: <Image src={cnFlag.src} width={24} height={12} alt="cn" />,
       onClick: (info) => handleChange(info.key),
     },
     {
       key: "th",
       label: "TH",
-      icon: (
-        <Image
-          src={thFlag.src}
-          width={24}
-          height={12}
-          className="aspect-square !w-6"
-          alt="th"
-        />
-      ),
+      icon: <Image src={thFlag.src} width={24} height={12} alt="th" />,
       onClick: (info) => handleChange(info.key),
     },
   ];

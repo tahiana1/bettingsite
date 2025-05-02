@@ -15,13 +15,12 @@ func CheckAuth(c *gin.Context) {
 	// Get the cookie from the request
 	tokenString, err := c.Cookie("Authorization")
 	t := c.GetHeader("Authorization")
-	if tokenString == "" {
-		tokenString = t
-	}
-	if err != nil {
+	if tokenString == "" && t == "" {
 		c.Next()
 		return
 	}
+
+	tokenString = t
 
 	// Decode and validate it
 	// Parse and takes the token string and a function for look
@@ -37,10 +36,9 @@ func CheckAuth(c *gin.Context) {
 		c.Next()
 		return
 	}
-	fmt.Println(token.Claims)
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check the expiration time
-		fmt.Println(c.ClientIP(), claims)
+		// fmt.Println(c.ClientIP(), claims)
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			c.Next()
 			return
@@ -61,7 +59,9 @@ func CheckAuth(c *gin.Context) {
 		}
 
 		// Attach the user to request
-		c.Set("authUser", user)
+		c.Set("authUser", &user)
+
+		fmt.Println("✅ Check Auth Passed!")
 
 		// Continue
 		c.Next()

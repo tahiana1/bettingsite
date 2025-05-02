@@ -37,7 +37,7 @@ const WebSocketTracker: React.FC = () => {
       console.log({ event });
       try {
         const data = JSON.parse(event.data);
-        data.data
+        data.data;
         setMessages(data);
       } catch (e) {}
     };
@@ -98,7 +98,7 @@ const WebSocketTracker: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    api("user/me", { method: "POST" }).then((result) => {
+    api("user/me").then((result) => {
       setUser(result.data);
       localStorage.setItem("token", result.token);
     });

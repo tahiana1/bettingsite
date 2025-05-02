@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -44,5 +45,10 @@ func main() {
 		Handler: h2c.NewHandler(r, h2s),
 	}
 
-	server.ListenAndServe()
+	fmt.Printf("🔥 Server is running %s\n", server.Addr)
+
+	if err := server.ListenAndServe(); err != nil {
+		fmt.Println("⛔ Server is not running because of " + err.Error())
+	}
+
 }

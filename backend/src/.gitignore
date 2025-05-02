@@ -35,6 +35,7 @@ __debug_bin
 main
 migrate
 github.com
+uploads/**
 .all-contributorsrc
 dist
 /codegen
@@ -42,3 +43,5 @@ dist
 # System Files
 .DS_Store
 .env
+generated
+model
