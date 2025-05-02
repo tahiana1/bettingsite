@@ -27,6 +27,7 @@ jobs:
       working-directory: backend/src
       run: |
         go mod tidy
+        GOOS=linux GOARCH=amd64 go run github.com/99designs/gqlgen generate
         GOOS=linux GOARCH=amd64 go build main.go
         GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
