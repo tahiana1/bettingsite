@@ -43,5 +43,3 @@ dist
 # System Files
 .DS_Store
 .env
-generated
-model
