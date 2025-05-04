@@ -9,8 +9,8 @@ if (typeof window !== "undefined") {
   }
 }
 export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
-export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/ws`;
-export const apolloWSURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}`;
+export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1/ws`;
+export const apolloWSURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
 
 export default function api(url: string, config?: AxiosRequestConfig) {
   const requestURL = url.startsWith("http") ? url : `${baseURL}${url}`;
@@ -32,12 +32,6 @@ export default function api(url: string, config?: AxiosRequestConfig) {
       return res.data;
     })
     .catch((err: AxiosError) => {
-      const response = err?.response?.data as any;
-      console.log({ response });
-      // message.error(
-      //   response?.title ?? "ERROR",
-      //   response?.message ?? err.message ?? "Unknown error occurred."
-      // );
-      throw JSON.stringify(response);
+      throw err;
     });
 }

@@ -17,6 +17,9 @@ export const GET_PROFILE = gql`
       point
       comp
       favorites
+      coupon
+      lastDeposit
+      lastWithdraw
       referral
     }
   }

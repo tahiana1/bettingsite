@@ -23,11 +23,11 @@ export default function GlobalError({
   return (
     <Result
       status="500"
-      title="500"
-      subTitle={error.message}
+      title={<h3 className="dark:text-white ">500</h3>}
+      subTitle={<h3 className="dark:text-white ">{error.message}</h3>}
       extra={
         <Button type="primary" onClick={goBack}>
-          Back Home
+          Back
         </Button>
       }
     />

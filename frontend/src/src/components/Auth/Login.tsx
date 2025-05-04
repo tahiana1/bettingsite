@@ -30,6 +30,7 @@ const Login: React.FC = () => {
         localStorage.setItem("token", result.token);
       })
       .catch((err) => {
+        console.log({err})
         notiApi.error({
           message: "Error",
           description: `Some error occurred! ${err}`,

@@ -1,16 +1,8 @@
 "use client";
+import { GET_USERS } from "@/actions/user";
 import client from "@/api/apollo-client-ws";
 import { gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
-
-const GET_USERS = gql`
-  query GetUsers {
-    users {
-      id
-      name
-    }
-  }
-`;
 
 export default function UsersPage() {
   const { loading, error, data } = useQuery(GET_USERS);

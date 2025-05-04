@@ -13,7 +13,6 @@ import {
   Dropdown,
 } from "antd";
 import type { MenuProps } from "antd";
-import { MenuInfo } from "@/types";
 
 import {
   MoonOutlined,

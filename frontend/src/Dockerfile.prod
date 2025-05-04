@@ -1,4 +1,4 @@
-FROM node:current-alpine AS deps
+FROM node:22-slim
 
 WORKDIR /app
 

@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+ 
+import { Refine } from "@refinedev/core";
+
+import { ApolloProvider } from "@apollo/client";
+import client from "@/api/apollo-client-ws";
 
 import {
   ConfigProvider,
@@ -16,7 +21,6 @@ import {
   Breadcrumb,
 } from "antd";
 import { List, MenuProps } from "antd";
-import { MenuInfo } from "@/types";
 
 import {
   MoonOutlined,
@@ -70,31 +74,6 @@ export default function AdminRootLayout({
   const locale = useLocale();
 
   const [currentUser, setUser] = useAtom<any>(userState);
-
-  useEffect(() => {
-    api("user/me")
-      .then((result) => {
-        setUser(result.data);
-        if (result.data.role == "admin") {
-          setAdmin(true);
-          router.push(ROUTES.admin.home);
-        } else {
-          setAdmin(false);
-          router.push(ROUTES.admin.login);
-          notiApi.error({
-            message: "Error",
-            description: "You are not able to access to Admin page!",
-          });
-        }
-        console.log({ result });
-        localStorage.setItem("token", result.token);
-      })
-      .catch((err) => {
-        console.log({ err }, ROUTES.admin.login);
-        router.push(ROUTES.admin.login);
-      });
-    return () => {};
-  }, []);
 
   const onLogout = () => {
     api("auth/logout", { method: "POST" }).then(() => {
@@ -331,157 +310,193 @@ export default function AdminRootLayout({
   };
 
   useEffect(() => {
+    api("user/me")
+      .then((result) => {
+        if (result.data.role === "ADMIN") {
+          setAdmin(true);
+          setUser(result.data);
+          // router.push(ROUTES.admin.home);
+        } else {
+          setAdmin(false);
+          router.push(ROUTES.admin.login);
+          notiApi.error({
+            message: "Error",
+            description: "You are not able to access to Admin page!",
+          });
+        }
+        console.log({ result });
+        localStorage.setItem("token", result.token);
+      })
+      .catch((err) => {
+        console.log({ err }, ROUTES.admin.login);
+        router.push(ROUTES.admin.login);
+      });
+    return () => {};
+  }, []);
+
+  useEffect(() => {
     setMount(true);
     setDarkTheme(false);
     document.documentElement.classList.remove("dark");
   }, []);
   useEffect(() => {
-    if (currentUser?.role === "admin") {
+    if (currentUser?.role === "ADMIN") {
       setAdmin(true);
     } else {
       setAdmin(false);
     }
   }, [currentUser]);
   return mounted ? (
-    <ConfigProvider
-      theme={{
-        token: {
-          borderRadius: 0,
-          motion: false,
-        },
-        components: {
-          Card: {
-            headerHeight: 40,
-            bodyPadding: 16,
-          },
-        },
-        algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-    >
-      {contextHolder}
-      <LayoutContext.Provider value={{ isDarkTheme, collapsed, setCollapsed }}>
-        <Layout hasSider>
-          {isAdmin ? (
-            <Sider
-              className="h-[calc(100vh)] overflow-y-auto"
-              breakpoint="lg"
-              collapsedWidth="0"
-              collapsed={collapsed}
-              onBreakpoint={(broken) => {
-                console.log(broken);
-              }}
-              onCollapse={(collapsed, type) => {
-                console.log(collapsed, type);
-                setCollapsed(collapsed);
-              }}
-            >
-              <div
-                className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
-                onClick={() => {
-                  setSelectedkeys(["admin"]);
-                  router.push("/admin");
-                }}
-              >
-                Admin
-              </div>
-
-              <Menu
-                theme="dark"
-                mode="inline"
-                items={[
-                  {
-                    key: "manage",
-                    label: (
-                      <List
-                        className="!text-white"
-                        header={"Home"}
-                        dataSource={[1, 2, 3]}
-                        renderItem={(item: any) => {
-                          return (
-                            <List.Item className="!p-0 flex justify-between !text-white">
-                              <div>my value</div>
-                              <div>{122 * item * item * item * item}</div>
-                            </List.Item>
-                          );
-                        }}
-                      />
-                    ),
-                    type: "group",
-                  },
-                ]}
-                onClick={onMenuClick}
-              />
-              <Menu
-                theme="dark"
-                mode="inline"
-                defaultSelectedKeys={["admin"]}
-                selectedKeys={selectedkeys}
-                items={sideBarItems}
-                onClick={onMenuClick}
-                className="!text-white"
-              />
-            </Sider>
-          ) : null}
-          <Layout className="min-h-screen">
-            {isAdmin ? (
-              <Header
-                className="w-full !px-2 flex !h-10 items-center !leading-10"
-                style={{ background: isDarkTheme ? "" : colorBgContainer }}
-              >
-                <Button
-                  type="text"
-                  icon={
-                    collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-                  }
-                  onClick={() => setCollapsed(!collapsed)}
-                  className="!w-10 !h-10 text-base !hidden lg:!block"
-                />
-                <Space className="w-full">Admin</Space>
-                <Flex
-                  align="flex-end"
-                  justify="space-between"
-                  className="gap-2 items-center"
+    <Refine>
+      <ApolloProvider client={client}>
+        <ConfigProvider
+          theme={{
+            token: {
+              borderRadius: 0,
+              motion: false,
+            },
+            components: {
+              Card: {
+                headerHeight: 40,
+                bodyPadding: 16,
+              },
+            },
+            algorithm: isDarkTheme
+              ? theme.darkAlgorithm
+              : theme.defaultAlgorithm,
+          }}
+        >
+          {contextHolder}
+          <LayoutContext.Provider
+            value={{ isDarkTheme, collapsed, setCollapsed }}
+          >
+            <Layout hasSider>
+              {isAdmin ? (
+                <Sider
+                  className="h-[calc(100vh)] overflow-y-auto"
+                  breakpoint="lg"
+                  collapsedWidth="0"
+                  collapsed={collapsed}
+                  onBreakpoint={(broken) => {
+                    console.log(broken);
+                  }}
+                  onCollapse={(collapsed, type) => {
+                    console.log(collapsed, type);
+                    setCollapsed(collapsed);
+                  }}
                 >
-                  <LangSwitcher locale={locale} />
-                  <Button
-                    type="text"
-                    icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
-                    onClick={onThemeChange}
-                    className="!w-10 !h-10 text-base invisible lg:visible"
-                  />
-                  <Dropdown
-                    className="w-32 flex gap-2 items-center"
-                    menu={{ items: profileItems }}
-                    placement="bottomRight"
-                    trigger={["click"]}
+                  <div
+                    className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
+                    onClick={() => {
+                      setSelectedkeys(["admin"]);
+                      router.push("/admin");
+                    }}
                   >
-                    <Button type="text" className="!h-10">
-                      <Avatar icon={<UserOutlined />} className="w-8 h-8" />
-                      {currentUser.name}
-                    </Button>
-                  </Dropdown>
-                </Flex>
-              </Header>
-            ) : null}
-            {isAdmin ? (
-              <Breadcrumb
-                className="!p-2 shadow"
-                items={[
-                  {
-                    title: <Link href="/admin">Home</Link>,
-                  },
-                  {
-                    title: <Link href="/admin">Dashboard</Link>,
-                  },
-                ]}
-              />
-            ) : null}
-            <Content className="p-2">{children}</Content>
-          </Layout>
-        </Layout>
-      </LayoutContext.Provider>
-    </ConfigProvider>
+                    Admin
+                  </div>
+
+                  <Menu
+                    theme="dark"
+                    mode="inline"
+                    items={[
+                      {
+                        key: "manage",
+                        label: (
+                          <List
+                            className="!text-white"
+                            header={"Home"}
+                            dataSource={[1, 2, 3]}
+                            renderItem={(item: any) => {
+                              return (
+                                <List.Item className="!p-0 flex justify-between !text-white">
+                                  <div>my value</div>
+                                  <div>{122 * item * item * item * item}</div>
+                                </List.Item>
+                              );
+                            }}
+                          />
+                        ),
+                        type: "group",
+                      },
+                    ]}
+                    onClick={onMenuClick}
+                  />
+                  <Menu
+                    theme="dark"
+                    mode="inline"
+                    defaultSelectedKeys={["admin"]}
+                    selectedKeys={selectedkeys}
+                    items={sideBarItems}
+                    onClick={onMenuClick}
+                    className="!text-white"
+                  />
+                </Sider>
+              ) : null}
+              <Layout className="min-h-screen">
+                {isAdmin ? (
+                  <Header
+                    className="w-full !px-2 flex !h-10 items-center !leading-10"
+                    style={{ background: isDarkTheme ? "" : colorBgContainer }}
+                  >
+                    <Button
+                      type="text"
+                      icon={
+                        collapsed ? (
+                          <MenuUnfoldOutlined />
+                        ) : (
+                          <MenuFoldOutlined />
+                        )
+                      }
+                      onClick={() => setCollapsed(!collapsed)}
+                      className="!w-10 !h-10 text-base !hidden lg:!block"
+                    />
+                    <Space className="w-full">Admin</Space>
+                    <Flex
+                      align="flex-end"
+                      justify="space-between"
+                      className="gap-2 items-center"
+                    >
+                      <LangSwitcher locale={locale} />
+                      <Button
+                        type="text"
+                        icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
+                        onClick={onThemeChange}
+                        className="!w-10 !h-10 text-base invisible lg:visible"
+                      />
+                      <Dropdown
+                        className="w-32 flex gap-2 items-center"
+                        menu={{ items: profileItems }}
+                        placement="bottomRight"
+                        trigger={["click"]}
+                      >
+                        <Button type="text" className="!h-10">
+                          <Avatar icon={<UserOutlined />} className="w-8 h-8" />
+                          {currentUser.name}
+                        </Button>
+                      </Dropdown>
+                    </Flex>
+                  </Header>
+                ) : null}
+                {isAdmin ? (
+                  <Breadcrumb
+                    className="!p-2 shadow"
+                    items={[
+                      {
+                        title: <Link href="/admin">Home</Link>,
+                      },
+                      {
+                        title: <Link href="/admin">Dashboard</Link>,
+                      },
+                    ]}
+                  />
+                ) : null}
+                <Content className="p-2">{children}</Content>
+              </Layout>
+            </Layout>
+          </LayoutContext.Provider>
+        </ConfigProvider>
+      </ApolloProvider></Refine>
   ) : (
-    "loading..."
+    "LOADING..."
   );
 }

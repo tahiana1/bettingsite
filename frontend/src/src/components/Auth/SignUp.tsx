@@ -37,7 +37,13 @@ const SignUp = () => {
         console.log({ result });
         notiApi.info({
           message: "Welcome!",
-          description: "Your information was registered successfully!",
+          description: (
+            <div>
+              Your information was registered successfully!
+              <br />
+              Please wait while you get access.
+            </div>
+          ),
           placement: "topRight",
         });
       })

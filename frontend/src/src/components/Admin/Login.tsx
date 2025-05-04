@@ -8,6 +8,7 @@ import api from "@/api";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/routes";
+import { parseError } from "@/lib";
 const UserSchema = z.object({
   userid: z.string().optional(),
   password: z.string().optional(),
@@ -23,25 +24,27 @@ const Login: React.FC = () => {
   const [notiApi, contextHolder] = notification.useNotification();
 
   const onSubmit: SubmitHandler<User> = (data) => {
-    api("auth/login", { method: "POST", data })
+    api("admin/auth/login", { method: "POST", data })
       .then((result) => {
-        setUser(result.data);
-        localStorage.setItem("token", result.token);
+        console.log({ result });
         notiApi.success({
-          message: "Welcome",
-          description: <div>You logged in as `Admin`!</div>,
+          message: result.message,
+          description: result.desc,
           placement: "topRight",
+          duration: 3,
+          showProgress: true,
+          onClose() {
+            setUser(result.data);
+            localStorage.setItem("token", result.token);
+            router.push(ROUTES.admin.home);
+          },
         });
-        router.push(ROUTES.admin.home);
       })
       .catch((err) => {
+        const errData = parseError(err);
         notiApi.error({
-          message: "Error",
-          description: (
-            <div>
-              <div>Some error occurred!</div> {err}
-            </div>
-          ),
+          message: errData.message,
+          description: errData.error,
           placement: "topRight",
         });
       });

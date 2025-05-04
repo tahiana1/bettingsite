@@ -93,7 +93,7 @@ const PendingUsers: React.FC = () => {
   const t = useTranslations();
   return (
     <Layout>
-      <Content className="overflow-auto h-[calc(100vh-80px)] dark:bg-black">
+      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
           title={t("Recent user deposits and withdrawals")}
           classNames={{

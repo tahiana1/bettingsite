@@ -5,10 +5,11 @@ import { createClient } from "graphql-ws";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 import { getMainDefinition } from "@apollo/client/utilities";
 import { apolloWSURL } from ".";
- 
+
+
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: apolloWSURL + "/api/v1/graphql",
+    url: apolloWSURL + "/graphql",
   })
 );
 
@@ -17,12 +18,11 @@ const uploadLink = createUploadLink({
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+const token =
+  typeof window !== "undefined" ? localStorage.getItem("token") : null;
   return {
     headers: {
       ...headers,
-
       authorization: token ? `${token}` : "",
     },
   };

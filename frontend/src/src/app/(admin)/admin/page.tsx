@@ -2,9 +2,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Layout, Statistic, Space, Card, Divider, Table, Tag } from "antd";
-import type { TableProps } from "antd";
-
-import { Content } from "antd/es/layout/layout";
+import type { TableProps } from "antd"; 
 
 import {
   DollarCircleOutlined,
@@ -171,105 +169,100 @@ const Dashboard: React.FC = () => {
   }, []);
   return mount ? (
     <Layout>
-      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
-        <Card title={t("admin/todayStatistics")} className="!mb-2">
-          <Space wrap className="w-full justify-between">
-            <Statistic
-              title="Withdraw"
-              value={1128}
-              prefix={<DollarCircleOutlined />}
-            />
-            <Statistic
-              title="User Deposit"
-              value={93}
-              prefix={<DollarCircleOutlined />}
-            />
-            <Statistic
-              title="User Withdraw"
-              value={1128}
-              prefix={<DollarCircleOutlined />}
-            />
-            <Statistic
-              prefix={<DollarCircleOutlined />}
-              title="Total Deposit"
-              value={93}
-            />
-            <Statistic
-              title="Total Withdraw"
-              value={1128}
-              prefix={<DollarCircleOutlined />}
-            />
-          </Space>
-          <Divider />
-          <Space wrap className="w-full justify-between">
-            <Statistic
-              title="Betting"
-              value={1128}
-              prefix={<DollarCircleOutlined />}
-            />
-            <Statistic
-              prefix={<DollarCircleOutlined />}
-              title="Prize"
-              value={93}
-            />
-            <Statistic
-              prefix={<UserOutlined />}
-              title="Betting Users"
-              value={93}
-              suffix="/ 100"
-            />
-            <Statistic
-              title="Registered Users"
-              value={1128}
-              prefix={<UserAddOutlined />}
-            />
-            <Statistic
-              title="Number of visiters"
-              value={1128}
-              prefix={<UserSwitchOutlined />}
-            />
-          </Space>
-        </Card>
-        <Space.Compact className="w-full gap-2">
-          <Space direction="vertical" className="w-full flex-1">
+      <Card title={t("admin/todayStatistics")} className="!mb-2">
+        <Space wrap className="w-full justify-between">
+          <Statistic
+            title="Withdraw"
+            value={1128}
+            prefix={<DollarCircleOutlined />}
+          />
+          <Statistic
+            title="User Deposit"
+            value={93}
+            prefix={<DollarCircleOutlined />}
+          />
+          <Statistic
+            title="User Withdraw"
+            value={1128}
+            prefix={<DollarCircleOutlined />}
+          />
+          <Statistic
+            prefix={<DollarCircleOutlined />}
+            title="Total Deposit"
+            value={93}
+          />
+          <Statistic
+            title="Total Withdraw"
+            value={1128}
+            prefix={<DollarCircleOutlined />}
+          />
+        </Space>
+        <Divider />
+        <Space wrap className="w-full justify-between">
+          <Statistic
+            title="Betting"
+            value={1128}
+            prefix={<DollarCircleOutlined />}
+          />
+          <Statistic
+            prefix={<DollarCircleOutlined />}
+            title="Prize"
+            value={93}
+          />
+          <Statistic
+            prefix={<UserOutlined />}
+            title="Betting Users"
+            value={93}
+            suffix="/ 100"
+          />
+          <Statistic
+            title="Registered Users"
+            value={1128}
+            prefix={<UserAddOutlined />}
+          />
+          <Statistic
+            title="Number of visiters"
+            value={1128}
+            prefix={<UserSwitchOutlined />}
+          />
+        </Space>
+      </Card>
+      <Space.Compact className="w-full gap-2">
+        <Space direction="vertical" className="w-full flex-1">
+          <Card title={t("admin/todayDepositWithdraw")}>
+            <Column {...config1} />
+          </Card>
+          <Card title={t("admin/todayDepositWithdraw")}>
+            <Column {...config2} />
+          </Card>
+        </Space>
+        <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
+          <Space wrap align="start" className="w-full">
             <Card title={t("admin/todayDepositWithdraw")}>
-              <Column {...config1} />
+              membership point
             </Card>
+            <Card title={t("admin/todayDepositWithdraw")}>total points</Card>
             <Card title={t("admin/todayDepositWithdraw")}>
-              <Column {...config2} />
+              Rolling the total
             </Card>
+            <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
           </Space>
-          <Space.Compact
-            direction="vertical"
-            className="w-full flex-2 p-0 gap-2"
-          >
-            <Space wrap align="start" className="w-full">
-              <Card title={t("admin/todayDepositWithdraw")}>
-                membership point
-              </Card>
-              <Card title={t("admin/todayDepositWithdraw")}>total points</Card>
-              <Card title={t("admin/todayDepositWithdraw")}>
-                Rolling the total
-              </Card>
-              <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
-            </Space>
-            <Space.Compact className="w-full">
-              <Card
-                title={t("Recent user deposits and withdrawals")}
-                classNames={{
-                  body: "!p-0",
-                }}
-              >
-                <Table<DataType>
-                  columns={columns}
-                  dataSource={data}
-                  className="w-full"
-                />
-              </Card>
-            </Space.Compact>
+          <Space.Compact className="w-full">
+            <Card
+              title={t("Recent user deposits and withdrawals")}
+              classNames={{
+                body: "!p-0",
+              }}
+            >
+              <Table<DataType>
+                columns={columns}
+                dataSource={data}
+                className="w-full"
+              />
+            </Card>
           </Space.Compact>
         </Space.Compact>
-      </Content>
+      </Space.Compact>
     </Layout>
   ) : null;
 };

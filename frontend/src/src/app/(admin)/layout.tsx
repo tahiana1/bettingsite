@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import AdminRootLayout from "@/components/Admin/Layout";
 import "@/styles/globals.css";
 import DeviceTracker from "@/components/Common/DeviceTracker";
+import { Content } from "antd/es/layout/layout";
 
 export const metadata: Metadata = {
   title: "Betting Admin",
@@ -20,7 +21,10 @@ export default function RootLayout({
   return (
     <AdminRootLayout>
       <DeviceTracker />
-      {children}
+
+      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+        {children}
+      </Content>
     </AdminRootLayout>
   );
 }

@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Card, Form, Input, Select, Space } from "antd";
+import React, { ChangeEvent } from "react";
+import { Button, Card, Form, Input, Space } from "antd";
 import { useTranslations } from "next-intl";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -43,6 +43,10 @@ const ProfileForm = () => {
     console.log({ u });
   };
   // console.log({ loading, error }, data?.profile);
+
+  const onNewPasswordChange = (v: ChangeEvent<HTMLInputElement>) => {
+    console.log({ v });
+  };
   return (
     <Card title={t("profile")}>
       {user.id && data?.profile?.id ? (
@@ -88,10 +92,11 @@ const ProfileForm = () => {
           <Space.Compact className="w-full gap-2">
             <Form.Item
               className="w-full"
-              name="accountNumber"
+              name="bankName"
               label={t("bank")}
               rules={[{ required: true }]}
             >
+              {/* 
               <Space.Compact>
                 <Form.Item
                   name="bankName"
@@ -113,8 +118,8 @@ const ProfileForm = () => {
                     ]}
                   />
                 </Form.Item>
-                <Input />
-              </Space.Compact>
+              </Space.Compact> */}
+              <Input />
             </Form.Item>
             <Form.Item
               name="holderName"
@@ -175,7 +180,7 @@ const ProfileForm = () => {
               ]}
               hasFeedback
             >
-              <Input.Password />
+              <Input.Password onChange={onNewPasswordChange} />
             </Form.Item>
             <Form.Item
               name="confirmPassword"

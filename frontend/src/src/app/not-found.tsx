@@ -21,15 +21,15 @@ export default function GlobalError({
   return (
     <Result
       status="404"
-      title={<h3 className="text-white ">404</h3>}
+      title={<h3 className="dark:text-white ">404</h3>}
       subTitle={
-        <h3 className="text-white ">
+        <h3 className="dark:text-white ">
           Sorry, the page you visited does not exist.
         </h3>
       }
       extra={
         <Button type="primary" onClick={goBack}>
-          Back Home
+          Back
         </Button>
       }
     />
