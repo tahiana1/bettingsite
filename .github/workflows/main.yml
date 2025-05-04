@@ -16,7 +16,7 @@ jobs:
     - name: Setup Golang
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.3'
+        go-version: '1.24.2'
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -49,6 +49,9 @@ jobs:
       run: |
         mkdir deploy
         mkdir deploy/frontend deploy/backend
+
+        rm -rf frontend/src/.next/cache
+
         cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
 
         cp -r backend/src/main backend/src/migrate  backend/src/static backend/src/Dockerfile.prod deploy/backend
@@ -76,7 +79,10 @@ jobs:
         script: |
           cd /root
           rm -rf frontend backend docker-compose.prod.yaml || true
+
           unzip -o artifact.zip
+
+          rm -rf artifact.zip || true
 
           # Create .env file for backend from secrets
           echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 

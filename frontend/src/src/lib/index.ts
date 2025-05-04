@@ -1,6 +1,5 @@
 // "use server";
 
-import { TableProps } from "antd";
 import axios from "axios";
 
 export const getData = () => {
@@ -27,7 +26,7 @@ export const parseTableOptions: (
   filters: any,
   sorter: any,
   extra: any
-) => any = (pagination, filters, sorter, extra) => {
+) => any = (pagination, filters, sorter) => {
   const p = {
     limit: pagination?.pageSize ?? 10,
     offset: pagination.current
@@ -48,6 +47,7 @@ export const parseTableOptions: (
         direction: sorter.order?.toUpperCase() == "ASCEND" ? "ASC" : "DESC",
       }]
     : undefined;
+
   return {
     filters: f,
     pagination: p,

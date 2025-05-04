@@ -15,12 +15,15 @@ import (
 func GetV1Route(r *gin.RouterGroup) {
 	r.Use(middleware.CheckAuth)
 
-	r.Any("/healthz", func(c *gin.Context) {
+	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,
 			"message": "BACKEND API RUNNING",
 		})
 	})
+
+	r.GET("/ws/info", controllers.Info)
+	r.GET("/ws", controllers.Upgrade)
 
 	gqlRouter := r.Group("/graphql")
 	{
@@ -41,13 +44,14 @@ func GetV1Route(r *gin.RouterGroup) {
 	// User API routes
 	commonRouter.GetCommonRoute(r.Group("/common"))
 
-	r.Use(middleware.RequireAuth)
-	r.POST("/logout", controllers.Logout)
 	// Admin API routes
 	adminRouter.GetAdminRoute(r.Group("/admin"))
 
 	// Partner API routes
 	partnerRouter.GetPartnerRoute(r.Group("/partner"))
+
+	r.Use(middleware.RequireAuth)
+	r.POST("/logout", controllers.Logout)
 
 	// User API routes
 	userRouter.GetUserRoute(r.Group("/user"))

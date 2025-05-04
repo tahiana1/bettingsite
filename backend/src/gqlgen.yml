@@ -1,6 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-- graph/graphqls/*.graphql
+- graph/schema/**/*.graphql
 
 # Where should the generated server code go?
 exec:
@@ -33,14 +33,14 @@ model:
 
   # Where should the resolver implementations go?
 resolver:
-  package: graph
+  package: resolver
   layout: follow-schema # Only other option is "single-file."
 
   # Only for single-file layout:
   # filename: graph/resolver.go
 
   # Only for follow-schema layout:
-  dir: graph
+  dir: graph/resolver
   filename_template: "{name}.resolvers.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
@@ -126,14 +126,13 @@ autobind: #  - "github.com/hotbrainy/go-betting/backend/graph/model"
 # your liking
 models:
   ID:
-    model:
-    - github.com/99designs/gqlgen/graphql.ID
-    - github.com/99designs/gqlgen/graphql.Uint
-    - github.com/99designs/gqlgen/graphql.Int
-    - github.com/99designs/gqlgen/graphql.Int64
-    - github.com/99designs/gqlgen/graphql.Int32
-  # gqlgen provides a default GraphQL UUID convenience wrapper for github.com/google/uuid 
-  # but you can override this to provide your own GraphQL UUID implementation
+    model: github.com/99designs/gqlgen/graphql.Uint
+    # - github.com/99designs/gqlgen/graphql.ID
+    # - github.com/99designs/gqlgen/graphql.Int
+    # - github.com/99designs/gqlgen/graphql.Int64
+    # - github.com/99designs/gqlgen/graphql.Int32
+    # gqlgen provides a default GraphQL UUID convenience wrapper for github.com/google/uuid 
+    # but you can override this to provide your own GraphQL UUID implementation
   UUID:
     model:
     - github.com/99designs/gqlgen/graphql.UUID

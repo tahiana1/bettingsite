@@ -1,4 +1,4 @@
-package graph
+package resolver
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -7,11 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
-	"io"
-	"os"
-	"time"
 
-	"github.com/99designs/gqlgen/graphql"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
@@ -19,28 +15,6 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
-
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
-}
-
-// UploadFile is the resolver for the uploadFile field.
-func (r *mutationResolver) UploadFile(ctx context.Context, file graphql.Upload) (string, error) {
-	uploadDir := "./uploads/"
-	os.MkdirAll(uploadDir, os.ModePerm)
-
-	out, err := os.Create(uploadDir + file.Filename)
-	if err != nil {
-		return "", err
-	}
-	defer out.Close()
-	_, err = io.Copy(out, file.File)
-	if err != nil {
-		return "", err
-	}
-	return "Uploaded: " + file.Filename, nil
-}
 
 // UpdateProfile is the resolver for the updateProfile field.
 func (r *mutationResolver) UpdateProfile(ctx context.Context, input model.UpdateProfile) (*models.Profile, error) {
@@ -57,7 +31,7 @@ func (r *mutationResolver) UpdateProfile(ctx context.Context, input model.Update
 }
 
 // DeleteProfile is the resolver for the deleteProfile field.
-func (r *mutationResolver) DeleteProfile(ctx context.Context, id string) (bool, error) {
+func (r *mutationResolver) DeleteProfile(ctx context.Context, id uint) (bool, error) {
 	// Get dataloader from context
 	ldr := loaders.For(ctx)
 	authUser, err := helpers.GetAuthUser(ctx)
@@ -72,13 +46,27 @@ func (r *mutationResolver) DeleteProfile(ctx context.Context, id string) (bool, 
 	return true, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	todos := []*model.Todo{
-		{ID: "1", Text: "text1", Done: true},
-		{ID: "2", Text: "text2", Done: false},
+// ApproveUser is the resolver for the approveUser field.
+func (r *mutationResolver) ApproveUser(ctx context.Context, id uint) (bool, error) {
+	ldr := loaders.For(ctx)
+	if err := ldr.UserReader.ApproveUser(ctx, id); err != nil {
+		return false, err
 	}
-	return todos, nil
+	return true, nil
+}
+
+// BlockUser is the resolver for the blockUser field.
+func (r *mutationResolver) BlockUser(ctx context.Context, id uint) (bool, error) {
+	ldr := loaders.For(ctx)
+	if err := ldr.UserReader.BlockUser(ctx, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// OrderNum is the resolver for the orderNum field.
+func (r *profileResolver) OrderNum(ctx context.Context, obj *models.Profile) (*int32, error) {
+	panic(fmt.Errorf("not implemented: OrderNum - orderNum"))
 }
 
 // Profile is the resolver for the profile field.
@@ -117,11 +105,18 @@ func (r *queryResolver) Users(ctx context.Context) ([]*models.User, error) {
 	if err := initializers.DB.Model(&models.User{}).Preload(("Profile")).Find(&users).Error; err != nil {
 		return nil, err
 	}
-	return users, nil
+	ldr := loaders.For(ctx)
+	return ldr.UserReader.GetUsers(ctx)
+}
+
+// FilterUsers is the resolver for the filterUsers field.
+func (r *queryResolver) FilterUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	ldr := loaders.For(ctx)
+	return ldr.UserReader.FilterUsers(ctx, filters, orders, pagination)
 }
 
 // User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, id string) (*models.User, error) {
+func (r *queryResolver) User(ctx context.Context, id uint) (*models.User, error) {
 	var user *models.User
 	if err := initializers.DB.Model(&models.User{}).Preload(("Profile")).Where("id = ?", id).Find(&user).Error; err != nil {
 		return nil, err
@@ -129,37 +124,16 @@ func (r *queryResolver) User(ctx context.Context, id string) (*models.User, erro
 	return user, nil
 }
 
-// Time is the resolver for the time field.
-func (r *subscriptionResolver) Time(ctx context.Context) (<-chan string, error) {
-	ch := make(chan string)
-
-	go func() {
-		ticker := time.NewTicker(60 * time.Second)
-		defer ticker.Stop()
-		defer close(ch)
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case t := <-ticker.C:
-				ch <- t.Format(time.RFC3339)
-			}
-		}
-	}()
-
-	return ch, nil
+// OrderNum is the resolver for the orderNum field.
+func (r *userResolver) OrderNum(ctx context.Context, obj *models.User) (*int32, error) {
+	panic(fmt.Errorf("not implemented: OrderNum - orderNum"))
 }
 
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+// Profile returns generated.ProfileResolver implementation.
+func (r *Resolver) Profile() generated.ProfileResolver { return &profileResolver{r} }
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+// User returns generated.UserResolver implementation.
+func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 
-// Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type subscriptionResolver struct{ *Resolver }
+type profileResolver struct{ *Resolver }
+type userResolver struct{ *Resolver }

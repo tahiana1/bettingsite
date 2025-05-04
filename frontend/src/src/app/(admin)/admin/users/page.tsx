@@ -14,7 +14,7 @@ import {
   DatePicker,
   Radio,
 } from "antd";
-import { FilterDropdown, useTable } from "@refinedev/antd";
+import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -25,19 +25,18 @@ import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 
-import HighlighterComp, { HighlighterProps } from "react-highlight-words";
+// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 
-const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
+// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
-type UserIndex = keyof User;
+// type UserIndex = keyof User;
 
 const UserPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
-  const { tableProps } = useTable<User>();
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
@@ -137,7 +136,7 @@ const UserPage: React.FC = () => {
     {
       title: t("nickname"),
       dataIndex: "profile.nickname",
-      key: '\"Profile\".\"nickname\"',
+      key: '"Profile"."nickname"',
       render: (_, { profile }) => profile.nickname,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
@@ -148,7 +147,7 @@ const UserPage: React.FC = () => {
     {
       title: t("holderName"),
       dataIndex: "profile.holderName",
-      key: '\"Profile\".\"holder_name\"',
+      key: '"Profile"."holder_name"',
       render: (_, { profile }) => profile.holderName,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
@@ -159,7 +158,7 @@ const UserPage: React.FC = () => {
     {
       title: t("phone"),
       dataIndex: "profile.phone",
-      key: '\"Profile\".\"phone\"',
+      key: '"Profile"."phone"',
       render: (_, { profile }) => profile.phone,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
@@ -266,8 +265,10 @@ const UserPage: React.FC = () => {
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Radio.Group className="!w-full !flex flex-col">
-            {props.filters?.map((f) => (
-              <Radio value={f.value}>{f.text}</Radio>
+            {props.filters?.map((f, i) => (
+              <Radio key={i } value={f.value}>
+                {f.text}
+              </Radio>
             ))}
           </Radio.Group>
         </FilterDropdown>

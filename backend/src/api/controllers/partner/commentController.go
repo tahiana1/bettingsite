@@ -82,7 +82,7 @@ func EditComment(c *gin.Context) {
 	result := initializers.DB.First(&comment, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -124,7 +124,7 @@ func UpdateComment(c *gin.Context) {
 	result := initializers.DB.First(&comment, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -152,7 +152,7 @@ func DeleteComment(c *gin.Context) {
 	result := initializers.DB.First(&comment, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 

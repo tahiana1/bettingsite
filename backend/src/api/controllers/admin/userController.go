@@ -48,7 +48,7 @@ func EditUser(c *gin.Context) {
 	result := initializers.DB.First(&user, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -88,7 +88,7 @@ func UpdateUser(c *gin.Context) {
 	result := initializers.DB.First(&user, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -130,7 +130,7 @@ func DeleteUser(c *gin.Context) {
 
 	result := initializers.DB.First(&user, id)
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -180,7 +180,7 @@ func PermanentlyDeleteUser(c *gin.Context) {
 
 	// Find the user
 	if err := initializers.DB.Unscoped().First(&user, id).Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 

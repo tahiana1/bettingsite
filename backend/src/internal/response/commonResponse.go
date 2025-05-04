@@ -44,3 +44,11 @@ type User struct {
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"` // Use `omitempty` to omit if nil
 }
+
+type Status struct {
+	Message string      `json:"message"`
+	Desc    string      `json:"desc"`
+	Token   string      `json:"token"`
+	Data    interface{} `json:"data"`
+	Error   interface{} `json:"error"`
+}

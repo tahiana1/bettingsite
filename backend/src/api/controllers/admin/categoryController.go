@@ -119,7 +119,7 @@ func EditCategory(c *gin.Context) {
 	result := initializers.DB.First(&category, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -160,7 +160,7 @@ func UpdateCategory(c *gin.Context) {
 	result := initializers.DB.First(&category, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -218,7 +218,7 @@ func DeleteCategory(c *gin.Context) {
 	result := initializers.DB.First(&category, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -268,7 +268,7 @@ func DeleteCategoryPermanent(c *gin.Context) {
 	result := initializers.DB.Unscoped().Delete(&models.Category{}, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 

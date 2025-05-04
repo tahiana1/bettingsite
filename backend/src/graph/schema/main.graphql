@@ -1,0 +1,61 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+scalar Upload
+scalar Time
+
+directive @auth on FIELD_DEFINITION
+
+directive @hasRole(role: Role!) on FIELD_DEFINITION
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+
+enum Role {
+  ADMIN
+  PARTNER
+  USER
+}
+
+enum Op {
+  eq # =
+  neq # !=
+  gt # >
+  gte # >=
+  lt # <
+  lte # <=
+  like # ILIKE or LIKE
+}
+
+input Pagination {
+  limit: Int = 10
+  offset: Int = 0
+}
+
+input Order {
+  field: String!
+  direction: OrderDirection = ASC
+}
+
+
+input Filter {
+  field: String!
+  value: String!     # You can keep it String and parse to correct type in Go
+  op: Op = eq
+}
+
+type Query {
+  time: Time
+}
+
+type Mutation {
+  time: Time!
+  uploadFile(file: Upload!): String!
+}
+
+type Subscription {
+  time: String!
+}

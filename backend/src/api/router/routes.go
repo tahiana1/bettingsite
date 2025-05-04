@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -23,7 +22,6 @@ func GetAPIRoute(r *gin.Engine) {
 
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
-		fmt.Println(path)
 		if strings.HasPrefix(path, "/api/v1/") {
 			c.JSON(http.StatusNotFound, gin.H{"error": "API route not found"})
 		} else {

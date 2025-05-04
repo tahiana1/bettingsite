@@ -124,7 +124,7 @@ func ShowPost(c *gin.Context) {
 	}).First(&post, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -144,7 +144,7 @@ func EditPost(c *gin.Context) {
 	result := initializers.DB.Preload("User").Preload("Category").First(&post, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -185,7 +185,7 @@ func UpdatePost(c *gin.Context) {
 	result := initializers.DB.First(&post, id)
 
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -224,7 +224,7 @@ func DeletePost(c *gin.Context) {
 
 	result := initializers.DB.First(&post, id)
 	if err := result.Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 
@@ -279,7 +279,7 @@ func PermanentlyDeletePost(c *gin.Context) {
 
 	// Find the post
 	if err := initializers.DB.Unscoped().First(&post, id).Error; err != nil {
-		format_errors.RecordNotFound(c, err)
+		format_errors.NotFound(c, err)
 		return
 	}
 

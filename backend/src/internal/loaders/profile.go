@@ -8,6 +8,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -95,23 +96,55 @@ func GetProfileByUserID(ctx context.Context, userID uint) (*models.Profile, erro
 
 // UpdateProfile updates a profile by ID
 func (pr *profileReader) UpdateProfile(ctx context.Context, userID uint, updates model.UpdateProfile) (*models.Profile, error) {
-	profile := models.Profile{}
-	fmt.Println("======updates======")
-	fmt.Println(updates)
-	fmt.Println("======updates======")
-	if err := initializers.DB.Model(&profile).First(&profile, "user_id = ?", userID).Error; err != nil {
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
+	me := models.User{}
+
+	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+	pwd, _ := bcrypt.GenerateFromPassword([]byte(updates.CurrentPassword), 10)
+	fmt.Println(string(pwd))
+	// Compare the password with user hashed password
+	err := bcrypt.CompareHashAndPassword([]byte(me.Password), []byte(updates.CurrentPassword))
+	if err != nil {
 		return nil, err
 	}
 
-	// // Apply updates
-	// if err := pr.db.Model(&profile).Updates(updates).Error; err != nil {
-	// 	return nil, err
-	// }
+	profile := models.Profile{}
+	fmt.Println("======updates======")
+	fmt.Println(updates)
+	if err := initializers.DB.Model(&profile).First(&profile, "user_id = ?", userID).Error; err != nil {
+		return nil, err
+	}
+	profile.AccountNumber = *updates.AccountNumber
+	profile.Nickname = *updates.Nickname
+	profile.BankName = *updates.BankName
+	profile.Phone = *updates.Phone
+	pr.db.Save(profile)
 
-	// // Optional: Reload the profile to get latest data
-	// if err := pr.db.First(&profile, profileID).Error; err != nil {
-	// 	return nil, err
-	// }
+	fmt.Println(updates.NewPassword)
+
+	if updates.NewPassword != nil && updates.ConfirmPassword != nil {
+		if *updates.ConfirmPassword != *updates.NewPassword {
+			return nil, fmt.Errorf("Password is not matched!")
+		}
+
+		// Hash the password
+		hashPassword, err := bcrypt.GenerateFromPassword([]byte(*updates.NewPassword), 10)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to hash password!")
+		}
+
+		me.Password = string(hashPassword)
+		pr.db.Save(me)
+	}
 
 	return &profile, nil
 }

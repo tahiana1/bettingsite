@@ -102,6 +102,7 @@ func ConnectDB() {
 
 	err = DB.AutoMigrate(
 		models.User{},
+		models.Profile{},
 		models.Event{},
 		models.Domain{},
 		models.Category{},

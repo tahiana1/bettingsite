@@ -42,8 +42,10 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Profile() ProfileResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
+	User() UserResolver
 }
 
 type DirectiveRoot struct {
@@ -53,8 +55,11 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
+		ApproveUser   func(childComplexity int, id uint) int
+		BlockUser     func(childComplexity int, id uint) int
 		CreateTodo    func(childComplexity int, input model.NewTodo) int
-		DeleteProfile func(childComplexity int, id string) int
+		DeleteProfile func(childComplexity int, id uint) int
+		Time          func(childComplexity int) int
 		UpdateProfile func(childComplexity int, input model.UpdateProfile) int
 		UploadFile    func(childComplexity int, file graphql.Upload) int
 	}
@@ -67,15 +72,21 @@ type ComplexityRoot struct {
 		Bio           func(childComplexity int) int
 		Birthday      func(childComplexity int) int
 		Comp          func(childComplexity int) int
+		Coupon        func(childComplexity int) int
 		CreatedAt     func(childComplexity int) int
 		DeletedAt     func(childComplexity int) int
 		Favorites     func(childComplexity int) int
 		HolderName    func(childComplexity int) int
 		ID            func(childComplexity int) int
+		LastDeposit   func(childComplexity int) int
+		LastWithdraw  func(childComplexity int) int
+		Level         func(childComplexity int) int
 		Mobile        func(childComplexity int) int
 		Name          func(childComplexity int) int
 		Nickname      func(childComplexity int) int
+		OrderNum      func(childComplexity int) int
 		Phone         func(childComplexity int) int
+		PhoneVerified func(childComplexity int) int
 		Point         func(childComplexity int) int
 		Referral      func(childComplexity int) int
 		SocialLinks   func(childComplexity int) int
@@ -84,11 +95,13 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Me      func(childComplexity int) int
-		Profile func(childComplexity int) int
-		Todos   func(childComplexity int) int
-		User    func(childComplexity int, id string) int
-		Users   func(childComplexity int) int
+		FilterUsers func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Me          func(childComplexity int) int
+		Profile     func(childComplexity int) int
+		Time        func(childComplexity int) int
+		Todos       func(childComplexity int) int
+		User        func(childComplexity int, id uint) int
+		Users       func(childComplexity int) int
 	}
 
 	Subscription struct {
@@ -103,35 +116,53 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		CreatedAt     func(childComplexity int) int
-		DeletedAt     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		LastLoginAt   func(childComplexity int) int
-		Name          func(childComplexity int) int
-		PhoneVerified func(childComplexity int) int
-		Profile       func(childComplexity int) int
-		Role          func(childComplexity int) int
-		USDTAddress   func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		Userid        func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		CurrentIP   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		IP          func(childComplexity int) int
+		Name        func(childComplexity int) int
+		OrderNum    func(childComplexity int) int
+		Profile     func(childComplexity int) int
+		Role        func(childComplexity int) int
+		Status      func(childComplexity int) int
+		USDTAddress func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		Userid      func(childComplexity int) int
+	}
+
+	UserList struct {
+		Total func(childComplexity int) int
+		Users func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
-	CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
+	Time(ctx context.Context) (*time.Time, error)
 	UploadFile(ctx context.Context, file graphql.Upload) (string, error)
+	CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error)
 	UpdateProfile(ctx context.Context, input model.UpdateProfile) (*models.Profile, error)
-	DeleteProfile(ctx context.Context, id string) (bool, error)
+	DeleteProfile(ctx context.Context, id uint) (bool, error)
+	ApproveUser(ctx context.Context, id uint) (bool, error)
+	BlockUser(ctx context.Context, id uint) (bool, error)
+}
+type ProfileResolver interface {
+	OrderNum(ctx context.Context, obj *models.Profile) (*int32, error)
 }
 type QueryResolver interface {
+	Time(ctx context.Context) (*time.Time, error)
 	Todos(ctx context.Context) ([]*model.Todo, error)
 	Profile(ctx context.Context) (*models.Profile, error)
 	Me(ctx context.Context) (*models.User, error)
 	Users(ctx context.Context) ([]*models.User, error)
-	User(ctx context.Context, id string) (*models.User, error)
+	FilterUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
+	User(ctx context.Context, id uint) (*models.User, error)
 }
 type SubscriptionResolver interface {
 	Time(ctx context.Context) (<-chan string, error)
+}
+type UserResolver interface {
+	OrderNum(ctx context.Context, obj *models.User) (*int32, error)
 }
 
 type executableSchema struct {
@@ -152,6 +183,30 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.approveUser":
+		if e.complexity.Mutation.ApproveUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_approveUser_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ApproveUser(childComplexity, args["id"].(uint)), true
+
+	case "Mutation.blockUser":
+		if e.complexity.Mutation.BlockUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_blockUser_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.BlockUser(childComplexity, args["id"].(uint)), true
 
 	case "Mutation.createTodo":
 		if e.complexity.Mutation.CreateTodo == nil {
@@ -175,7 +230,14 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteProfile(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.DeleteProfile(childComplexity, args["id"].(uint)), true
+
+	case "Mutation.time":
+		if e.complexity.Mutation.Time == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Time(childComplexity), true
 
 	case "Mutation.updateProfile":
 		if e.complexity.Mutation.UpdateProfile == nil {
@@ -250,6 +312,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.Comp(childComplexity), true
 
+	case "Profile.coupon":
+		if e.complexity.Profile.Coupon == nil {
+			break
+		}
+
+		return e.complexity.Profile.Coupon(childComplexity), true
+
 	case "Profile.createdAt":
 		if e.complexity.Profile.CreatedAt == nil {
 			break
@@ -285,6 +354,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.ID(childComplexity), true
 
+	case "Profile.lastDeposit":
+		if e.complexity.Profile.LastDeposit == nil {
+			break
+		}
+
+		return e.complexity.Profile.LastDeposit(childComplexity), true
+
+	case "Profile.lastWithdraw":
+		if e.complexity.Profile.LastWithdraw == nil {
+			break
+		}
+
+		return e.complexity.Profile.LastWithdraw(childComplexity), true
+
+	case "Profile.level":
+		if e.complexity.Profile.Level == nil {
+			break
+		}
+
+		return e.complexity.Profile.Level(childComplexity), true
+
 	case "Profile.mobile":
 		if e.complexity.Profile.Mobile == nil {
 			break
@@ -306,12 +396,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.Nickname(childComplexity), true
 
+	case "Profile.orderNum":
+		if e.complexity.Profile.OrderNum == nil {
+			break
+		}
+
+		return e.complexity.Profile.OrderNum(childComplexity), true
+
 	case "Profile.phone":
 		if e.complexity.Profile.Phone == nil {
 			break
 		}
 
 		return e.complexity.Profile.Phone(childComplexity), true
+
+	case "Profile.phoneVerified":
+		if e.complexity.Profile.PhoneVerified == nil {
+			break
+		}
+
+		return e.complexity.Profile.PhoneVerified(childComplexity), true
 
 	case "Profile.point":
 		if e.complexity.Profile.Point == nil {
@@ -348,6 +452,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.UserID(childComplexity), true
 
+	case "Query.filterUsers":
+		if e.complexity.Query.FilterUsers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_filterUsers_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FilterUsers(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
 			break
@@ -361,6 +477,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.Profile(childComplexity), true
+
+	case "Query.time":
+		if e.complexity.Query.Time == nil {
+			break
+		}
+
+		return e.complexity.Query.Time(childComplexity), true
 
 	case "Query.todos":
 		if e.complexity.Query.Todos == nil {
@@ -379,7 +502,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.User(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.User(childComplexity, args["id"].(uint)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -430,6 +553,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.CreatedAt(childComplexity), true
 
+	case "User.currentIP":
+		if e.complexity.User.CurrentIP == nil {
+			break
+		}
+
+		return e.complexity.User.CurrentIP(childComplexity), true
+
 	case "User.deletedAt":
 		if e.complexity.User.DeletedAt == nil {
 			break
@@ -444,12 +574,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.ID(childComplexity), true
 
-	case "User.lastLoginAt":
-		if e.complexity.User.LastLoginAt == nil {
+	case "User.IP":
+		if e.complexity.User.IP == nil {
 			break
 		}
 
-		return e.complexity.User.LastLoginAt(childComplexity), true
+		return e.complexity.User.IP(childComplexity), true
 
 	case "User.name":
 		if e.complexity.User.Name == nil {
@@ -458,12 +588,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Name(childComplexity), true
 
-	case "User.phoneVerified":
-		if e.complexity.User.PhoneVerified == nil {
+	case "User.orderNum":
+		if e.complexity.User.OrderNum == nil {
 			break
 		}
 
-		return e.complexity.User.PhoneVerified(childComplexity), true
+		return e.complexity.User.OrderNum(childComplexity), true
 
 	case "User.profile":
 		if e.complexity.User.Profile == nil {
@@ -478,6 +608,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.Role(childComplexity), true
+
+	case "User.status":
+		if e.complexity.User.Status == nil {
+			break
+		}
+
+		return e.complexity.User.Status(childComplexity), true
 
 	case "User.usdtAddress":
 		if e.complexity.User.USDTAddress == nil {
@@ -500,6 +637,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Userid(childComplexity), true
 
+	case "UserList.total":
+		if e.complexity.UserList.Total == nil {
+			break
+		}
+
+		return e.complexity.UserList.Total(childComplexity), true
+
+	case "UserList.users":
+		if e.complexity.UserList.Users == nil {
+			break
+		}
+
+		return e.complexity.UserList.Users(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -508,9 +659,13 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputFilter,
 		ec.unmarshalInputNewProfile,
 		ec.unmarshalInputNewTodo,
+		ec.unmarshalInputOrder,
+		ec.unmarshalInputPagination,
 		ec.unmarshalInputUpdateProfile,
+		ec.unmarshalInputUserFilter,
 	)
 	first := true
 
@@ -625,7 +780,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../graphqls/schema.graphql", Input: `# GraphQL schema example
+	{Name: "../schema/main.graphql", Input: `# GraphQL schema example
 #
 # https://gqlgen.com/getting-started/
 
@@ -636,11 +791,60 @@ directive @auth on FIELD_DEFINITION
 
 directive @hasRole(role: Role!) on FIELD_DEFINITION
 
+enum OrderDirection {
+  ASC
+  DESC
+}
+
 enum Role {
   ADMIN
   PARTNER
   USER
 }
+
+enum Op {
+  eq # =
+  neq # !=
+  gt # >
+  gte # >=
+  lt # <
+  lte # <=
+  like # ILIKE or LIKE
+}
+
+input Pagination {
+  limit: Int = 10
+  offset: Int = 0
+}
+
+input Order {
+  field: String!
+  direction: OrderDirection = ASC
+}
+
+
+input Filter {
+  field: String!
+  value: String!     # You can keep it String and parse to correct type in Go
+  op: Op = eq
+}
+
+type Query {
+  time: Time
+}
+
+type Mutation {
+  time: Time!
+  uploadFile(file: Upload!): String!
+}
+
+type Subscription {
+  time: String!
+}
+`, BuiltIn: false},
+	{Name: "../schema/todo.graphql", Input: `# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
 
 type Todo {
   id: ID!
@@ -649,41 +853,30 @@ type Todo {
   user: User!
 }
 
-type Query {
-  todos: [Todo!]!
-
-  profile: Profile! @auth
-  me: User! @auth
-
-  users: [User!]! @hasRole(role: ADMIN)
-  user(id: ID!): User @hasRole(role: ADMIN)
-}
-
 input NewTodo {
   text: String!
   userId: String!
 }
 
-type Mutation {
-  createTodo(input: NewTodo!): Todo!
-  uploadFile(file: Upload!): String!
-  updateProfile(input: UpdateProfile!): Profile! @auth
-  deleteProfile(id: ID!): Boolean! @auth
+extend type Query {
+  todos: [Todo!]!
 }
 
-type Subscription {
-  time: String!
+extend type Mutation {
+  createTodo(input: NewTodo!): Todo!
 }
 `, BuiltIn: false},
-	{Name: "../graphqls/user.graphql", Input: `type User {
+	{Name: "../schema/user.graphql", Input: `type User {
   id: ID!
   name: String!
   userid: String!
-  phoneVerified: Boolean!
   role: String!
   usdtAddress: String!
+  currentIP: String!
+  IP: String!
   profile: Profile
-  lastLoginAt: Time
+  status: Boolean!
+  orderNum: Int
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -700,14 +893,20 @@ type Profile {
   birthday: Time
   phone: String
   mobile: String
+  phoneVerified: Boolean!
   balance: Float!
   point: Int!
   comp: Int!
+  level: Int!
+  coupon: Int!
   favorites: String
   referral: String
   avatarUrl: String
   bio: String
   socialLinks: String
+  lastDeposit: Time
+  lastWithdraw: Time
+  orderNum: Int
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -755,6 +954,41 @@ input UpdateProfile {
   confirmPassword: String
   newPassword: String
 }
+
+input UserFilter {
+  id: ID
+  name: String
+  userid: String
+  role: String
+  currentIP: String
+  IP: String
+  status: Boolean
+}
+
+type UserList {
+  users: [User!]!
+  total: Int!
+}
+
+extend type Query {
+  profile: Profile! @auth
+  me: User! @auth
+
+  users: [User!]! @hasRole(role: ADMIN)
+  filterUsers(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: ADMIN)
+  user(id: ID!): User @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  updateProfile(input: UpdateProfile!): Profile! @auth
+  deleteProfile(id: ID!): Boolean! @auth
+  approveUser(id: ID!): Boolean! @hasRole(role: ADMIN)
+  blockUser(id: ID!): Boolean! @hasRole(role: ADMIN)
+}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -788,6 +1022,52 @@ func (ec *executionContext) dir_hasRole_argsRole(
 	}
 
 	var zeroVal model.Role
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_approveUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_approveUser_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_approveUser_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_blockUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_blockUser_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_blockUser_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
 	return zeroVal, nil
 }
 
@@ -827,13 +1107,13 @@ func (ec *executionContext) field_Mutation_deleteProfile_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_deleteProfile_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (string, error) {
+) (uint, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
+		return ec.unmarshalNID2uint(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal uint
 	return zeroVal, nil
 }
 
@@ -906,6 +1186,65 @@ func (ec *executionContext) field_Query___type_argsName(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_filterUsers_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_filterUsers_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_filterUsers_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_filterUsers_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_filterUsers_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_filterUsers_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_filterUsers_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -919,13 +1258,13 @@ func (ec *executionContext) field_Query_user_args(ctx context.Context, rawArgs m
 func (ec *executionContext) field_Query_user_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (string, error) {
+) (uint, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNID2string(ctx, tmp)
+		return ec.unmarshalNID2uint(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal uint
 	return zeroVal, nil
 }
 
@@ -1029,6 +1368,105 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Mutation_time(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_time(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().Time(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_time(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_uploadFile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UploadFile(rctx, fc.Args["file"].(graphql.Upload))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_uploadFile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createTodo(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createTodo(ctx, field)
 	if err != nil {
@@ -1088,61 +1526,6 @@ func (ec *executionContext) fieldContext_Mutation_createTodo(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTodo_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_uploadFile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UploadFile(rctx, fc.Args["file"].(graphql.Upload))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_uploadFile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1230,12 +1613,18 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_phone(ctx, field)
 			case "mobile":
 				return ec.fieldContext_Profile_mobile(ctx, field)
+			case "phoneVerified":
+				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
 				return ec.fieldContext_Profile_comp(ctx, field)
+			case "level":
+				return ec.fieldContext_Profile_level(ctx, field)
+			case "coupon":
+				return ec.fieldContext_Profile_coupon(ctx, field)
 			case "favorites":
 				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
@@ -1246,6 +1635,12 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_bio(ctx, field)
 			case "socialLinks":
 				return ec.fieldContext_Profile_socialLinks(ctx, field)
+			case "lastDeposit":
+				return ec.fieldContext_Profile_lastDeposit(ctx, field)
+			case "lastWithdraw":
+				return ec.fieldContext_Profile_lastWithdraw(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Profile_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Profile_createdAt(ctx, field)
 			case "updatedAt":
@@ -1285,7 +1680,7 @@ func (ec *executionContext) _Mutation_deleteProfile(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		directive0 := func(rctx context.Context) (any, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().DeleteProfile(rctx, fc.Args["id"].(string))
+			return ec.resolvers.Mutation().DeleteProfile(rctx, fc.Args["id"].(uint))
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
@@ -1341,6 +1736,170 @@ func (ec *executionContext) fieldContext_Mutation_deleteProfile(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteProfile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_approveUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_approveUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ApproveUser(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_approveUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_approveUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_blockUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_blockUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().BlockUser(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_blockUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_blockUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1769,6 +2328,50 @@ func (ec *executionContext) fieldContext_Profile_mobile(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Profile_phoneVerified(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_phoneVerified(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhoneVerified, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_phoneVerified(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Profile_balance(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Profile_balance(ctx, field)
 	if err != nil {
@@ -1889,6 +2492,94 @@ func (ec *executionContext) _Profile_comp(ctx context.Context, field graphql.Col
 }
 
 func (ec *executionContext) fieldContext_Profile_comp(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_level(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_level(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Level, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_level(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_coupon(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_coupon(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Coupon, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_coupon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Profile",
 		Field:      field,
@@ -2106,6 +2797,129 @@ func (ec *executionContext) fieldContext_Profile_socialLinks(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Profile_lastDeposit(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_lastDeposit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastDeposit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_lastDeposit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_lastWithdraw(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_lastWithdraw(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastWithdraw, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_lastWithdraw(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_orderNum(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_orderNum(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Profile().OrderNum(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int32)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_orderNum(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Profile_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Profile_createdAt(ctx, field)
 	if err != nil {
@@ -2228,6 +3042,47 @@ func (ec *executionContext) fieldContext_Profile_deletedAt(_ context.Context, fi
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_time(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_time(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Time(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_time(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -2370,12 +3225,18 @@ func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field 
 				return ec.fieldContext_Profile_phone(ctx, field)
 			case "mobile":
 				return ec.fieldContext_Profile_mobile(ctx, field)
+			case "phoneVerified":
+				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
 				return ec.fieldContext_Profile_comp(ctx, field)
+			case "level":
+				return ec.fieldContext_Profile_level(ctx, field)
+			case "coupon":
+				return ec.fieldContext_Profile_coupon(ctx, field)
 			case "favorites":
 				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
@@ -2386,6 +3247,12 @@ func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field 
 				return ec.fieldContext_Profile_bio(ctx, field)
 			case "socialLinks":
 				return ec.fieldContext_Profile_socialLinks(ctx, field)
+			case "lastDeposit":
+				return ec.fieldContext_Profile_lastDeposit(ctx, field)
+			case "lastWithdraw":
+				return ec.fieldContext_Profile_lastWithdraw(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Profile_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Profile_createdAt(ctx, field)
 			case "updatedAt":
@@ -2466,16 +3333,20 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_name(ctx, field)
 			case "userid":
 				return ec.fieldContext_User_userid(ctx, field)
-			case "phoneVerified":
-				return ec.fieldContext_User_phoneVerified(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
 			case "usdtAddress":
 				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
-			case "lastLoginAt":
-				return ec.fieldContext_User_lastLoginAt(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -2561,16 +3432,20 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_name(ctx, field)
 			case "userid":
 				return ec.fieldContext_User_userid(ctx, field)
-			case "phoneVerified":
-				return ec.fieldContext_User_phoneVerified(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
 			case "usdtAddress":
 				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
-			case "lastLoginAt":
-				return ec.fieldContext_User_lastLoginAt(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -2580,6 +3455,94 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 			}
 			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_filterUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_filterUsers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().FilterUsers(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			if err != nil {
+				var zeroVal *model.UserList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.UserList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.UserList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.UserList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserList)
+	fc.Result = res
+	return ec.marshalNUserList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_filterUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "users":
+				return ec.fieldContext_UserList_users(ctx, field)
+			case "total":
+				return ec.fieldContext_UserList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_filterUsers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -2599,7 +3562,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		directive0 := func(rctx context.Context) (any, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().User(rctx, fc.Args["id"].(string))
+			return ec.resolvers.Query().User(rctx, fc.Args["id"].(uint))
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
@@ -2653,16 +3616,20 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_name(ctx, field)
 			case "userid":
 				return ec.fieldContext_User_userid(ctx, field)
-			case "phoneVerified":
-				return ec.fieldContext_User_phoneVerified(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
 			case "usdtAddress":
 				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
-			case "lastLoginAt":
-				return ec.fieldContext_User_lastLoginAt(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -2902,9 +3869,9 @@ func (ec *executionContext) _Todo_id(ctx context.Context, field graphql.Collecte
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(uint)
 	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
+	return ec.marshalNID2uint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Todo_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3053,16 +4020,20 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_name(ctx, field)
 			case "userid":
 				return ec.fieldContext_User_userid(ctx, field)
-			case "phoneVerified":
-				return ec.fieldContext_User_phoneVerified(ctx, field)
 			case "role":
 				return ec.fieldContext_User_role(ctx, field)
 			case "usdtAddress":
 				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
-			case "lastLoginAt":
-				return ec.fieldContext_User_lastLoginAt(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -3208,50 +4179,6 @@ func (ec *executionContext) fieldContext_User_userid(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _User_phoneVerified(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_phoneVerified(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PhoneVerified, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_phoneVerified(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _User_role(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_role(ctx, field)
 	if err != nil {
@@ -3340,6 +4267,94 @@ func (ec *executionContext) fieldContext_User_usdtAddress(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _User_currentIP(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_currentIP(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrentIP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_currentIP(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_IP(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_IP(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_IP(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_profile(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_profile(ctx, field)
 	if err != nil {
@@ -3396,12 +4411,18 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 				return ec.fieldContext_Profile_phone(ctx, field)
 			case "mobile":
 				return ec.fieldContext_Profile_mobile(ctx, field)
+			case "phoneVerified":
+				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
 				return ec.fieldContext_Profile_comp(ctx, field)
+			case "level":
+				return ec.fieldContext_Profile_level(ctx, field)
+			case "coupon":
+				return ec.fieldContext_Profile_coupon(ctx, field)
 			case "favorites":
 				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
@@ -3412,6 +4433,12 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 				return ec.fieldContext_Profile_bio(ctx, field)
 			case "socialLinks":
 				return ec.fieldContext_Profile_socialLinks(ctx, field)
+			case "lastDeposit":
+				return ec.fieldContext_Profile_lastDeposit(ctx, field)
+			case "lastWithdraw":
+				return ec.fieldContext_Profile_lastWithdraw(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Profile_orderNum(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Profile_createdAt(ctx, field)
 			case "updatedAt":
@@ -3425,8 +4452,8 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _User_lastLoginAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_lastLoginAt(ctx, field)
+func (ec *executionContext) _User_status(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_status(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3439,7 +4466,51 @@ func (ec *executionContext) _User_lastLoginAt(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LastLoginAt, nil
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_orderNum(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_orderNum(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().OrderNum(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3448,19 +4519,19 @@ func (ec *executionContext) _User_lastLoginAt(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*int32)
 	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOInt2ᚖint32(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_User_lastLoginAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_User_orderNum(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3590,6 +4661,122 @@ func (ec *executionContext) fieldContext_User_deletedAt(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserList_users(ctx context.Context, field graphql.CollectedField, obj *model.UserList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserList_users(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Users, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "userid":
+				return ec.fieldContext_User_userid(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "usdtAddress":
+				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserList_total(ctx context.Context, field graphql.CollectedField, obj *model.UserList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserList_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5546,6 +6733,51 @@ func (ec *executionContext) fieldContext___Type_isOneOf(_ context.Context, field
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputFilter(ctx context.Context, obj any) (model.Filter, error) {
+	var it model.Filter
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["op"]; !present {
+		asMap["op"] = "eq"
+	}
+
+	fieldsInOrder := [...]string{"field", "value", "op"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "field":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Field = data
+		case "value":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Value = data
+		case "op":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
+			data, err := ec.unmarshalOOp2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOp(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Op = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj any) (model.NewProfile, error) {
 	var it model.NewProfile
 	asMap := map[string]any{}
@@ -5562,7 +6794,7 @@ func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj an
 		switch k {
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+			data, err := ec.unmarshalNID2uint(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -5713,6 +6945,85 @@ func (ec *executionContext) unmarshalInputNewTodo(ctx context.Context, obj any) 
 				return it, err
 			}
 			it.UserID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputOrder(ctx context.Context, obj any) (model.Order, error) {
+	var it model.Order
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["direction"]; !present {
+		asMap["direction"] = "ASC"
+	}
+
+	fieldsInOrder := [...]string{"field", "direction"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "field":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Field = data
+		case "direction":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			data, err := ec.unmarshalOOrderDirection2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Direction = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj any) (model.Pagination, error) {
+	var it model.Pagination
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["limit"]; !present {
+		asMap["limit"] = 10
+	}
+	if _, present := asMap["offset"]; !present {
+		asMap["offset"] = 0
+	}
+
+	fieldsInOrder := [...]string{"limit", "offset"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "limit":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Limit = data
+		case "offset":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Offset = data
 		}
 	}
 
@@ -5879,6 +7190,75 @@ func (ec *executionContext) unmarshalInputUpdateProfile(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUserFilter(ctx context.Context, obj any) (model.UserFilter, error) {
+	var it model.UserFilter
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "name", "userid", "role", "currentIP", "IP", "status"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "userid":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userid"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Userid = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "currentIP":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currentIP"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CurrentIP = data
+		case "IP":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IP"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IP = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -5906,9 +7286,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createTodo":
+		case "time":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTodo(ctx, field)
+				return ec._Mutation_time(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5916,6 +7296,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "uploadFile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_uploadFile(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createTodo":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTodo(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5930,6 +7317,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteProfile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteProfile(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "approveUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_approveUser(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "blockUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_blockUser(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5971,22 +7372,22 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Profile_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userId":
 			out.Values[i] = ec._Profile_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Profile_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "nickname":
 			out.Values[i] = ec._Profile_nickname(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "bankName":
 			out.Values[i] = ec._Profile_bankName(ctx, field, obj)
@@ -6000,20 +7401,35 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Profile_phone(ctx, field, obj)
 		case "mobile":
 			out.Values[i] = ec._Profile_mobile(ctx, field, obj)
+		case "phoneVerified":
+			out.Values[i] = ec._Profile_phoneVerified(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "balance":
 			out.Values[i] = ec._Profile_balance(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "point":
 			out.Values[i] = ec._Profile_point(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "comp":
 			out.Values[i] = ec._Profile_comp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "level":
+			out.Values[i] = ec._Profile_level(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "coupon":
+			out.Values[i] = ec._Profile_coupon(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "favorites":
 			out.Values[i] = ec._Profile_favorites(ctx, field, obj)
@@ -6025,15 +7441,52 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Profile_bio(ctx, field, obj)
 		case "socialLinks":
 			out.Values[i] = ec._Profile_socialLinks(ctx, field, obj)
+		case "lastDeposit":
+			out.Values[i] = ec._Profile_lastDeposit(ctx, field, obj)
+		case "lastWithdraw":
+			out.Values[i] = ec._Profile_lastWithdraw(ctx, field, obj)
+		case "orderNum":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Profile_orderNum(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._Profile_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Profile_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Profile_deletedAt(ctx, field, obj)
@@ -6079,6 +7532,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "time":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_time(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "todos":
 			field := field
 
@@ -6155,6 +7627,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_users(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "filterUsers":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_filterUsers(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6305,49 +7799,134 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._User_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._User_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userid":
 			out.Values[i] = ec._User_userid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "phoneVerified":
-			out.Values[i] = ec._User_phoneVerified(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "role":
 			out.Values[i] = ec._User_role(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "usdtAddress":
 			out.Values[i] = ec._User_usdtAddress(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "currentIP":
+			out.Values[i] = ec._User_currentIP(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "IP":
+			out.Values[i] = ec._User_IP(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "profile":
 			out.Values[i] = ec._User_profile(ctx, field, obj)
-		case "lastLoginAt":
-			out.Values[i] = ec._User_lastLoginAt(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._User_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "orderNum":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_orderNum(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._User_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
 			out.Values[i] = ec._User_deletedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var userListImplementors = []string{"UserList"}
+
+func (ec *executionContext) _UserList(ctx context.Context, sel ast.SelectionSet, obj *model.UserList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserList")
+		case "users":
+			out.Values[i] = ec._UserList_users(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._UserList_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6721,6 +8300,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNFilter2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilter(ctx context.Context, v any) (*model.Filter, error) {
+	res, err := ec.unmarshalInputFilter(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
 	res, err := graphql.UnmarshalFloat(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6728,21 +8312,6 @@ func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) 
 
 func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
 	res := graphql.MarshalFloat(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
-	res, err := graphql.UnmarshalID(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
-	res := graphql.MarshalID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6784,6 +8353,11 @@ func (ec *executionContext) marshalNInt2int32(ctx context.Context, sel ast.Selec
 func (ec *executionContext) unmarshalNNewTodo2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewTodo(ctx context.Context, v any) (model.NewTodo, error) {
 	res, err := ec.unmarshalInputNewTodo(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNOrder2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrder(ctx context.Context, v any) (*model.Order, error) {
+	res, err := ec.unmarshalInputOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNProfile2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v models.Profile) graphql.Marshaler {
@@ -6832,6 +8406,27 @@ func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v an
 
 func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
 	res := graphql.MarshalTime(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNTime2ᚖtimeᚐTime(ctx context.Context, v any) (*time.Time, error) {
+	res, err := graphql.UnmarshalTime(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNTime2ᚖtimeᚐTime(ctx context.Context, sel ast.SelectionSet, v *time.Time) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	res := graphql.MarshalTime(*v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6974,6 +8569,20 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbett
 		return graphql.Null
 	}
 	return ec._User(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNUserList2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserList(ctx context.Context, sel ast.SelectionSet, v model.UserList) graphql.Marshaler {
+	return ec._UserList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserList(ctx context.Context, sel ast.SelectionSet, v *model.UserList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserList(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
@@ -7253,6 +8862,24 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx context.Context, v any) ([]*model.Filter, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.Filter, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNFilter2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilter(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
 	if v == nil {
 		return nil, nil
@@ -7266,6 +8893,22 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 		return graphql.Null
 	}
 	res := graphql.MarshalFloat(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOID2ᚖuint(ctx context.Context, v any) (*uint, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalUint(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖuint(ctx context.Context, sel ast.SelectionSet, v *uint) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalUint(*v)
 	return res
 }
 
@@ -7283,6 +8926,64 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	}
 	res := graphql.MarshalInt32(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOOp2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOp(ctx context.Context, v any) (*model.Op, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.Op)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOOp2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOp(ctx context.Context, sel ast.SelectionSet, v *model.Op) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx context.Context, v any) ([]*model.Order, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]*model.Order, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNOrder2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrder(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOOrderDirection2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderDirection(ctx context.Context, v any) (*model.OrderDirection, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.OrderDirection)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOOrderDirection2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderDirection(ctx context.Context, sel ast.SelectionSet, v *model.OrderDirection) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx context.Context, v any) (*model.Pagination, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPagination(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOProfile2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v models.Profile) graphql.Marshaler {

@@ -2,11 +2,13 @@ type User {
   id: ID!
   name: String!
   userid: String!
-  phoneVerified: Boolean!
   role: String!
   usdtAddress: String!
+  currentIP: String!
+  IP: String!
   profile: Profile
-  lastLoginAt: Time
+  status: Boolean!
+  orderNum: Int
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -23,14 +25,20 @@ type Profile {
   birthday: Time
   phone: String
   mobile: String
+  phoneVerified: Boolean!
   balance: Float!
   point: Int!
   comp: Int!
+  level: Int!
+  coupon: Int!
   favorites: String
   referral: String
   avatarUrl: String
   bio: String
   socialLinks: String
+  lastDeposit: Time
+  lastWithdraw: Time
+  orderNum: Int
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -77,4 +85,39 @@ input UpdateProfile {
   currentPassword: String!
   confirmPassword: String
   newPassword: String
+}
+
+input UserFilter {
+  id: ID
+  name: String
+  userid: String
+  role: String
+  currentIP: String
+  IP: String
+  status: Boolean
+}
+
+type UserList {
+  users: [User!]!
+  total: Int!
+}
+
+extend type Query {
+  profile: Profile! @auth
+  me: User! @auth
+
+  users: [User!]! @hasRole(role: ADMIN)
+  filterUsers(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: ADMIN)
+  user(id: ID!): User @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  updateProfile(input: UpdateProfile!): Profile! @auth
+  deleteProfile(id: ID!): Boolean! @auth
+  approveUser(id: ID!): Boolean! @hasRole(role: ADMIN)
+  blockUser(id: ID!): Boolean! @hasRole(role: ADMIN)
 }

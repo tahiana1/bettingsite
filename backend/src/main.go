@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/hotbrainy/go-betting/backend/api/controllers"
 	"github.com/hotbrainy/go-betting/backend/api/router"
 	"github.com/hotbrainy/go-betting/backend/config"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
@@ -33,8 +32,6 @@ func main() {
 	r.Use(cors.Default())
 
 	r.Static("/resources", "./static")
-	r.GET("/ws/info", controllers.Info)
-	r.GET("/ws", controllers.Upgrade)
 	router.GetAPIRoute(r)
 	port := os.Getenv("PORT")
 

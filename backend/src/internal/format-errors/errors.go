@@ -5,19 +5,20 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 	"gorm.io/gorm"
 )
 
-func RecordNotFound(c *gin.Context, err error, errMessage ...string) {
+func NotFound(c *gin.Context, err error, errMessage ...string) {
 	errorMessage := "The record not found"
 	if len(errMessage) > 0 {
 		errorMessage = errMessage[0]
 	}
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error":   errorMessage,
-			"message": err.Error(),
+		c.AbortWithStatusJSON(http.StatusNotFound, responses.Status{
+			Error:   err.Error(),
+			Message: errorMessage,
 		})
 		return
 	}
@@ -26,18 +27,41 @@ func RecordNotFound(c *gin.Context, err error, errMessage ...string) {
 	InternalServerError(c, err)
 }
 
+func ConflictError(c *gin.Context, err error) {
+	c.AbortWithStatusJSON(http.StatusConflict, responses.Status{
+		Error:   err.Error(),
+		Message: "Conflict Error",
+	})
+	return
+}
+func ForbbidenError(c *gin.Context, err error) {
+	c.AbortWithStatusJSON(http.StatusForbidden, responses.Status{
+		Error:   err.Error(),
+		Message: "Forbbiden",
+	})
+	return
+}
+
+func UnauthorizedError(c *gin.Context, err error) {
+	c.AbortWithStatusJSON(http.StatusUnauthorized, responses.Status{
+		Error:   err.Error(),
+		Message: "Unauthorized",
+	})
+	return
+}
+
 func BadRequestError(c *gin.Context, err error) {
-	c.JSON(http.StatusBadRequest, gin.H{
-		"error":   "Bad Request",
-		"message": err.Error(),
+	c.AbortWithStatusJSON(http.StatusBadRequest, responses.Status{
+		Error:   err.Error(),
+		Message: "Bad Request!",
 	})
 	return
 }
 
 func InternalServerError(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, gin.H{
-		"error":   "Internal server error",
-		"message": err.Error(),
+	c.AbortWithStatusJSON(http.StatusInternalServerError, responses.Status{
+		Error:   err.Error(),
+		Message: "Internal Server Error!",
 	})
 	return
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/graph"
 	"github.com/hotbrainy/go-betting/backend/graph/directives"
 	"github.com/hotbrainy/go-betting/backend/graph/generated"
+	"github.com/hotbrainy/go-betting/backend/graph/resolver"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -22,7 +23,7 @@ import (
 
 func GraphqlHandler() gin.HandlerFunc {
 	h := handler.New(generated.NewExecutableSchema(generated.Config{
-		Resolvers: &graph.Resolver{},
+		Resolvers: &resolver.Resolver{},
 		Directives: generated.DirectiveRoot{
 			HasRole: directives.HasRole,
 			Auth:    directives.Auth,

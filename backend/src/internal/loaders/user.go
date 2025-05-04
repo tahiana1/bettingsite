@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	"github.com/hotbrainy/go-betting/backend/graph/model"
+	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"gorm.io/gorm"
 )
@@ -15,7 +18,7 @@ type userReader struct {
 
 func (ur *userReader) getUsers(ctx context.Context, userIDs []uint) ([]*models.User, []error) {
 	var users []*models.User
-	err := ur.db.Where("id IN ?", userIDs).Find(&users).Error
+	err := ur.db.Where("id IN ?", userIDs).Order("order_num").Find(&users).Error
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -37,4 +40,120 @@ func (ur *userReader) getUsers(ctx context.Context, userIDs []uint) ([]*models.U
 		}
 	}
 	return results, errs
+}
+
+// GetProfiles returns many profiles by ids efficiently
+func (ur *userReader) GetUsers(ctx context.Context) ([]*models.User, error) {
+	// loaders := For(ctx)
+	// return loaders.UserLoader.LoadAll(ctx, userIDs)
+
+	var users []*models.User
+	err := initializers.DB.Model(&models.User{}).Preload("Profile").Limit(10).Offset(0).Order("order_num").Find(&users).Error
+
+	return users, err
+}
+
+// GetProfiles returns many profiles by ids efficiently
+func GetUser(ctx context.Context, userID uint) (*models.User, error) {
+	loaders := For(ctx)
+	return loaders.UserLoader.Load(ctx, userID)
+}
+
+// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+func (pr *userReader) ApproveUser(ctx context.Context, userID uint) error {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	fmt.Println(userID)
+
+	me := models.User{}
+
+	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
+		return err
+	}
+	me.Status = true
+
+	tx := initializers.DB.Save(&me)
+
+	return tx.Error
+	// return pr.db.Delete(&models.Profile{}, profileID).Error
+}
+
+// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+func (pr *userReader) BlockUser(ctx context.Context, userID uint) error {
+	fmt.Println(userID)
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	fmt.Println(userID)
+
+	me := models.User{}
+
+	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
+		return err
+	}
+	me.Status = false
+
+	tx := initializers.DB.Save(&me)
+
+	return tx.Error
+}
+
+// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+func (pr *userReader) DeleteUser(ctx context.Context, userID uint) error {
+	fmt.Println(userID)
+	return nil
+	// return pr.db.Delete(&models.Profile{}, profileID).Error
+}
+
+// GetProfiles returns many profiles by ids efficiently
+func (ur *userReader) FilterUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	// loaders := For(ctx)
+	// return loaders.UserLoader.LoadAll(ctx, userIDs)
+	var users []*models.User
+
+	db := ur.db.Model(&models.User{}).Joins("Profile")
+	// Filtering
+
+	db = helpers.ApplyFilters(db, filters)
+
+	q := ur.db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		tx = db
+		return tx.Find(&users)
+	})
+
+	fmt.Println("================q")
+	fmt.Println(q)
+	fmt.Println("================q")
+
+	// Count total
+	var count int64
+	if err := db.Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	// Ordering
+	db = helpers.ApplyOrders(db, orders)
+
+	// Pagination
+
+	db = helpers.ApplyPagination(db, pagination)
+
+	// Query results
+
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return &model.UserList{
+		Users: users,
+		Total: int32(count),
+	}, nil
+	// var users []*models.User
+	// err := initializers.DB.Limit(10).Offset(0).Order("order_num").Find(&users).Error
+
+	// return users, err
 }

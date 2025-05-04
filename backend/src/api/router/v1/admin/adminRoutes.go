@@ -8,6 +8,16 @@ import (
 
 func GetAdminRoute(r *gin.RouterGroup) {
 
+	// User routes
+	authRouter := r.Group("/auth")
+	{
+		authRouter.POST("/signup", controllers.SignUp)
+		authRouter.POST("/login", controllers.Login)
+
+		authRouter.Use(middleware.RequireAdminAuth)
+		authRouter.POST("/logout", controllers.Logout)
+	}
+
 	r.Use(middleware.RequireAdminAuth)
 	userRouter := r.Group("/users")
 	{

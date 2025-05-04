@@ -21,7 +21,10 @@ func RequirePartnerAuth(c *gin.Context) {
 	}
 	if err != nil {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error":   "Unauthorized",
+			"message": "❌ Unauthorized",
+		})
 	}
 
 	// Decode and validate it
@@ -37,21 +40,29 @@ func RequirePartnerAuth(c *gin.Context) {
 	})
 	if err != nil || !token.Valid {
 		fmt.Println("❌ Auth Failed ")
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		c.Abort()
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error":   "Unauthorized",
+			"message": "❌ Unauthorized",
+		})
 		return
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check the expiration time
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "❌ Unauthorized",
+			})
 		}
 
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error":   "Unauthorized",
+				"message": "❌ Unauthorized",
+			})
 		}
 		// Find the user with token sub
 		var user models.User
@@ -60,11 +71,18 @@ func RequirePartnerAuth(c *gin.Context) {
 		if user.ID == 0 {
 			fmt.Println("❌ Auth Failed ")
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "Unauthorized",
+				"error":   "Unauthorized",
+				"message": "❌ Unauthorized",
 			})
 			return
 		}
+		if user.Status != true {
+			c.JSON(http.StatusUnavailableForLegalReasons, gin.H{
+				"error": "You are not allowed!",
+			})
 
+			return
+		}
 		if user.Role == "partner" {
 			// Attach the user to request
 			c.Set("authUser", user)

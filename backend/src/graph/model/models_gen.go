@@ -12,11 +12,17 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
+type Filter struct {
+	Field string `json:"field"`
+	Value string `json:"value"`
+	Op    *Op    `json:"op,omitempty"`
+}
+
 type Mutation struct {
 }
 
 type NewProfile struct {
-	UserID        string     `json:"userId"`
+	UserID        uint       `json:"userId"`
 	Name          string     `json:"name"`
 	Nickname      string     `json:"nickname"`
 	BankName      *string    `json:"bankName,omitempty"`
@@ -40,6 +46,16 @@ type NewTodo struct {
 	UserID string `json:"userId"`
 }
 
+type Order struct {
+	Field     string          `json:"field"`
+	Direction *OrderDirection `json:"direction,omitempty"`
+}
+
+type Pagination struct {
+	Limit  *int32 `json:"limit,omitempty"`
+	Offset *int32 `json:"offset,omitempty"`
+}
+
 type Query struct {
 }
 
@@ -47,7 +63,7 @@ type Subscription struct {
 }
 
 type Todo struct {
-	ID   string       `json:"id"`
+	ID   uint         `json:"id"`
 	Text string       `json:"text"`
 	Done bool         `json:"done"`
 	User *models.User `json:"user"`
@@ -74,6 +90,141 @@ type UpdateProfile struct {
 	CurrentPassword string     `json:"currentPassword"`
 	ConfirmPassword *string    `json:"confirmPassword,omitempty"`
 	NewPassword     *string    `json:"newPassword,omitempty"`
+}
+
+type UserFilter struct {
+	ID        *uint   `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	Userid    *string `json:"userid,omitempty"`
+	Role      *string `json:"role,omitempty"`
+	CurrentIP *string `json:"currentIP,omitempty"`
+	IP        *string `json:"IP,omitempty"`
+	Status    *bool   `json:"status,omitempty"`
+}
+
+type UserList struct {
+	Users []*models.User `json:"users"`
+	Total int32          `json:"total"`
+}
+
+type Op string
+
+const (
+	OpEq   Op = "eq"
+	OpNeq  Op = "neq"
+	OpGt   Op = "gt"
+	OpGte  Op = "gte"
+	OpLt   Op = "lt"
+	OpLte  Op = "lte"
+	OpLike Op = "like"
+)
+
+var AllOp = []Op{
+	OpEq,
+	OpNeq,
+	OpGt,
+	OpGte,
+	OpLt,
+	OpLte,
+	OpLike,
+}
+
+func (e Op) IsValid() bool {
+	switch e {
+	case OpEq, OpNeq, OpGt, OpGte, OpLt, OpLte, OpLike:
+		return true
+	}
+	return false
+}
+
+func (e Op) String() string {
+	return string(e)
+}
+
+func (e *Op) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Op(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Op", str)
+	}
+	return nil
+}
+
+func (e Op) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Op) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Op) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type OrderDirection string
+
+const (
+	OrderDirectionAsc  OrderDirection = "ASC"
+	OrderDirectionDesc OrderDirection = "DESC"
+)
+
+var AllOrderDirection = []OrderDirection{
+	OrderDirectionAsc,
+	OrderDirectionDesc,
+}
+
+func (e OrderDirection) IsValid() bool {
+	switch e {
+	case OrderDirectionAsc, OrderDirectionDesc:
+		return true
+	}
+	return false
+}
+
+func (e OrderDirection) String() string {
+	return string(e)
+}
+
+func (e *OrderDirection) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrderDirection(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrderDirection", str)
+	}
+	return nil
+}
+
+func (e OrderDirection) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *OrderDirection) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e OrderDirection) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Role string

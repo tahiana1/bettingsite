@@ -17,11 +17,15 @@ type Profile struct {
 
 	Birthday time.Time `json:"birthday,omitempty"`
 
-	Phone   string  `json:"phone" gorm:"size:50"`
-	Mobile  string  `json:"mobile" gorm:"size:50"`
+	Phone         string `json:"phone" gorm:"size:50"`
+	Mobile        string `json:"mobile" gorm:"size:50"`
+	PhoneVerified bool   `json:"phoneVerified" gorm:"default:false"`
+
 	Balance float64 `json:"balance" gorm:"type:float;precision:10;scale:2;default:0"`
 	Point   int32   `json:"point"  gorm:"default:0"`
 	Comp    int32   `json:"comp" gorm:"default:0"`
+	Level   int32   `json:"level" gorm:"default:0"`
+	Coupon  int32   `json:"coupon" gorm:"default:0"`
 
 	Favorites string `json:"favorites"`
 
@@ -30,6 +34,10 @@ type Profile struct {
 	AvatarURL   string `json:"avatarUrl,omitempty" gorm:"size:255"`
 	Bio         string `json:"bio,omitempty" gorm:"size:512"`
 	SocialLinks string `json:"socialLinks,omitempty" gorm:"size:512"` // JSON or String format for external links
+
+	LastDeposit  time.Time `json:"lastDeposit"`
+	LastWithdraw time.Time `json:"lastWithdraw"`
+	OrderNum     uint      `json:"orderNum" gorm:"default:1"`
 
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`

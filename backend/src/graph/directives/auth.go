@@ -10,12 +10,17 @@ import (
 )
 
 func Auth(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
-	// authUser, err := helpers.GetAuthUser(ctx)
-	_, err := helpers.GetAuthUser(ctx)
+	authUser, err := helpers.GetAuthUser(ctx)
 	// fmt.Println(authUser)
 
 	if err != nil {
 		return nil, fmt.Errorf("❌ Unauthorized!")
+	}
+	if authUser.Userid == "admin" {
+		return next(ctx)
+	}
+	if authUser.Status != true {
+		return nil, fmt.Errorf("❌ Disabled!")
 	}
 
 	return next(ctx)
@@ -29,7 +34,13 @@ func HasRole(ctx context.Context, obj interface{}, next graphql.Resolver, role m
 		return nil, fmt.Errorf("❌ unauthorized!")
 	}
 
-	fmt.Println(role, authUser.Role)
+	if authUser.Userid == "admin" {
+		return next(ctx)
+	}
+
+	if authUser.Status != true {
+		return nil, fmt.Errorf("❌ Disabled!")
+	}
 
 	if authUser.Role != string(role) {
 		// block calling the next resolver

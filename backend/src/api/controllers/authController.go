@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -12,6 +13,7 @@ import (
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -36,21 +38,16 @@ func SignUp(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		if errs, ok := err.(validator.ValidationErrors); ok {
-			c.JSON(http.StatusUnprocessableEntity, gin.H{
-				"validations": validations.FormatValidationErrors(errs),
-			})
+			format_errors.BadRequestError(c, errs)
 			return
 		}
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		format_errors.BadRequestError(c, err)
 		return
 	}
 
 	// Userid unique validation
 	if validations.IsUniqueValue("users", "userid", userInput.Userid) {
-		c.JSON(http.StatusUnprocessableEntity, "The userid is already exist!")
+		format_errors.ConflictError(c, fmt.Errorf("The userid is already exist!"))
 		return
 	}
 
@@ -58,10 +55,7 @@ func SignUp(c *gin.Context) {
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to hash password",
-		})
-
+		format_errors.ConflictError(c, err)
 		return
 	}
 
@@ -71,6 +65,8 @@ func SignUp(c *gin.Context) {
 		Password:    string(hashPassword),
 		SecPassword: userInput.SecPassword,
 		USDTAddress: userInput.USDTAddress,
+		IP:          c.ClientIP(),
+		CurrentIP:   c.ClientIP(),
 	}
 
 	// Create the user
@@ -103,8 +99,8 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user": user,
+	c.JSON(http.StatusOK, responses.Status{
+		Data: user,
 	})
 }
 
@@ -116,11 +112,8 @@ func Login(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
-	if c.ShouldBindJSON(&userInput) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to read body",
-		})
-
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		format_errors.BadRequestError(c, err)
 		return
 	}
 
@@ -128,20 +121,19 @@ func Login(c *gin.Context) {
 	var user models.User
 	initializers.DB.First(&user, "userid = ?", userInput.Userid)
 	if user.ID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid userid or password 0",
-		})
+		format_errors.NotFound(c, fmt.Errorf("Invalid UserID!"))
+		return
+	}
 
+	if user.Status != true {
+		format_errors.ForbbidenError(c, fmt.Errorf("You are not allowed!"))
 		return
 	}
 
 	// Compare the password with user hashed password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid userid or password",
-		})
-
+		format_errors.UnauthorizedError(c, err)
 		return
 	}
 
@@ -156,17 +148,23 @@ func Login(c *gin.Context) {
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed to create token",
-		})
+		format_errors.BadRequestError(c, err)
 		return
 	}
 
 	// Set expiry time and send the token back
+
 	c.SetSameSite(http.SameSiteLaxMode)
+
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString,
-		"data": user})
+
+	user.CurrentIP = c.ClientIP()
+	initializers.DB.Save(&user)
+	c.JSON(http.StatusOK, responses.Status{
+		Token:   tokenString,
+		Data:    user,
+		Message: "Authorized!",
+	})
 }
 
 // Logout function is used to log out a user
@@ -174,8 +172,8 @@ func Logout(c *gin.Context) {
 	// Clear the cookie
 	c.SetCookie("Authorization", "", 0, "", "", false, true)
 
-	c.JSON(http.StatusOK, gin.H{
-		"successMessage": "Logout successful",
+	c.JSON(http.StatusOK, responses.Status{
+		Message: "Logout successfully.",
 	})
 }
 
@@ -201,23 +199,20 @@ func Me(c *gin.Context) {
 		tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error":   "Failed to create token",
-				"message": err.Error(),
-			})
+			format_errors.BadRequestError(c, err)
 			return
 		}
 
 		// Set expiry time and send the token back
 		c.SetSameSite(http.SameSiteLaxMode)
 		c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
-		c.JSON(http.StatusOK, gin.H{"success": true, "token": tokenString,
-			"data": user})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "Failed to create token",
-			"message": "Unauthorized",
+		c.JSON(http.StatusOK, responses.Status{
+			Token:   tokenString,
+			Data:    user,
+			Message: "Authorized!",
 		})
+	} else {
+		format_errors.UnauthorizedError(c, fmt.Errorf("No user founded!"))
 		return
 	}
 
@@ -233,12 +228,12 @@ func GetMyProfile(c *gin.Context) {
 	}
 	initializers.DB.Model(user).Preload("Profile").Find(user, "userid = ?", user.Userid)
 	if user != nil {
-		c.JSON(http.StatusOK, gin.H{"success": true, "data": user})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "Failed to create token",
-			"message": "Unauthorized",
+		c.JSON(http.StatusOK, responses.Status{
+			Data:    user,
+			Message: "Authorized!",
 		})
+	} else {
+		format_errors.UnauthorizedError(c, fmt.Errorf("User Not Found!"))
 		return
 	}
 
@@ -254,12 +249,12 @@ func UpdateMe(c *gin.Context) {
 	}
 
 	if user != nil {
-		c.JSON(http.StatusOK, gin.H{"success": true, "data": user})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error":   "Failed to create token",
-			"message": "Unauthorized",
+		c.JSON(http.StatusOK, responses.Status{
+			Data:    user,
+			Message: "Authorized!",
 		})
+	} else {
+		format_errors.UnauthorizedError(c, fmt.Errorf("User Not Found!"))
 		return
 	}
 
