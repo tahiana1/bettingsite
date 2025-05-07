@@ -115,7 +115,7 @@ const NotiPage: React.FC = () => {
         id: currentNoti!.id,
         input: update,
       },
-    }).then((res) => {
+    }).then(() => {
       setEditOpen(false);
       refetch(tableOptions);
     });

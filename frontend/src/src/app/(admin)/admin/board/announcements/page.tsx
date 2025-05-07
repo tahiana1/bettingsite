@@ -118,7 +118,7 @@ const AnnouncementPage: React.FC = () => {
         id: currentAnnouncement!.id,
         input: update,
       },
-    }).then((res) => {
+    }).then(() => {
       setEditOpen(false);
       refetch(tableOptions);
     });

@@ -59,7 +59,7 @@ const EventPage: React.FC = () => {
     refetch: refetchDomain,
   } = useQuery(GET_DOMAINS);
 
-  const [updateEvent, { loading: loadingUpdate }] = useMutation(UPDATE_EVENT);
+  const [updateEvent, /* { loading: loadingUpdate } */] = useMutation(UPDATE_EVENT);
   const [createEvent, { loading: loadingCreate }] = useMutation(CREATE_EVENT);
   const [deleteEvent, { loading: loadingDelete }] = useMutation(DELETE_EVENT);
   const [open, setOpen] = useState(false);
@@ -79,7 +79,7 @@ const EventPage: React.FC = () => {
           status: checked,
         },
       },
-    }).then((result) => {
+    }).then(() => {
       refetch(tableOptions);
     });
   };
@@ -129,7 +129,7 @@ const EventPage: React.FC = () => {
         id: currentEvent!.id,
         input: update,
       },
-    }).then((res) => {
+    }).then(() => {
       setEditOpen(false);
       refetch(tableOptions);
     });
