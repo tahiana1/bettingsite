@@ -4,12 +4,23 @@ import Image from "next/image";
 import { Locale } from "@/i18n/config";
 import { setUserLocale } from "@/services/locale";
 import { MenuItemType } from "antd/es/menu/interface";
+
+import "dayjs/locale/en";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/th";
+
 import eNFlag from "@/assets/img/flags/us.svg";
 import cnFlag from "@/assets/img/flags/cn.svg";
 import thFlag from "@/assets/img/flags/th.svg";
+import dayjs from "dayjs";
 
 const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
   const [lang, setLang] = useState(locale);
+  const dayjsLang: { [key: string]: string } = {
+    en: "en",
+    cn: "zh-cn",
+    th: "th",
+  };
   const items: MenuProps["items"] = [
     {
       key: "en",
@@ -33,6 +44,7 @@ const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
   const handleChange = (value: Locale) => {
     setLang(value);
     setUserLocale(value);
+    dayjs.locale(dayjsLang[value]);
   };
 
   return (

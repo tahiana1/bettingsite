@@ -7,14 +7,14 @@ import (
 type Announcement struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 
-	Title    string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
-	Desc     string `json:"desc"`
-	OrderNum uint   `json:"orderNum" gorm:"default:1"`
+	Title       string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
+	Description string `json:"description"`
+	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 
 	UserID uint `json:"userId"`
 	User   User `json:"author" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
-	Active bool `json:"active"`
+	Status bool `json:"status"`
 
 	ShowFrom time.Time `json:"showFrom"`
 	ShowTo   time.Time `json:"showTo"`

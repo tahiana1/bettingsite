@@ -152,6 +152,7 @@ models:
   # integers, or ignore the spec and bind Int to graphql.Int / graphql.Int64
   # (the default behavior of gqlgen). This is fine in simple use cases when you
   # do not need to worry about interoperability and only expect small numbers.
+
   Uint:
     model:
     - github.com/99designs/gqlgen/graphql.Uint
@@ -159,10 +160,12 @@ models:
   Int:
     model:
     - github.com/99designs/gqlgen/graphql.Int32
+
   Int64:
     model:
     - github.com/99designs/gqlgen/graphql.Int
     - github.com/99designs/gqlgen/graphql.Int64
+
   Float:
     model:
     - github.com/99designs/gqlgen/graphql.Float
@@ -182,3 +185,19 @@ models:
   Transaction:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Transaction
+
+  Notification:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Notification
+
+  Event:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Event
+
+  Domain:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Domain
+
+  Announcement:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Announcement

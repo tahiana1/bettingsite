@@ -3,7 +3,7 @@ package responses
 type Market struct {
 	ID           uint   `json:"id"`
 	Name         string `json:"name"`
-	Desc         string `json:"desc"`
+	Description  string `json:"description"`
 	Type         string `json:"type"`
 	Family       int    `json:"family"`
 	ProviderName string `json:"providerName"`

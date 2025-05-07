@@ -158,10 +158,10 @@ func Login(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	c.JSON(http.StatusOK, responses.Status{
-		Token:   tokenString,
-		Data:    user,
-		Desc:    "You logged in as Admin!",
-		Message: "Welcome!",
+		Token:       tokenString,
+		Data:        user,
+		Description: "You logged in as Admin!",
+		Message:     "Welcome!",
 	})
 }
 

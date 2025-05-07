@@ -30,46 +30,43 @@ import { PiPlus } from "react-icons/pi";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
-  CREATE_ANNOUNCEMENT,
-  DELETE_ANNOUNCEMENT,
-  GET_ANNOUNCEMENTS,
-  UPDATE_ANNOUNCEMENT,
-} from "@/actions/announcement";
+  CREATE_NOTI,
+  FILTER_NOTI,
+  UPDATE_NOTI,
+  DELETE_NOTI,
+} from "@/actions/notification";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
-const AnnouncementPage: React.FC = () => {
+const NotiPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [total, setTotal] = useState<number>(0);
-  const [announcements, setAnnouncements] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(GET_ANNOUNCEMENTS);
+  const [notis, setNotis] = useState<any[]>([]);
+  const { loading, data, refetch } = useQuery(FILTER_NOTI);
 
   const [notiAPI, context] = notification.useNotification();
 
-  const [updateAnnouncement, { loading: loadingUpdate }] =
-    useMutation(UPDATE_ANNOUNCEMENT);
-  const [createAnnouncement, { loading: loadingCreate }] =
-    useMutation(CREATE_ANNOUNCEMENT);
-  const [deleteNoti, { loading: loadingDelete }] =
-    useMutation(DELETE_ANNOUNCEMENT);
+  const [updateNoti, { loading: loadingUpdate }] = useMutation(UPDATE_NOTI);
+  const [createNoti, { loading: loadingCreate }] = useMutation(CREATE_NOTI);
+  const [deleteNoti, { loading: loadingDelete }] = useMutation(DELETE_NOTI);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
-  const [currentAnnouncement, setCurrentAnnouncement] = useState<Announcement | null>(null);
+  const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
 
   const showModal = () => {
     setOpen(true);
   };
 
-  const onStatusChange = (ann: Noti, checked: boolean) => {
-    updateAnnouncement({
+  const onStatusChange = (noti: Noti, checked: boolean) => {
+    updateNoti({
       variables: {
-        id: ann.id,
+        id: noti.id,
         input: {
           status: checked,
         },
@@ -79,17 +76,17 @@ const AnnouncementPage: React.FC = () => {
     });
   };
 
-  const onCreate = (ann: Noti) => {
-    console.log("Received values of form: ", ann);
+  const onCreate = (noti: Noti) => {
+    console.log("Received values of form: ", noti);
     const newNoti = {
-      title: ann.title,
-      orderNum: ann.orderNum,
-      description: ann.description,
-      showFrom: ann.duration ? ann.duration[0] : undefined,
-      showTo: ann.duration ? ann.duration[1] : undefined,
-      status: ann.status,
+      title: noti.title,
+      orderNum: noti.orderNum,
+      description: noti.description,
+      showFrom: noti.duration ? noti.duration[0] : undefined,
+      showTo: noti.duration ? noti.duration[1] : undefined,
+      status: noti.status,
     };
-    createAnnouncement({ variables: { input: newNoti } })
+    createNoti({ variables: { input: newNoti } })
       .then((res) => {
         if (res.data?.success) {
         }
@@ -113,9 +110,9 @@ const AnnouncementPage: React.FC = () => {
       orderNum: noti.orderNum,
       status: noti.status,
     };
-    updateAnnouncement({
+    updateNoti({
       variables: {
-        id: currentAnnouncement!.id,
+        id: currentNoti!.id,
         input: update,
       },
     }).then((res) => {
@@ -124,15 +121,15 @@ const AnnouncementPage: React.FC = () => {
     });
   };
 
-  const onEdit = (announce: Announcement) => {
-    console.log("Received values of form: ", announce);
-    announce.duration = [dayjs(announce.showFrom), dayjs(announce.showTo)];
-    setCurrentAnnouncement(announce);
+  const onEdit = (noti: Noti) => {
+    console.log("Received values of form: ", noti);
+    noti.duration = [dayjs(noti.showFrom), dayjs(noti.showTo)];
+    setCurrentNoti(noti);
     setEditOpen(true);
   };
 
   const onCancelEdit = () => {
-    setCurrentAnnouncement(null);
+    setCurrentNoti(null);
     setEditOpen(false);
   };
 
@@ -152,7 +149,7 @@ const AnnouncementPage: React.FC = () => {
       });
   };
 
-  const onChange: TableProps<Announcement>["onChange"] = (
+  const onChange: TableProps<Noti>["onChange"] = (
     pagination,
     filters,
     sorter,
@@ -160,7 +157,7 @@ const AnnouncementPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
-  const columns: TableProps<Announcement>["columns"] = [
+  const columns: TableProps<Noti>["columns"] = [
     {
       title: "ID",
       dataIndex: "id",
@@ -248,8 +245,8 @@ const AnnouncementPage: React.FC = () => {
     },
   ];
   useEffect(() => {
-    setAnnouncements(
-      data?.response?.announcements?.map((u: any) => {
+    setNotis(
+      data?.response?.notifications?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -266,7 +263,7 @@ const AnnouncementPage: React.FC = () => {
       {context}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/announcements")}
+          title={t("admin/menu/notifications")}
           classNames={{
             body: "!p-0",
           }}
@@ -284,10 +281,10 @@ const AnnouncementPage: React.FC = () => {
           {loading ? (
             ""
           ) : (
-            <Table<Announcement>
+            <Table<Noti>
               columns={columns}
               loading={loading}
-              dataSource={announcements ?? []}
+              dataSource={notis ?? []}
               className="w-full"
               size="small"
               scroll={{ x: "max-content" }}
@@ -352,7 +349,7 @@ const AnnouncementPage: React.FC = () => {
             <Form
               name="editForm"
               layout="vertical"
-              initialValues={currentAnnouncement ?? {}}
+              initialValues={currentNoti ?? {}}
               onFinish={onUpdate}
             >
               <Form.Item name="title" label={t("title")}>
@@ -383,4 +380,4 @@ const AnnouncementPage: React.FC = () => {
   );
 };
 
-export default AnnouncementPage;
+export default NotiPage;

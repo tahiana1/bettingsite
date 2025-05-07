@@ -3,14 +3,14 @@
   "home/todaysMatch": "今日比赛",
   "home/title": "Hello world!",
   "home/hideToday": "今天不再显示此对话框。",
-  
+
   "partnerPage": "合作伙伴页面",
-  
+
   "lang/th": "TH ภาษาไทย",
   "lang/cn": "CN 中文",
   "lang/en": "EN English",
   "lang/label": "语言",
-  
+
   "menu/international": "国际",
   "menu/national": "国内",
   "menu/live": "直播",
@@ -22,14 +22,14 @@
   "menu/events": "活动",
   "menu/notifications": "通知",
   "menu/livechat": "客服",
-  
+
   "americanFootball": "美式足球",
   "volleyball": "排球",
-  
+
   "auth/login": "登录",
   "auth/register": "注册",
   "auth/logout": "退出",
-  
+
   "billing/depositRequest": "存款请求",
   "billing/withdrawRequest": "提现请求",
   "billing/depositAmount": "存款金额",
@@ -38,7 +38,7 @@
   "billing/applyDeposit": "申请存款",
   "billing/applyWithdraw": "申请提现",
   "billing/withdrawAmount": "提现金额",
-  
+
   "profile": "我的个人资料",
   "profile/balance": "余额",
   "profile/xp": "XP",
@@ -62,9 +62,24 @@
   "mobile": "手机",
   "tos": "我已阅读本协议。",
   "intro": "简介",
+  "status": "状态",
+  "title": "标题",
+  "desc": "描述",
+  "new": "新的",
+  "edit": "编辑",
+  "action": "动作",
+  "duration": "持续时间",
+  "orderNum": "订单",
+  "showFrom": "显示来自",
+  "showTo": "显示到",
+  "domain": "域名",
+  "level": "级别",
+  "author": "作者",
   
+  "paginationLabel": "{from} - {to}, 总计: {total, plural, =0 {暂无商品} =1 {一件商品} other {# 件商品}}.",
+
   "Recent user deposits and withdrawals": "最近用户存款和取款",
-  
+
   "betting/cart": "投注车",
   "betting/singleMaxBettingAmount": "单注最高投注额",
   "betting/singleMaxWinningAmount": "单注最高赢额",
@@ -73,7 +88,7 @@
   "betting/amount": "投注金额",
   "betting/placeBet": "下注",
   "betting/expectedWinningAmount": "预期赢额",
-  
+
   "admin/menu/administrations": "管理",
   "admin/menu/settlements": "结算",
   "admin/menu/financals": "财务",
@@ -92,23 +107,34 @@
   "admin/menu/partners": "合作伙伴",
   "admin/menu/partnerStatus": "状态",
   "admin/menu/partnerDomain": "域名",
-  
+
   "admin/menu/game": "游戏",
   "admin/menu/sports": "体育",
-  
+
   "admin/menu/board": "公告栏",
   "admin/menu/bulletins": "公告",
   "admin/menu/announcements": "公告",
+  "admin/menu/notifications": "通知",
   "admin/menu/events": "活动",
   "admin/menu/customSupport": "定制支持",
   "admin/menu/p2p": "在线聊天",
   "admin/menu/inbox": "收件箱",
-  
+
   "admin/todayStatistics": "今日统计",
   "admin/todayDepositWithdraw": "今日充值/提现",
-  
+
+  "confirmSure": "您确定吗？",
+  "deleteMessage": "此操作将删除当前项目。",
+  "blockMessage": "此操作将屏蔽当前用户。",
+  "approveMessage": "此操作将允许当前用户。",
+  "lastLogin": "上次登录",
+  "lastDeposit": "上次存款",
+  "createdAt": "创建时间",
+  "updatedAt": "更新时间",
+  "block": "屏蔽",
+  "approve": "批准",
   "submit": "提交",
   "reset": "重置",
   "delete": "删除",
   "deleteAll": "全部删除"
-  }
+}

@@ -1,0 +1,46 @@
+type Domain {
+  id: ID!
+  name: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  user: User!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateDomainInput {
+  name: String
+  description: String
+  status: Boolean
+  orderNum: Uint
+}
+
+input NewDomainInput {
+  name: String!
+  description: String!
+  status: Boolean
+  orderNum: Uint
+}
+
+type DomainList {
+  domains: [Domain!]!
+  total: Int!
+}
+
+extend type Query {
+  domains: [Domain!]
+  getDomains(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): DomainList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createDomain(input: NewDomainInput!): Domain! @hasRole(role: ADMIN)
+  updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
+    @hasRole(role: ADMIN)
+  deleteDomain(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

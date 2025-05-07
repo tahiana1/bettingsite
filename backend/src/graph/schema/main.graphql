@@ -4,6 +4,7 @@
 
 scalar Upload
 scalar Time
+scalar Uint
 
 directive @auth on FIELD_DEFINITION
 

@@ -1,0 +1,54 @@
+type Announcement {
+  id: ID!
+  title: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  user: User!
+  userId: Uint!
+  showFrom: Time
+  showTo: Time
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateAnnouncementInput {
+  title: String
+  description: String
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time
+  showTo: Time
+  level: Uint
+}
+
+input NewAnnouncementInput {
+  title: String!
+  description: String!
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time
+  showTo: Time
+}
+
+type AnnouncementList {
+  announcements: [Announcement!]!
+  total: Int!
+}
+
+extend type Query {
+  getAnnouncements(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): AnnouncementList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createAnnouncement(input: NewAnnouncementInput!): Announcement!
+    @hasRole(role: ADMIN)
+  updateAnnouncement(id: ID!, input: UpdateAnnouncementInput!): Announcement!
+    @hasRole(role: ADMIN)
+  deleteAnnouncement(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

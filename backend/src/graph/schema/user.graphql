@@ -8,7 +8,7 @@ type User {
   IP: String!
   profile: Profile
   status: Boolean!
-  orderNum: Int
+  orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -38,7 +38,7 @@ type Profile {
   socialLinks: String
   lastDeposit: Time
   lastWithdraw: Time
-  orderNum: Int
+  orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -86,16 +86,7 @@ input UpdateProfile {
   confirmPassword: String
   newPassword: String
 }
-
-input UserFilter {
-  id: ID
-  name: String
-  userid: String
-  role: String
-  currentIP: String
-  IP: String
-  status: Boolean
-}
+ 
 
 type UserList {
   users: [User!]!

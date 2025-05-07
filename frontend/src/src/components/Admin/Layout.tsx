@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
- 
+
 import { Refine } from "@refinedev/core";
 
 import { ApolloProvider } from "@apollo/client";
@@ -49,7 +49,8 @@ import { FaFootball, FaUsersGear } from "react-icons/fa6";
 import { MdAnnouncement } from "react-icons/md";
 import { SiDistrokid } from "react-icons/si";
 import { BiDiamond, BiSupport } from "react-icons/bi";
-
+import Image from "next/image";
+import Logo from "@/assets/img/logo.png";
 const { Header, Sider } = Layout;
 
 export default function AdminRootLayout({
@@ -239,6 +240,10 @@ export default function AdminRootLayout({
           label: t("admin/menu/announcements"),
         },
         {
+          key: "admin/board/notifications",
+          label: t("admin/menu/notifications"),
+        },
+        {
           key: "admin/board/events",
           label: t("admin/menu/events"),
         },
@@ -392,7 +397,7 @@ export default function AdminRootLayout({
                       router.push("/admin");
                     }}
                   >
-                    Admin
+                    <Image src={Logo} height={40} alt="Toto Admin" />
                   </div>
 
                   <Menu
@@ -495,7 +500,8 @@ export default function AdminRootLayout({
             </Layout>
           </LayoutContext.Provider>
         </ConfigProvider>
-      </ApolloProvider></Refine>
+      </ApolloProvider>
+    </Refine>
   ) : (
     "LOADING..."
   );

@@ -12,8 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type ctxKey string
-
 // profileReader reads Profiles from a database
 type profileReader struct {
 	db *gorm.DB
@@ -22,8 +20,6 @@ type profileReader struct {
 // getProfiles implements a batch function that can retrieve many profiles by ID,
 // for use in a dataloader
 func (u *profileReader) getProfiles(ctx context.Context, profileIDs []uint) ([]*models.Profile, []error) {
-	fmt.Println("============profileIDs")
-	fmt.Println(profileIDs)
 	var profiles []*models.Profile
 	err := u.db.Where("id IN ?", profileIDs).Find(&profiles).Error
 	if err != nil {
@@ -117,8 +113,6 @@ func (pr *profileReader) UpdateProfile(ctx context.Context, userID uint, updates
 	}
 
 	profile := models.Profile{}
-	fmt.Println("======updates======")
-	fmt.Println(updates)
 	if err := initializers.DB.Model(&profile).First(&profile, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}

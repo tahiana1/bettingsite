@@ -7,10 +7,10 @@ import (
 )
 
 type Notification struct {
-	ID       uint   `json:"id"`
-	Title    string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
-	Desc     string `json:"desc" gorm:"size:200"`
-	OrderNum uint   `json:"orderNum" gorm:"default:1"`
+	ID          uint   `json:"id"`
+	Title       string `json:"title" gorm:"size:100;unique" validate:"required,min=2"`
+	Description string `json:"description" gorm:"size:1200"`
+	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 
 	ShowFrom time.Time `json:"showFrom"`
 	ShowTo   time.Time `json:"showTo"`
@@ -46,9 +46,9 @@ type User struct {
 }
 
 type Status struct {
-	Message string      `json:"message"`
-	Desc    string      `json:"desc"`
-	Token   string      `json:"token"`
-	Data    interface{} `json:"data"`
-	Error   interface{} `json:"error"`
+	Message     string      `json:"message"`
+	Description string      `json:"description"`
+	Token       string      `json:"token"`
+	Data        interface{} `json:"data"`
+	Error       interface{} `json:"error"`
 }

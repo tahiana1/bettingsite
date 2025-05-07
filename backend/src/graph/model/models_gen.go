@@ -12,6 +12,21 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
+type AnnouncementList struct {
+	Announcements []*models.Announcement `json:"announcements"`
+	Total         int32                  `json:"total"`
+}
+
+type DomainList struct {
+	Domains []*models.Domain `json:"domains"`
+	Total   int32            `json:"total"`
+}
+
+type EventList struct {
+	Events []*models.Event `json:"events"`
+	Total  int32           `json:"total"`
+}
+
 type Filter struct {
 	Field string `json:"field"`
 	Value string `json:"value"`
@@ -19,6 +34,43 @@ type Filter struct {
 }
 
 type Mutation struct {
+}
+
+type NewAnnouncementInput struct {
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	ShowFrom    *time.Time `json:"showFrom,omitempty"`
+	ShowTo      *time.Time `json:"showTo,omitempty"`
+}
+
+type NewDomainInput struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Status      *bool  `json:"status,omitempty"`
+	OrderNum    *uint  `json:"orderNum,omitempty"`
+}
+
+type NewEventInput struct {
+	Title       string     `json:"title"`
+	Type        string     `json:"type"`
+	Description string     `json:"description"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	DomainID    *uint      `json:"domainId,omitempty"`
+	Level       *uint      `json:"level,omitempty"`
+	ShowFrom    *time.Time `json:"showFrom,omitempty"`
+	ShowTo      *time.Time `json:"showTo,omitempty"`
+}
+
+type NewNotificationInput struct {
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	Status      *bool     `json:"status,omitempty"`
+	OrderNum    *uint     `json:"orderNum,omitempty"`
+	ShowFrom    time.Time `json:"showFrom"`
+	ShowTo      time.Time `json:"showTo"`
 }
 
 type NewProfile struct {
@@ -46,6 +98,11 @@ type NewTodo struct {
 	UserID string `json:"userId"`
 }
 
+type NotificationList struct {
+	Notifications []*models.Notification `json:"notifications"`
+	Total         int32                  `json:"total"`
+}
+
 type Order struct {
 	Field     string          `json:"field"`
 	Direction *OrderDirection `json:"direction,omitempty"`
@@ -69,6 +126,44 @@ type Todo struct {
 	User *models.User `json:"user"`
 }
 
+type UpdateAnnouncementInput struct {
+	Title       *string    `json:"title,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	ShowFrom    *time.Time `json:"showFrom,omitempty"`
+	ShowTo      *time.Time `json:"showTo,omitempty"`
+	Level       *uint      `json:"level,omitempty"`
+}
+
+type UpdateDomainInput struct {
+	Name        *string `json:"name,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Status      *bool   `json:"status,omitempty"`
+	OrderNum    *uint   `json:"orderNum,omitempty"`
+}
+
+type UpdateEventInput struct {
+	Title       *string    `json:"title,omitempty"`
+	Type        *string    `json:"type,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	DomainID    *uint      `json:"domainId,omitempty"`
+	ShowFrom    *time.Time `json:"showFrom,omitempty"`
+	ShowTo      *time.Time `json:"showTo,omitempty"`
+	Level       *uint      `json:"level,omitempty"`
+}
+
+type UpdateNotificationInput struct {
+	Title       *string    `json:"title,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	ShowFrom    *time.Time `json:"showFrom,omitempty"`
+	ShowTo      *time.Time `json:"showTo,omitempty"`
+}
+
 type UpdateProfile struct {
 	Userid          *string    `json:"userid,omitempty"`
 	Name            *string    `json:"name,omitempty"`
@@ -90,16 +185,6 @@ type UpdateProfile struct {
 	CurrentPassword string     `json:"currentPassword"`
 	ConfirmPassword *string    `json:"confirmPassword,omitempty"`
 	NewPassword     *string    `json:"newPassword,omitempty"`
-}
-
-type UserFilter struct {
-	ID        *uint   `json:"id,omitempty"`
-	Name      *string `json:"name,omitempty"`
-	Userid    *string `json:"userid,omitempty"`
-	Role      *string `json:"role,omitempty"`
-	CurrentIP *string `json:"currentIP,omitempty"`
-	IP        *string `json:"IP,omitempty"`
-	Status    *bool   `json:"status,omitempty"`
 }
 
 type UserList struct {

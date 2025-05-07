@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -14,9 +15,9 @@ import (
 // Get fetch the all sports
 func GetNotifications(c *gin.Context) {
 
-	today := time.Now().Truncate(24 * time.Hour)
+	today := time.Now() //.Truncate(24 * time.Hour)
 	notifications := []responses.Notification{}
-
+	fmt.Println(today)
 	err := initializers.DB.
 		Model(&models.Notification{}).
 		Where("show_from < ?", today).

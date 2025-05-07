@@ -1,0 +1,62 @@
+type Event {
+  id: ID!
+  title: String!
+  type: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  user: User!
+  userId: Uint!
+  domainId: Uint
+  domain: Domain
+  showFrom: Time
+  showTo: Time
+  level: Uint
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateEventInput {
+  title: String
+  type: String
+  description: String
+  status: Boolean
+  orderNum: Uint
+  domainId: Uint
+  showFrom: Time
+  showTo: Time
+  level: Uint
+}
+
+input NewEventInput {
+  title: String!
+  type: String!
+  description: String!
+  status: Boolean
+  orderNum: Uint
+  domainId: Uint
+  level: Uint
+  showFrom: Time
+  showTo: Time
+}
+
+type EventList {
+  events: [Event!]!
+  total: Int!
+}
+
+extend type Query {
+  events: [Event!]
+  getEvents(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): EventList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createEvent(input: NewEventInput!): Event! @hasRole(role: ADMIN)
+  updateEvent(id: ID!, input: UpdateEventInput!): Event! @hasRole(role: ADMIN)
+  deleteEvent(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

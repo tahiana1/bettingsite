@@ -44,4 +44,56 @@ interface User {
   status: boolean;
 }
 
+interface Noti {
+  key: string;
+  id: number;
+  title: string;
+  description: string;
+  showFrom: string | Date | dayjs.Dayjs;
+  showTo: string | Date | dayjs.Dayjs; // ISO string format
+  duration?: (string | Date | dayjs.Dayjs)[];
+  orderNum: number; // ISO string format
+  status: boolean;
+}
 
+interface Domain {
+  key: string;
+  id: number;
+  name: string;
+  description: string;
+  showFrom: string | Date | dayjs.Dayjs;
+  showTo: string | Date | dayjs.Dayjs; // ISO string format
+  orderNum: number; // ISO string format
+  status: boolean;
+}
+
+interface Event {
+  key: string;
+  id: number;
+  title: string;
+  description: string;
+  showFrom: string | Date | dayjs.Dayjs;
+  showTo: string | Date | dayjs.Dayjs; // ISO string format
+  duration?: (string | Date | dayjs.Dayjs)[];
+  orderNum: number; // ISO string format
+  status: boolean;
+  level: number;
+  userId: number;
+  domainId: number;
+  user: User;
+  domain: Domain;
+}
+
+interface Announcement {
+  key: string;
+  id: number;
+  title: string;
+  description: string;
+  showFrom: string | Date | dayjs.Dayjs;
+  showTo: string | Date | dayjs.Dayjs; // ISO string format
+  duration?: (string | Date | dayjs.Dayjs)[];
+  orderNum: number; // ISO string format
+  status: boolean;
+  userId: number;
+  user: User;
+}

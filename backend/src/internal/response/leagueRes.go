@@ -20,11 +20,11 @@ type Nation struct {
 }
 
 type Team struct {
-	ID   uint   `json:"id"`
-	Code string `json:"code" gorm:"size:50;unique"`
-	Name string `json:"name" gorm:"size:100;unique"`
-	Logo string `json:"logo" gorm:"size:200"`
-	Desc string `json:"desc" gorm:"size:1024;default:''"`
+	ID          uint   `json:"id"`
+	Code        string `json:"code" gorm:"size:50;unique"`
+	Name        string `json:"name" gorm:"size:100;unique"`
+	Logo        string `json:"logo" gorm:"size:200"`
+	Description string `json:"description" gorm:"size:1024;default:''"`
 }
 
 type Fixture struct {

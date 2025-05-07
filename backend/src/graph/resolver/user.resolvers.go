@@ -6,10 +6,8 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
-	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
@@ -62,11 +60,6 @@ func (r *mutationResolver) BlockUser(ctx context.Context, id uint) (bool, error)
 		return false, err
 	}
 	return true, nil
-}
-
-// OrderNum is the resolver for the orderNum field.
-func (r *profileResolver) OrderNum(ctx context.Context, obj *models.Profile) (*int32, error) {
-	panic(fmt.Errorf("not implemented: OrderNum - orderNum"))
 }
 
 // Profile is the resolver for the profile field.
@@ -123,17 +116,3 @@ func (r *queryResolver) User(ctx context.Context, id uint) (*models.User, error)
 	}
 	return user, nil
 }
-
-// OrderNum is the resolver for the orderNum field.
-func (r *userResolver) OrderNum(ctx context.Context, obj *models.User) (*int32, error) {
-	panic(fmt.Errorf("not implemented: OrderNum - orderNum"))
-}
-
-// Profile returns generated.ProfileResolver implementation.
-func (r *Resolver) Profile() generated.ProfileResolver { return &profileResolver{r} }
-
-// User returns generated.UserResolver implementation.
-func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
-
-type profileResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }

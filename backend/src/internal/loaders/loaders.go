@@ -10,6 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
+type ctxKey string
+
 const (
 	loadersKey = ctxKey("dataloaders")
 )
@@ -18,13 +20,25 @@ type Loaders struct {
 	ProfileLoader         *dataloadgen.Loader[uint, *models.Profile]
 	ProfileByUserIDLoader *dataloadgen.Loader[uint, *models.Profile]
 	UserLoader            *dataloadgen.Loader[uint, *models.User]
+	NotificationLoader    *dataloadgen.Loader[uint, *models.Notification]
+	EventLoader           *dataloadgen.Loader[uint, *models.Event]
+	DomainLoader          *dataloadgen.Loader[uint, *models.Domain]
+	AnnouncementLoader    *dataloadgen.Loader[uint, *models.Announcement]
 	ProfileReader         *profileReader
 	UserReader            *userReader
+	NotificationReader    *notificationReader
+	EventReader           *eventReader
+	DomainReader          *domainReader
+	AnnouncementReader    *announcementReader
 }
 
 func NewLoaders(db *gorm.DB) *Loaders {
 	pr := &profileReader{db: db}
 	ur := &userReader{db: db}
+	nr := &notificationReader{db: db}
+	er := &eventReader{db: db}
+	dr := &domainReader{db: db}
+	ar := &announcementReader{db: db}
 
 	return &Loaders{
 		ProfileLoader:         dataloadgen.NewLoader(pr.getProfiles, dataloadgen.WithWait(time.Millisecond)),
@@ -32,6 +46,10 @@ func NewLoaders(db *gorm.DB) *Loaders {
 		UserLoader:            dataloadgen.NewLoader(ur.getUsers, dataloadgen.WithWait(time.Millisecond)),
 		ProfileReader:         pr,
 		UserReader:            ur,
+		NotificationReader:    nr,
+		EventReader:           er,
+		DomainReader:          dr,
+		AnnouncementReader:    ar,
 	}
 }
 

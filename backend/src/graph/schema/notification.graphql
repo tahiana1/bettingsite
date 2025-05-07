@@ -1,0 +1,52 @@
+type Notification {
+  id: ID!
+  title: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  showFrom: Time!
+  showTo: Time!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateNotificationInput {
+  title: String
+  description: String
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time
+  showTo: Time
+}
+
+input NewNotificationInput {
+  title: String!
+  description: String!
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time!
+  showTo: Time!
+}
+
+type NotificationList {
+  notifications: [Notification!]!
+  total: Int!
+}
+
+extend type Query {
+  notifications: [Notification!]
+  getNotifications(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): NotificationList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createNotification(input: NewNotificationInput!): Notification!
+    @hasRole(role: ADMIN)
+  updateNotification(id: ID!, input: UpdateNotificationInput!): Notification!
+    @hasRole(role: ADMIN)
+  deleteNotification(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

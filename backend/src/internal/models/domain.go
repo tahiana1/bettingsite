@@ -7,14 +7,14 @@ import (
 type Domain struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 
-	Name     string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
-	Desc     string `json:"desc"`
-	OrderNum uint   `json:"orderNum" gorm:"default:1"`
+	Name        string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
+	Description string `json:"description"`
+	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 
 	UserID uint `json:"userId"`
 	User   User `json:"owner" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
-	Active bool `json:"active"`
+	Status bool `json:"status"`
 
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`

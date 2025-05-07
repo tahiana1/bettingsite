@@ -26,7 +26,6 @@ import { ApolloProvider } from "@apollo/client";
 import client from "@/api/apollo-client-ws";
 
 import LayoutContext from "@/contexts/LayoutContextProvider";
-// import { wsURL } from "@/api";
 
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
@@ -42,6 +41,8 @@ import WebSocketTracker from "./Common/WebSocketTracker";
 import { currentTheme, userState } from "@/state/state";
 import { useAtom } from "jotai";
 import api from "@/api";
+import Logo from "@/assets/img/logo.png";
+import Image from "next/image";
 
 const { Header } = Layout;
 
@@ -203,7 +204,7 @@ export default function RootLayout({
                 }}
               >
                 <Link href={"/"}>
-                  <div className="p-4">Logo</div>
+                  <Image src={Logo} height={40} alt="Toto Admin" />
                 </Link>
                 {/* <Button
                 type="text"

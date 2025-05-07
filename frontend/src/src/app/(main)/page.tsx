@@ -33,6 +33,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useAtom } from "jotai";
 import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
+import dayjs from "dayjs";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -51,23 +52,25 @@ const gridStyle: React.CSSProperties = {
 const Index: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
+  const tk = dayjs().format("YYYYMMDD");
 
   const [notiApi, contextHolder] = notification.useNotification();
 
-  const [noti, setNoti] = useAtom<any[]>(notiState);
+  const [noti, setNoti] = useAtom<any>(notiState);
   const [notifications, setNotififications] = useAtom<any[]>(notificationState);
 
   const onChange = (n: any) => {
-    noti.push(n.id);
-    setNoti([...noti]);
+    const nn = noti[tk] ?? [];
+    nn.push(n.id);
+    setNoti({ ...noti, [tk]: nn });
   };
 
   useEffect(() => {
     notifications.map((n) => {
-      if (noti.indexOf(n.id) == -1) {
+      if ((noti[dayjs().format("YYYYMMDD")] ?? []).indexOf(n.id) == -1) {
         notiApi.info({
           message: n.title,
-          description: n.desc,
+          description: n.description,
           placement: "topLeft",
           actions: [
             <Checkbox onChange={() => onChange(n)} key={n.id}>

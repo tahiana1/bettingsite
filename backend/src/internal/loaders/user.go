@@ -121,15 +121,6 @@ func (ur *userReader) FilterUsers(ctx context.Context, filters []*model.Filter, 
 
 	db = helpers.ApplyFilters(db, filters)
 
-	q := ur.db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-		tx = db
-		return tx.Find(&users)
-	})
-
-	fmt.Println("================q")
-	fmt.Println(q)
-	fmt.Println("================q")
-
 	// Count total
 	var count int64
 	if err := db.Count(&count).Error; err != nil {
