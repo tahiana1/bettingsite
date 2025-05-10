@@ -38,6 +38,11 @@ type InboxList struct {
 	Total   int32           `json:"total"`
 }
 
+type LogList struct {
+	Logs  []*models.Log `json:"logs"`
+	Total int32         `json:"total"`
+}
+
 type MenuList struct {
 	Menus []*models.Menu `json:"menus"`
 	Total int32          `json:"total"`
@@ -82,6 +87,13 @@ type NewInboxInput struct {
 	UserID      uint       `json:"userId"`
 	OrderNum    *uint      `json:"orderNum,omitempty"`
 	OpenedAt    *time.Time `json:"openedAt,omitempty"`
+}
+
+type NewLogInput struct {
+	Data   string `json:"data"`
+	Path   string `json:"path"`
+	IP     string `json:"ip"`
+	Status *bool  `json:"status,omitempty"`
 }
 
 type NewMenuInput struct {

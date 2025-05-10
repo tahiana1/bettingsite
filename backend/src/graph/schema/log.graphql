@@ -34,6 +34,5 @@ extend type Query {
 
 extend type Mutation {
   createLog(input: NewLogInput!): Log! @hasRole(role: ADMIN)
-  updateLog(id: ID!, input: UpdateLogInput!): Log! @hasRole(role: ADMIN)
   deleteLog(id: ID!): Boolean! @hasRole(role: ADMIN)
 }
