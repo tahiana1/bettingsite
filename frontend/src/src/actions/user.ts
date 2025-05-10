@@ -44,7 +44,11 @@ export const FILTER_USERS = gql`
     $orders: [Order!]
     $pagination: Pagination
   ) {
-    filterUsers(filters: $filters, orders: $orders, pagination: $pagination) {
+    response: filterUsers(
+      filters: $filters
+      orders: $orders
+      pagination: $pagination
+    ) {
       users {
         id
         name

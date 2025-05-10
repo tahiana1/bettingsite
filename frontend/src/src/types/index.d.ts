@@ -97,3 +97,33 @@ interface Announcement {
   userId: number;
   user: User;
 }
+
+interface Inbox {
+  key: string;
+  id: number;
+  type: string;
+  title: string;
+  description: string;
+  openedAt: string | Date | dayjs.Dayjs;
+  createdAt: string | Date | dayjs.Dayjs;
+  updatedAt: string | Date | dayjs.Dayjs;
+  orderNum: number; // ISO string format
+  status: boolean;
+  userId: number;
+  user: User;
+  fromId: number;
+  from: User;
+}
+
+interface Menu {
+  key: string;
+  id: number;
+  icon: string;
+  path: string;
+  label: string;
+  description: string;
+  orderNum: number; // ISO string format
+  status: boolean;
+  parentId: number;
+  children: Menu[];
+}

@@ -13,12 +13,14 @@ type Inbox struct {
 	FromID   uint `json:"fromId"`
 	FromUser User `gorm:"foreignKey:FromID"`
 
+	Type string `json:"type" gorm:"size:200"`
+
 	Title       string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
 	Description string `json:"description" gorm:"size:200"`
 	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
+	Status      bool   `json:"status"`
 
-	ShowFrom time.Time `json:"showFrom"`
-	ShowTo   time.Time `json:"showTo"`
+	OpenedAt time.Time `json:"openedAt"`
 
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`

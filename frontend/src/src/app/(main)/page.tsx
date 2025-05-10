@@ -34,6 +34,8 @@ import { useAtom } from "jotai";
 import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
 import dayjs from "dayjs";
+// import { useQuery } from "@apollo/client";
+// import { GET_ANNOUNCEMENTS } from "@/actions/announcement";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -42,17 +44,14 @@ const contentStyle: React.CSSProperties = {
   textAlign: "center",
   background: "#364d79",
 };
-
-const gridStyle: React.CSSProperties = {
-  width: "16.666%",
-  textAlign: "center",
-  padding: 0,
-};
+ 
 
 const Index: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const tk = dayjs().format("YYYYMMDD");
+
+  // const { data, loading, refetch } = useQuery(GET_ANNOUNCEMENTS);
 
   const [notiApi, contextHolder] = notification.useNotification();
 
@@ -81,12 +80,18 @@ const Index: React.FC = () => {
         });
       }
     });
+    return () => {
+      setNotififications([]);
+    };
   }, [notifications]);
 
   useEffect(() => {
     api("common/notifications").then((result) => {
       setNotififications(result.data);
     });
+    return () => {
+      setNotififications([]);
+    };
   }, []);
 
   return (
@@ -101,7 +106,7 @@ const Index: React.FC = () => {
           </Marquee>
         }
       />
-      <Content className="p-4 overflow-y-auto h-[calc(100vh-70px)] w-full">
+      <Content className="p-4 overflow-y-auto h-screen md:h-[calc(100vh-70px)] w-full">
         <Carousel autoplay>
           <div>
             <Image
@@ -143,26 +148,26 @@ const Index: React.FC = () => {
               body: "!px-0",
             }}
           >
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype1} style={{ width: "100%" }} alt="" />
             </Card.Grid>
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype2} style={{ width: "100%" }} alt="" />
             </Card.Grid>
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype3} style={{ width: "100%" }} alt="" />
             </Card.Grid>
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype4} style={{ width: "100%" }} alt="" />
             </Card.Grid>
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype5} style={{ width: "100%" }} alt="" />
             </Card.Grid>
-            <Card.Grid style={gridStyle}>
+            <Card.Grid className="!w-1/2 md:!w-1/6 !p-0">
               <Image src={gtype6} style={{ width: "100%" }} alt="" />
             </Card.Grid>
           </Card>
-          <Space.Compact className="w-full gap-1">
+          <Space.Compact className="w-full gap-2 flex flex-col md:flex-row">
             <Card className="w-full" title="Announcements">
               This is an APEX solution Sample site
             </Card>

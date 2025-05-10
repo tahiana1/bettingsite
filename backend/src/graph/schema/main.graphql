@@ -22,13 +22,22 @@ enum Role {
 }
 
 enum Op {
-  eq # =
-  neq # !=
-  gt # >
-  gte # >=
-  lt # <
-  lte # <=
-  like # ILIKE or LIKE
+  eq         # =
+  neq        # != or <>
+  gt         # >
+  gte        # >=
+  lt         # <
+  lte        # <=
+  in         # IN (...)
+  not_in     # NOT IN (...)
+  like       # LIKE
+  not_like   # NOT LIKE
+  ilike      # ILIKE (PostgreSQL)
+  not_ilike  # NOT ILIKE
+  between    # BETWEEN
+  not_between # NOT BETWEEN
+  is_null    # IS NULL
+  is_not_null # IS NOT NULL
 }
 
 input Pagination {

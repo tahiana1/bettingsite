@@ -42,7 +42,7 @@ export const CREATE_ANNOUNCEMENT = gql`
 `;
 
 export const UPDATE_ANNOUNCEMENT = gql`
-  mutation UpdateNoti($id: ID!, $input: UpdateAnnouncementInput!) {
+  mutation UpdateAnnouncement($id: ID!, $input: UpdateAnnouncementInput!) {
     response: updateAnnouncement(id: $id, input: $input) {
       id
       title

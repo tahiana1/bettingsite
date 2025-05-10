@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
@@ -27,7 +26,8 @@ func (r *mutationResolver) UpdateAnnouncement(ctx context.Context, id uint, inpu
 
 // DeleteAnnouncement is the resolver for the deleteAnnouncement field.
 func (r *mutationResolver) DeleteAnnouncement(ctx context.Context, id uint) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteAnnouncement - deleteAnnouncement"))
+	ldr := loaders.For(ctx)
+	return ldr.AnnouncementReader.DeleteAnnouncement(ctx, id)
 }
 
 // GetAnnouncements is the resolver for the getAnnouncements field.
@@ -35,26 +35,3 @@ func (r *queryResolver) GetAnnouncements(ctx context.Context, filters []*model.F
 	ldr := loaders.For(ctx)
 	return ldr.AnnouncementReader.GetAnnouncements(ctx, filters, orders, pagination)
 }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *announcementResolver) Type(ctx context.Context, obj *models.Announcement) (string, error) {
-	panic(fmt.Errorf("not implemented: Type - type"))
-}
-func (r *announcementResolver) DomainID(ctx context.Context, obj *models.Announcement) (*uint, error) {
-	panic(fmt.Errorf("not implemented: DomainID - domainId"))
-}
-func (r *announcementResolver) Domain(ctx context.Context, obj *models.Announcement) (*models.Domain, error) {
-	panic(fmt.Errorf("not implemented: Domain - domain"))
-}
-func (r *announcementResolver) Level(ctx context.Context, obj *models.Announcement) (*uint, error) {
-	panic(fmt.Errorf("not implemented: Level - level"))
-}
-func (r *Resolver) Announcement() generated.AnnouncementResolver { return &announcementResolver{r} }
-type announcementResolver struct{ *Resolver }
-*/

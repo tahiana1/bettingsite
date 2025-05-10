@@ -1,0 +1,57 @@
+type Inbox {
+  id: ID!
+  type: String!
+  title: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  userId: Uint!
+  user: User!
+  fromId: Uint!
+  from: User!
+  openedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateInboxInput {
+  type: String
+  title: String
+  description: String
+  status: Boolean
+  userId: Uint
+  orderNum: Uint
+  openedAt: Time
+}
+
+input NewInboxInput {
+  type: String
+  title: String!
+  description: String!
+  status: Boolean
+  userId: Uint!
+  orderNum: Uint
+  openedAt: Time
+}
+
+type InboxList {
+  inboxes: [Inbox!]!
+  total: Int!
+}
+
+extend type Query {
+  getInboxes(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): InboxList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createInbox(input: NewInboxInput!): Inbox!
+    @hasRole(role: ADMIN)
+  updateInbox(id: ID!, input: UpdateInboxInput!): Inbox!
+    @hasRole(role: ADMIN)
+  deleteInbox(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

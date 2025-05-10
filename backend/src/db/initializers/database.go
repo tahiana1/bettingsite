@@ -124,6 +124,7 @@ func ConnectDB() {
 		models.Inbox{},
 		models.Notification{},
 		models.Menu{},
+		models.Log{},
 	)
 
 	if err != nil {

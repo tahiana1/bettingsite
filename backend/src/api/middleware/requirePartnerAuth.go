@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
@@ -21,10 +21,7 @@ func RequirePartnerAuth(c *gin.Context) {
 	}
 	if err != nil {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 	}
 
 	// Decode and validate it
@@ -40,29 +37,20 @@ func RequirePartnerAuth(c *gin.Context) {
 	})
 	if err != nil || !token.Valid {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		// Check the expiration time
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		}
 
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		}
 		// Find the user with token sub
 		var user models.User
@@ -70,17 +58,11 @@ func RequirePartnerAuth(c *gin.Context) {
 
 		if user.ID == 0 {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 		if user.Status != true {
-			c.JSON(http.StatusUnavailableForLegalReasons, gin.H{
-				"error": "You are not allowed!",
-			})
-
+			format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 		if user.Role == "partner" {
@@ -93,10 +75,10 @@ func RequirePartnerAuth(c *gin.Context) {
 			c.Next()
 		} else {
 			fmt.Println("❌ Partner Auth Failed ")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		}
 	} else {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 	}
 }

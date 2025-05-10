@@ -33,6 +33,16 @@ type Filter struct {
 	Op    *Op    `json:"op,omitempty"`
 }
 
+type InboxList struct {
+	Inboxes []*models.Inbox `json:"inboxes"`
+	Total   int32           `json:"total"`
+}
+
+type MenuList struct {
+	Menus []*models.Menu `json:"menus"`
+	Total int32          `json:"total"`
+}
+
 type Mutation struct {
 }
 
@@ -62,6 +72,28 @@ type NewEventInput struct {
 	Level       *uint      `json:"level,omitempty"`
 	ShowFrom    *time.Time `json:"showFrom,omitempty"`
 	ShowTo      *time.Time `json:"showTo,omitempty"`
+}
+
+type NewInboxInput struct {
+	Type        *string    `json:"type,omitempty"`
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Status      *bool      `json:"status,omitempty"`
+	UserID      uint       `json:"userId"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	OpenedAt    *time.Time `json:"openedAt,omitempty"`
+}
+
+type NewMenuInput struct {
+	Label       string     `json:"label"`
+	Key         string     `json:"key"`
+	Path        string     `json:"path"`
+	Icon        *string    `json:"icon,omitempty"`
+	ParentID    *uint      `json:"parentId,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Status      *bool      `json:"status,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	OpenedAt    *time.Time `json:"openedAt,omitempty"`
 }
 
 type NewNotificationInput struct {
@@ -155,6 +187,27 @@ type UpdateEventInput struct {
 	Level       *uint      `json:"level,omitempty"`
 }
 
+type UpdateInboxInput struct {
+	Type        *string    `json:"type,omitempty"`
+	Title       *string    `json:"title,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	Status      *bool      `json:"status,omitempty"`
+	UserID      *uint      `json:"userId,omitempty"`
+	OrderNum    *uint      `json:"orderNum,omitempty"`
+	OpenedAt    *time.Time `json:"openedAt,omitempty"`
+}
+
+type UpdateMenuInput struct {
+	Label       *string `json:"label,omitempty"`
+	Key         *string `json:"key,omitempty"`
+	Icon        *string `json:"icon,omitempty"`
+	Path        *string `json:"path,omitempty"`
+	ParentID    *uint   `json:"parentId,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Status      *bool   `json:"status,omitempty"`
+	OrderNum    *uint   `json:"orderNum,omitempty"`
+}
+
 type UpdateNotificationInput struct {
 	Title       *string    `json:"title,omitempty"`
 	Description *string    `json:"description,omitempty"`
@@ -195,13 +248,22 @@ type UserList struct {
 type Op string
 
 const (
-	OpEq   Op = "eq"
-	OpNeq  Op = "neq"
-	OpGt   Op = "gt"
-	OpGte  Op = "gte"
-	OpLt   Op = "lt"
-	OpLte  Op = "lte"
-	OpLike Op = "like"
+	OpEq         Op = "eq"
+	OpNeq        Op = "neq"
+	OpGt         Op = "gt"
+	OpGte        Op = "gte"
+	OpLt         Op = "lt"
+	OpLte        Op = "lte"
+	OpIn         Op = "in"
+	OpNotIn      Op = "not_in"
+	OpLike       Op = "like"
+	OpNotLike    Op = "not_like"
+	OpIlike      Op = "ilike"
+	OpNotIlike   Op = "not_ilike"
+	OpBetween    Op = "between"
+	OpNotBetween Op = "not_between"
+	OpIsNull     Op = "is_null"
+	OpIsNotNull  Op = "is_not_null"
 )
 
 var AllOp = []Op{
@@ -211,12 +273,21 @@ var AllOp = []Op{
 	OpGte,
 	OpLt,
 	OpLte,
+	OpIn,
+	OpNotIn,
 	OpLike,
+	OpNotLike,
+	OpIlike,
+	OpNotIlike,
+	OpBetween,
+	OpNotBetween,
+	OpIsNull,
+	OpIsNotNull,
 }
 
 func (e Op) IsValid() bool {
 	switch e {
-	case OpEq, OpNeq, OpGt, OpGte, OpLt, OpLte, OpLike:
+	case OpEq, OpNeq, OpGt, OpGte, OpLt, OpLte, OpIn, OpNotIn, OpLike, OpNotLike, OpIlike, OpNotIlike, OpBetween, OpNotBetween, OpIsNull, OpIsNotNull:
 		return true
 	}
 	return false

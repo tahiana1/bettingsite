@@ -201,3 +201,15 @@ models:
   Announcement:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Announcement
+
+  Inbox:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Inbox
+
+  Menu:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Menu
+
+  Log:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Log

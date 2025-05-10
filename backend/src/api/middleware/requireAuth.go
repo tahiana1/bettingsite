@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
@@ -18,10 +18,7 @@ func RequireAuth(c *gin.Context) {
 	t := c.GetHeader("Authorization")
 	if tokenString == "" && t == "" {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 
@@ -39,10 +36,7 @@ func RequireAuth(c *gin.Context) {
 	})
 	if err != nil || !token.Valid {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -50,20 +44,14 @@ func RequireAuth(c *gin.Context) {
 		fmt.Println(c.ClientIP(), claims)
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized!",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 		// Find the user with token sub
@@ -72,19 +60,13 @@ func RequireAuth(c *gin.Context) {
 
 		if user.ID == 0 {
 			fmt.Println("❌ Auth Failed ")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 
 		if user.Userid != "admin" {
 			if user.Status != true {
-				c.AbortWithStatusJSON(http.StatusUnavailableForLegalReasons, gin.H{
-					"error":   "You are not allowed!",
-					"message": "❌ Unauthorized",
-				})
+				format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 
 				return
 			}
@@ -98,7 +80,7 @@ func RequireAuth(c *gin.Context) {
 		c.Next()
 	} else {
 		fmt.Println("❌ Auth Failed ")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 }

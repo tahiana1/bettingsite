@@ -1,0 +1,60 @@
+type Menu {
+  id: ID!
+  path: String!
+  label: String!
+  key: String!
+  icon: String
+  description: String
+  status: Boolean
+  parentId: Uint
+  children: [Menu!]
+  orderNum: Uint
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input UpdateMenuInput {
+  label: String
+  key: String
+  icon: String
+  path: String
+  parentId: Uint
+  description: String
+  status: Boolean
+  orderNum: Uint
+}
+
+input NewMenuInput {
+  label: String!
+  key: String!
+  path: String!
+  icon: String
+  parentId: Uint
+  description: String
+  status: Boolean
+  orderNum: Uint
+  openedAt: Time
+}
+
+type MenuList {
+  menus: [Menu!]!
+  total: Int!
+}
+
+extend type Query {
+  getUserMenus: [Menu]!
+  getMenus(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): MenuList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createMenu(input: NewMenuInput!): Menu!
+    @hasRole(role: ADMIN)
+  updateMenu(id: ID!, input: UpdateMenuInput!): Menu!
+    @hasRole(role: ADMIN)
+  deleteMenu(id: ID!): Boolean! @hasRole(role: ADMIN)
+}

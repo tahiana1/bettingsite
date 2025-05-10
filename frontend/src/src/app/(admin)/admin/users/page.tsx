@@ -13,6 +13,7 @@ import {
   Input,
   DatePicker,
   Radio,
+  Select,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -24,7 +25,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
-
+import { RxLetterCaseToggle } from "react-icons/rx";
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
@@ -132,6 +133,12 @@ const UserPage: React.FC = () => {
           <Input className="w-full" />
         </FilterDropdown>
       ),
+    },
+    {
+      title: t("site"),
+      dataIndex: "site",
+      key: "site",
+      render: (text) => text ?? "site",
     },
     {
       title: t("nickname"),
@@ -266,7 +273,7 @@ const UserPage: React.FC = () => {
         <FilterDropdown {...props}>
           <Radio.Group className="!w-full !flex flex-col">
             {props.filters?.map((f, i) => (
-              <Radio key={i } value={f.value}>
+              <Radio key={i} value={f.value}>
                 {f.text}
               </Radio>
             ))}
@@ -391,13 +398,13 @@ const UserPage: React.FC = () => {
       .then((res) => {
         console.log({ res });
         setUsers(
-          res.data?.filterUsers.users?.map((u: any) => {
+          res.data?.response?.users?.map((u: any) => {
             console.log({ u });
             // u.key = u.id;
             return { ...u, key: u.id };
           }) ?? []
         );
-        setTotal(res.data?.filterUsers.total);
+        setTotal(res.data?.response?.total);
       })
       .catch((err) => {
         console.log({ err });
@@ -412,6 +419,216 @@ const UserPage: React.FC = () => {
             body: "!p-0",
           }}
         >
+          <Space className="p-2 !w-full" direction="vertical">
+            <Radio.Group
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: "All",
+                  value: "",
+                },
+                {
+                  label: "Site",
+                  value: "site",
+                },
+              ]}
+              defaultValue={""}
+            />
+            <Space wrap>
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "Mem",
+                    value: "member",
+                  },
+                  {
+                    label: "Dist",
+                    value: "dist",
+                  },
+                  {
+                    label: "Mem + Dist",
+                    value: "",
+                  },
+                ]}
+                defaultValue={""}
+              />
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "All",
+                    value: "",
+                  },
+                  {
+                    label: "Referral O",
+                    value: true,
+                  },
+                  {
+                    label: "Referral X",
+                    value: false,
+                  },
+                ]}
+                defaultValue={""}
+              />
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "All",
+                    value: "",
+                  },
+                  {
+                    label: "Black Memo O",
+                    value: true,
+                  },
+                  {
+                    label: "Black Memo X",
+                    value: false,
+                  },
+                ]}
+                defaultValue={""}
+              />
+
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "All",
+                    value: "",
+                  },
+                  {
+                    label: "General",
+                    value: "general",
+                  },
+                  {
+                    label: "Test",
+                    value: "test",
+                  },
+                  {
+                    label: "Interest",
+                    value: "interest",
+                  },
+                  {
+                    label: "Working",
+                    value: "work",
+                  },
+                ]}
+                defaultValue={""}
+              />
+              <Radio.Group
+                className="flex-nowrap"
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "All",
+                    value: "",
+                  },
+                  {
+                    label: "Withdrawn",
+                    value: "withdrawn",
+                  },
+                  {
+                    label: "Approved",
+                    value: "approved",
+                  },
+                  {
+                    label: "Suspened",
+                    value: "suspended",
+                  },
+                  {
+                    label: "Deleted",
+                    value: "deleted",
+                  },
+                  {
+                    label: "Blocked",
+                    value: "blocked",
+                  },
+                  {
+                    label: "Inactive",
+                    value: "inactive",
+                  },
+                ]}
+                defaultValue={""}
+              />
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: "All",
+                    value: "",
+                  },
+                  {
+                    label: "Reg IP",
+                    value: true,
+                  },
+                  {
+                    label: "Duplicated IP",
+                    value: false,
+                  },
+                ]}
+                defaultValue={""}
+              />
+            </Space>
+            <Space className="!w-full justify-between">
+              <Select
+                size="small"
+                placeholder="select dist"
+                className="min-w-28"
+              />
+              <Select
+                size="small"
+                placeholder="By Color"
+                className="min-w-28"
+              />
+              <Select
+                size="small"
+                placeholder="By Level"
+                className="min-w-28"
+              />
+              <DatePicker.RangePicker size="small" />
+              <Input.Search
+                size="small"
+                placeholder="ID,Nickname,Account Holder,Phone Number"
+                suffix={
+                  <Button
+                    size="small"
+                    type="text"
+                    icon={<RxLetterCaseToggle />}
+                  />
+                }
+                enterButton="Search"
+              />
+              <Space className="!w-full"></Space>
+              <Space.Compact className="gap-1">
+                <Button size="small" type="primary">
+                  Reset all Coupon
+                </Button>
+                <Button size="small" type="primary">
+                  Change Color in batches
+                </Button>
+                <Button size="small" type="primary">
+                  Change Password in bulk
+                </Button>
+                <Button size="small" type="primary">
+                  Point multi-payment
+                </Button>
+              </Space.Compact>
+            </Space>
+          </Space>
           <Table<User>
             columns={columns}
             loading={loading}
@@ -429,7 +646,6 @@ const UserPage: React.FC = () => {
               pageSizeOptions: [10, 20, 50],
             }}
           />
-          {/* <pre> {JSON.stringify(users, null, 2)}</pre> */}
         </Card>
       </Content>
     </Layout>

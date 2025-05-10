@@ -28,37 +28,38 @@ export default function RootLayout({
       <Splitter className="shadow">
         <Splitter.Panel
           defaultSize="20%"
-          min="20%"
           max="40%"
           style={{
             scrollbarWidth: "inherit",
           }}
-          className="!pr-2 h-[calc(100vh-40px)]"
+          className="!pr-2 h-[calc(100vh-40px)] hidden md:block"
           collapsible
         >
           <EventSidebar />
         </Splitter.Panel>
         <Splitter.Panel
-          defaultSize="60%"
+          defaultSize="80%"
           style={{
             scrollbarWidth: "inherit",
           }}
+          className="!basis-full"
         >
-          {children}
-        </Splitter.Panel>
-        <Splitter.Panel
-          style={{
-            scrollbarWidth: "inherit",
-          }}
-          defaultSize="20%"
-          min="20%"
-          max="40%"
-          className="h-[calc(100vh-40px)]"
-          collapsible={true}
-        >
-          <ProfileCard />
+          <div className="flex">
+            <div className="w-full md:w-3/4">{children}</div>
+            <div
+              style={{
+                scrollbarWidth: "inherit",
+              }}
+              // defaultSize="20%"
+              // max="40%"
+              className="w-1/4 h-[calc(100vh-40px)] hidden md:block"
+              // collapsible
+            >
+              <ProfileCard />
 
-          <ContactCard />
+              <ContactCard />
+            </div>
+          </div>
         </Splitter.Panel>
       </Splitter>
     </Layout>

@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
@@ -19,10 +19,7 @@ func RequireAdminAuth(c *gin.Context) {
 	t := c.GetHeader("Authorization")
 	if tokenString == "" && t == "" {
 		fmt.Println("❌ Unauthorized")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 
@@ -41,10 +38,7 @@ func RequireAdminAuth(c *gin.Context) {
 	})
 	if err != nil || !token.Valid {
 		fmt.Println("❌ Unauthorized")
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error":   "Unauthorized",
-			"message": "❌ Unauthorized",
-		})
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		return
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -52,16 +46,13 @@ func RequireAdminAuth(c *gin.Context) {
 		fmt.Println(c.ClientIP(), claims)
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			fmt.Println("❌ Unauthorized")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		}
 
 		// Check the expiration time
 		if c.ClientIP() != claims["ip"] {
 			fmt.Println("❌ Unauthorized")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "❌ Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 		}
 		// Find the user with token sub
 		var user models.User
@@ -69,20 +60,13 @@ func RequireAdminAuth(c *gin.Context) {
 
 		if user.ID == 0 {
 			fmt.Println("❌ Unauthorized")
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error":   "Unauthorized",
-				"message": "❌ Unauthorized",
-			})
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
 
 		if user.Userid != "admin" {
 			if user.Status != true {
-				c.AbortWithStatusJSON(http.StatusUnavailableForLegalReasons, gin.H{
-					"error":   "You are not allowed!",
-					"message": "❌ You are not allowed!",
-				})
-
+				format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 				return
 			}
 		}
@@ -97,10 +81,12 @@ func RequireAdminAuth(c *gin.Context) {
 			c.Next()
 		} else {
 			fmt.Println("❌ Admin Unauthorized")
-			c.AbortWithStatus(http.StatusUnauthorized)
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+			return
 		}
 	} else {
 		fmt.Println("❌ Unauthorized")
-		c.AbortWithStatus(http.StatusUnauthorized)
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
 	}
 }

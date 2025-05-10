@@ -48,7 +48,7 @@ func (r *subscriptionResolver) Time(ctx context.Context) (<-chan string, error) 
 	ch := make(chan string)
 
 	go func() {
-		ticker := time.NewTicker(60 * time.Second)
+		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
 		defer close(ch)
 

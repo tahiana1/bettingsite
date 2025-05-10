@@ -18,7 +18,7 @@ import {
   Dropdown,
   Space,
   notification,
-  Breadcrumb,
+  Breadcrumb, 
 } from "antd";
 import { List, MenuProps } from "antd";
 
@@ -49,8 +49,10 @@ import { FaFootball, FaUsersGear } from "react-icons/fa6";
 import { MdAnnouncement } from "react-icons/md";
 import { SiDistrokid } from "react-icons/si";
 import { BiDiamond, BiSupport } from "react-icons/bi";
+
 import Image from "next/image";
 import Logo from "@/assets/img/logo.png";
+ 
 const { Header, Sider } = Layout;
 
 export default function AdminRootLayout({
@@ -76,6 +78,87 @@ export default function AdminRootLayout({
 
   const [currentUser, setUser] = useAtom<any>(userState);
 
+  const [data] = useState<
+    { label: string; value: number; color?: string }[]
+  >([
+    {
+      label: "Honor Link",
+      value: 2321,
+      color: "cyan",
+    },
+    {
+      label: "Deposit today",
+      value: 0,
+      color: "lightgreen",
+    },
+    {
+      label: "Withdrawl today",
+      value: 0,
+      color: "tomato",
+    },
+    {
+      label: "Betting today",
+      value: 23210,
+      color: "lightgreen",
+    },
+    {
+      label: "Today's winner",
+      value: 23212,
+      color: "yellow",
+    },
+    {
+      label: "User ammount",
+      value: 2321234,
+      color: "tomato",
+    },
+    {
+      label: "User Points",
+      value: 2322321,
+      color: "lightgreen",
+    },
+    {
+      label: "Total amount of distribution reserves",
+      value: 94232321,
+      color: "yellow",
+    },
+    {
+      label: "Total points",
+      value: 832321,
+      color: "yellow",
+    },
+    {
+      label: "Total loss",
+      value: 4222321,
+      color: "yellow",
+    },
+    {
+      label: "Rolling the total",
+      value: 200232321,
+      color: "yellow",
+    },
+    {
+      label: "Total sales loss today",
+      value: 0,
+      color: "tomato",
+    },
+    {
+      label: "Today's distribution rolling",
+      value: 0,
+      color: "tomato",
+    },
+    {
+      label: "Sports Pending Betting",
+      value: 0,
+      color: "lightgreen",
+    },
+
+    {
+      label: "Sports Rebate Betting",
+      value: 0,
+      color: "lightgreen",
+    },
+  ]);
+
   const onLogout = () => {
     api("auth/logout", { method: "POST" }).then(() => {
       setUser({});
@@ -83,7 +166,27 @@ export default function AdminRootLayout({
       router.push(ROUTES.admin.login);
     });
   };
+
   const sideBarItems: MenuProps["items"] = [
+    {
+      key: "home",
+      label: (
+        <List
+          className="!text-white"
+          header={"Home"}
+          dataSource={data}
+          renderItem={(item: any) => {
+            return (
+              <List.Item className={`!p-0 flex justify-between !items-end`}>
+                <div style={{ color: item.color }}>{item.label}</div>
+                <div style={{ color: item.color }}>{item.value}</div>
+              </List.Item>
+            );
+          }}
+        />
+      ),
+      type: "group",
+    },
     {
       key: "manage",
       label: t("admin/menu/administrations"),
@@ -270,11 +373,7 @@ export default function AdminRootLayout({
       icon: <InboxOutlined />,
       children: [
         {
-          key: "admin/inbox/p2p",
-          label: t("admin/menu/inbox"),
-        },
-        {
-          key: "admin/inbox/events",
+          key: "admin/inbox/custom",
           label: t("admin/menu/inbox"),
         },
       ],
@@ -299,6 +398,7 @@ export default function AdminRootLayout({
       onClick: onLogout,
     },
   ];
+
   const onThemeChange = () => {
     if (!isDarkTheme) {
       document.documentElement.classList.add("dark");
@@ -309,7 +409,6 @@ export default function AdminRootLayout({
   };
   const onMenuClick = (e: MenuInfo) => {
     setSelectedkeys(e.keyPath);
-    console.log({ e });
     router.push("/" + e.key);
     // router.push("/" + e.keyPath.reverse().join("/"));
   };
@@ -329,7 +428,6 @@ export default function AdminRootLayout({
             description: "You are not able to access to Admin page!",
           });
         }
-        console.log({ result });
         localStorage.setItem("token", result.token);
       })
       .catch((err) => {
@@ -400,32 +498,6 @@ export default function AdminRootLayout({
                     <Image src={Logo} height={40} alt="Toto Admin" />
                   </div>
 
-                  <Menu
-                    theme="dark"
-                    mode="inline"
-                    items={[
-                      {
-                        key: "manage",
-                        label: (
-                          <List
-                            className="!text-white"
-                            header={"Home"}
-                            dataSource={[1, 2, 3]}
-                            renderItem={(item: any) => {
-                              return (
-                                <List.Item className="!p-0 flex justify-between !text-white">
-                                  <div>my value</div>
-                                  <div>{122 * item * item * item * item}</div>
-                                </List.Item>
-                              );
-                            }}
-                          />
-                        ),
-                        type: "group",
-                      },
-                    ]}
-                    onClick={onMenuClick}
-                  />
                   <Menu
                     theme="dark"
                     mode="inline"

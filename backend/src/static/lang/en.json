@@ -74,6 +74,7 @@
   "admin/menu/partners": "Partners",
   "admin/menu/partnerStatus": "Status",
   "admin/menu/partnerDomain": "Domain",
+  "admin/menu/menu": "Menu",
 
   "admin/menu/game": "Game",
   "admin/menu/sports": "Sports",
@@ -129,7 +130,11 @@
   "showTo": "Show To",
   "domain": "Domain",
   "author": "Author",
-
+  "openedAt": "Opened At",
+  "recipient": "Recipient",
+  "label": "Label",
+  "icon": "Icon",
+  
   "paginationLabel": "{from} - {to}, Total: {total, plural, =0 {No items yet} =1 {One item} other {# items}}.",
   "confirmSure": "Are you sure?",
   "deleteMessage": "This action will delete the current item.",

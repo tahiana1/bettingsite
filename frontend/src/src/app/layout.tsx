@@ -6,6 +6,7 @@ import { getLocale } from "next-intl/server";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 import localFont from "next/font/local";
+import "@/styles/icomoon.css";
 import "@/styles/globals.css";
 import "@ant-design/v5-patch-for-react-19";
 import { ConfigProvider } from "antd";

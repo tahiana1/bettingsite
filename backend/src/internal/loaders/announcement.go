@@ -205,11 +205,14 @@ func (er *announcementReader) UpdateAnnouncement(ctx context.Context, nID uint, 
 }
 
 // DeleteAnnouncement deletes a announcement by ID (soft delete if GORM soft delete is enabled)
-func (er *announcementReader) DeleteAnnouncement(ctx context.Context, nid uint) error {
+func (er *announcementReader) DeleteAnnouncement(ctx context.Context, aid uint) (bool, error) {
 	n := &models.Announcement{}
-	err := er.db.Model(&models.Announcement{}).First(&n, nid).Error
+	err := er.db.Model(&models.Announcement{}).First(&n, aid).Error
 	if err != nil {
-		return err
+		return false, err
 	}
-	return er.db.Delete(&models.Announcement{}, nid).Error
+	if err := er.db.Delete(&models.Announcement{}, aid).Error; err != nil {
+		return false, err
+	}
+	return true, nil
 }

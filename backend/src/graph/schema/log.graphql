@@ -1,0 +1,39 @@
+type Log {
+  id: ID!
+  data: String!
+  path: String!
+  ip: String!
+  userId: Uint
+  user: User!
+  status: Boolean
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: Time
+}
+
+input NewLogInput {
+  data: String!
+  path: String!
+  ip: String!
+  status: Boolean
+}
+
+type LogList {
+  logs: [Log!]!
+  total: Int!
+}
+
+extend type Query {
+  logs: [Log!]
+  getLogs(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): LogList! @hasRole(role: ADMIN)
+}
+
+extend type Mutation {
+  createLog(input: NewLogInput!): Log! @hasRole(role: ADMIN)
+  updateLog(id: ID!, input: UpdateLogInput!): Log! @hasRole(role: ADMIN)
+  deleteLog(id: ID!): Boolean! @hasRole(role: ADMIN)
+}
