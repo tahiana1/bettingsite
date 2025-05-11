@@ -80,9 +80,9 @@ const Index: React.FC = () => {
         });
       }
     });
-    return () => {
-      setNotififications([]);
-    };
+    // return () => {
+      // setNotififications([]);
+    // };
   }, [notifications]);
 
   useEffect(() => {

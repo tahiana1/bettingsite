@@ -34,7 +34,7 @@ const Head = () => {
 
   const t = useTranslations();
   const locale = useLocale();
-
+  console.log({ locale });
   const [selectedkeys, setSelectedkeys] = useState<string[]>(["home"]);
   const [isDarkTheme, setDarkTheme] = useAtom<boolean>(currentTheme);
   const [menu, setMenu] = useState<any[]>([]);
@@ -109,11 +109,12 @@ const Head = () => {
       setMenu(
         data.response.map((m: Menu) => ({
           ...m,
+          label: t(m.label.toLowerCase()),
           icon: <span className={"icon-" + m.icon}></span>,
         })) ?? []
       );
     }
-  }, [data]);
+  }, [data, locale]);
   return (
     <>
       <Header
