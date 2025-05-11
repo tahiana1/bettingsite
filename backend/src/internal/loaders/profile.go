@@ -104,22 +104,40 @@ func (pr *profileReader) UpdateProfile(ctx context.Context, userID uint, updates
 	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
 		return nil, err
 	}
-	pwd, _ := bcrypt.GenerateFromPassword([]byte(updates.CurrentPassword), 10)
-	fmt.Println(string(pwd))
-	// Compare the password with user hashed password
-	err := bcrypt.CompareHashAndPassword([]byte(me.Password), []byte(updates.CurrentPassword))
-	if err != nil {
-		return nil, err
-	}
+	// pwd, _ := bcrypt.GenerateFromPassword([]byte(updates.CurrentPassword), 10)
+	// fmt.Println(string(pwd))
+	// // Compare the password with user hashed password
+	// err := bcrypt.CompareHashAndPassword([]byte(me.Password), []byte(updates.CurrentPassword))
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	profile := models.Profile{}
 	if err := initializers.DB.Model(&profile).First(&profile, "user_id = ?", userID).Error; err != nil {
 		return nil, err
 	}
-	profile.AccountNumber = *updates.AccountNumber
-	profile.Nickname = *updates.Nickname
-	profile.BankName = *updates.BankName
-	profile.Phone = *updates.Phone
+
+	if updates.AccountNumber != nil {
+		profile.AccountNumber = *updates.AccountNumber
+	}
+
+	if updates.Nickname != nil {
+		profile.Nickname = *updates.Nickname
+	}
+
+	if updates.BankName != nil {
+		profile.BankName = *updates.BankName
+
+	}
+
+	if updates.Phone != nil {
+		profile.Phone = *updates.Phone
+	}
+
+	if updates.Level != nil {
+		profile.Level = *updates.Level
+	}
+
 	pr.db.Save(profile)
 
 	fmt.Println(updates.NewPassword)

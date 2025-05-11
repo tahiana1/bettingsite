@@ -112,21 +112,36 @@ func Login(c *gin.Context) {
 		Password string `json:"password" binding:"required"`
 	}
 
+	l := &models.Log{}
+	l.IP = c.ClientIP()
+	l.Type = "L"
+
+	l.Path = c.Request.URL.Path
+
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		format_errors.BadRequestError(c, err)
+		l.Data = err.Error()
+		l.Status = "error"
+		initializers.DB.Save(l)
 		return
 	}
 
 	// Find the user by userid
 	var user models.User
-	initializers.DB.First(&user, "userid = ?", userInput.Userid)
+	initializers.DB.First(&user, "userid = ?", userInput.Userid).Preload("Profile")
 	if user.ID == 0 {
 		format_errors.NotFound(c, fmt.Errorf("Invalid UserID!"))
+		l.Data = "Invalid UserID!"
+		l.Status = "error"
+		initializers.DB.Save(l)
 		return
 	}
 
-	if user.Status != true {
+	if user.Status != "A" {
 		format_errors.ForbbidenError(c, fmt.Errorf("You are not allowed!"))
+		l.Data = "You are not allowed!"
+		l.Status = "error"
+		initializers.DB.Save(l)
 		return
 	}
 
@@ -134,6 +149,9 @@ func Login(c *gin.Context) {
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {
 		format_errors.UnauthorizedError(c, err)
+		l.Data = err.Error()
+		l.Status = "error"
+		initializers.DB.Save(l)
 		return
 	}
 
@@ -149,6 +167,9 @@ func Login(c *gin.Context) {
 
 	if err != nil {
 		format_errors.BadRequestError(c, err)
+		l.Data = err.Error()
+		l.Status = "error"
+		initializers.DB.Save(l)
 		return
 	}
 
@@ -160,6 +181,12 @@ func Login(c *gin.Context) {
 
 	user.CurrentIP = c.ClientIP()
 	initializers.DB.Save(&user)
+	l.Phone = user.Profile.Phone
+	l.Status = "success"
+	l.UserID = &user.ID
+	l.Data = "Authorized!"
+	initializers.DB.Save(l)
+	fmt.Println("authorized")
 	c.JSON(http.StatusOK, responses.Status{
 		Token:   tokenString,
 		Data:    user,

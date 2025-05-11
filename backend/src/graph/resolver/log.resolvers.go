@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"github.com/hotbrainy/go-betting/backend/graph/model"
+	"github.com/hotbrainy/go-betting/backend/internal/loaders"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
@@ -29,5 +30,6 @@ func (r *queryResolver) Logs(ctx context.Context) ([]*models.Log, error) {
 
 // GetLogs is the resolver for the getLogs field.
 func (r *queryResolver) GetLogs(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.LogList, error) {
-	panic(fmt.Errorf("not implemented: GetLogs - getLogs"))
+	ldr := loaders.For(ctx)
+	return ldr.LogReader.GetLogs(ctx, filters, orders, pagination)
 }

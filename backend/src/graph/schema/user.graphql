@@ -1,13 +1,31 @@
+enum UserStatus {
+  A # approved
+  B # blocked
+  D # deleted
+  I # inactivated
+  S # suspended
+  P # pending
+}
+
+enum UserType {
+  G # general
+  T # test
+  I # interest
+  W # working
+}
+
 type User {
   id: ID!
   name: String!
   userid: String!
+  type: UserType!
   role: String!
   usdtAddress: String!
   currentIP: String!
   IP: String!
   profile: Profile
-  status: Boolean!
+  status: UserStatus!
+  blackMemo: Boolean!
   orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
@@ -57,6 +75,7 @@ input NewProfile {
   balance: Float
   point: Int
   comp: Int
+  level: Int
   favorites: String
   referral: String
   avatarUrl: String
@@ -77,16 +96,26 @@ input UpdateProfile {
   balance: Float
   point: Int
   comp: Int
+  level: Int
   favorites: String
   referral: String
   avatarUrl: String
   bio: String
   socialLinks: String
-  currentPassword: String!
+  currentPassword: String
   confirmPassword: String
   newPassword: String
 }
- 
+
+input UpdateUser {
+  name: String
+  userid: String
+  type: UserType
+  role: String
+  usdtAddress: String
+  status: UserStatus
+  orderNum: Uint
+}
 
 type UserList {
   users: [User!]!
@@ -98,17 +127,26 @@ extend type Query {
   me: User! @auth
 
   users: [User!]! @hasRole(role: ADMIN)
+  
   filterUsers(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
   ): UserList! @hasRole(role: ADMIN)
+
+  connectedUsers(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: ADMIN)
+
   user(id: ID!): User @hasRole(role: ADMIN)
 }
 
 extend type Mutation {
-  updateProfile(input: UpdateProfile!): Profile! @auth
+  updateProfile(id: ID!, input: UpdateProfile!): Profile! @auth
   deleteProfile(id: ID!): Boolean! @auth
   approveUser(id: ID!): Boolean! @hasRole(role: ADMIN)
   blockUser(id: ID!): Boolean! @hasRole(role: ADMIN)
+  updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: ADMIN)
 }

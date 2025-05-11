@@ -13,7 +13,7 @@ import (
 )
 
 func GetV1Route(r *gin.RouterGroup) {
-	r.Use(middleware.CheckAuth)
+	r.Use(middleware.LogAuth)
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

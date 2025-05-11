@@ -65,7 +65,7 @@ func RequireAdminAuth(c *gin.Context) {
 		}
 
 		if user.Userid != "admin" {
-			if user.Status != true {
+			if user.Status != "A" {
 				format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 				return
 			}

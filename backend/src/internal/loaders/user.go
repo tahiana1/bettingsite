@@ -3,6 +3,7 @@ package loaders
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
@@ -73,7 +74,7 @@ func (pr *userReader) ApproveUser(ctx context.Context, userID uint) error {
 	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
 		return err
 	}
-	me.Status = true
+	me.Status = "A"
 
 	tx := initializers.DB.Save(&me)
 
@@ -96,7 +97,7 @@ func (pr *userReader) BlockUser(ctx context.Context, userID uint) error {
 	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
 		return err
 	}
-	me.Status = false
+	me.Status = "B"
 
 	tx := initializers.DB.Save(&me)
 
@@ -130,6 +131,7 @@ func (ur *userReader) FilterUsers(ctx context.Context, filters []*model.Filter, 
 	// Ordering
 	db = helpers.ApplyOrders(db, orders)
 
+	db = db.Order("order_num")
 	// Pagination
 
 	db = helpers.ApplyPagination(db, pagination)
@@ -139,12 +141,87 @@ func (ur *userReader) FilterUsers(ctx context.Context, filters []*model.Filter, 
 	if err := db.Find(&users).Error; err != nil {
 		return nil, err
 	}
+
 	return &model.UserList{
 		Users: users,
 		Total: int32(count),
 	}, nil
-	// var users []*models.User
-	// err := initializers.DB.Limit(10).Offset(0).Order("order_num").Find(&users).Error
+}
 
-	// return users, err
+// GetProfiles returns many profiles by ids efficiently
+func (ur *userReader) ConnectedUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	// loaders := For(ctx)
+	// return loaders.UserLoader.LoadAll(ctx, userIDs)
+	var users []*models.User
+
+	db := ur.db.Model(&models.User{}).Joins("Profile")
+	// Filtering
+
+	db = helpers.ApplyFilters(db, filters)
+
+	// Ordering
+	db = helpers.ApplyOrders(db, orders)
+
+	db = db.Order("order_num")
+	// Pagination
+
+	db = helpers.ApplyPagination(db, pagination)
+	fmt.Println(time.Now().Local().Add(time.Minute * -5).Format(time.RFC3339))
+	fmt.Println(time.Now().Local().Format(time.RFC3339))
+	// Current status is approved
+	db = db.Where("users.updated_at > ? AND status = 'A'", time.Now().Local().Add(time.Minute*-5).Format(time.RFC3339))
+
+	// Count total
+	var count int64
+	if err := db.Count(&count).Error; err != nil {
+		return nil, err
+	}
+	// Query results
+
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return &model.UserList{
+		Users: users,
+		Total: int32(count),
+	}, nil
+}
+
+// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model.UpdateUser) error {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
+	me := models.User{}
+
+	if err := initializers.DB.Model(&me).First(&me, "id = ?", userID).Error; err != nil {
+		return err
+	}
+
+	if updates.Name != nil {
+		me.Name = *updates.Name
+	}
+	if updates.OrderNum != nil {
+		me.OrderNum = *updates.OrderNum
+	}
+	if updates.Role != nil {
+		me.Role = *updates.Role
+	}
+	if updates.Type != nil {
+		me.Type = string(*updates.Type)
+	}
+	if updates.UsdtAddress != nil {
+		me.USDTAddress = *updates.UsdtAddress
+	}
+	if updates.Status != nil {
+		me.Status = string(*updates.Status)
+	}
+
+	tx := initializers.DB.Save(&me)
+
+	return tx.Error
 }

@@ -61,7 +61,7 @@ func RequirePartnerAuth(c *gin.Context) {
 			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
-		if user.Status != true {
+		if user.Status != "A" {
 			format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}

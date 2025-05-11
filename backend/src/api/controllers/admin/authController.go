@@ -123,7 +123,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if user.Status != true {
+	if user.Status != "A" {
 		format_errors.ForbbidenError(c, fmt.Errorf("You are not allowed!"))
 		return
 	}

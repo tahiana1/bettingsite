@@ -37,11 +37,12 @@ interface User {
   name: string;
   userid: string;
   role: string; // Could be a more specific type like 'USER' | 'ADMIN' if roles are limited
+  type: string;
   usdtAddress: string;
   createdAt: string; // ISO string format
   updatedAt: string; // ISO string format
   profile: Profile;
-  status: boolean;
+  status: string;
 }
 
 interface Noti {
@@ -126,4 +127,18 @@ interface Menu {
   status: boolean;
   parentId: number;
   children: Menu[];
+}
+
+interface Log {
+  key: string;
+  id: number;
+  userid: string;
+  data: string;
+  path: string;
+  ip: string;
+  user?: User;
+  createdAt: string; // ISO string format
+  updatedAt: string; // ISO string format
+  profile?: Profile;
+  status: string;
 }

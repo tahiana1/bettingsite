@@ -26,8 +26,8 @@ export const GET_PROFILE = gql`
 `;
 
 export const UPDATE_PROFILE = gql`
-  mutation UpdateProfile($input: UpdateProfile!) {
-    updateProfile(input: $input) {
+  mutation UpdateProfile($id: ID!, $input: UpdateProfile!) {
+    response: updateProfile(id: $id, input: $input) {
       id
       userId
       name
@@ -40,6 +40,7 @@ export const UPDATE_PROFILE = gql`
       balance
       point
       comp
+      level
       favorites
       referral
       avatarUrl

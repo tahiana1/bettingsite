@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-import { Refine } from "@refinedev/core";
+import { useRouter } from "next/navigation"; 
 
 import { ApolloProvider } from "@apollo/client";
 import client from "@/api/apollo-client-ws";
@@ -18,7 +16,7 @@ import {
   Dropdown,
   Space,
   notification,
-  Breadcrumb, 
+  Breadcrumb,
 } from "antd";
 import { List, MenuProps } from "antd";
 
@@ -52,7 +50,7 @@ import { BiDiamond, BiSupport } from "react-icons/bi";
 
 import Image from "next/image";
 import Logo from "@/assets/img/logo.png";
- 
+
 const { Header, Sider } = Layout;
 
 export default function AdminRootLayout({
@@ -78,9 +76,7 @@ export default function AdminRootLayout({
 
   const [currentUser, setUser] = useAtom<any>(userState);
 
-  const [data] = useState<
-    { label: string; value: number; color?: string }[]
-  >([
+  const [data] = useState<{ label: string; value: number; color?: string }[]>([
     {
       label: "Honor Link",
       value: 2321,
@@ -267,6 +263,11 @@ export default function AdminRootLayout({
           // icon: <SiStatuspage />,
           label: `Auth Logs`,
         },
+        {
+          key: "admin/users/activity",
+          // icon: <SiStatuspage />,
+          label: `Activities`,
+        },
       ],
     },
     {
@@ -450,43 +451,44 @@ export default function AdminRootLayout({
     }
   }, [currentUser]);
   return mounted ? (
-    <Refine>
-      <ApolloProvider client={client}>
-        <ConfigProvider
-          theme={{
-            token: {
-              borderRadius: 0,
-              motion: false,
+    <ApolloProvider client={client}>
+      <ConfigProvider
+        theme={{
+          token: {
+            borderRadius: 0,
+            motion: false,
+          },
+          components: {
+            Card: {
+              headerHeight: 40,
+              bodyPadding: 16,
             },
-            components: {
-              Card: {
-                headerHeight: 40,
-                bodyPadding: 16,
-              },
-            },
-            algorithm: isDarkTheme
-              ? theme.darkAlgorithm
-              : theme.defaultAlgorithm,
-          }}
+          },
+          algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        }}
+      >
+        {contextHolder}
+        <LayoutContext.Provider
+          value={{ isDarkTheme, collapsed, setCollapsed }}
         >
-          {contextHolder}
-          <LayoutContext.Provider
-            value={{ isDarkTheme, collapsed, setCollapsed }}
-          >
-            <Layout hasSider>
-              {isAdmin ? (
-                <Sider
-                  className="h-[calc(100vh)] overflow-y-auto"
-                  breakpoint="lg"
-                  collapsedWidth="0"
-                  collapsed={collapsed}
-                  onBreakpoint={(broken) => {
-                    console.log(broken);
-                  }}
-                  onCollapse={(collapsed, type) => {
-                    console.log(collapsed, type);
-                    setCollapsed(collapsed);
-                  }}
+          <Layout>
+            {isAdmin ? (
+              <Sider
+                className="h-screen !absolute md:!relative z-50 top-0"
+                breakpoint="md"
+                collapsedWidth="0"
+                collapsed={collapsed}
+                onBreakpoint={(broken) => {
+                  console.log(broken);
+                }}
+                onCollapse={(collapsed, type) => {
+                  console.log(collapsed, type);
+                  setCollapsed(collapsed);
+                }}
+              >
+                <Space
+                  direction="vertical"
+                  className="h-screen overflow-y-auto"
                 >
                   <div
                     className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
@@ -507,73 +509,69 @@ export default function AdminRootLayout({
                     onClick={onMenuClick}
                     className="!text-white"
                   />
-                </Sider>
-              ) : null}
-              <Layout className="min-h-screen">
-                {isAdmin ? (
-                  <Header
-                    className="w-full !px-2 flex !h-10 items-center !leading-10"
-                    style={{ background: isDarkTheme ? "" : colorBgContainer }}
+                </Space>
+              </Sider>
+            ) : null}
+            <Layout className="min-h-screen">
+              {isAdmin ? (
+                <Header
+                  className="w-full !px-2 flex !h-10 items-center !leading-10"
+                  style={{ background: isDarkTheme ? "" : colorBgContainer }}
+                >
+                  <Button
+                    type="text"
+                    icon={
+                      collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
+                    }
+                    onClick={() => setCollapsed(!collapsed)}
+                    className="!w-10 !h-10 text-base !hidden lg:!block"
+                  />
+                  <Space className="w-full">Admin</Space>
+                  <Flex
+                    align="flex-end"
+                    justify="space-between"
+                    className="gap-2 items-center"
                   >
+                    <LangSwitcher locale={locale} />
                     <Button
                       type="text"
-                      icon={
-                        collapsed ? (
-                          <MenuUnfoldOutlined />
-                        ) : (
-                          <MenuFoldOutlined />
-                        )
-                      }
-                      onClick={() => setCollapsed(!collapsed)}
-                      className="!w-10 !h-10 text-base !hidden lg:!block"
+                      icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
+                      onClick={onThemeChange}
+                      className="!w-10 !h-10 text-base invisible lg:visible"
                     />
-                    <Space className="w-full">Admin</Space>
-                    <Flex
-                      align="flex-end"
-                      justify="space-between"
-                      className="gap-2 items-center"
+                    <Dropdown
+                      className="w-32 flex gap-2 items-center"
+                      menu={{ items: profileItems }}
+                      placement="bottomRight"
+                      trigger={["click"]}
                     >
-                      <LangSwitcher locale={locale} />
-                      <Button
-                        type="text"
-                        icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
-                        onClick={onThemeChange}
-                        className="!w-10 !h-10 text-base invisible lg:visible"
-                      />
-                      <Dropdown
-                        className="w-32 flex gap-2 items-center"
-                        menu={{ items: profileItems }}
-                        placement="bottomRight"
-                        trigger={["click"]}
-                      >
-                        <Button type="text" className="!h-10">
-                          <Avatar icon={<UserOutlined />} className="w-8 h-8" />
-                          {currentUser.name}
-                        </Button>
-                      </Dropdown>
-                    </Flex>
-                  </Header>
-                ) : null}
-                {isAdmin ? (
-                  <Breadcrumb
-                    className="!p-2 shadow"
-                    items={[
-                      {
-                        title: <Link href="/admin">Home</Link>,
-                      },
-                      {
-                        title: <Link href="/admin">Dashboard</Link>,
-                      },
-                    ]}
-                  />
-                ) : null}
-                <Content className="p-2">{children}</Content>
-              </Layout>
+                      <Button type="text" className="!h-10">
+                        <Avatar icon={<UserOutlined />} className="w-8 h-8" />
+                        {currentUser.name}
+                      </Button>
+                    </Dropdown>
+                  </Flex>
+                </Header>
+              ) : null}
+              {isAdmin ? (
+                <Breadcrumb
+                  className="!p-2 shadow"
+                  items={[
+                    {
+                      title: <Link href="/admin">Home</Link>,
+                    },
+                    {
+                      title: <Link href="/admin">Dashboard</Link>,
+                    },
+                  ]}
+                />
+              ) : null}
+              <Content className="p-2">{children}</Content>
             </Layout>
-          </LayoutContext.Provider>
-        </ConfigProvider>
-      </ApolloProvider>
-    </Refine>
+          </Layout>
+        </LayoutContext.Provider>
+      </ConfigProvider>
+    </ApolloProvider>
   ) : (
     "LOADING..."
   );

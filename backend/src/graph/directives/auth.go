@@ -19,7 +19,7 @@ func Auth(ctx context.Context, obj interface{}, next graphql.Resolver) (interfac
 	if authUser.Userid == "admin" {
 		return next(ctx)
 	}
-	if authUser.Status != true {
+	if authUser.Status != "A" {
 		return nil, fmt.Errorf("❌ Disabled!")
 	}
 
@@ -38,7 +38,7 @@ func HasRole(ctx context.Context, obj interface{}, next graphql.Resolver, role m
 		return next(ctx)
 	}
 
-	if authUser.Status != true {
+	if authUser.Status != "A" {
 		return nil, fmt.Errorf("❌ Disabled!")
 	}
 

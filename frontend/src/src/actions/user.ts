@@ -6,6 +6,7 @@ export const GET_USERS = gql`
       id
       name
       userid
+      type
       role
       usdtAddress
       currentIP
@@ -13,6 +14,7 @@ export const GET_USERS = gql`
       createdAt
       updatedAt
       status
+      blackMemo
       profile {
         id
         userId
@@ -38,13 +40,13 @@ export const GET_USERS = gql`
   }
 `;
 
-export const FILTER_USERS = gql`
-  query FilterUsers(
+export const CONNECTED_USERS = gql`
+  query ConnectedUsers(
     $filters: [Filter!]
     $orders: [Order!]
     $pagination: Pagination
   ) {
-    response: filterUsers(
+    response: connectedUsers(
       filters: $filters
       orders: $orders
       pagination: $pagination
@@ -54,6 +56,8 @@ export const FILTER_USERS = gql`
         name
         userid
         role
+        type
+        blackMemo
         usdtAddress
         currentIP
         IP
@@ -84,6 +88,63 @@ export const FILTER_USERS = gql`
       }
       total
     }
+  }
+`;
+
+export const FILTER_USERS = gql`
+  query FilterUsers(
+    $filters: [Filter!]
+    $orders: [Order!]
+    $pagination: Pagination
+  ) {
+    response: filterUsers(
+      filters: $filters
+      orders: $orders
+      pagination: $pagination
+    ) {
+      users {
+        id
+        name
+        userid
+        role
+        type
+        blackMemo
+        usdtAddress
+        currentIP
+        IP
+        createdAt
+        updatedAt
+        status
+        profile {
+          id
+          userId
+          name
+          nickname
+          bankName
+          holderName
+          accountNumber
+          birthday
+          phone
+          mobile
+          balance
+          point
+          comp
+          level
+          favorites
+          referral
+          coupon
+          lastDeposit
+          lastWithdraw
+        }
+      }
+      total
+    }
+  }
+`;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: ID!, $input: UpdateUser!) {
+    success: updateUser(id: $id, input: $input)
   }
 `;
 export const APPROVE_USER = gql`

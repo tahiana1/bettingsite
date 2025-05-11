@@ -26,6 +26,7 @@ type Loaders struct {
 	AnnouncementLoader    *dataloadgen.Loader[uint, *models.Announcement]
 	InboxLoader           *dataloadgen.Loader[uint, *models.Inbox]
 	MenuLoader            *dataloadgen.Loader[uint, *models.Menu]
+	LogLoader             *dataloadgen.Loader[uint, *models.Log]
 	ProfileReader         *profileReader
 	UserReader            *userReader
 	NotificationReader    *notificationReader
@@ -34,6 +35,7 @@ type Loaders struct {
 	AnnouncementReader    *announcementReader
 	InboxReader           *inboxReader
 	MenuReader            *menuReader
+	LogReader             *logReader
 }
 
 func NewLoaders(db *gorm.DB) *Loaders {
@@ -45,6 +47,7 @@ func NewLoaders(db *gorm.DB) *Loaders {
 	ar := &announcementReader{db: db}
 	ir := &inboxReader{db: db}
 	mr := &menuReader{db: db}
+	lr := &logReader{db: db}
 
 	return &Loaders{
 		ProfileLoader:         dataloadgen.NewLoader(pr.getProfiles, dataloadgen.WithWait(time.Millisecond)),
@@ -58,6 +61,7 @@ func NewLoaders(db *gorm.DB) *Loaders {
 		AnnouncementReader:    ar,
 		InboxReader:           ir,
 		MenuReader:            mr,
+		LogReader:             lr,
 	}
 }
 

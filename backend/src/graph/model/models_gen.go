@@ -28,9 +28,11 @@ type EventList struct {
 }
 
 type Filter struct {
-	Field string `json:"field"`
-	Value string `json:"value"`
-	Op    *Op    `json:"op,omitempty"`
+	Field *string   `json:"field,omitempty"`
+	Value *string   `json:"value,omitempty"`
+	Op    *Op       `json:"op,omitempty"`
+	Or    []*Filter `json:"or,omitempty"`
+	And   []*Filter `json:"and,omitempty"`
 }
 
 type InboxList struct {
@@ -90,10 +92,12 @@ type NewInboxInput struct {
 }
 
 type NewLogInput struct {
-	Data   string `json:"data"`
-	Path   string `json:"path"`
-	IP     string `json:"ip"`
-	Status *bool  `json:"status,omitempty"`
+	Data   string  `json:"data"`
+	Path   string  `json:"path"`
+	IP     string  `json:"ip"`
+	Type   string  `json:"type"`
+	Phone  *string `json:"phone,omitempty"`
+	Status *string `json:"status,omitempty"`
 }
 
 type NewMenuInput struct {
@@ -130,6 +134,7 @@ type NewProfile struct {
 	Balance       *float64   `json:"balance,omitempty"`
 	Point         *int32     `json:"point,omitempty"`
 	Comp          *int32     `json:"comp,omitempty"`
+	Level         *int32     `json:"level,omitempty"`
 	Favorites     *string    `json:"favorites,omitempty"`
 	Referral      *string    `json:"referral,omitempty"`
 	AvatarURL     *string    `json:"avatarUrl,omitempty"`
@@ -242,14 +247,25 @@ type UpdateProfile struct {
 	Balance         *float64   `json:"balance,omitempty"`
 	Point           *int32     `json:"point,omitempty"`
 	Comp            *int32     `json:"comp,omitempty"`
+	Level           *int32     `json:"level,omitempty"`
 	Favorites       *string    `json:"favorites,omitempty"`
 	Referral        *string    `json:"referral,omitempty"`
 	AvatarURL       *string    `json:"avatarUrl,omitempty"`
 	Bio             *string    `json:"bio,omitempty"`
 	SocialLinks     *string    `json:"socialLinks,omitempty"`
-	CurrentPassword string     `json:"currentPassword"`
+	CurrentPassword *string    `json:"currentPassword,omitempty"`
 	ConfirmPassword *string    `json:"confirmPassword,omitempty"`
 	NewPassword     *string    `json:"newPassword,omitempty"`
+}
+
+type UpdateUser struct {
+	Name        *string     `json:"name,omitempty"`
+	Userid      *string     `json:"userid,omitempty"`
+	Type        *UserType   `json:"type,omitempty"`
+	Role        *string     `json:"role,omitempty"`
+	UsdtAddress *string     `json:"usdtAddress,omitempty"`
+	Status      *UserStatus `json:"status,omitempty"`
+	OrderNum    *uint       `json:"orderNum,omitempty"`
 }
 
 type UserList struct {
@@ -447,6 +463,128 @@ func (e *Role) UnmarshalJSON(b []byte) error {
 }
 
 func (e Role) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type UserStatus string
+
+const (
+	UserStatusA UserStatus = "A"
+	UserStatusB UserStatus = "B"
+	UserStatusD UserStatus = "D"
+	UserStatusI UserStatus = "I"
+	UserStatusS UserStatus = "S"
+	UserStatusP UserStatus = "P"
+)
+
+var AllUserStatus = []UserStatus{
+	UserStatusA,
+	UserStatusB,
+	UserStatusD,
+	UserStatusI,
+	UserStatusS,
+	UserStatusP,
+}
+
+func (e UserStatus) IsValid() bool {
+	switch e {
+	case UserStatusA, UserStatusB, UserStatusD, UserStatusI, UserStatusS, UserStatusP:
+		return true
+	}
+	return false
+}
+
+func (e UserStatus) String() string {
+	return string(e)
+}
+
+func (e *UserStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UserStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UserStatus", str)
+	}
+	return nil
+}
+
+func (e UserStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *UserStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UserStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type UserType string
+
+const (
+	UserTypeG UserType = "G"
+	UserTypeT UserType = "T"
+	UserTypeI UserType = "I"
+	UserTypeW UserType = "W"
+)
+
+var AllUserType = []UserType{
+	UserTypeG,
+	UserTypeT,
+	UserTypeI,
+	UserTypeW,
+}
+
+func (e UserType) IsValid() bool {
+	switch e {
+	case UserTypeG, UserTypeT, UserTypeI, UserTypeW:
+		return true
+	}
+	return false
+}
+
+func (e UserType) String() string {
+	return string(e)
+}
+
+func (e *UserType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = UserType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid UserType", str)
+	}
+	return nil
+}
+
+func (e UserType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *UserType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e UserType) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

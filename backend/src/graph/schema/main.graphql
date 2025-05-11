@@ -52,9 +52,12 @@ input Order {
 
 
 input Filter {
-  field: String!
-  value: String!     # You can keep it String and parse to correct type in Go
-  op: Op = eq
+  field: String
+  value: String     # You can keep it String and parse to correct type in Go
+  op: Op = eq  
+  
+  or: [Filter]
+  and: [Filter]
 }
 
 type Query {

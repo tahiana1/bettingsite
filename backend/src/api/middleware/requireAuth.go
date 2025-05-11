@@ -65,12 +65,14 @@ func RequireAuth(c *gin.Context) {
 		}
 
 		if user.Userid != "admin" {
-			if user.Status != true {
+			if user.Status != "A" {
 				format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 
 				return
 			}
 		}
+		user.CurrentIP = c.ClientIP()
+		initializers.DB.Save(&user)
 
 		// Attach the user to request
 		c.Set("authUser", &user)

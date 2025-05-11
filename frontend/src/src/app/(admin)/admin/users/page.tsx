@@ -9,26 +9,33 @@ import {
   Tag,
   Button,
   Popconfirm,
-  Badge,
   Input,
   DatePicker,
   Radio,
   Select,
+  Modal,
+  Form,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
-
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
-import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
+import {
+  APPROVE_USER,
+  BLOCK_USER,
+  FILTER_USERS,
+  UPDATE_USER,
+} from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
+import { USER_STATUS, USER_TYPE } from "@/constants";
+import { UPDATE_PROFILE } from "@/actions/profile";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -39,10 +46,14 @@ const UserPage: React.FC = () => {
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
 
+  const [modal, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, error, data, refetch } = useQuery(FILTER_USERS);
+  const { loading, data, refetch } = useQuery(FILTER_USERS);
+  const [updateProfile] = useMutation(UPDATE_PROFILE);
+  const [colorModal, setColorModal] = useState<boolean>(false);
 
+  const [updateUser] = useMutation(UPDATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
 
@@ -70,33 +81,89 @@ const UserPage: React.FC = () => {
         console.log({ err });
       });
   };
-
-  const columns: TableProps<User>["columns"] = [
-    {
-      title: "",
-      dataIndex: "status",
-      key: "status",
-      fixed: "left",
-      render: (text, record) => {
-        console.log({ record });
-        if (!record.status) {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Badge status="warning" className="mr-2"></Badge>
-            </Popconfirm>
-          );
-        }
-        return text;
+  const onUserLevelChange = (u: User, v: string = "") => {
+    updateProfile({
+      variables: {
+        id: u.id,
+        input: {
+          level: v ? parseInt(v) : 0,
+        },
       },
+    }).then(() => {
+      refetch(tableOptions);
+    });
+  };
+  const onUserTypeChange = (u: User, v: string = "") => {
+    updateUser({
+      variables: {
+        id: u.id,
+        input: {
+          type: v,
+        },
+      },
+    }).then(() => {
+      refetch(tableOptions);
+    });
+  };
+
+  const onUserRoleChange = (u: User, v: string = "USER") => {
+    updateUser({
+      variables: {
+        id: u.id,
+        input: {
+          role: v,
+        },
+      },
+    }).then(() => {
+      refetch(tableOptions);
+    });
+  };
+  const labelRenderer = (props: any) =>
+    props.value.toString() == "100"
+      ? "Premium"
+      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
+        props.value;
+
+  const levelOption = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
+  ].map((i) => ({
+    value: i,
+    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
+  }));
+
+  const userTypeOption = [
+    {
+      label: "General",
+      value: "G",
     },
+    {
+      label: "Test",
+      value: "T",
+    },
+    {
+      label: "Interest",
+      value: "I",
+    },
+    {
+      label: "Working",
+      value: "W",
+    },
+  ];
+  const roleOption = [
+    {
+      label: "Admin",
+      value: "ADMIN",
+    },
+    {
+      label: "Partner",
+      value: "PARTNER",
+    },
+    {
+      label: "User",
+      value: "USER",
+    },
+  ];
+  const columns: TableProps<User>["columns"] = [
     {
       title: "ID",
       dataIndex: "userid",
@@ -139,6 +206,16 @@ const UserPage: React.FC = () => {
       dataIndex: "site",
       key: "site",
       render: (text) => text ?? "site",
+    },
+    {
+      title: t("root_dist"),
+      dataIndex: "root_dist",
+      key: "root_dist",
+    },
+    {
+      title: t("top_dist"),
+      dataIndex: "top_dist",
+      key: "top_dist",
     },
     {
       title: t("nickname"),
@@ -184,12 +261,66 @@ const UserPage: React.FC = () => {
       title: t("level"),
       dataIndex: "profile.level",
       key: "level",
-      render: (_, { profile }) => profile.level,
+      render: (_, record) => (
+        <Select
+          size="small"
+          placeholder="By Level"
+          className="min-w-28"
+          defaultValue={`${record.profile.level}`}
+          allowClear
+          onClear={() => onUserLevelChange(record, "")}
+          labelRender={(props) => labelRenderer(props)}
+          options={levelOption}
+          onChange={(e) => onUserLevelChange(record, e)}
+        />
+      ),
+    },
+    {
+      title: t("type"),
+      dataIndex: "type",
+      key: "type",
+      render: (_, record) => (
+        <Select
+          size="small"
+          placeholder="By Level"
+          className="min-w-28"
+          defaultValue={`${record.type}`}
+          allowClear
+          options={userTypeOption}
+          onClear={() => onUserTypeChange(record, "")}
+          labelRender={(props) => USER_TYPE[props.value]}
+          onChange={(e) => onUserTypeChange(record, e)}
+        />
+      ),
     },
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      render: (text, record) => {
+        if (record.status == "P") {
+          return (
+            <Popconfirm
+              title={t("confirmSure")}
+              onConfirm={
+                record.status
+                  ? () => onBlockUser(record)
+                  : () => onApproveUser(record)
+              }
+              description={t("approveMessage")}
+            >
+              <Tag color="warning" className="mr-2">
+                {USER_STATUS[text]}
+              </Tag>
+            </Popconfirm>
+          );
+        }
+        return (
+          <Tag color={text == "A" ? "success" : "gold"}>
+            {USER_STATUS[text]}
+          </Tag>
+        );
+      },
     },
     {
       title: t("balance"),
@@ -250,35 +381,16 @@ const UserPage: React.FC = () => {
       title: t("role"),
       key: "role",
       dataIndex: "role",
-      render: (_, { role }) => (
-        <Tag color={role == "ADMIN" ? "red" : "green"} key={role}>
-          {role.toUpperCase()}
-        </Tag>
-      ),
-      filters: [
-        {
-          text: "Admin",
-          value: "ADMIN",
-        },
-        {
-          text: "Partner",
-          value: "PARTNER",
-        },
-        {
-          text: "User",
-          value: "USER",
-        },
-      ],
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Radio.Group className="!w-full !flex flex-col">
-            {props.filters?.map((f, i) => (
-              <Radio key={i} value={f.value}>
-                {f.text}
-              </Radio>
-            ))}
-          </Radio.Group>
-        </FilterDropdown>
+      render: (role, record) => (
+        <Select
+          size="small"
+          placeholder="By Level"
+          className="min-w-28"
+          defaultValue={`${role}`}
+          labelRender={(props) => USER_TYPE[props.value]}
+          options={roleOption}
+          onChange={(e) => onUserRoleChange(record, e)}
+        />
       ),
     },
     {
@@ -381,37 +493,98 @@ const UserPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
+
+  const updateFilter = (field: string, v: string, op: string = "eq") => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+    filters = filters.filter((f) => f.field !== field);
+    if (v) {
+      filters = [
+        ...filters,
+        {
+          field: field,
+          value: v,
+          op: op,
+        },
+      ];
+    }
+    setTableOptions({ ...tableOptions, filters });
+  };
+
+  const onBlackMemoChange = (v: string) => {
+    updateFilter("black_memo", v, "eq");
+  };
+
+  const onReferralChange = (v: string) => {
+    updateFilter(
+      '"Profile"."referral"',
+      v,
+      v == "not_null" ? "is_not_null" : "is_null"
+    );
+  };
+
+  const onMemberTypeChange = (v: string) => {
+    updateFilter("type", v, "eq");
+  };
+
+  const onMemberStatusChange = (v: string) => {
+    updateFilter("status", v, "eq");
+  };
+
+  const onLevelChange = (v: string = "") => {
+    updateFilter(`"Profile"."level"`, v, "eq");
+  };
+
+  const onResetCoupon = async () => {
+    const confirmed = await modal.confirm({
+      title: "Do you want to reset the number of coupons for all members to 0?",
+    });
+    console.log("Confirmed: ", confirmed);
+  };
+  const [colorOption, setColorOptoin] = useState<any>("new");
+  const onChangeColors = async () => {
+    setColorModal(false);
+  };
+  const onRangerChange = (
+    dates: (Dayjs | null)[] | null,
+    dateStrings: string[]
+  ) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+    const f = filters.filter((f) => f.field !== "users.created_at");
+    if (dates?.at(0)) {
+      filters = [
+        ...f,
+        {
+          field: "users.created_at",
+          value: dateStrings[0],
+          op: "gt",
+        },
+        {
+          field: "users.created_at",
+          value: dateStrings[1],
+          op: "lt",
+        },
+      ];
+    }
+    setTableOptions({ ...tableOptions, filters });
+  };
+
   useEffect(() => {
-    console.log({ loading, error, data });
-    console.log({ data });
     setUsers(
-      data?.users?.map((u: any) => {
-        console.log({ u });
-        // u.key = u.id;
+      data?.response?.users?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
+    setTotal(data?.response?.total);
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined)
-      .then((res) => {
-        console.log({ res });
-        setUsers(
-          res.data?.response?.users?.map((u: any) => {
-            console.log({ u });
-            // u.key = u.id;
-            return { ...u, key: u.id };
-          }) ?? []
-        );
-        setTotal(res.data?.response?.total);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
+    refetch(tableOptions ?? undefined);
   }, [tableOptions]);
   return (
     <Layout>
+      {contextHolder}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
           title={t("admin/users")}
@@ -421,6 +594,7 @@ const UserPage: React.FC = () => {
         >
           <Space className="p-2 !w-full" direction="vertical">
             <Radio.Group
+              size="small"
               optionType="button"
               buttonStyle="solid"
               options={[
@@ -467,14 +641,15 @@ const UserPage: React.FC = () => {
                   },
                   {
                     label: "Referral O",
-                    value: true,
+                    value: "not_null",
                   },
                   {
                     label: "Referral X",
-                    value: false,
+                    value: "null",
                   },
                 ]}
                 defaultValue={""}
+                onChange={(e) => onReferralChange(e.target.value)}
               />
               <Radio.Group
                 size="small"
@@ -487,14 +662,15 @@ const UserPage: React.FC = () => {
                   },
                   {
                     label: "Black Memo O",
-                    value: true,
+                    value: "true",
                   },
                   {
                     label: "Black Memo X",
-                    value: false,
+                    value: "false",
                   },
                 ]}
                 defaultValue={""}
+                onChange={(e) => onBlackMemoChange(e.target.value)}
               />
 
               <Radio.Group
@@ -508,22 +684,23 @@ const UserPage: React.FC = () => {
                   },
                   {
                     label: "General",
-                    value: "general",
+                    value: "G",
                   },
                   {
                     label: "Test",
-                    value: "test",
+                    value: "T",
                   },
                   {
                     label: "Interest",
-                    value: "interest",
+                    value: "I",
                   },
                   {
                     label: "Working",
-                    value: "work",
+                    value: "W",
                   },
                 ]}
                 defaultValue={""}
+                onChange={(e) => onMemberTypeChange(e.target.value)}
               />
               <Radio.Group
                 className="flex-nowrap"
@@ -537,30 +714,31 @@ const UserPage: React.FC = () => {
                   },
                   {
                     label: "Withdrawn",
-                    value: "withdrawn",
+                    value: "W",
                   },
                   {
                     label: "Approved",
-                    value: "approved",
+                    value: "A",
                   },
                   {
                     label: "Suspened",
-                    value: "suspended",
+                    value: "S",
                   },
                   {
                     label: "Deleted",
-                    value: "deleted",
+                    value: "D",
                   },
                   {
                     label: "Blocked",
-                    value: "blocked",
+                    value: "B",
                   },
                   {
                     label: "Inactive",
-                    value: "inactive",
+                    value: "I",
                   },
                 ]}
                 defaultValue={""}
+                onChange={(e) => onMemberStatusChange(e.target.value)}
               />
               <Radio.Group
                 size="small"
@@ -572,11 +750,11 @@ const UserPage: React.FC = () => {
                     value: "",
                   },
                   {
-                    label: "Reg IP",
+                    label: "Reg IP Duplication",
                     value: true,
                   },
                   {
-                    label: "Duplicated IP",
+                    label: "Connected IP Duplication",
                     value: false,
                   },
                 ]}
@@ -584,40 +762,60 @@ const UserPage: React.FC = () => {
               />
             </Space>
             <Space className="!w-full justify-between">
-              <Select
-                size="small"
-                placeholder="select dist"
-                className="min-w-28"
-              />
-              <Select
-                size="small"
-                placeholder="By Color"
-                className="min-w-28"
-              />
-              <Select
-                size="small"
-                placeholder="By Level"
-                className="min-w-28"
-              />
-              <DatePicker.RangePicker size="small" />
-              <Input.Search
-                size="small"
-                placeholder="ID,Nickname,Account Holder,Phone Number"
-                suffix={
-                  <Button
-                    size="small"
-                    type="text"
-                    icon={<RxLetterCaseToggle />}
-                  />
-                }
-                enterButton="Search"
-              />
-              <Space className="!w-full"></Space>
+              <Space>
+                <Select
+                  size="small"
+                  placeholder="select dist"
+                  className="min-w-28"
+                  allowClear
+                />
+                <Select
+                  size="small"
+                  placeholder="By Color"
+                  className="min-w-28"
+                  allowClear
+                />
+                <Select
+                  size="small"
+                  placeholder="By Level"
+                  className="min-w-28"
+                  allowClear
+                  onClear={onLevelChange}
+                  options={[
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
+                  ].map((i) => ({
+                    value: i,
+                    label:
+                      i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
+                  }))}
+                  onChange={onLevelChange}
+                />
+                <DatePicker.RangePicker
+                  size="small"
+                  onChange={onRangerChange}
+                />
+                <Input.Search
+                  size="small"
+                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  suffix={
+                    <Button
+                      size="small"
+                      type="text"
+                      icon={<RxLetterCaseToggle />}
+                    />
+                  }
+                  enterButton="Search"
+                />
+              </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary">
+                <Button size="small" type="primary" onClick={onResetCoupon}>
                   Reset all Coupon
                 </Button>
-                <Button size="small" type="primary">
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => setColorModal(true)}
+                >
                   Change Color in batches
                 </Button>
                 <Button size="small" type="primary">
@@ -643,9 +841,41 @@ const UserPage: React.FC = () => {
               },
               total: total,
               showSizeChanger: true,
-              pageSizeOptions: [10, 20, 50],
+              defaultPageSize: 25,
+              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
+          <Modal
+            open={colorModal}
+            onCancel={() => setColorModal(false)}
+            onOk={onChangeColors}
+          >
+            <Space direction="vertical" className="gap-2">
+              <Radio.Group
+                onChange={(e) => setColorOptoin(e.target.value)}
+                className="!flex !flex-col gap-2"
+                defaultValue={"new"}
+              >
+                <Radio value={"new"}>New Search Criteria</Radio>
+                {colorOption == "new" ? (
+                  <Form.Item>
+                    <Input />
+                  </Form.Item>
+                ) : null}
+                <Radio value={"list"}>
+                  Apply the member list search conditions as is:
+                </Radio>
+                {colorOption == "list" ? (
+                  <Form.Item>
+                    <Select />
+                  </Form.Item>
+                ) : null}
+              </Radio.Group>
+              <Form.Item label="Change Color">
+                <Select />
+              </Form.Item>
+            </Space>
+          </Modal>
         </Card>
       </Content>
     </Layout>

@@ -36,12 +36,12 @@ const LogStatusPage: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [logs, setLogs] = useState<any[]>([]);
-  const { loading,  data, refetch } = useQuery(GET_LOGS, {
+  const { loading, data, refetch } = useQuery(GET_LOGS, {
     variables: {
       filters: [
         {
           field: "type",
-          value: "L",
+          value: "R",
           op: "eq",
         },
       ],
@@ -109,37 +109,36 @@ const LogStatusPage: React.FC = () => {
       fixed: "left",
     },
     {
-      title: t("IP"),
+      title: t("userid"),
+      dataIndex: "user.userid",
+      key: "user.userid",
+      render: (text, record) => (
+        <Tag>{text || record.user?.userid || "internal"}</Tag>
+      ),
+    },
+    {
+      title: "IP",
       dataIndex: "ip",
       key: "ip",
     },
     {
+      title: t("path"),
+      dataIndex: "path",
+      key: "path",
+    },
+    {
       title: t("data"),
       dataIndex: "data",
       key: "data",
+      width: 400,
     },
-    {
-      title: t("verificationNumber"),
-      dataIndex: "verificationNumber",
-      key: "verificationNumber",
-      render: (text) => text ?? "000000",
-    },
-    /* {
-      title: t("data"),
-      dataIndex: "data",
-      key: "data",
-    }, */
-    {
-      title: t("phone"),
-      dataIndex: "phone",
-      key: "phone",
-    },
-
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text) => <Tag color={text}>{text.toUpperCase()}</Tag>,
+      render: (text) => (
+        <Tag color={text}>{text.toUpperCase() || "UNKNOWN"}</Tag>
+      ),
     },
     {
       title: t("createdAt"),
@@ -181,9 +180,13 @@ const LogStatusPage: React.FC = () => {
     sorter,
     extra
   ) => {
+    console.log({
+      ...parseTableOptions(pagination, filters, sorter, extra),
+      filters: tableOptions?.filters,
+    });
     setTableOptions({
       ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions.filters,
+      filters: tableOptions?.filters,
     });
   };
 
@@ -198,7 +201,6 @@ const LogStatusPage: React.FC = () => {
   useEffect(() => {
     refetch(tableOptions ?? undefined)
       .then((res) => {
-        console.log({ res });
         setLogs(
           res.data?.response?.logs?.map((u: any) => {
             return { ...u, key: u.id };

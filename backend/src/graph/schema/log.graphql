@@ -1,11 +1,13 @@
 type Log {
   id: ID!
-  data: String!
+  data: String
   path: String!
+  phone: String!
+  type: String!
   ip: String!
-  userId: Uint
-  user: User!
-  status: Boolean
+  userId: ID
+  user: User
+  status: String
   createdAt: Time!
   updatedAt: Time!
   deletedAt: Time
@@ -15,7 +17,9 @@ input NewLogInput {
   data: String!
   path: String!
   ip: String!
-  status: Boolean
+  type: String!
+  phone: String
+  status: String
 }
 
 type LogList {

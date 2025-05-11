@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"time"
 
@@ -11,7 +13,19 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
-func CheckAuth(c *gin.Context) {
+func LogAuth(c *gin.Context) {
+	l := &models.Log{}
+	l.IP = c.ClientIP()
+	l.Type = "R"
+	l.Path = c.Request.URL.Path
+	bodyBytes, err := io.ReadAll(c.Request.Body)
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	l.Data = string(bodyBytes)
+	if err != nil {
+		l.Data = err.Error()
+	}
+
+	initializers.DB.Save(l)
 	// Get the cookie from the request
 	tokenString, err := c.Cookie("Authorization")
 	t := c.GetHeader("Authorization")
@@ -21,7 +35,6 @@ func CheckAuth(c *gin.Context) {
 	}
 
 	tokenString = t
-
 	// Decode and validate it
 	// Parse and takes the token string and a function for look
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -62,6 +75,11 @@ func CheckAuth(c *gin.Context) {
 		c.Set("authUser", &user)
 
 		fmt.Println("✅ Check Auth Passed!")
+
+		l.UserID = &user.ID
+		l.Status = "success"
+
+		initializers.DB.Save(l)
 
 		// Continue
 		c.Next()

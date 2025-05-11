@@ -9,10 +9,12 @@ import {
   Tag,
   Button,
   Popconfirm,
-  Badge,
   Input,
   DatePicker,
   Radio,
+  Select,
+  Modal,
+  Form,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -20,14 +22,15 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { useMutation, useQuery } from "@apollo/client";
-import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
-import { BiBlock, BiTrash } from "react-icons/bi";
-import { PiUserCircleCheckLight } from "react-icons/pi";
+import { useQuery } from "@apollo/client";
+import { CONNECTED_USERS } from "@/actions/user";
+import { RxLetterCaseToggle } from "react-icons/rx";
+import { AiOutlineDisconnect } from "react-icons/ai";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
+import { USER_STATUS } from "@/constants";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -40,13 +43,12 @@ const UserStatusPage: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, error, data, refetch } = useQuery(FILTER_USERS);
+  const { loading, error, data, refetch } = useQuery(CONNECTED_USERS);
+  const [colorModal, setColorModal] = useState<boolean>(false);
 
-  const [approveUser] = useMutation(APPROVE_USER);
-  const [blockUser] = useMutation(BLOCK_USER);
-
-  const onBlockUser = (user: User) => {
-    blockUser({ variables: { id: user.id } })
+  const onDisconnect = (user: User) => {
+    console.log({ user });
+    /*  blockUser({ variables: { id: user.id } })
       .then((res) => {
         if (res.data?.success) {
         }
@@ -54,84 +56,31 @@ const UserStatusPage: React.FC = () => {
       })
       .catch((err) => {
         console.log({ err });
-      });
-  };
-
-  const onApproveUser = (user: User) => {
-    approveUser({ variables: { id: user.id } })
-      .then((res) => {
-        console.log({ res });
-        if (res.data?.success) {
-        }
-        refetch();
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
+      }); */
   };
 
   const columns: TableProps<User>["columns"] = [
-    {
-      title: "",
-      dataIndex: "status",
-      key: "status",
-      fixed: "left",
-      render: (text, record) => {
-        console.log({ record });
-        if (!record.status) {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Badge status="warning" className="mr-2"></Badge>
-            </Popconfirm>
-          );
-        }
-        return text;
-      },
-    },
     {
       title: "ID",
       dataIndex: "userid",
       key: "userid",
       fixed: "left",
-      sorter: {
-        compare: (a, b) => {
-          return a.userid > b.userid ? -1 : 1;
-        },
-        multiple: 1,
-      },
-      render: (text, record) => {
-        if (!record.status) {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Button type="link" size="small">
-                {text}
-              </Button>
-            </Popconfirm>
-          );
-        }
-        return text;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+    },
+    {
+      title: t("site"),
+      dataIndex: "site",
+      key: "site",
+      render: (text) => text ?? "site",
+    },
+    {
+      title: t("root_dist"),
+      dataIndex: "root_dist",
+      key: "root_dist",
+    },
+    {
+      title: t("top_dist"),
+      dataIndex: "top_dist",
+      key: "top_dist",
     },
     {
       title: t("nickname"),
@@ -174,15 +123,10 @@ const UserStatusPage: React.FC = () => {
         f.dateTime(new Date(profile.birthday) ?? null),
     },
     {
-      title: t("level"),
-      dataIndex: "profile.level",
-      key: "level",
-      render: (_, { profile }) => profile.level,
-    },
-    {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      render: (text) => <Tag color={"gold"}>{USER_STATUS[text]}</Tag>,
     },
     {
       title: t("balance"),
@@ -243,36 +187,6 @@ const UserStatusPage: React.FC = () => {
       title: t("role"),
       key: "role",
       dataIndex: "role",
-      render: (_, { role }) => (
-        <Tag color={role == "ADMIN" ? "red" : "green"} key={role}>
-          {role.toUpperCase()}
-        </Tag>
-      ),
-      filters: [
-        {
-          text: "Admin",
-          value: "ADMIN",
-        },
-        {
-          text: "Partner",
-          value: "PARTNER",
-        },
-        {
-          text: "User",
-          value: "USER",
-        },
-      ],
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Radio.Group className="!w-full !flex flex-col">
-            {props.filters?.map((f, i) => (
-              <Radio key={i} value={f.value}>
-                {f.text}
-              </Radio>
-            ))}
-          </Radio.Group>
-        </FilterDropdown>
-      ),
     },
     {
       title: t("lastLogin"),
@@ -284,7 +198,14 @@ const UserStatusPage: React.FC = () => {
         },
         multiple: 2,
       },
-      render: (text) => f.dateTime(new Date(text) ?? null),
+      render: (text) =>
+        f.dateTime(new Date(text) ?? null, {
+          year: "numeric",
+          day: "numeric",
+          month: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
       // defaultFilteredValue: getDefaultFilter("updatedAt"),
       filterDropdown: (props) => (
         <FilterDropdown
@@ -329,38 +250,17 @@ const UserStatusPage: React.FC = () => {
         <Space.Compact size="small" className="gap-2">
           <Popconfirm
             title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockUser(record)
-                : () => onApproveUser(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
+            onConfirm={() => onDisconnect(record)}
+            description={t("disconnectMessage")}
+            icon={<AiOutlineDisconnect className="w-4 h-4 !text-red-500" />}
           >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<PiUserCircleCheckLight />}
-              />
-            )}
+            <Button
+              title={t("disconnect")}
+              variant="outlined"
+              color="danger"
+              icon={<AiOutlineDisconnect />}
+            />
           </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
         </Space.Compact>
       ),
     },
@@ -374,13 +274,17 @@ const UserStatusPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
+
+  const [colorOption, setColorOptoin] = useState<any>("new");
+  const onChangeColors = async () => {
+    setColorModal(false);
+  };
+
   useEffect(() => {
     console.log({ loading, error, data });
     console.log({ data });
     setUsers(
       data?.users?.map((u: any) => {
-        console.log({ u });
-        // u.key = u.id;
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -389,11 +293,8 @@ const UserStatusPage: React.FC = () => {
   useEffect(() => {
     refetch(tableOptions ?? undefined)
       .then((res) => {
-        console.log({ res });
         setUsers(
           res.data?.response?.users?.map((u: any) => {
-            console.log({ u });
-            // u.key = u.id;
             return { ...u, key: u.id };
           }) ?? []
         );
@@ -407,11 +308,46 @@ const UserStatusPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/users")}
+          title={t("userStatus")}
           classNames={{
             body: "!p-0",
           }}
         >
+          <Space className="p-2 !w-full" direction="vertical">
+            <Radio.Group
+              optionType="button"
+              buttonStyle="solid"
+              size="small"
+              options={[
+                {
+                  label: "All",
+                  value: "",
+                },
+                {
+                  label: "Site",
+                  value: "site",
+                },
+              ]}
+              defaultValue={""}
+            />
+            <Space>
+              <Input.Search
+                size="small"
+                placeholder="ID,Nickname,Account Holder,Phone Number"
+                suffix={
+                  <Button
+                    size="small"
+                    type="text"
+                    icon={<RxLetterCaseToggle />}
+                  />
+                }
+                enterButton="Search"
+              />
+              <Button size="small" color="danger" variant="outlined">
+                {t("disconnectAll")}
+              </Button>
+            </Space>
+          </Space>
           <Table<User>
             columns={columns}
             loading={loading}
@@ -425,10 +361,42 @@ const UserStatusPage: React.FC = () => {
                 return `${range[0]} to ${range[1]} in Total ${total} `;
               },
               total: total,
+              defaultPageSize: 25,
               showSizeChanger: true,
-              pageSizeOptions: [10, 20, 50],
+              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
+          <Modal
+            open={colorModal}
+            onCancel={() => setColorModal(false)}
+            onOk={onChangeColors}
+          >
+            <Space direction="vertical" className="gap-2">
+              <Radio.Group
+                onChange={(e) => setColorOptoin(e.target.value)}
+                className="!flex !flex-col gap-2"
+                defaultValue={"new"}
+              >
+                <Radio value={"new"}>New Search Criteria</Radio>
+                {colorOption == "new" ? (
+                  <Form.Item>
+                    <Input />
+                  </Form.Item>
+                ) : null}
+                <Radio value={"list"}>
+                  Apply the member list search conditions as is:
+                </Radio>
+                {colorOption == "list" ? (
+                  <Form.Item>
+                    <Select />
+                  </Form.Item>
+                ) : null}
+              </Radio.Group>
+              <Form.Item label="Change Color">
+                <Select />
+              </Form.Item>
+            </Space>
+          </Modal>
         </Card>
       </Content>
     </Layout>

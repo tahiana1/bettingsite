@@ -6,8 +6,10 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
@@ -15,7 +17,7 @@ import (
 )
 
 // UpdateProfile is the resolver for the updateProfile field.
-func (r *mutationResolver) UpdateProfile(ctx context.Context, input model.UpdateProfile) (*models.Profile, error) {
+func (r *mutationResolver) UpdateProfile(ctx context.Context, id uint, input model.UpdateProfile) (*models.Profile, error) {
 	// Get dataloader from context
 	ldr := loaders.For(ctx)
 	authUser, err := helpers.GetAuthUser(ctx)
@@ -57,6 +59,15 @@ func (r *mutationResolver) ApproveUser(ctx context.Context, id uint) (bool, erro
 func (r *mutationResolver) BlockUser(ctx context.Context, id uint) (bool, error) {
 	ldr := loaders.For(ctx)
 	if err := ldr.UserReader.BlockUser(ctx, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// UpdateUser is the resolver for the updateUser field.
+func (r *mutationResolver) UpdateUser(ctx context.Context, id uint, input model.UpdateUser) (bool, error) {
+	ldr := loaders.For(ctx)
+	if err := ldr.UserReader.UpdateUser(ctx, id, input); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -108,6 +119,12 @@ func (r *queryResolver) FilterUsers(ctx context.Context, filters []*model.Filter
 	return ldr.UserReader.FilterUsers(ctx, filters, orders, pagination)
 }
 
+// ConnectedUsers is the resolver for the connectedUsers field.
+func (r *queryResolver) ConnectedUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	ldr := loaders.For(ctx)
+	return ldr.UserReader.ConnectedUsers(ctx, filters, orders, pagination)
+}
+
 // User is the resolver for the user field.
 func (r *queryResolver) User(ctx context.Context, id uint) (*models.User, error) {
 	var user *models.User
@@ -116,3 +133,42 @@ func (r *queryResolver) User(ctx context.Context, id uint) (*models.User, error)
 	}
 	return user, nil
 }
+
+// Type is the resolver for the type field.
+func (r *userResolver) Type(ctx context.Context, obj *models.User) (model.UserType, error) {
+	switch obj.Type {
+	case model.UserTypeG.String():
+		return model.UserTypeG, nil
+	case model.UserTypeI.String():
+		return model.UserTypeI, nil
+	case model.UserTypeW.String():
+		return model.UserTypeW, nil
+	case model.UserTypeT.String():
+		return model.UserTypeT, nil
+	}
+	return "", fmt.Errorf("Unknown user type %s", obj.Type)
+}
+
+// Status is the resolver for the status field.
+func (r *userResolver) Status(ctx context.Context, obj *models.User) (model.UserStatus, error) {
+	switch obj.Status {
+	case model.UserStatusA.String():
+		return model.UserStatusA, nil
+	case model.UserStatusB.String():
+		return model.UserStatusB, nil
+	case model.UserStatusD.String():
+		return model.UserStatusD, nil
+	case model.UserStatusI.String():
+		return model.UserStatusI, nil
+	case model.UserStatusS.String():
+		return model.UserStatusS, nil
+	case model.UserStatusP.String():
+		return model.UserStatusP, nil
+	}
+	return "", fmt.Errorf("Unknown status %s", obj.Status)
+}
+
+// User returns generated.UserResolver implementation.
+func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
+
+type userResolver struct{ *Resolver }
