@@ -65,7 +65,7 @@ const DistStatusPage: React.FC = () => {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
-      render(record) {
+      render(_, record) {
         return record.parent?.userid;
       },
     },
