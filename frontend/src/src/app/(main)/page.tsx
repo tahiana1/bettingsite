@@ -34,8 +34,9 @@ import { useAtom } from "jotai";
 import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
 import dayjs from "dayjs";
-// import { useQuery } from "@apollo/client";
-// import { GET_ANNOUNCEMENTS } from "@/actions/announcement";
+import { useQuery } from "@apollo/client";
+import { GET_LATEST_ANNOUNCEMENTS } from "@/actions/announcement";
+import { GET_TOP_EVENT } from "@/actions/event";
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -44,14 +45,14 @@ const contentStyle: React.CSSProperties = {
   textAlign: "center",
   background: "#364d79",
 };
- 
 
 const Index: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const tk = dayjs().format("YYYYMMDD");
 
-  // const { data, loading, refetch } = useQuery(GET_ANNOUNCEMENTS);
+  const { data, loading } = useQuery(GET_LATEST_ANNOUNCEMENTS);
+  const { data: eventData, } = useQuery(GET_TOP_EVENT);
 
   const [notiApi, contextHolder] = notification.useNotification();
 
@@ -81,9 +82,15 @@ const Index: React.FC = () => {
       }
     });
     // return () => {
-      // setNotififications([]);
+    // setNotififications([]);
     // };
   }, [notifications]);
+
+  useEffect(() => {
+    if (data) {
+      data.announcements?.map((a: Announcement) => a);
+    }
+  }, [data]);
 
   useEffect(() => {
     api("common/notifications").then((result) => {
@@ -93,7 +100,6 @@ const Index: React.FC = () => {
       setNotififications([]);
     };
   }, []);
-
   return (
     <Layout>
       {contextHolder}
@@ -168,18 +174,32 @@ const Index: React.FC = () => {
             </Card.Grid>
           </Card>
           <Space.Compact className="w-full gap-2 flex flex-col md:flex-row">
-            <Card className="w-full" title="Announcements">
-              This is an APEX solution Sample site
+            <Card
+              title={t("announcements")}
+              loading={loading}
+              className="w-full"
+              classNames={{
+                body: "!p-0",
+              }}
+            >
+              <List
+                size="small"
+                className="w-full"
+                dataSource={data?.announcements ?? []}
+                renderItem={(i: Announcement) => (
+                  <List.Item>{i.description}</List.Item>
+                )}
+              />
             </Card>
             <Card
               className="w-full !p-0"
               classNames={{
                 body: "!p-0",
               }}
-              title="Real-time deposit/withdraw status"
+              title={t("Real-time deposit/withdraw status")}
             >
-              <List size="small" className="w-full">
-                <List.Item>
+              <List size="small" className="!w-full">
+                <List.Item className="w-full">
                   1. Deposit 235234 {f.dateTime(new Date())}
                 </List.Item>
                 <List.Item>
@@ -188,23 +208,34 @@ const Index: React.FC = () => {
                 <List.Item>
                   3. Deposit 235234 {f.dateTime(new Date())}
                 </List.Item>
+                <List.Item>
+                  4. Deposit 235234 {f.dateTime(new Date())}
+                </List.Item>
+                <List.Item>
+                  5. Deposit 235234 {f.dateTime(new Date())}
+                </List.Item>
+                <List.Item>
+                  6. Deposit 235234 {f.dateTime(new Date())}
+                </List.Item>
               </List>
             </Card>
             <Card
+              title={t("events")}
               className="w-full"
-              title="Events"
               classNames={{
                 body: "!p-0",
               }}
             >
-              <List size="small" className="w-full">
-                <List.Item>Affillate Events</List.Item>
-                <List.Item>Birthday Event</List.Item>
-                <List.Item>
-                  <span className="text-red-600 text-xs">Event</span>{" "}
-                  Multi-folder event
-                </List.Item>
-              </List>
+              <List
+                size="small"
+                className="w-full"
+                dataSource={eventData?.response ?? []}
+                renderItem={(e: Event) => (
+                  <List.Item>
+                    {e.title} - {e.description}
+                  </List.Item>
+                )}
+              />
             </Card>
           </Space.Compact>
         </Space.Compact>

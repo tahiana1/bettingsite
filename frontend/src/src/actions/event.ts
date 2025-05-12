@@ -1,5 +1,34 @@
 import { gql } from "@apollo/client";
 
+export const GET_TOP_EVENT = gql`
+  query GetTopEvents {
+    response: topEvents {
+      id
+      title
+      description
+      orderNum
+      status
+      showFrom
+      showTo
+      type
+      domainId
+      domain {
+        id
+        name
+      }
+      userId
+      user {
+        id
+        name
+        userid
+      }
+      level
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
 export const FILTER_EVENT = gql`
   query GetEvents(
     $filters: [Filter!]

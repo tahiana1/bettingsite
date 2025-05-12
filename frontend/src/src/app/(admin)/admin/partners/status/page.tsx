@@ -1,109 +1,354 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { Layout, Space, Card, Table, Tag } from "antd";
+import {
+  Layout,
+  Space,
+  Card,
+  Table,
+  Tag,
+  Button,
+  Input,
+  DatePicker,
+  Radio,
+} from "antd";
+import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
+import { useQuery } from "@apollo/client";
+import { CONNECTED_USERS } from "@/actions/user";
+import { RxLetterCaseToggle } from "react-icons/rx";
 
-interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
-}
+// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
+import dayjs from "dayjs";
+import { parseTableOptions } from "@/lib";
+import { USER_STATUS } from "@/constants";
 
-const columns: TableProps<DataType>["columns"] = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>{text}</a>,
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-  },
-  {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
+// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
+// type UserIndex = keyof User;
 
-const PendingUsers: React.FC = () => {
+const DistStatusPage: React.FC = () => {
   const t = useTranslations();
+  const f = useFormatter();
+  const [tableOptions, setTableOptions] = useState<any>(null);
+
+  const [total, setTotal] = useState<number>(0);
+  const [users, setUsers] = useState<any[]>([]);
+  const { loading, data, refetch } = useQuery(CONNECTED_USERS);
+
+  const columns: TableProps<User>["columns"] = [
+    {
+      title: "ID",
+      dataIndex: "userid",
+      key: "userid",
+      fixed: "left",
+    },
+    {
+      title: t("site"),
+      dataIndex: "site",
+      key: "site",
+      render: (text) => text ?? "site",
+    },
+    {
+      title: t("root_dist"),
+      dataIndex: "root_dist",
+      key: "root_dist",
+      render(record) {
+        return record.root?.userid;
+      },
+    },
+    {
+      title: t("top_dist"),
+      dataIndex: "top_dist",
+      key: "top_dist",
+      render(record) {
+        return record.parent?.userid;
+      },
+    },
+    {
+      title: t("nickname"),
+      dataIndex: "profile.nickname",
+      key: '"Profile"."nickname"',
+      render: (_, { profile }) => profile.nickname,
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input className="w-full" />
+        </FilterDropdown>
+      ),
+    },
+    {
+      title: t("holderName"),
+      dataIndex: "profile.holderName",
+      key: '"Profile"."holder_name"',
+      render: (_, { profile }) => profile.holderName,
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input className="w-full" />
+        </FilterDropdown>
+      ),
+    },
+    {
+      title: t("phone"),
+      dataIndex: "profile.phone",
+      key: '"Profile"."phone"',
+      render: (_, { profile }) => profile.phone,
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input className="w-full" />
+        </FilterDropdown>
+      ),
+    },
+    {
+      title: t("birthday"),
+      dataIndex: "profile.birthday",
+      key: "birthday",
+      render: (_, { profile }) =>
+        f.dateTime(new Date(profile.birthday) ?? null),
+    },
+    {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      render: (text) => <Tag color={"gold"}>{USER_STATUS[text]}</Tag>,
+    },
+    {
+      title: t("balance"),
+      dataIndex: "balance",
+      key: "balance",
+      render: (_, { profile }) => profile.balance,
+    },
+    {
+      title: t("point"),
+      dataIndex: "point",
+      key: "point",
+      render: (_, { profile }) => profile.point,
+    },
+    {
+      title: t("comp"),
+      dataIndex: "comp",
+      key: "comp",
+      render: (_, { profile }) => profile.comp,
+    },
+    {
+      title: t("usdtAddress"),
+      dataIndex: "usdtAddress",
+      key: "usdtAddress",
+    },
+    {
+      title: t("currentIP"),
+      dataIndex: "currentIP",
+      key: "currentIP",
+    },
+    {
+      title: "IP",
+      dataIndex: "IP",
+      key: "IP",
+    },
+    {
+      title: "Coupon",
+      dataIndex: "profile.coupon",
+      key: "profile.coupon",
+      render: (_, { profile }) => profile.coupon,
+    },
+    {
+      title: "Last Deposit",
+      dataIndex: "profile.lastDeposit",
+      key: "lastDeposit",
+      render: (_, { profile }) =>
+        profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
+    },
+    {
+      title: "Last Withdraw",
+      dataIndex: "profile.lastWithdraw",
+      key: "lastWithdraw",
+      render: (_, { profile }) =>
+        profile.lastWithdraw
+          ? f.dateTime(new Date(profile.lastWithdraw))
+          : null,
+    },
+    {
+      title: t("role"),
+      key: "role",
+      dataIndex: "role",
+    },
+    {
+      title: t("lastLogin"),
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      sorter: {
+        compare: (a, b) => {
+          return new Date(a.updatedAt) > new Date(b.updatedAt) ? -1 : 1;
+        },
+        multiple: 2,
+      },
+      render: (text) =>
+        f.dateTime(new Date(text) ?? null, {
+          year: "numeric",
+          day: "numeric",
+          month: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+        }),
+      // defaultFilteredValue: getDefaultFilter("updatedAt"),
+      filterDropdown: (props) => (
+        <FilterDropdown
+          {...props}
+          mapValue={(selectedKeys, event) => {
+            if (event === "value") {
+              return selectedKeys?.map((key) => {
+                if (typeof key === "string") {
+                  return dayjs(key);
+                }
+
+                return key;
+              });
+            }
+
+            if (event === "onChange") {
+              if (selectedKeys.every(dayjs.isDayjs)) {
+                return selectedKeys?.map((date: any) =>
+                  dayjs(date).toISOString()
+                );
+              }
+            }
+
+            return selectedKeys;
+          }}
+        >
+          <DatePicker.RangePicker />
+        </FilterDropdown>
+      ),
+    },
+    {
+      title: t("createdAt"),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+    },
+    /*  {
+      title: t("action"),
+      key: "action",
+      fixed: "right",
+      render: (_, record) => (
+        <Space.Compact size="small" className="gap-2">
+          <Popconfirm
+            title={t("confirmSure")}
+            onConfirm={() => onDisconnect(record)}
+            description={t("disconnectMessage")}
+            icon={<AiOutlineDisconnect className="w-4 h-4 !text-red-500" />}
+          >
+            <Button
+              title={t("disconnect")}
+              variant="outlined"
+              color="danger"
+              icon={<AiOutlineDisconnect />}
+            />
+          </Popconfirm>
+        </Space.Compact>
+      ),
+    }, */
+  ];
+
+  const onChange: TableProps<User>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
+  };
+
+  useEffect(() => {
+    setUsers(
+      data?.users?.map((u: any) => {
+        return { ...u, key: u.id };
+      }) ?? []
+    );
+  }, [data]);
+
+  useEffect(() => {
+    refetch(tableOptions ?? undefined)
+      .then((res) => {
+        setUsers(
+          res.data?.response?.users?.map((u: any) => {
+            return { ...u, key: u.id };
+          }) ?? []
+        );
+        setTotal(res.data?.response?.total);
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  }, [tableOptions]);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("Recent user deposits and withdrawals")}
+          title={t("userStatus")}
           classNames={{
             body: "!p-0",
           }}
         >
-          <Table<DataType>
+          <Space className="p-2 !w-full" direction="vertical">
+            <Radio.Group
+              optionType="button"
+              buttonStyle="solid"
+              size="small"
+              options={[
+                {
+                  label: t("all"),
+                  value: "",
+                },
+                {
+                  label: t("site"),
+                  value: "site",
+                },
+              ]}
+              defaultValue={""}
+            />
+            <Space>
+              <Input.Search
+                size="small"
+                placeholder="ID,Nickname,Account Holder,Phone Number"
+                suffix={
+                  <Button
+                    size="small"
+                    type="text"
+                    icon={<RxLetterCaseToggle />}
+                  />
+                }
+                enterButton="Search"
+              />
+              <Button size="small" color="danger" variant="outlined">
+                {t("disconnectAll")}
+              </Button>
+            </Space>
+          </Space>
+          <Table<User>
             columns={columns}
-            dataSource={data}
+            loading={loading}
+            dataSource={users ?? []}
             className="w-full"
+            size="small"
+            scroll={{ x: "max-content" }}
+            onChange={onChange}
+            pagination={{
+              showTotal(total, range) {
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
+              },
+              total: total,
+              defaultPageSize: 25,
+              showSizeChanger: true,
+              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
+            }}
           />
         </Card>
       </Content>
@@ -111,4 +356,4 @@ const PendingUsers: React.FC = () => {
   );
 };
 
-export default PendingUsers;
+export default DistStatusPage;

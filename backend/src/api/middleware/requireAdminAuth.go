@@ -71,7 +71,7 @@ func RequireAdminAuth(c *gin.Context) {
 			}
 		}
 
-		if user.Role == "admin" {
+		if user.Role == "A" {
 
 			// Attach the user to request
 			c.Set("authUser", user)

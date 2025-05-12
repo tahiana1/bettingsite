@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 import { ApolloProvider } from "@apollo/client";
 import client from "@/api/apollo-client-ws";
@@ -223,17 +223,14 @@ export default function AdminRootLayout({
       children: [
         {
           key: "admin/partners/",
-          // icon: <BsRobot />,
           label: t("admin/menu/partners"),
         },
         {
           key: "admin/partners/status",
-          // icon: <MdPending />,
           label: t("admin/menu/partnerStatus"),
         },
         {
           key: "admin/partners/domain",
-          // icon: <SiStatuspage />,
           label: t("admin/menu/partnerDomain"),
         },
       ],
@@ -245,28 +242,23 @@ export default function AdminRootLayout({
       children: [
         {
           key: "admin/users/",
-          // icon: <BsRobot />,
           label: t("admin/menu/users"),
         },
         {
           key: "admin/users/pending",
-          // icon: <MdPending />,
-          label: `Pendings`,
+          label: t(`admin/menu/pendings`),
         },
         {
           key: "admin/users/status",
-          // icon: <SiStatuspage />,
-          label: `User Status`,
+          label: t(`admin/menu/userStatus`),
         },
         {
           key: "admin/users/logs",
-          // icon: <SiStatuspage />,
-          label: `Auth Logs`,
+          label: t(`admin/menu/logs`),
         },
         {
           key: "admin/users/activity",
-          // icon: <SiStatuspage />,
-          label: `Activities`,
+          label: t(`admin/menu/activity`),
         },
       ],
     },
@@ -417,7 +409,7 @@ export default function AdminRootLayout({
   useEffect(() => {
     api("user/me")
       .then((result) => {
-        if (result.data.role === "ADMIN") {
+        if (result.data.role === "A") {
           setAdmin(true);
           setUser(result.data);
           // router.push(ROUTES.admin.home);
@@ -444,7 +436,7 @@ export default function AdminRootLayout({
     document.documentElement.classList.remove("dark");
   }, []);
   useEffect(() => {
-    if (currentUser?.role === "ADMIN") {
+    if (currentUser?.role === "A") {
       setAdmin(true);
     } else {
       setAdmin(false);

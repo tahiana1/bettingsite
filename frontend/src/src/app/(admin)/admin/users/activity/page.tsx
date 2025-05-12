@@ -19,7 +19,7 @@ import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { RxLetterCaseToggle } from "react-icons/rx";
-
+import { FaWindows, FaLinux, FaApple } from "react-icons/fa";
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
@@ -112,9 +112,53 @@ const LogStatusPage: React.FC = () => {
       title: t("userid"),
       dataIndex: "user.userid",
       key: "user.userid",
-      render: (text, record) => (
-        <Tag>{text || record.user?.userid || "internal"}</Tag>
-      ),
+      render: (text, record) => text || record.user?.userid || "internal",
+    },
+    {
+      title: t("os"),
+      dataIndex: "os",
+      key: "os",
+      render(value) {
+        if (value.toLowerCase().includes("window")) {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaWindows />}
+              color="blue"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        } else if (value.toLowerCase().includes("linux")) {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaLinux />}
+              color="orange"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        } else {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaApple />}
+              color="purple"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        }
+      },
+    },
+    {
+      title: t("device"),
+      dataIndex: "device",
+      key: "device",
     },
     {
       title: "IP",
@@ -125,6 +169,18 @@ const LogStatusPage: React.FC = () => {
       title: t("path"),
       dataIndex: "path",
       key: "path",
+      render(value, record) {
+        return (
+          <pre>
+            <Tag
+              color={record.status == "success" ? "success" : "red"}
+            >
+              {record.method}
+            </Tag>
+            {value}
+          </pre>
+        );
+      },
     },
     {
       title: t("data"),
@@ -137,7 +193,9 @@ const LogStatusPage: React.FC = () => {
       dataIndex: "status",
       key: "status",
       render: (text) => (
-        <Tag color={text}>{text.toUpperCase() || "UNKNOWN"}</Tag>
+        <Tag bordered={false} color={text == "success" ? "success" : "red"}>
+          {text.toUpperCase() || "UNKNOWN"}
+        </Tag>
       ),
     },
     {
@@ -228,11 +286,11 @@ const LogStatusPage: React.FC = () => {
               size="small"
               options={[
                 {
-                  label: "All",
+                  label: t("all"),
                   value: "",
                 },
                 {
-                  label: "Site",
+                  label: t("site"),
                   value: "site",
                 },
               ]}
@@ -259,15 +317,15 @@ const LogStatusPage: React.FC = () => {
                 size="small"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Success",
+                    label: t("success"),
                     value: "success",
                   },
                   {
-                    label: "Failure",
+                    label: t("failure"),
                     value: "fail",
                   },
                 ]}
@@ -286,7 +344,11 @@ const LogStatusPage: React.FC = () => {
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
-                return `${range[0]} to ${range[1]} in Total ${total} `;
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
               },
               total: total,
               defaultPageSize: 25,

@@ -20,12 +20,14 @@ func (r *mutationResolver) CreateDomain(ctx context.Context, input model.NewDoma
 
 // UpdateDomain is the resolver for the updateDomain field.
 func (r *mutationResolver) UpdateDomain(ctx context.Context, id uint, input model.UpdateDomainInput) (*models.Domain, error) {
-	panic(fmt.Errorf("not implemented: UpdateDomain - updateDomain"))
+	ldr := loaders.For(ctx)
+	return ldr.DomainReader.UpdateDomain(ctx, id, input)
 }
 
 // DeleteDomain is the resolver for the deleteDomain field.
 func (r *mutationResolver) DeleteDomain(ctx context.Context, id uint) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteDomain - deleteDomain"))
+	ldr := loaders.For(ctx)
+	return ldr.DomainReader.DeleteDomain(ctx, id)
 }
 
 // Domains is the resolver for the domains field.

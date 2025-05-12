@@ -15,6 +15,7 @@ import JotaiContextProvider from "@/contexts/JotaiContextProvider";
 import zhCN from "antd/locale/zh_CN";
 import enUS from "antd/locale/en_US";
 import thTH from "antd/locale/th_TH";
+import koTH from "antd/locale/ko_KR";
 
 const geistSans = localFont({
   src: "../assets/fonts/GeistVF.woff",
@@ -43,6 +44,7 @@ export default async function RootLayout({
     cn: zhCN,
     en: enUS,
     th: thTH,
+    ko: koTH,
   };
   return (
     <html lang={locale}>

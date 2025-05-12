@@ -66,6 +66,8 @@ type NewDomainInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Status      *bool  `json:"status,omitempty"`
+	UserID      uint   `json:"userId"`
+	AutoReg     *bool  `json:"autoReg,omitempty"`
 	OrderNum    *uint  `json:"orderNum,omitempty"`
 }
 
@@ -94,6 +96,7 @@ type NewInboxInput struct {
 type NewLogInput struct {
 	Data   string  `json:"data"`
 	Path   string  `json:"path"`
+	Method string  `json:"method"`
 	IP     string  `json:"ip"`
 	Type   string  `json:"type"`
 	Phone  *string `json:"phone,omitempty"`
@@ -189,6 +192,8 @@ type UpdateDomainInput struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Status      *bool   `json:"status,omitempty"`
+	UserID      *uint   `json:"userId,omitempty"`
+	AutoReg     *bool   `json:"autoReg,omitempty"`
 	OrderNum    *uint   `json:"orderNum,omitempty"`
 }
 
@@ -261,6 +266,8 @@ type UpdateProfile struct {
 type UpdateUser struct {
 	Name        *string     `json:"name,omitempty"`
 	Userid      *string     `json:"userid,omitempty"`
+	RootID      *uint       `json:"rootId,omitempty"`
+	PartentID   *uint       `json:"partentId,omitempty"`
 	Type        *UserType   `json:"type,omitempty"`
 	Role        *string     `json:"role,omitempty"`
 	UsdtAddress *string     `json:"usdtAddress,omitempty"`
@@ -414,20 +421,20 @@ func (e OrderDirection) MarshalJSON() ([]byte, error) {
 type Role string
 
 const (
-	RoleAdmin   Role = "ADMIN"
-	RolePartner Role = "PARTNER"
-	RoleUser    Role = "USER"
+	RoleA Role = "A"
+	RoleP Role = "P"
+	RoleU Role = "U"
 )
 
 var AllRole = []Role{
-	RoleAdmin,
-	RolePartner,
-	RoleUser,
+	RoleA,
+	RoleP,
+	RoleU,
 }
 
 func (e Role) IsValid() bool {
 	switch e {
-	case RoleAdmin, RolePartner, RoleUser:
+	case RoleA, RoleP, RoleU:
 		return true
 	}
 	return false

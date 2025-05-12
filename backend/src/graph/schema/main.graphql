@@ -5,6 +5,8 @@
 scalar Upload
 scalar Time
 scalar Uint
+scalar DeletedAt
+scalar MyCustomBooleanScalar
 
 directive @auth on FIELD_DEFINITION
 
@@ -16,9 +18,9 @@ enum OrderDirection {
 }
 
 enum Role {
-  ADMIN
-  PARTNER
-  USER
+  A
+  P
+  U
 }
 
 enum Op {

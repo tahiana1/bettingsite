@@ -226,11 +226,11 @@ const LogStatusPage: React.FC = () => {
               size="small"
               options={[
                 {
-                  label: "All",
+                  label: t("all"),
                   value: "",
                 },
                 {
-                  label: "Site",
+                  label: t("site"),
                   value: "site",
                 },
               ]}
@@ -247,7 +247,7 @@ const LogStatusPage: React.FC = () => {
                     icon={<RxLetterCaseToggle />}
                   />
                 }
-                enterButton="Search"
+                enterButton={t("search")}
                 onSearch={onSearchLog}
               />
               <DatePicker.RangePicker size="small" onChange={onRangerChange} />
@@ -257,15 +257,15 @@ const LogStatusPage: React.FC = () => {
                 size="small"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Success",
+                    label: t("success"),
                     value: "success",
                   },
                   {
-                    label: "Failure",
+                    label: t("failure"),
                     value: "fail",
                   },
                 ]}
@@ -284,7 +284,11 @@ const LogStatusPage: React.FC = () => {
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
-                return `${range[0]} to ${range[1]} in Total ${total} `;
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
               },
               total: total,
               defaultPageSize: 25,

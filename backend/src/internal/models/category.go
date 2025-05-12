@@ -14,9 +14,9 @@ type Category struct {
 	Slug  string `gorm:"unique;not null" json:"slug"`
 	Posts []Post
 
-	CreatedAt time.Time  `json:"createdAt"`
-	UpdatedAt time.Time  `json:"updatedAt"`
-	DeletedAt *time.Time `gorm:"index" json:"deletedAt,omitempty"`
+	CreatedAt time.Time       `json:"createdAt"`
+	UpdatedAt time.Time       `json:"updatedAt"`
+	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
 }
 
 func (category *Category) BeforeCreate(tx *gorm.DB) (err error) {

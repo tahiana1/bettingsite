@@ -8,10 +8,17 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	"gorm.io/gorm"
 )
+
+// DeletedAt is the resolver for the deletedAt field.
+func (r *logResolver) DeletedAt(ctx context.Context, obj *models.Log) (*gorm.DeletedAt, error) {
+	panic(fmt.Errorf("not implemented: DeletedAt - deletedAt"))
+}
 
 // CreateLog is the resolver for the createLog field.
 func (r *mutationResolver) CreateLog(ctx context.Context, input model.NewLogInput) (*models.Log, error) {
@@ -33,3 +40,8 @@ func (r *queryResolver) GetLogs(ctx context.Context, filters []*model.Filter, or
 	ldr := loaders.For(ctx)
 	return ldr.LogReader.GetLogs(ctx, filters, orders, pagination)
 }
+
+// Log returns generated.LogResolver implementation.
+func (r *Resolver) Log() generated.LogResolver { return &logResolver{r} }
+
+type logResolver struct{ *Resolver }

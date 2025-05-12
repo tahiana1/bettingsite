@@ -11,7 +11,7 @@ type Menu {
   orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateMenuInput {
@@ -48,13 +48,13 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): MenuList! @hasRole(role: ADMIN)
+  ): MenuList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createMenu(input: NewMenuInput!): Menu!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateMenu(id: ID!, input: UpdateMenuInput!): Menu!
-    @hasRole(role: ADMIN)
-  deleteMenu(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteMenu(id: ID!): Boolean! @hasRole(role: A)
 }

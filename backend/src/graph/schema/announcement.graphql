@@ -10,7 +10,7 @@ type Announcement {
   showTo: Time
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateAnnouncementInput {
@@ -38,17 +38,18 @@ type AnnouncementList {
 }
 
 extend type Query {
+  announcements: [Announcement!]!
   getAnnouncements(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): AnnouncementList! @hasRole(role: ADMIN)
+  ): AnnouncementList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createAnnouncement(input: NewAnnouncementInput!): Announcement!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateAnnouncement(id: ID!, input: UpdateAnnouncementInput!): Announcement!
-    @hasRole(role: ADMIN)
-  deleteAnnouncement(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteAnnouncement(id: ID!): Boolean! @hasRole(role: A)
 }

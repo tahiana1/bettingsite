@@ -23,13 +23,23 @@ type User {
   usdtAddress: String!
   currentIP: String!
   IP: String!
+  rootId: ID
+  root: User
+  parentId: ID
+  parent: User
+  children: [User]
+  childrenCount: Uint
   profile: Profile
   status: UserStatus!
   blackMemo: Boolean!
   orderNum: Uint
+  os: String
+  device: String
+  fingerPrint: String
+
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 type Profile {
@@ -59,7 +69,7 @@ type Profile {
   orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input NewProfile {
@@ -110,6 +120,8 @@ input UpdateProfile {
 input UpdateUser {
   name: String
   userid: String
+  rootId: ID
+  partentId: ID
   type: UserType
   role: String
   usdtAddress: String
@@ -126,27 +138,33 @@ extend type Query {
   profile: Profile! @auth
   me: User! @auth
 
-  users: [User!]! @hasRole(role: ADMIN)
-  
+  users: [User!]! @hasRole(role: A)
+
   filterUsers(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): UserList! @hasRole(role: ADMIN)
+  ): UserList! @hasRole(role: A)
 
   connectedUsers(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): UserList! @hasRole(role: ADMIN)
+  ): UserList! @hasRole(role: A)
 
-  user(id: ID!): User @hasRole(role: ADMIN)
+  user(id: ID!): User @hasRole(role: A)
+
+  getDistributors(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: A)
 }
 
 extend type Mutation {
   updateProfile(id: ID!, input: UpdateProfile!): Profile! @auth
   deleteProfile(id: ID!): Boolean! @auth
-  approveUser(id: ID!): Boolean! @hasRole(role: ADMIN)
-  blockUser(id: ID!): Boolean! @hasRole(role: ADMIN)
-  updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: ADMIN)
+  approveUser(id: ID!): Boolean! @hasRole(role: A)
+  blockUser(id: ID!): Boolean! @hasRole(role: A)
+  updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: A)
 }

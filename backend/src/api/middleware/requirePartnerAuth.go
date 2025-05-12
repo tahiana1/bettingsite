@@ -65,7 +65,7 @@ func RequirePartnerAuth(c *gin.Context) {
 			format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
-		if user.Role == "partner" {
+		if user.Role == "P" {
 			// Attach the user to request
 			c.Set("authUser", user)
 

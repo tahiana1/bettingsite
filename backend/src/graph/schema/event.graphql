@@ -14,7 +14,7 @@ type Event {
   level: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateEventInput {
@@ -47,16 +47,17 @@ type EventList {
 }
 
 extend type Query {
+  topEvents: [Event!]
   events: [Event!]
   getEvents(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): EventList! @hasRole(role: ADMIN)
+  ): EventList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createEvent(input: NewEventInput!): Event! @hasRole(role: ADMIN)
-  updateEvent(id: ID!, input: UpdateEventInput!): Event! @hasRole(role: ADMIN)
-  deleteEvent(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createEvent(input: NewEventInput!): Event! @hasRole(role: A)
+  updateEvent(id: ID!, input: UpdateEventInput!): Event! @hasRole(role: A)
+  deleteEvent(id: ID!): Boolean! @hasRole(role: A)
 }

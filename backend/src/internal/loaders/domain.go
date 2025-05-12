@@ -161,10 +161,17 @@ func (nr *domainReader) UpdateDomain(ctx context.Context, nID uint, updates mode
 		domain.Name = *updates.Name
 	}
 
+	if updates.UserID != nil {
+		domain.UserID = *updates.UserID
+	}
+
 	if updates.Description != nil {
 		domain.Description = *updates.Description
 	}
 
+	if updates.AutoReg != nil {
+		domain.AutoReg = *updates.AutoReg
+	}
 	if updates.Status != nil {
 		domain.Status = *updates.Status
 	}
@@ -179,11 +186,14 @@ func (nr *domainReader) UpdateDomain(ctx context.Context, nID uint, updates mode
 }
 
 // DeleteDomain deletes a domain by ID (soft delete if GORM soft delete is enabled)
-func (nr *domainReader) DeleteDomain(ctx context.Context, nid uint) error {
+func (nr *domainReader) DeleteDomain(ctx context.Context, nid uint) (bool, error) {
 	n := &models.Domain{}
 	err := nr.db.Model(&models.Domain{}).First(&n, nid).Error
 	if err != nil {
-		return err
+		return false, err
 	}
-	return nr.db.Delete(&models.Domain{}, nid).Error
+	if err := nr.db.Delete(&models.Domain{}, nid).Error; err != nil {
+		return false, err
+	}
+	return true, nil
 }

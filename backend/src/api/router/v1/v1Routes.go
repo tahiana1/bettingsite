@@ -13,7 +13,6 @@ import (
 )
 
 func GetV1Route(r *gin.RouterGroup) {
-	r.Use(middleware.LogAuth)
 
 	r.GET("/healthz", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
@@ -21,6 +20,9 @@ func GetV1Route(r *gin.RouterGroup) {
 			"message": "BACKEND API RUNNING",
 		})
 	})
+	r.GET("/lang/:locale", controllers.GetLang)
+
+	r.Use(middleware.LogAuth)
 
 	r.GET("/ws/info", controllers.Info)
 	r.GET("/ws", controllers.Upgrade)
@@ -40,7 +42,6 @@ func GetV1Route(r *gin.RouterGroup) {
 		authRouter.POST("/logout", controllers.Logout)
 	}
 
-	r.GET("/lang/:locale", controllers.GetLang)
 	// User API routes
 	commonRouter.GetCommonRoute(r.Group("/common"))
 

@@ -3,19 +3,24 @@ type Log {
   data: String
   path: String!
   phone: String!
+  method: String!
   type: String!
   ip: String!
   userId: ID
   user: User
   status: String
+  os: String
+  device: String
+  host: String
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input NewLogInput {
   data: String!
   path: String!
+  method: String!
   ip: String!
   type: String!
   phone: String
@@ -33,10 +38,10 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): LogList! @hasRole(role: ADMIN)
+  ): LogList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createLog(input: NewLogInput!): Log! @hasRole(role: ADMIN)
-  deleteLog(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createLog(input: NewLogInput!): Log! @hasRole(role: A)
+  deleteLog(id: ID!): Boolean! @hasRole(role: A)
 }

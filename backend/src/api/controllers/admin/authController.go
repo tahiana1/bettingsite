@@ -128,7 +128,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if user.Role != "ADMIN" {
+	if user.Role != "A" {
 		format_errors.ForbbidenError(c, fmt.Errorf("Access denied!"))
 		return
 	}

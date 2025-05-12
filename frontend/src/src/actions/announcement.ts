@@ -1,5 +1,21 @@
 import { gql } from "@apollo/client";
 
+export const GET_LATEST_ANNOUNCEMENTS = gql`
+  query GetLatestAnnouncements {
+    announcements {
+      id
+      title
+      description
+      showTo
+      showFrom
+      orderNum
+      status
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
 export const GET_ANNOUNCEMENTS = gql`
   query GetAnnouncements(
     $filters: [Filter!]

@@ -430,11 +430,11 @@ const PendingUserPage: React.FC = () => {
               size="small"
               options={[
                 {
-                  label: "All",
+                  label: t("all"),
                   value: "",
                 },
                 {
-                  label: "Site",
+                  label: t("site"),
                   value: "site",
                 },
               ]}
@@ -473,11 +473,11 @@ const PendingUserPage: React.FC = () => {
                   buttonStyle="solid"
                   options={[
                     {
-                      label: "Waiting for approval",
+                      label: t("waiting_approval"),
                       value: "pending",
                     },
                     {
-                      label: "Joined today",
+                      label: t("joined_today"),
                       value: "today",
                     },
                   ]}
@@ -497,7 +497,11 @@ const PendingUserPage: React.FC = () => {
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
-                return `${range[0]} to ${range[1]} in Total ${total} `;
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
               },
               total: total,
               defaultPageSize: 25,

@@ -16,6 +16,7 @@ export const GET_DOMAINS = gql`
         name
         description
         orderNum
+        autoReg
         status
         user {
           id
@@ -35,11 +36,19 @@ export const CREATE_DOMAIN = gql`
   mutation NewDomain($input: NewDomainInput!) {
     response: createDomain(input: $input) {
       id
-      title
+      name
       description
-      showFrom
-      showTo
       orderNum
+      autoReg
+      status
+      user {
+        id
+        name
+        userid
+      }
+      createdAt
+      updatedAt
+      deletedAt
     }
   }
 `;
@@ -48,14 +57,18 @@ export const UPDATE_DOMAIN = gql`
   mutation UpdateDomain($id: ID!, $input: UpdateDomainInput!) {
     response: updateDomain(id: $id, input: $input) {
       id
-      title
-      showFrom
-      showTo
-      orderNum
+      name
       description
+      orderNum
+      autoReg
       status
-      updatedAt
+      user {
+        id
+        name
+        userid
+      }
       createdAt
+      updatedAt
       deletedAt
     }
   }

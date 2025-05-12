@@ -320,11 +320,11 @@ const UserStatusPage: React.FC = () => {
               size="small"
               options={[
                 {
-                  label: "All",
+                  label: t("all"),
                   value: "",
                 },
                 {
-                  label: "Site",
+                  label: t("site"),
                   value: "site",
                 },
               ]}
@@ -358,7 +358,11 @@ const UserStatusPage: React.FC = () => {
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
-                return `${range[0]} to ${range[1]} in Total ${total} `;
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
               },
               total: total,
               defaultPageSize: 25,
@@ -393,7 +397,7 @@ const UserStatusPage: React.FC = () => {
                 ) : null}
               </Radio.Group>
               <Form.Item label="Change Color">
-                <Select />
+                <Select />1
               </Form.Item>
             </Space>
           </Modal>

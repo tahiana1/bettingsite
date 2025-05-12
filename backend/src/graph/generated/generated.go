@@ -16,9 +16,11 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
+	"github.com/hotbrainy/go-betting/backend/graph/scalar"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
+	"gorm.io/gorm"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -41,7 +43,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
-	Inbox() InboxResolver
+	Log() LogResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
@@ -75,6 +77,7 @@ type ComplexityRoot struct {
 	}
 
 	Domain struct {
+		AutoReg     func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		DeletedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
@@ -84,6 +87,7 @@ type ComplexityRoot struct {
 		Status      func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		User        func(childComplexity int) int
+		UserID      func(childComplexity int) int
 	}
 
 	DomainList struct {
@@ -119,8 +123,8 @@ type ComplexityRoot struct {
 		CreatedAt   func(childComplexity int) int
 		DeletedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
-		From        func(childComplexity int) int
 		FromID      func(childComplexity int) int
+		FromUser    func(childComplexity int) int
 		ID          func(childComplexity int) int
 		OpenedAt    func(childComplexity int) int
 		OrderNum    func(childComplexity int) int
@@ -141,8 +145,12 @@ type ComplexityRoot struct {
 		CreatedAt func(childComplexity int) int
 		Data      func(childComplexity int) int
 		DeletedAt func(childComplexity int) int
+		Device    func(childComplexity int) int
+		Host      func(childComplexity int) int
 		ID        func(childComplexity int) int
 		IP        func(childComplexity int) int
+		Method    func(childComplexity int) int
+		OS        func(childComplexity int) int
 		Path      func(childComplexity int) int
 		Phone     func(childComplexity int) int
 		Status    func(childComplexity int) int
@@ -258,11 +266,13 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Announcements    func(childComplexity int) int
 		ConnectedUsers   func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		Domains          func(childComplexity int) int
 		Events           func(childComplexity int) int
 		FilterUsers      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetAnnouncements func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDistributors  func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetDomains       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetEvents        func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetInboxes       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
@@ -276,6 +286,7 @@ type ComplexityRoot struct {
 		Profile          func(childComplexity int) int
 		Time             func(childComplexity int) int
 		Todos            func(childComplexity int) int
+		TopEvents        func(childComplexity int) int
 		User             func(childComplexity int, id uint) int
 		Users            func(childComplexity int) int
 	}
@@ -292,21 +303,30 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		BlackMemo   func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		CurrentIP   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		ID          func(childComplexity int) int
-		IP          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		OrderNum    func(childComplexity int) int
-		Profile     func(childComplexity int) int
-		Role        func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Type        func(childComplexity int) int
-		USDTAddress func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		Userid      func(childComplexity int) int
+		BlackMemo     func(childComplexity int) int
+		Children      func(childComplexity int) int
+		ChildrenCount func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		CurrentIP     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		Device        func(childComplexity int) int
+		FingerPrint   func(childComplexity int) int
+		ID            func(childComplexity int) int
+		IP            func(childComplexity int) int
+		Name          func(childComplexity int) int
+		OS            func(childComplexity int) int
+		OrderNum      func(childComplexity int) int
+		Parent        func(childComplexity int) int
+		ParentID      func(childComplexity int) int
+		Profile       func(childComplexity int) int
+		Role          func(childComplexity int) int
+		Root          func(childComplexity int) int
+		RootID        func(childComplexity int) int
+		Status        func(childComplexity int) int
+		Type          func(childComplexity int) int
+		USDTAddress   func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		Userid        func(childComplexity int) int
 	}
 
 	UserList struct {
@@ -315,8 +335,8 @@ type ComplexityRoot struct {
 	}
 }
 
-type InboxResolver interface {
-	From(ctx context.Context, obj *models.Inbox) (*models.User, error)
+type LogResolver interface {
+	DeletedAt(ctx context.Context, obj *models.Log) (*gorm.DeletedAt, error)
 }
 type MutationResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
@@ -350,9 +370,11 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
+	Announcements(ctx context.Context) ([]*models.Announcement, error)
 	GetAnnouncements(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.AnnouncementList, error)
 	Domains(ctx context.Context) ([]*models.Domain, error)
 	GetDomains(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.DomainList, error)
+	TopEvents(ctx context.Context) ([]*models.Event, error)
 	Events(ctx context.Context) ([]*models.Event, error)
 	GetEvents(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.EventList, error)
 	GetInboxes(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.InboxList, error)
@@ -369,6 +391,7 @@ type QueryResolver interface {
 	FilterUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
 	ConnectedUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
 	User(ctx context.Context, id uint) (*models.User, error)
+	GetDistributors(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
 }
 type SubscriptionResolver interface {
 	Time(ctx context.Context) (<-chan string, error)
@@ -496,6 +519,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AnnouncementList.Total(childComplexity), true
 
+	case "Domain.autoReg":
+		if e.complexity.Domain.AutoReg == nil {
+			break
+		}
+
+		return e.complexity.Domain.AutoReg(childComplexity), true
+
 	case "Domain.createdAt":
 		if e.complexity.Domain.CreatedAt == nil {
 			break
@@ -558,6 +588,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Domain.User(childComplexity), true
+
+	case "Domain.userId":
+		if e.complexity.Domain.UserID == nil {
+			break
+		}
+
+		return e.complexity.Domain.UserID(childComplexity), true
 
 	case "DomainList.domains":
 		if e.complexity.DomainList.Domains == nil {
@@ -720,19 +757,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Inbox.Description(childComplexity), true
 
-	case "Inbox.from":
-		if e.complexity.Inbox.From == nil {
-			break
-		}
-
-		return e.complexity.Inbox.From(childComplexity), true
-
 	case "Inbox.fromId":
 		if e.complexity.Inbox.FromID == nil {
 			break
 		}
 
 		return e.complexity.Inbox.FromID(childComplexity), true
+
+	case "Inbox.FromUser":
+		if e.complexity.Inbox.FromUser == nil {
+			break
+		}
+
+		return e.complexity.Inbox.FromUser(childComplexity), true
 
 	case "Inbox.id":
 		if e.complexity.Inbox.ID == nil {
@@ -832,6 +869,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Log.DeletedAt(childComplexity), true
 
+	case "Log.device":
+		if e.complexity.Log.Device == nil {
+			break
+		}
+
+		return e.complexity.Log.Device(childComplexity), true
+
+	case "Log.host":
+		if e.complexity.Log.Host == nil {
+			break
+		}
+
+		return e.complexity.Log.Host(childComplexity), true
+
 	case "Log.id":
 		if e.complexity.Log.ID == nil {
 			break
@@ -845,6 +896,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Log.IP(childComplexity), true
+
+	case "Log.method":
+		if e.complexity.Log.Method == nil {
+			break
+		}
+
+		return e.complexity.Log.Method(childComplexity), true
+
+	case "Log.os":
+		if e.complexity.Log.OS == nil {
+			break
+		}
+
+		return e.complexity.Log.OS(childComplexity), true
 
 	case "Log.path":
 		if e.complexity.Log.Path == nil {
@@ -1618,6 +1683,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Profile.UserID(childComplexity), true
 
+	case "Query.announcements":
+		if e.complexity.Query.Announcements == nil {
+			break
+		}
+
+		return e.complexity.Query.Announcements(childComplexity), true
+
 	case "Query.connectedUsers":
 		if e.complexity.Query.ConnectedUsers == nil {
 			break
@@ -1667,6 +1739,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetAnnouncements(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
+	case "Query.getDistributors":
+		if e.complexity.Query.GetDistributors == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getDistributors_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetDistributors(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
 
 	case "Query.getDomains":
 		if e.complexity.Query.GetDomains == nil {
@@ -1789,6 +1873,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.Todos(childComplexity), true
 
+	case "Query.topEvents":
+		if e.complexity.Query.TopEvents == nil {
+			break
+		}
+
+		return e.complexity.Query.TopEvents(childComplexity), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -1850,6 +1941,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.BlackMemo(childComplexity), true
 
+	case "User.children":
+		if e.complexity.User.Children == nil {
+			break
+		}
+
+		return e.complexity.User.Children(childComplexity), true
+
+	case "User.childrenCount":
+		if e.complexity.User.ChildrenCount == nil {
+			break
+		}
+
+		return e.complexity.User.ChildrenCount(childComplexity), true
+
 	case "User.createdAt":
 		if e.complexity.User.CreatedAt == nil {
 			break
@@ -1870,6 +1975,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.DeletedAt(childComplexity), true
+
+	case "User.device":
+		if e.complexity.User.Device == nil {
+			break
+		}
+
+		return e.complexity.User.Device(childComplexity), true
+
+	case "User.fingerPrint":
+		if e.complexity.User.FingerPrint == nil {
+			break
+		}
+
+		return e.complexity.User.FingerPrint(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -1892,12 +2011,33 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Name(childComplexity), true
 
+	case "User.os":
+		if e.complexity.User.OS == nil {
+			break
+		}
+
+		return e.complexity.User.OS(childComplexity), true
+
 	case "User.orderNum":
 		if e.complexity.User.OrderNum == nil {
 			break
 		}
 
 		return e.complexity.User.OrderNum(childComplexity), true
+
+	case "User.parent":
+		if e.complexity.User.Parent == nil {
+			break
+		}
+
+		return e.complexity.User.Parent(childComplexity), true
+
+	case "User.parentId":
+		if e.complexity.User.ParentID == nil {
+			break
+		}
+
+		return e.complexity.User.ParentID(childComplexity), true
 
 	case "User.profile":
 		if e.complexity.User.Profile == nil {
@@ -1912,6 +2052,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.Role(childComplexity), true
+
+	case "User.root":
+		if e.complexity.User.Root == nil {
+			break
+		}
+
+		return e.complexity.User.Root(childComplexity), true
+
+	case "User.rootId":
+		if e.complexity.User.RootID == nil {
+			break
+		}
+
+		return e.complexity.User.RootID(childComplexity), true
 
 	case "User.status":
 		if e.complexity.User.Status == nil {
@@ -2116,7 +2270,7 @@ var sources = []*ast.Source{
   showTo: Time
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateAnnouncementInput {
@@ -2144,19 +2298,20 @@ type AnnouncementList {
 }
 
 extend type Query {
+  announcements: [Announcement!]!
   getAnnouncements(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): AnnouncementList! @hasRole(role: ADMIN)
+  ): AnnouncementList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createAnnouncement(input: NewAnnouncementInput!): Announcement!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateAnnouncement(id: ID!, input: UpdateAnnouncementInput!): Announcement!
-    @hasRole(role: ADMIN)
-  deleteAnnouncement(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteAnnouncement(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/domain.graphql", Input: `type Domain {
@@ -2164,17 +2319,21 @@ extend type Mutation {
   name: String!
   description: String!
   status: Boolean!
+  autoReg: MyCustomBooleanScalar!
   orderNum: Uint
+  userId: ID!
   user: User!
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateDomainInput {
   name: String
   description: String
   status: Boolean
+  userId: ID
+  autoReg: Boolean
   orderNum: Uint
 }
 
@@ -2182,6 +2341,8 @@ input NewDomainInput {
   name: String!
   description: String!
   status: Boolean
+  userId: ID!
+  autoReg: Boolean
   orderNum: Uint
 }
 
@@ -2196,14 +2357,13 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): DomainList! @hasRole(role: ADMIN)
+  ): DomainList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createDomain(input: NewDomainInput!): Domain! @hasRole(role: ADMIN)
-  updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
-    @hasRole(role: ADMIN)
-  deleteDomain(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createDomain(input: NewDomainInput!): Domain! @hasRole(role: A)
+  updateDomain(id: ID!, input: UpdateDomainInput!): Domain! @hasRole(role: A)
+  deleteDomain(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/event.graphql", Input: `type Event {
@@ -2222,7 +2382,7 @@ extend type Mutation {
   level: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateEventInput {
@@ -2255,18 +2415,19 @@ type EventList {
 }
 
 extend type Query {
+  topEvents: [Event!]
   events: [Event!]
   getEvents(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): EventList! @hasRole(role: ADMIN)
+  ): EventList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createEvent(input: NewEventInput!): Event! @hasRole(role: ADMIN)
-  updateEvent(id: ID!, input: UpdateEventInput!): Event! @hasRole(role: ADMIN)
-  deleteEvent(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createEvent(input: NewEventInput!): Event! @hasRole(role: A)
+  updateEvent(id: ID!, input: UpdateEventInput!): Event! @hasRole(role: A)
+  deleteEvent(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/inbox.graphql", Input: `type Inbox {
@@ -2279,11 +2440,11 @@ extend type Mutation {
   userId: Uint!
   user: User!
   fromId: Uint!
-  from: User!
+  FromUser: User!
   openedAt: Time
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateInboxInput {
@@ -2316,15 +2477,15 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): InboxList! @hasRole(role: ADMIN)
+  ): InboxList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createInbox(input: NewInboxInput!): Inbox!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateInbox(id: ID!, input: UpdateInboxInput!): Inbox!
-    @hasRole(role: ADMIN)
-  deleteInbox(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteInbox(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/log.graphql", Input: `type Log {
@@ -2332,19 +2493,24 @@ extend type Mutation {
   data: String
   path: String!
   phone: String!
+  method: String!
   type: String!
   ip: String!
   userId: ID
   user: User
   status: String
+  os: String
+  device: String
+  host: String
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input NewLogInput {
   data: String!
   path: String!
+  method: String!
   ip: String!
   type: String!
   phone: String
@@ -2362,12 +2528,12 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): LogList! @hasRole(role: ADMIN)
+  ): LogList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createLog(input: NewLogInput!): Log! @hasRole(role: ADMIN)
-  deleteLog(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createLog(input: NewLogInput!): Log! @hasRole(role: A)
+  deleteLog(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/main.graphql", Input: `# GraphQL schema example
@@ -2377,6 +2543,8 @@ extend type Mutation {
 scalar Upload
 scalar Time
 scalar Uint
+scalar DeletedAt
+scalar MyCustomBooleanScalar
 
 directive @auth on FIELD_DEFINITION
 
@@ -2388,9 +2556,9 @@ enum OrderDirection {
 }
 
 enum Role {
-  ADMIN
-  PARTNER
-  USER
+  A
+  P
+  U
 }
 
 enum Op {
@@ -2458,7 +2626,7 @@ type Subscription {
   orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateMenuInput {
@@ -2495,15 +2663,15 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): MenuList! @hasRole(role: ADMIN)
+  ): MenuList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createMenu(input: NewMenuInput!): Menu!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateMenu(id: ID!, input: UpdateMenuInput!): Menu!
-    @hasRole(role: ADMIN)
-  deleteMenu(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteMenu(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/notification.graphql", Input: `type Notification {
@@ -2516,7 +2684,7 @@ extend type Mutation {
   showTo: Time!
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateNotificationInput {
@@ -2548,15 +2716,15 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): NotificationList! @hasRole(role: ADMIN)
+  ): NotificationList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createNotification(input: NewNotificationInput!): Notification!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateNotification(id: ID!, input: UpdateNotificationInput!): Notification!
-    @hasRole(role: ADMIN)
-  deleteNotification(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteNotification(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/todo.graphql", Input: `# GraphQL schema example
@@ -2608,13 +2776,23 @@ type User {
   usdtAddress: String!
   currentIP: String!
   IP: String!
+  rootId: ID
+  root: User
+  parentId: ID
+  parent: User
+  children: [User]
+  childrenCount: Uint
   profile: Profile
   status: UserStatus!
   blackMemo: Boolean!
   orderNum: Uint
+  os: String
+  device: String
+  fingerPrint: String
+
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 type Profile {
@@ -2644,7 +2822,7 @@ type Profile {
   orderNum: Uint
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input NewProfile {
@@ -2695,6 +2873,8 @@ input UpdateProfile {
 input UpdateUser {
   name: String
   userid: String
+  rootId: ID
+  partentId: ID
   type: UserType
   role: String
   usdtAddress: String
@@ -2711,29 +2891,35 @@ extend type Query {
   profile: Profile! @auth
   me: User! @auth
 
-  users: [User!]! @hasRole(role: ADMIN)
-  
+  users: [User!]! @hasRole(role: A)
+
   filterUsers(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): UserList! @hasRole(role: ADMIN)
+  ): UserList! @hasRole(role: A)
 
   connectedUsers(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): UserList! @hasRole(role: ADMIN)
+  ): UserList! @hasRole(role: A)
 
-  user(id: ID!): User @hasRole(role: ADMIN)
+  user(id: ID!): User @hasRole(role: A)
+
+  getDistributors(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: A)
 }
 
 extend type Mutation {
   updateProfile(id: ID!, input: UpdateProfile!): Profile! @auth
   deleteProfile(id: ID!): Boolean! @auth
-  approveUser(id: ID!): Boolean! @hasRole(role: ADMIN)
-  blockUser(id: ID!): Boolean! @hasRole(role: ADMIN)
-  updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: ADMIN)
+  approveUser(id: ID!): Boolean! @hasRole(role: A)
+  blockUser(id: ID!): Boolean! @hasRole(role: A)
+  updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 }
@@ -3736,6 +3922,65 @@ func (ec *executionContext) field_Query_getAnnouncements_argsPagination(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_getDistributors_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getDistributors_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_getDistributors_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_getDistributors_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_getDistributors_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getDistributors_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getDistributors_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_getDomains_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -4485,6 +4730,18 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -4493,6 +4750,12 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -4743,9 +5006,9 @@ func (ec *executionContext) _Announcement_deletedAt(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Announcement_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4755,7 +5018,7 @@ func (ec *executionContext) fieldContext_Announcement_deletedAt(_ context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5051,6 +5314,50 @@ func (ec *executionContext) fieldContext_Domain_status(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _Domain_autoReg(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_autoReg(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AutoReg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNMyCustomBooleanScalar2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_autoReg(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type MyCustomBooleanScalar does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Domain_orderNum(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Domain_orderNum(ctx, field)
 	if err != nil {
@@ -5087,6 +5394,50 @@ func (ec *executionContext) fieldContext_Domain_orderNum(_ context.Context, fiel
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_userId(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalNID2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5147,6 +5498,18 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -5155,6 +5518,12 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -5279,9 +5648,9 @@ func (ec *executionContext) _Domain_deletedAt(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Domain_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5291,7 +5660,7 @@ func (ec *executionContext) fieldContext_Domain_deletedAt(_ context.Context, fie
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5344,8 +5713,12 @@ func (ec *executionContext) fieldContext_DomainList_domains(_ context.Context, f
 				return ec.fieldContext_Domain_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
 			case "user":
 				return ec.fieldContext_Domain_user(ctx, field)
 			case "createdAt":
@@ -5721,6 +6094,18 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -5729,6 +6114,12 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -5871,8 +6262,12 @@ func (ec *executionContext) fieldContext_Event_domain(_ context.Context, field g
 				return ec.fieldContext_Domain_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
 			case "user":
 				return ec.fieldContext_Domain_user(ctx, field)
 			case "createdAt":
@@ -6122,9 +6517,9 @@ func (ec *executionContext) _Event_deletedAt(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Event_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6134,7 +6529,7 @@ func (ec *executionContext) fieldContext_Event_deletedAt(_ context.Context, fiel
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6622,6 +7017,18 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -6630,6 +7037,12 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -6687,8 +7100,8 @@ func (ec *executionContext) fieldContext_Inbox_fromId(_ context.Context, field g
 	return fc, nil
 }
 
-func (ec *executionContext) _Inbox_from(ctx context.Context, field graphql.CollectedField, obj *models.Inbox) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Inbox_from(ctx, field)
+func (ec *executionContext) _Inbox_FromUser(ctx context.Context, field graphql.CollectedField, obj *models.Inbox) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Inbox_FromUser(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -6701,7 +7114,7 @@ func (ec *executionContext) _Inbox_from(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Inbox().From(rctx, obj)
+		return obj.FromUser, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6713,17 +7126,17 @@ func (ec *executionContext) _Inbox_from(ctx context.Context, field graphql.Colle
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.User)
+	res := resTmp.(models.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Inbox_from(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Inbox_FromUser(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Inbox",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -6742,6 +7155,18 @@ func (ec *executionContext) fieldContext_Inbox_from(_ context.Context, field gra
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -6750,6 +7175,12 @@ func (ec *executionContext) fieldContext_Inbox_from(_ context.Context, field gra
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -6915,9 +7346,9 @@ func (ec *executionContext) _Inbox_deletedAt(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Inbox_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -6927,7 +7358,7 @@ func (ec *executionContext) fieldContext_Inbox_deletedAt(_ context.Context, fiel
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6990,8 +7421,8 @@ func (ec *executionContext) fieldContext_InboxList_inboxes(_ context.Context, fi
 				return ec.fieldContext_Inbox_user(ctx, field)
 			case "fromId":
 				return ec.fieldContext_Inbox_fromId(ctx, field)
-			case "from":
-				return ec.fieldContext_Inbox_from(ctx, field)
+			case "FromUser":
+				return ec.fieldContext_Inbox_FromUser(ctx, field)
 			case "openedAt":
 				return ec.fieldContext_Inbox_openedAt(ctx, field)
 			case "createdAt":
@@ -7224,6 +7655,50 @@ func (ec *executionContext) fieldContext_Log_phone(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _Log_method(ctx context.Context, field graphql.CollectedField, obj *models.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_method(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Method, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_method(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Log_type(ctx context.Context, field graphql.CollectedField, obj *models.Log) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Log_type(ctx, field)
 	if err != nil {
@@ -7405,6 +7880,18 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -7413,6 +7900,12 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -7455,6 +7948,129 @@ func (ec *executionContext) _Log_status(ctx context.Context, field graphql.Colle
 }
 
 func (ec *executionContext) fieldContext_Log_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_os(ctx context.Context, field graphql.CollectedField, obj *models.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_os(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OS, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_os(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_device(ctx context.Context, field graphql.CollectedField, obj *models.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_device(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Device, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_device(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Log",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Log_host(ctx context.Context, field graphql.CollectedField, obj *models.Log) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Log_host(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Host, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Log_host(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
@@ -7569,7 +8185,7 @@ func (ec *executionContext) _Log_deletedAt(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.DeletedAt, nil
+		return ec.resolvers.Log().DeletedAt(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7578,19 +8194,19 @@ func (ec *executionContext) _Log_deletedAt(ctx context.Context, field graphql.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Log_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Log",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7643,6 +8259,8 @@ func (ec *executionContext) fieldContext_LogList_logs(_ context.Context, field g
 				return ec.fieldContext_Log_path(ctx, field)
 			case "phone":
 				return ec.fieldContext_Log_phone(ctx, field)
+			case "method":
+				return ec.fieldContext_Log_method(ctx, field)
 			case "type":
 				return ec.fieldContext_Log_type(ctx, field)
 			case "ip":
@@ -7653,6 +8271,12 @@ func (ec *executionContext) fieldContext_LogList_logs(_ context.Context, field g
 				return ec.fieldContext_Log_user(ctx, field)
 			case "status":
 				return ec.fieldContext_Log_status(ctx, field)
+			case "os":
+				return ec.fieldContext_Log_os(ctx, field)
+			case "device":
+				return ec.fieldContext_Log_device(ctx, field)
+			case "host":
+				return ec.fieldContext_Log_host(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Log_createdAt(ctx, field)
 			case "updatedAt":
@@ -8271,9 +8895,9 @@ func (ec *executionContext) _Menu_deletedAt(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Menu_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -8283,7 +8907,7 @@ func (ec *executionContext) fieldContext_Menu_deletedAt(_ context.Context, field
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8523,7 +9147,7 @@ func (ec *executionContext) _Mutation_createAnnouncement(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Announcement
 				return zeroVal, err
@@ -8631,7 +9255,7 @@ func (ec *executionContext) _Mutation_updateAnnouncement(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Announcement
 				return zeroVal, err
@@ -8739,7 +9363,7 @@ func (ec *executionContext) _Mutation_deleteAnnouncement(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -8821,7 +9445,7 @@ func (ec *executionContext) _Mutation_createDomain(ctx context.Context, field gr
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Domain
 				return zeroVal, err
@@ -8876,8 +9500,12 @@ func (ec *executionContext) fieldContext_Mutation_createDomain(ctx context.Conte
 				return ec.fieldContext_Domain_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
 			case "user":
 				return ec.fieldContext_Domain_user(ctx, field)
 			case "createdAt":
@@ -8923,7 +9551,7 @@ func (ec *executionContext) _Mutation_updateDomain(ctx context.Context, field gr
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Domain
 				return zeroVal, err
@@ -8978,8 +9606,12 @@ func (ec *executionContext) fieldContext_Mutation_updateDomain(ctx context.Conte
 				return ec.fieldContext_Domain_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
 			case "user":
 				return ec.fieldContext_Domain_user(ctx, field)
 			case "createdAt":
@@ -9025,7 +9657,7 @@ func (ec *executionContext) _Mutation_deleteDomain(ctx context.Context, field gr
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -9107,7 +9739,7 @@ func (ec *executionContext) _Mutation_createEvent(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Event
 				return zeroVal, err
@@ -9223,7 +9855,7 @@ func (ec *executionContext) _Mutation_updateEvent(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Event
 				return zeroVal, err
@@ -9339,7 +9971,7 @@ func (ec *executionContext) _Mutation_deleteEvent(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -9421,7 +10053,7 @@ func (ec *executionContext) _Mutation_createInbox(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Inbox
 				return zeroVal, err
@@ -9486,8 +10118,8 @@ func (ec *executionContext) fieldContext_Mutation_createInbox(ctx context.Contex
 				return ec.fieldContext_Inbox_user(ctx, field)
 			case "fromId":
 				return ec.fieldContext_Inbox_fromId(ctx, field)
-			case "from":
-				return ec.fieldContext_Inbox_from(ctx, field)
+			case "FromUser":
+				return ec.fieldContext_Inbox_FromUser(ctx, field)
 			case "openedAt":
 				return ec.fieldContext_Inbox_openedAt(ctx, field)
 			case "createdAt":
@@ -9533,7 +10165,7 @@ func (ec *executionContext) _Mutation_updateInbox(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Inbox
 				return zeroVal, err
@@ -9598,8 +10230,8 @@ func (ec *executionContext) fieldContext_Mutation_updateInbox(ctx context.Contex
 				return ec.fieldContext_Inbox_user(ctx, field)
 			case "fromId":
 				return ec.fieldContext_Inbox_fromId(ctx, field)
-			case "from":
-				return ec.fieldContext_Inbox_from(ctx, field)
+			case "FromUser":
+				return ec.fieldContext_Inbox_FromUser(ctx, field)
 			case "openedAt":
 				return ec.fieldContext_Inbox_openedAt(ctx, field)
 			case "createdAt":
@@ -9645,7 +10277,7 @@ func (ec *executionContext) _Mutation_deleteInbox(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -9727,7 +10359,7 @@ func (ec *executionContext) _Mutation_createLog(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Log
 				return zeroVal, err
@@ -9782,6 +10414,8 @@ func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context,
 				return ec.fieldContext_Log_path(ctx, field)
 			case "phone":
 				return ec.fieldContext_Log_phone(ctx, field)
+			case "method":
+				return ec.fieldContext_Log_method(ctx, field)
 			case "type":
 				return ec.fieldContext_Log_type(ctx, field)
 			case "ip":
@@ -9792,6 +10426,12 @@ func (ec *executionContext) fieldContext_Mutation_createLog(ctx context.Context,
 				return ec.fieldContext_Log_user(ctx, field)
 			case "status":
 				return ec.fieldContext_Log_status(ctx, field)
+			case "os":
+				return ec.fieldContext_Log_os(ctx, field)
+			case "device":
+				return ec.fieldContext_Log_device(ctx, field)
+			case "host":
+				return ec.fieldContext_Log_host(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Log_createdAt(ctx, field)
 			case "updatedAt":
@@ -9835,7 +10475,7 @@ func (ec *executionContext) _Mutation_deleteLog(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -9917,7 +10557,7 @@ func (ec *executionContext) _Mutation_createMenu(ctx context.Context, field grap
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Menu
 				return zeroVal, err
@@ -10027,7 +10667,7 @@ func (ec *executionContext) _Mutation_updateMenu(ctx context.Context, field grap
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Menu
 				return zeroVal, err
@@ -10137,7 +10777,7 @@ func (ec *executionContext) _Mutation_deleteMenu(ctx context.Context, field grap
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -10219,7 +10859,7 @@ func (ec *executionContext) _Mutation_createNotification(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Notification
 				return zeroVal, err
@@ -10323,7 +10963,7 @@ func (ec *executionContext) _Mutation_updateNotification(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.Notification
 				return zeroVal, err
@@ -10427,7 +11067,7 @@ func (ec *executionContext) _Mutation_deleteNotification(ctx context.Context, fi
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -10784,7 +11424,7 @@ func (ec *executionContext) _Mutation_approveUser(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -10866,7 +11506,7 @@ func (ec *executionContext) _Mutation_blockUser(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -10948,7 +11588,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal bool
 				return zeroVal, err
@@ -11427,9 +12067,9 @@ func (ec *executionContext) _Notification_deletedAt(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Notification_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11439,7 +12079,7 @@ func (ec *executionContext) fieldContext_Notification_deletedAt(_ context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12680,9 +13320,9 @@ func (ec *executionContext) _Profile_deletedAt(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12692,7 +13332,7 @@ func (ec *executionContext) fieldContext_Profile_deletedAt(_ context.Context, fi
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12739,6 +13379,76 @@ func (ec *executionContext) fieldContext_Query_time(_ context.Context, field gra
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_announcements(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_announcements(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Announcements(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Announcement)
+	fc.Result = res
+	return ec.marshalNAnnouncement2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAnnouncementᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_announcements(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Announcement_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Announcement_title(ctx, field)
+			case "description":
+				return ec.fieldContext_Announcement_description(ctx, field)
+			case "status":
+				return ec.fieldContext_Announcement_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Announcement_orderNum(ctx, field)
+			case "user":
+				return ec.fieldContext_Announcement_user(ctx, field)
+			case "userId":
+				return ec.fieldContext_Announcement_userId(ctx, field)
+			case "showFrom":
+				return ec.fieldContext_Announcement_showFrom(ctx, field)
+			case "showTo":
+				return ec.fieldContext_Announcement_showTo(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Announcement_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Announcement_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Announcement_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Announcement", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_getAnnouncements(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getAnnouncements(ctx, field)
 	if err != nil {
@@ -12758,7 +13468,7 @@ func (ec *executionContext) _Query_getAnnouncements(ctx context.Context, field g
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.AnnouncementList
 				return zeroVal, err
@@ -12871,8 +13581,12 @@ func (ec *executionContext) fieldContext_Query_domains(_ context.Context, field 
 				return ec.fieldContext_Domain_description(ctx, field)
 			case "status":
 				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
 			case "user":
 				return ec.fieldContext_Domain_user(ctx, field)
 			case "createdAt":
@@ -12907,7 +13621,7 @@ func (ec *executionContext) _Query_getDomains(ctx context.Context, field graphql
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.DomainList
 				return zeroVal, err
@@ -12972,6 +13686,81 @@ func (ec *executionContext) fieldContext_Query_getDomains(ctx context.Context, f
 	if fc.Args, err = ec.field_Query_getDomains_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_topEvents(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_topEvents(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TopEvents(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Event)
+	fc.Result = res
+	return ec.marshalOEvent2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐEventᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_topEvents(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Event_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Event_title(ctx, field)
+			case "type":
+				return ec.fieldContext_Event_type(ctx, field)
+			case "description":
+				return ec.fieldContext_Event_description(ctx, field)
+			case "status":
+				return ec.fieldContext_Event_status(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Event_orderNum(ctx, field)
+			case "user":
+				return ec.fieldContext_Event_user(ctx, field)
+			case "userId":
+				return ec.fieldContext_Event_userId(ctx, field)
+			case "domainId":
+				return ec.fieldContext_Event_domainId(ctx, field)
+			case "domain":
+				return ec.fieldContext_Event_domain(ctx, field)
+			case "showFrom":
+				return ec.fieldContext_Event_showFrom(ctx, field)
+			case "showTo":
+				return ec.fieldContext_Event_showTo(ctx, field)
+			case "level":
+				return ec.fieldContext_Event_level(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Event_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Event_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Event_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Event", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -13070,7 +13859,7 @@ func (ec *executionContext) _Query_getEvents(ctx context.Context, field graphql.
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.EventList
 				return zeroVal, err
@@ -13158,7 +13947,7 @@ func (ec *executionContext) _Query_getInboxes(ctx context.Context, field graphql
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.InboxList
 				return zeroVal, err
@@ -13271,6 +14060,8 @@ func (ec *executionContext) fieldContext_Query_logs(_ context.Context, field gra
 				return ec.fieldContext_Log_path(ctx, field)
 			case "phone":
 				return ec.fieldContext_Log_phone(ctx, field)
+			case "method":
+				return ec.fieldContext_Log_method(ctx, field)
 			case "type":
 				return ec.fieldContext_Log_type(ctx, field)
 			case "ip":
@@ -13281,6 +14072,12 @@ func (ec *executionContext) fieldContext_Query_logs(_ context.Context, field gra
 				return ec.fieldContext_Log_user(ctx, field)
 			case "status":
 				return ec.fieldContext_Log_status(ctx, field)
+			case "os":
+				return ec.fieldContext_Log_os(ctx, field)
+			case "device":
+				return ec.fieldContext_Log_device(ctx, field)
+			case "host":
+				return ec.fieldContext_Log_host(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Log_createdAt(ctx, field)
 			case "updatedAt":
@@ -13313,7 +14110,7 @@ func (ec *executionContext) _Query_getLogs(ctx context.Context, field graphql.Co
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.LogList
 				return zeroVal, err
@@ -13473,7 +14270,7 @@ func (ec *executionContext) _Query_getMenus(ctx context.Context, field graphql.C
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.MenuList
 				return zeroVal, err
@@ -13624,7 +14421,7 @@ func (ec *executionContext) _Query_getNotifications(ctx context.Context, field g
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.NotificationList
 				return zeroVal, err
@@ -13946,6 +14743,18 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -13954,6 +14763,12 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13986,7 +14801,7 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal []*models.User
 				return zeroVal, err
@@ -14049,6 +14864,18 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -14057,6 +14884,12 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -14089,7 +14922,7 @@ func (ec *executionContext) _Query_filterUsers(ctx context.Context, field graphq
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.UserList
 				return zeroVal, err
@@ -14177,7 +15010,7 @@ func (ec *executionContext) _Query_connectedUsers(ctx context.Context, field gra
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *model.UserList
 				return zeroVal, err
@@ -14265,7 +15098,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "ADMIN")
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
 			if err != nil {
 				var zeroVal *models.User
 				return zeroVal, err
@@ -14325,6 +15158,18 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -14333,6 +15178,12 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -14351,6 +15202,94 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_user_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getDistributors(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getDistributors(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetDistributors(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.UserList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.UserList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.UserList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.UserList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserList)
+	fc.Result = res
+	return ec.marshalNUserList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getDistributors(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "users":
+				return ec.fieldContext_UserList_users(ctx, field)
+			case "total":
+				return ec.fieldContext_UserList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getDistributors_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -14733,6 +15672,18 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -14741,6 +15692,12 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -15106,6 +16063,402 @@ func (ec *executionContext) fieldContext_User_IP(_ context.Context, field graphq
 	return fc, nil
 }
 
+func (ec *executionContext) _User_rootId(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_rootId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RootID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uint)
+	fc.Result = res
+	return ec.marshalOID2ᚖuint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_rootId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_root(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_root(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Root, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_root(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "userid":
+				return ec.fieldContext_User_userid(ctx, field)
+			case "type":
+				return ec.fieldContext_User_type(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "usdtAddress":
+				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "blackMemo":
+				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_parentId(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_parentId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ParentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uint)
+	fc.Result = res
+	return ec.marshalOID2ᚖuint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_parentId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_parent(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_parent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Parent, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_parent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "userid":
+				return ec.fieldContext_User_userid(ctx, field)
+			case "type":
+				return ec.fieldContext_User_type(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "usdtAddress":
+				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "blackMemo":
+				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_children(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_children(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Children, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]models.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚕgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_children(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "userid":
+				return ec.fieldContext_User_userid(ctx, field)
+			case "type":
+				return ec.fieldContext_User_type(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "usdtAddress":
+				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "blackMemo":
+				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_childrenCount(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_childrenCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChildrenCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_childrenCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_profile(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_profile(ctx, field)
 	if err != nil {
@@ -15332,6 +16685,129 @@ func (ec *executionContext) fieldContext_User_orderNum(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _User_os(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_os(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OS, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_os(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_device(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_device(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Device, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_device(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_fingerPrint(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_fingerPrint(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FingerPrint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_fingerPrint(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
@@ -15443,9 +16919,9 @@ func (ec *executionContext) _User_deletedAt(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*time.Time)
+	res := resTmp.(*gorm.DeletedAt)
 	fc.Result = res
-	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_User_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15455,7 +16931,7 @@ func (ec *executionContext) fieldContext_User_deletedAt(_ context.Context, field
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
+			return nil, errors.New("field of type DeletedAt does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15516,6 +16992,18 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_currentIP(ctx, field)
 			case "IP":
 				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
 			case "profile":
 				return ec.fieldContext_User_profile(ctx, field)
 			case "status":
@@ -15524,6 +17012,12 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_blackMemo(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -17660,7 +19154,7 @@ func (ec *executionContext) unmarshalInputNewDomainInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "status", "orderNum"}
+	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -17688,6 +19182,20 @@ func (ec *executionContext) unmarshalInputNewDomainInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Status = data
+		case "userId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			data, err := ec.unmarshalNID2uint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "autoReg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("autoReg"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AutoReg = data
 		case "orderNum":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
 			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
@@ -17860,7 +19368,7 @@ func (ec *executionContext) unmarshalInputNewLogInput(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"data", "path", "ip", "type", "phone", "status"}
+	fieldsInOrder := [...]string{"data", "path", "method", "ip", "type", "phone", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -17881,6 +19389,13 @@ func (ec *executionContext) unmarshalInputNewLogInput(ctx context.Context, obj a
 				return it, err
 			}
 			it.Path = data
+		case "method":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("method"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Method = data
 		case "ip":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ip"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -18395,7 +19910,7 @@ func (ec *executionContext) unmarshalInputUpdateDomainInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "status", "orderNum"}
+	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -18423,6 +19938,20 @@ func (ec *executionContext) unmarshalInputUpdateDomainInput(ctx context.Context,
 				return it, err
 			}
 			it.Status = data
+		case "userId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			data, err := ec.unmarshalOID2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "autoReg":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("autoReg"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AutoReg = data
 		case "orderNum":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
 			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
@@ -18900,7 +20429,7 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "userid", "type", "role", "usdtAddress", "status", "orderNum"}
+	fieldsInOrder := [...]string{"name", "userid", "rootId", "partentId", "type", "role", "usdtAddress", "status", "orderNum"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -18921,6 +20450,20 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 				return it, err
 			}
 			it.Userid = data
+		case "rootId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rootId"))
+			data, err := ec.unmarshalOID2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RootID = data
+		case "partentId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("partentId"))
+			data, err := ec.unmarshalOID2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PartentID = data
 		case "type":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
 			data, err := ec.unmarshalOUserType2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserType(ctx, v)
@@ -19127,8 +20670,18 @@ func (ec *executionContext) _Domain(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "autoReg":
+			out.Values[i] = ec._Domain_autoReg(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "orderNum":
 			out.Values[i] = ec._Domain_orderNum(ctx, field, obj)
+		case "userId":
+			out.Values[i] = ec._Domain_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "user":
 			out.Values[i] = ec._Domain_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19364,92 +20917,61 @@ func (ec *executionContext) _Inbox(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Inbox_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "type":
 			out.Values[i] = ec._Inbox_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "title":
 			out.Values[i] = ec._Inbox_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "description":
 			out.Values[i] = ec._Inbox_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "status":
 			out.Values[i] = ec._Inbox_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "orderNum":
 			out.Values[i] = ec._Inbox_orderNum(ctx, field, obj)
 		case "userId":
 			out.Values[i] = ec._Inbox_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "user":
 			out.Values[i] = ec._Inbox_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "fromId":
 			out.Values[i] = ec._Inbox_fromId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
-		case "from":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Inbox_from(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
+		case "FromUser":
+			out.Values[i] = ec._Inbox_FromUser(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "openedAt":
 			out.Values[i] = ec._Inbox_openedAt(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Inbox_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Inbox_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Inbox_deletedAt(ctx, field, obj)
@@ -19534,29 +21056,34 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 		case "id":
 			out.Values[i] = ec._Log_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "data":
 			out.Values[i] = ec._Log_data(ctx, field, obj)
 		case "path":
 			out.Values[i] = ec._Log_path(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "phone":
 			out.Values[i] = ec._Log_phone(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "method":
+			out.Values[i] = ec._Log_method(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "type":
 			out.Values[i] = ec._Log_type(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "ip":
 			out.Values[i] = ec._Log_ip(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userId":
 			out.Values[i] = ec._Log_userId(ctx, field, obj)
@@ -19564,18 +21091,55 @@ func (ec *executionContext) _Log(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._Log_user(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._Log_status(ctx, field, obj)
+		case "os":
+			out.Values[i] = ec._Log_os(ctx, field, obj)
+		case "device":
+			out.Values[i] = ec._Log_device(ctx, field, obj)
+		case "host":
+			out.Values[i] = ec._Log_host(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._Log_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Log_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
-			out.Values[i] = ec._Log_deletedAt(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Log_deletedAt(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -20287,6 +21851,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "announcements":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_announcements(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getAnnouncements":
 			field := field
 
@@ -20341,6 +21927,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "topEvents":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_topEvents(ctx, field)
 				return res
 			}
 
@@ -20690,6 +22295,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getDistributors":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getDistributors(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -20877,6 +22504,18 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "rootId":
+			out.Values[i] = ec._User_rootId(ctx, field, obj)
+		case "root":
+			out.Values[i] = ec._User_root(ctx, field, obj)
+		case "parentId":
+			out.Values[i] = ec._User_parentId(ctx, field, obj)
+		case "parent":
+			out.Values[i] = ec._User_parent(ctx, field, obj)
+		case "children":
+			out.Values[i] = ec._User_children(ctx, field, obj)
+		case "childrenCount":
+			out.Values[i] = ec._User_childrenCount(ctx, field, obj)
 		case "profile":
 			out.Values[i] = ec._User_profile(ctx, field, obj)
 		case "status":
@@ -20922,6 +22561,12 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "orderNum":
 			out.Values[i] = ec._User_orderNum(ctx, field, obj)
+		case "os":
+			out.Values[i] = ec._User_os(ctx, field, obj)
+		case "device":
+			out.Values[i] = ec._User_device(ctx, field, obj)
+		case "fingerPrint":
+			out.Values[i] = ec._User_fingerPrint(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -21871,6 +23516,21 @@ func (ec *executionContext) marshalNMenuList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑ
 	return ec._MenuList(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNMyCustomBooleanScalar2bool(ctx context.Context, v any) (bool, error) {
+	res, err := scalar.UnmarshalMyCustomBooleanScalar(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNMyCustomBooleanScalar2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	res := scalar.MarshalMyCustomBooleanScalar(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNNewAnnouncementInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAnnouncementInput(ctx context.Context, v any) (model.NewAnnouncementInput, error) {
 	res, err := ec.unmarshalInputNewAnnouncementInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -22560,6 +24220,22 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx context.Context, v any) (*gorm.DeletedAt, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := scalar.UnmarshalDeletedAt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx context.Context, sel ast.SelectionSet, v *gorm.DeletedAt) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := scalar.MarshalDeletedAt(*v)
+	return res
+}
+
 func (ec *executionContext) marshalODomain2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐDomainᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Domain) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -23043,6 +24719,47 @@ func (ec *executionContext) marshalOUint2ᚖuint(ctx context.Context, sel ast.Se
 
 func (ec *executionContext) marshalOUser2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v models.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOUser2ᚕgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v []models.User) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOUser2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx context.Context, sel ast.SelectionSet, v *models.User) graphql.Marshaler {

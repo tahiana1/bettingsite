@@ -4,6 +4,7 @@ package loaders
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
@@ -77,6 +78,30 @@ func (er *eventReader) getEventsByEventID(ctx context.Context, nIDs []uint) ([]*
 func GetEvent(ctx context.Context, eventID uint) (*models.Event, error) {
 	loaders := For(ctx)
 	return loaders.EventLoader.Load(ctx, eventID)
+}
+
+// GetTopEvents returns many events by ids efficiently
+func (er *eventReader) GetTopEvents(ctx context.Context) ([]*models.Event, error) {
+	var events []*models.Event
+
+	db := er.db.Model(&models.Event{}).Joins("User").Preload("Domain", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id, name")
+	}).Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id, userid, name")
+	})
+
+	db.Where("show_from < ?", time.Now().Format(time.RFC3339))
+	db.Where("show_to > ?", time.Now().Format(time.RFC3339))
+
+	db.Limit(5).Offset(0)
+	db = db.Order("created_at desc, updated_at desc,  order_num asc")
+
+	// Query results
+
+	if err := db.Find(&events).Error; err != nil {
+		return nil, err
+	}
+	return events, nil
 }
 
 // GetEvents returns many events by ids efficiently

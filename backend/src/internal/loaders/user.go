@@ -117,7 +117,7 @@ func (ur *userReader) FilterUsers(ctx context.Context, filters []*model.Filter, 
 	// return loaders.UserLoader.LoadAll(ctx, userIDs)
 	var users []*models.User
 
-	db := ur.db.Model(&models.User{}).Joins("Profile")
+	db := ur.db.Model(&models.User{}).Preload("Root").Preload("Parent").Joins("Profile")
 	// Filtering
 
 	db = helpers.ApplyFilters(db, filters)
@@ -154,7 +154,7 @@ func (ur *userReader) ConnectedUsers(ctx context.Context, filters []*model.Filte
 	// return loaders.UserLoader.LoadAll(ctx, userIDs)
 	var users []*models.User
 
-	db := ur.db.Model(&models.User{}).Joins("Profile")
+	db := ur.db.Model(&models.User{}).Preload("Parent").Preload("Root").Joins("Profile")
 	// Filtering
 
 	db = helpers.ApplyFilters(db, filters)
@@ -224,4 +224,41 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 	tx := initializers.DB.Save(&me)
 
 	return tx.Error
+}
+
+// GetProfiles returns many profiles by ids efficiently
+func (ur *userReader) GetDistributors(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	// loaders := For(ctx)
+	// return loaders.UserLoader.LoadAll(ctx, userIDs)
+	var users []*models.User
+
+	db := ur.db.Model(&models.User{}).Preload("Root").Preload("Parent").Joins("Profile")
+	// Filtering
+
+	db = helpers.ApplyFilters(db, filters)
+
+	// Count total
+	var count int64
+	if err := db.Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	// Ordering
+	db = helpers.ApplyOrders(db, orders)
+
+	db = db.Order("order_num")
+	// Pagination
+
+	db = helpers.ApplyPagination(db, pagination)
+
+	// Query results
+
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	return &model.UserList{
+		Users: users,
+		Total: int32(count),
+	}, nil
 }

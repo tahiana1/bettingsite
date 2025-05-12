@@ -8,7 +8,7 @@ type Notification {
   showTo: Time!
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateNotificationInput {
@@ -40,13 +40,13 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): NotificationList! @hasRole(role: ADMIN)
+  ): NotificationList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createNotification(input: NewNotificationInput!): Notification!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateNotification(id: ID!, input: UpdateNotificationInput!): Notification!
-    @hasRole(role: ADMIN)
-  deleteNotification(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteNotification(id: ID!): Boolean! @hasRole(role: A)
 }

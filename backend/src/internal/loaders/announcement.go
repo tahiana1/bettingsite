@@ -4,6 +4,7 @@ package loaders
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
@@ -77,6 +78,27 @@ func (er *announcementReader) getAnnouncementsByAnnouncementID(ctx context.Conte
 func GetAnnouncement(ctx context.Context, announcementID uint) (*models.Announcement, error) {
 	loaders := For(ctx)
 	return loaders.AnnouncementLoader.Load(ctx, announcementID)
+}
+
+// GetAnnouncements returns many announcements by ids efficiently
+func (er *announcementReader) GetLatestAnnouncements(ctx context.Context) ([]*models.Announcement, error) {
+	var announcements []*models.Announcement
+
+	db := er.db.Model(&models.Announcement{}).Joins("User").Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id, userid, name")
+	})
+
+	db.Where("show_from < ? AND show_to > ?", time.Now().Format(time.RFC3339), time.Now().Format(time.RFC3339))
+
+	db = db.Limit(5).Offset(0)
+	db = db.Order("updated_at desc, created_at desc, order_num desc")
+
+	// Query results
+
+	if err := db.Find(&announcements).Error; err != nil {
+		return nil, err
+	}
+	return announcements, nil
 }
 
 // GetAnnouncements returns many announcements by ids efficiently

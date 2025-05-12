@@ -17,8 +17,12 @@ export const GET_LOGS = gql`
         status
         phone
         path
+        method
         data
         userId
+        device
+        os
+        host
         user {
           id
           userid

@@ -152,15 +152,15 @@ const UserPage: React.FC = () => {
   const roleOption = [
     {
       label: "Admin",
-      value: "ADMIN",
+      value: "A",
     },
     {
       label: "Partner",
-      value: "PARTNER",
+      value: "P",
     },
     {
       label: "User",
-      value: "USER",
+      value: "U",
     },
   ];
   const columns: TableProps<User>["columns"] = [
@@ -209,13 +209,19 @@ const UserPage: React.FC = () => {
     },
     {
       title: t("root_dist"),
-      dataIndex: "root_dist",
-      key: "root_dist",
+      dataIndex: "root.userid",
+      key: "root.userid",
+      render(_, record,) {
+        return record.root?.userid;
+      },
     },
     {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
+      render(_, record,) {
+        return record.parent?.userid;
+      },
     },
     {
       title: t("nickname"),
@@ -599,11 +605,11 @@ const UserPage: React.FC = () => {
               buttonStyle="solid"
               options={[
                 {
-                  label: "All",
+                  label: t("all"),
                   value: "",
                 },
                 {
-                  label: "Site",
+                  label: t("site"),
                   value: "site",
                 },
               ]}
@@ -616,15 +622,15 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "Mem",
+                    label: t("member"),
                     value: "member",
                   },
                   {
-                    label: "Dist",
+                    label: t("distributor"),
                     value: "dist",
                   },
                   {
-                    label: "Mem + Dist",
+                    label: t("member") + "+" + t("distributor"),
                     value: "",
                   },
                 ]}
@@ -636,15 +642,15 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Referral O",
+                    label: t("referral") + " O",
                     value: "not_null",
                   },
                   {
-                    label: "Referral X",
+                    label: t("referral") + " X",
                     value: "null",
                   },
                 ]}
@@ -657,15 +663,15 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Black Memo O",
+                    label: t("blackMemo") + " O",
                     value: "true",
                   },
                   {
-                    label: "Black Memo X",
+                    label: t("blackMemo") + " X",
                     value: "false",
                   },
                 ]}
@@ -679,23 +685,23 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "General",
+                    label: t("general"),
                     value: "G",
                   },
                   {
-                    label: "Test",
+                    label: t("test"),
                     value: "T",
                   },
                   {
-                    label: "Interest",
+                    label: t("interest"),
                     value: "I",
                   },
                   {
-                    label: "Working",
+                    label: t("working"),
                     value: "W",
                   },
                 ]}
@@ -709,31 +715,31 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Withdrawn",
+                    label: t("withdrawn"),
                     value: "W",
                   },
                   {
-                    label: "Approved",
+                    label: t("approved"),
                     value: "A",
                   },
                   {
-                    label: "Suspened",
+                    label: t("suspened"),
                     value: "S",
                   },
                   {
-                    label: "Deleted",
+                    label: t("deleted"),
                     value: "D",
                   },
                   {
-                    label: "Blocked",
+                    label: t("blocked"),
                     value: "B",
                   },
                   {
-                    label: "Inactive",
+                    label: t("inactive"),
                     value: "I",
                   },
                 ]}
@@ -746,15 +752,15 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: "All",
+                    label: t("all"),
                     value: "",
                   },
                   {
-                    label: "Reg IP Duplication",
+                    label: t("reg_ip_dup"),
                     value: true,
                   },
                   {
-                    label: "Connected IP Duplication",
+                    label: t("current_ip_dup"),
                     value: false,
                   },
                 ]}
@@ -804,25 +810,25 @@ const UserPage: React.FC = () => {
                       icon={<RxLetterCaseToggle />}
                     />
                   }
-                  enterButton="Search"
+                  enterButton={t("search")}
                 />
               </Space>
               <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={onResetCoupon}>
-                  Reset all Coupon
+                  {t("reset_all_coupon")}
                 </Button>
                 <Button
                   size="small"
                   type="primary"
                   onClick={() => setColorModal(true)}
                 >
-                  Change Color in batches
+                  {t("change_color_in_batches")}
                 </Button>
                 <Button size="small" type="primary">
-                  Change Password in bulk
+                  {t("change_password_in_bulk")}
                 </Button>
                 <Button size="small" type="primary">
-                  Point multi-payment
+                  {t("point_multi_payment")}
                 </Button>
               </Space.Compact>
             </Space>

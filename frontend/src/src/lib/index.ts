@@ -42,10 +42,12 @@ export const parseTableOptions: (
         direction: s.order?.toUpperCase() == "ASCEND" ? "ASC" : "DESC",
       }))
     : sorter.field
-    ? [{
-        field: sorter.field,
-        direction: sorter.order?.toUpperCase() == "ASCEND" ? "ASC" : "DESC",
-      }]
+    ? [
+        {
+          field: sorter.field,
+          direction: sorter.order?.toUpperCase() == "ASCEND" ? "ASC" : "DESC",
+        },
+      ]
     : undefined;
 
   return {
@@ -53,4 +55,30 @@ export const parseTableOptions: (
     pagination: p,
     orders,
   };
+};
+
+export const buildTree = (data: any[]) => {
+  const map = new Map<any, any>();
+  const roots = [];
+
+  // Initialize map
+  for (const item of data) {
+    map.set(item.key, { ...item, children: [] });
+  }
+
+  // Build tree
+  for (const item of map.values()) {
+    if (item.parentId != null) {
+      const parent = map.get(item.parentId);
+      if (parent) {
+        parent.children!.push(item);
+      } else {
+        roots.push(item);
+      }
+    } else {
+      roots.push(item);
+    }
+  }
+
+  return roots;
 };

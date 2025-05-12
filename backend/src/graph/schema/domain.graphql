@@ -3,17 +3,21 @@ type Domain {
   name: String!
   description: String!
   status: Boolean!
+  autoReg: MyCustomBooleanScalar!
   orderNum: Uint
+  userId: ID!
   user: User!
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateDomainInput {
   name: String
   description: String
   status: Boolean
+  userId: ID
+  autoReg: Boolean
   orderNum: Uint
 }
 
@@ -21,6 +25,8 @@ input NewDomainInput {
   name: String!
   description: String!
   status: Boolean
+  userId: ID!
+  autoReg: Boolean
   orderNum: Uint
 }
 
@@ -35,12 +41,11 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): DomainList! @hasRole(role: ADMIN)
+  ): DomainList! @hasRole(role: A)
 }
 
 extend type Mutation {
-  createDomain(input: NewDomainInput!): Domain! @hasRole(role: ADMIN)
-  updateDomain(id: ID!, input: UpdateDomainInput!): Domain!
-    @hasRole(role: ADMIN)
-  deleteDomain(id: ID!): Boolean! @hasRole(role: ADMIN)
+  createDomain(input: NewDomainInput!): Domain! @hasRole(role: A)
+  updateDomain(id: ID!, input: UpdateDomainInput!): Domain! @hasRole(role: A)
+  deleteDomain(id: ID!): Boolean! @hasRole(role: A)
 }

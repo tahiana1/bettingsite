@@ -8,11 +8,11 @@ type Inbox {
   userId: Uint!
   user: User!
   fromId: Uint!
-  from: User!
+  FromUser: User!
   openedAt: Time
   createdAt: Time!
   updatedAt: Time!
-  deletedAt: Time
+  deletedAt: DeletedAt
 }
 
 input UpdateInboxInput {
@@ -45,13 +45,13 @@ extend type Query {
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
-  ): InboxList! @hasRole(role: ADMIN)
+  ): InboxList! @hasRole(role: A)
 }
 
 extend type Mutation {
   createInbox(input: NewInboxInput!): Inbox!
-    @hasRole(role: ADMIN)
+    @hasRole(role: A)
   updateInbox(id: ID!, input: UpdateInboxInput!): Inbox!
-    @hasRole(role: ADMIN)
-  deleteInbox(id: ID!): Boolean! @hasRole(role: ADMIN)
+    @hasRole(role: A)
+  deleteInbox(id: ID!): Boolean! @hasRole(role: A)
 }

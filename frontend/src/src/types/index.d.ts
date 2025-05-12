@@ -36,13 +36,17 @@ interface User {
   id: number;
   name: string;
   userid: string;
-  role: string; // Could be a more specific type like 'USER' | 'ADMIN' if roles are limited
+  role: string; // Could be a more specific type like 'U' | 'A' if roles are limited
   type: string;
   usdtAddress: string;
   createdAt: string; // ISO string format
   updatedAt: string; // ISO string format
   profile: Profile;
   status: string;
+  root: User;
+  parent: User;
+  parentId: number;
+  rootId: number;
 }
 
 interface Noti {
@@ -61,6 +65,8 @@ interface Domain {
   key: string;
   id: number;
   name: string;
+  userId: number;
+  user: User;
   description: string;
   showFrom: string | Date | dayjs.Dayjs;
   showTo: string | Date | dayjs.Dayjs; // ISO string format
@@ -137,6 +143,10 @@ interface Log {
   path: string;
   ip: string;
   user?: User;
+  method: string;
+  os: string;
+  device: string;
+  host: string;
   createdAt: string; // ISO string format
   updatedAt: string; // ISO string format
   profile?: Profile;
