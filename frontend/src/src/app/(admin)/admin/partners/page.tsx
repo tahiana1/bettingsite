@@ -145,7 +145,7 @@ const PartnerPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root.userid",
       key: "root.userid",
-      render(record) {
+      render(_, record) {
         return record.root?.userid;
       },
     },

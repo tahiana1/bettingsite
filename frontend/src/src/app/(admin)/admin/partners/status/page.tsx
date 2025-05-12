@@ -57,7 +57,7 @@ const DistStatusPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root_dist",
       key: "root_dist",
-      render(record) {
+      render(_, record) {
         return record.root?.userid;
       },
     },
