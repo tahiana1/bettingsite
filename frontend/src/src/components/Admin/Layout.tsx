@@ -31,7 +31,7 @@ import {
   CalculatorOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
-
+import { GrUserAdmin } from "react-icons/gr";
 import { BsRobot, BsSpeedometer2 } from "react-icons/bs";
 import LayoutContext from "@/contexts/LayoutContextProvider";
 
@@ -259,6 +259,25 @@ export default function AdminRootLayout({
         {
           key: "admin/users/activity",
           label: t(`admin/menu/activity`),
+        },
+      ],
+    },
+    {
+      key: "admin/admin",
+      label: t("admin/menu/admin"),
+      icon: <GrUserAdmin />,
+      children: [
+        {
+          key: "admin/admin/",
+          label: t("admin/menu/admin"),
+        },
+        {
+          key: "admin/admin/status",
+          label: t("admin/menu/adminStatus"),
+        },
+        {
+          key: "admin/admin/log",
+          label: t("admin/menu/adminLog"),
         },
       ],
     },

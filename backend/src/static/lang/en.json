@@ -79,6 +79,9 @@
   "admin/menu/partnerStatus": "Connection Status",
   "admin/menu/partnerDomain": "Domain",
   "admin/menu/menu": "Menu",
+  "admin/menu/admin": "Admin",
+  "admin/menu/adminStatus": "Access Staus",
+  "admin/menu/adminLog": "Admin Log",
 
   "admin/menu/game": "Game",
   "admin/menu/sports": "Sports",

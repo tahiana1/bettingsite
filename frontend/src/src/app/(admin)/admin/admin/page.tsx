@@ -6,7 +6,6 @@ import {
   Space,
   Card,
   Table,
-  Tag,
   Button,
   Popconfirm,
   Input,
@@ -15,53 +14,59 @@ import {
   Select,
   Modal,
   Form,
+  Checkbox,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
-
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
-import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
-import { BiTrash } from "react-icons/bi";
+import { APPROVE_USER, BLOCK_USER, GET_DISTRIBUTORS } from "@/actions/user";
+import { BiBlock } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-import dayjs, { Dayjs } from "dayjs";
-import { parseTableOptions } from "@/lib";
-import { USER_STATUS } from "@/constants";
+import dayjs from "dayjs";
+import { buildTree, parseTableOptions } from "@/lib";
+import { USER_STATUS, USER_TYPE } from "@/constants";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
-const PendingUserPage: React.FC = () => {
+const PartnerPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
-        field: "status",
-        value: "P",
-        op: "eq",
+        or: [
+          {
+            field: "role",
+            value: "P",
+            op: "eq",
+          },
+          {
+            field: "role",
+            value: "A",
+            op: "eq",
+          },
+        ],
       },
     ],
   });
 
+  const [, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, error, data, refetch } = useQuery(FILTER_USERS, {
-    variables: {
-      filters: [
-        {
-          field: "status",
-          value: "P",
-          op: "eq",
-        },
-      ],
-    },
-  });
+  const [treeUsers, setTreeUsers] = useState<any[]>([]);
+
+  const { loading, data, refetch } = useQuery(GET_DISTRIBUTORS);
+
+  const { data: childrenData, refetch: refetchChildren } =
+    useQuery(GET_DISTRIBUTORS);
+
   const [colorModal, setColorModal] = useState<boolean>(false);
 
   const [approveUser] = useMutation(APPROVE_USER);
@@ -138,13 +143,19 @@ const PendingUserPage: React.FC = () => {
     },
     {
       title: t("root_dist"),
-      dataIndex: "root_dist",
-      key: "root_dist",
+      dataIndex: "root.userid",
+      key: "root.userid",
+      render(_, record) {
+        return record.root?.userid;
+      },
     },
     {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
+      render(_, record) {
+        return record.parent?.userid;
+      },
     },
     {
       title: t("nickname"),
@@ -187,10 +198,21 @@ const PendingUserPage: React.FC = () => {
         f.dateTime(new Date(profile.birthday) ?? null),
     },
     {
+      title: t("level"),
+      dataIndex: "profile.level",
+      key: "level",
+    },
+    {
+      title: t("type"),
+      dataIndex: "type",
+      key: "type",
+      render: (text) => USER_TYPE[text],
+    },
+    {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text) => <Tag color={"gold"}>{USER_STATUS[text]}</Tag>,
+      render: (text) => USER_STATUS[text],
     },
     {
       title: t("balance"),
@@ -226,20 +248,20 @@ const PendingUserPage: React.FC = () => {
       key: "IP",
     },
     {
-      title: "Coupon",
+      title: t("coupon"),
       dataIndex: "profile.coupon",
       key: "profile.coupon",
       render: (_, { profile }) => profile.coupon,
     },
     {
-      title: "Last Deposit",
+      title: t("lastDeposit"),
       dataIndex: "profile.lastDeposit",
       key: "lastDeposit",
       render: (_, { profile }) =>
         profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
     },
     {
-      title: "Last Withdraw",
+      title: t("lastWithdraw"),
       dataIndex: "profile.lastWithdraw",
       key: "lastWithdraw",
       render: (_, { profile }) =>
@@ -307,23 +329,31 @@ const PendingUserPage: React.FC = () => {
         <Space.Compact size="small" className="gap-2">
           <Popconfirm
             title={t("confirmSure")}
-            onConfirm={() => onApproveUser(record)}
-            description={t("approveMessage")}
+            onConfirm={
+              record.status
+                ? () => onBlockUser(record)
+                : () => onApproveUser(record)
+            }
+            description={
+              record.status ? t("blockMessage") : t("approveMessage")
+            }
           >
-            <Button
-              title={t("approve")}
-              variant="outlined"
-              color="blue"
-              icon={<PiUserCircleCheckLight />}
-            />
+            {record.status ? (
+              <Button
+                title={t("block")}
+                icon={<BiBlock />}
+                variant="outlined"
+                color="orange"
+              />
+            ) : (
+              <Button
+                title={t("approve")}
+                variant="outlined"
+                color="blue"
+                icon={<PiUserCircleCheckLight />}
+              />
+            )}
           </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
         </Space.Compact>
       ),
     },
@@ -337,97 +367,94 @@ const PendingUserPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
+
   const updateFilter = (field: string, v: string, op: string = "eq") => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
+    filters = filters.filter((f) => f.field !== field);
     if (v) {
-      const f = filters.filter((f) => f.field == field);
       filters = [
-        ...f,
+        ...filters,
         {
           field: field,
           value: v,
           op: op,
         },
       ];
-      setTableOptions({ ...tableOptions, filters });
-    } else {
-      const f = filters.filter((f) => f.field == field);
-
-      setTableOptions({ ...tableOptions, filters: f });
     }
-  };
-
-  const onRangerChange = (
-    dates: (Dayjs | null)[] | null,
-    dateStrings: string[]
-  ) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "users.created_at");
-
-    filters = [
-      ...f,
-      {
-        field: "users.created_at",
-        value: dateStrings[0],
-        op: "gt",
-      },
-      {
-        field: "users.created_at",
-        value: dateStrings[1],
-        op: "lt",
-      },
-    ];
     setTableOptions({ ...tableOptions, filters });
   };
+
+  const onBlackMemoChange = (v: string) => {
+    updateFilter("black_memo", v, "eq");
+  };
+
   const onMemberStatusChange = (v: string) => {
     updateFilter("status", v, "eq");
   };
+
+  const onLevelChange = (v: string = "") => {
+    updateFilter(`"Profile"."level"`, v, "eq");
+  };
+
   const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
     setColorModal(false);
   };
-
+  const onExpand = (expanded: boolean, record: User) => {
+    if (expanded) {
+      refetchChildren({
+        filters: [
+          {
+            field: "parent_id",
+            value: record.id,
+            op: "eq",
+          },
+        ],
+      }).then((res) => {
+        console.log({ res });
+        setUsers([
+          ...(users ?? []),
+          ...(childrenData?.response?.users?.map((u: any) => {
+            return { ...u, key: u.id };
+          }) ?? []),
+        ]);
+      });
+    }
+  };
   useEffect(() => {
-    console.log({ loading, error, data });
-    console.log({ data });
     setUsers(
-      data?.users?.map((u: any) => {
+      data?.response?.users?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
+    setTotal(data?.response?.total);
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined)
-      .then((res) => {
-        console.log({ res });
-        setUsers(
-          res.data?.response?.users?.map((u: any) => {
-            return { ...u, key: u.id };
-          }) ?? []
-        );
-        setTotal(res.data?.response?.total);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
+    console.log(buildTree(users ?? []));
+    setTreeUsers(buildTree(users ?? []));
+    // setTotal(data?.response?.total);
+  }, [users]);
+
+  useEffect(() => {
+    refetch(tableOptions ?? undefined);
   }, [tableOptions]);
   return (
     <Layout>
+      {contextHolder}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("pendingUsers")}
+          title={t("admin/menu/partners")}
           classNames={{
             body: "!p-0",
           }}
         >
           <Space className="p-2 !w-full" direction="vertical">
             <Radio.Group
+              size="small"
               optionType="button"
               buttonStyle="solid"
-              size="small"
               options={[
                 {
                   label: t("all"),
@@ -440,22 +467,102 @@ const PendingUserPage: React.FC = () => {
               ]}
               defaultValue={""}
             />
+            <Space wrap>
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: t("all"),
+                    value: "",
+                  },
+                  {
+                    label: t("blackMemo") + " O",
+                    value: "true",
+                  },
+                  {
+                    label: t("blackMemo") + " X",
+                    value: "false",
+                  },
+                ]}
+                defaultValue={""}
+                onChange={(e) => onBlackMemoChange(e.target.value)}
+              />
+
+              <Radio.Group
+                className="flex-nowrap"
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  {
+                    label: t("all"),
+                    value: "",
+                  },
+                  {
+                    label: t("approved"),
+                    value: "A",
+                  },
+                  {
+                    label: t("suspened"),
+                    value: "S",
+                  },
+                  {
+                    label: t("deleted"),
+                    value: "D",
+                  },
+                  {
+                    label: t("blocked"),
+                    value: "B",
+                  },
+                  {
+                    label: t("inactive"),
+                    value: "I",
+                  },
+                ]}
+                defaultValue={""}
+                onChange={(e) => onMemberStatusChange(e.target.value)}
+              />
+            </Space>
             <Space className="!w-full justify-between">
               <Space>
                 <Select
                   size="small"
-                  placeholder="select dist"
+                  placeholder="By Level"
                   className="min-w-28"
                   allowClear
+                  onClear={onLevelChange}
+                  options={[
+                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
+                  ].map((i) => ({
+                    value: i,
+                    label:
+                      i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
+                  }))}
+                  onChange={onLevelChange}
                 />
-
-                <DatePicker.RangePicker
+                <Select
                   size="small"
-                  onChange={onRangerChange}
+                  placeholder="By Field"
+                  className="min-w-28"
+                  allowClear
+                  options={[
+                    { label: t("all"), value: "" },
+                    { label: t("userid"), value: "id" },
+                    { label: t("nickname"), value: `"Profile"."nickname"` },
+                    { label: t("phone"), value: `"Profile"."phone"` },
+                    { label: t("holderName"), value: `"Profile"."holderName"` },
+                    {
+                      label: t("accountNumber"),
+                      value: `"Profile"."accountNumber"`,
+                    },
+                    { label: t("usdtAddress"), value: `usdtAddress` },
+                  ]}
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder="ID,Nickname,AccountHolder,Phone"
                   suffix={
                     <Button
                       size="small"
@@ -465,35 +572,21 @@ const PendingUserPage: React.FC = () => {
                   }
                   enterButton={t("search")}
                 />
+                <Button size="small">{t("only_root_distributor")}</Button>
+                <Checkbox> {t("only_direct_member")}</Checkbox>
               </Space>
-              <Space.Compact className="gap-1">
-                <Radio.Group
-                  size="small"
-                  optionType="button"
-                  buttonStyle="solid"
-                  options={[
-                    {
-                      label: t("waiting_approval"),
-                      value: "pending",
-                    },
-                    {
-                      label: t("joined_today"),
-                      value: "today",
-                    },
-                  ]}
-                  defaultValue={""}
-                  onChange={(e) => onMemberStatusChange(e.target.value)}
-                />
-              </Space.Compact>
             </Space>
           </Space>
           <Table<User>
             columns={columns}
             loading={loading}
-            dataSource={users ?? []}
+            dataSource={treeUsers ?? []}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}
+            expandable={{
+              onExpand,
+            }}
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
@@ -504,8 +597,8 @@ const PendingUserPage: React.FC = () => {
                 });
               },
               total: total,
-              defaultPageSize: 25,
               showSizeChanger: true,
+              defaultPageSize: 25,
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
@@ -546,4 +639,4 @@ const PendingUserPage: React.FC = () => {
   );
 };
 
-export default PendingUserPage;
+export default PartnerPage;

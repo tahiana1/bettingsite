@@ -79,6 +79,9 @@
   "admin/menu/partnerStatus": "상태",
   "admin/menu/partnerDomain": "도메인",
   "admin/menu/menu": "메뉴",
+  "admin/menu/admin": "관리자",
+  "admin/menu/adminStatus": "접속 상태",
+  "admin/menu/adminLog": "관리자 로그",
 
   "admin/menu/game": "게임",
   "admin/menu/sports": "스포츠",

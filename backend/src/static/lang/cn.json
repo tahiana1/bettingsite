@@ -79,6 +79,9 @@
   "admin/menu/partnerStatus": "状态",
   "admin/menu/partnerDomain": "域名",
   "admin/menu/menu": "菜单",
+  "admin/menu/admin": "管理员",
+  "admin/menu/adminStatus": "访问状态",
+  "admin/menu/adminLog": "管理员日志",
 
   "admin/menu/game": "游戏",
   "admin/menu/sports": "体育",

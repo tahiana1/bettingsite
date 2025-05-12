@@ -8,13 +8,9 @@ import {
   Table,
   Tag,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
-  Select,
-  Modal,
-  Form,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -25,7 +21,6 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { CONNECTED_USERS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { AiOutlineDisconnect } from "react-icons/ai";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
@@ -36,28 +31,14 @@ import { USER_STATUS } from "@/constants";
 
 // type UserIndex = keyof User;
 
-const UserStatusPage: React.FC = () => {
+const DistStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, error, data, refetch } = useQuery(CONNECTED_USERS);
-  const [colorModal, setColorModal] = useState<boolean>(false);
-
-  const onDisconnect = (user: User) => {
-    console.log({ user });
-    /*  blockUser({ variables: { id: user.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      }); */
-  };
+  const { loading, data, refetch } = useQuery(CONNECTED_USERS);
 
   const columns: TableProps<User>["columns"] = [
     {
@@ -76,11 +57,17 @@ const UserStatusPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root_dist",
       key: "root_dist",
+      render(_, record) {
+        return record.root?.userid;
+      },
     },
     {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
+      render(_, record) {
+        return record.parent?.userid;
+      },
     },
     {
       title: t("nickname"),
@@ -242,7 +229,7 @@ const UserStatusPage: React.FC = () => {
       key: "createdAt",
       render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
     },
-    {
+    /*  {
       title: t("action"),
       key: "action",
       fixed: "right",
@@ -263,7 +250,7 @@ const UserStatusPage: React.FC = () => {
           </Popconfirm>
         </Space.Compact>
       ),
-    },
+    }, */
   ];
 
   const onChange: TableProps<User>["onChange"] = (
@@ -275,14 +262,7 @@ const UserStatusPage: React.FC = () => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
 
-  const [colorOption, setColorOptoin] = useState<any>("new");
-  const onChangeColors = async () => {
-    setColorModal(false);
-  };
-
   useEffect(() => {
-    console.log({ loading, error, data });
-    console.log({ data });
     setUsers(
       data?.users?.map((u: any) => {
         return { ...u, key: u.id };
@@ -341,7 +321,7 @@ const UserStatusPage: React.FC = () => {
                     icon={<RxLetterCaseToggle />}
                   />
                 }
-                enterButton={t("search")}
+                enterButton="Search"
               />
               <Button size="small" color="danger" variant="outlined">
                 {t("disconnectAll")}
@@ -370,41 +350,10 @@ const UserStatusPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
-          <Modal
-            open={colorModal}
-            onCancel={() => setColorModal(false)}
-            onOk={onChangeColors}
-          >
-            <Space direction="vertical" className="gap-2">
-              <Radio.Group
-                onChange={(e) => setColorOptoin(e.target.value)}
-                className="!flex !flex-col gap-2"
-                defaultValue={"new"}
-              >
-                <Radio value={"new"}>New Search Criteria</Radio>
-                {colorOption == "new" ? (
-                  <Form.Item>
-                    <Input />
-                  </Form.Item>
-                ) : null}
-                <Radio value={"list"}>
-                  Apply the member list search conditions as is:
-                </Radio>
-                {colorOption == "list" ? (
-                  <Form.Item>
-                    <Select />
-                  </Form.Item>
-                ) : null}
-              </Radio.Group>
-              <Form.Item label="Change Color">
-                <Select />1
-              </Form.Item>
-            </Space>
-          </Modal>
         </Card>
       </Content>
     </Layout>
   );
 };
 
-export default UserStatusPage;
+export default DistStatusPage;

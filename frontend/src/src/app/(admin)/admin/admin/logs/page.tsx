@@ -19,7 +19,7 @@ import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { FaWindows, FaLinux, FaApple } from "react-icons/fa";
+
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
@@ -36,12 +36,12 @@ const LogStatusPage: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [logs, setLogs] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(GET_LOGS, {
+  const { loading,  data, refetch } = useQuery(GET_LOGS, {
     variables: {
       filters: [
         {
           field: "type",
-          value: "R",
+          value: "L",
           op: "eq",
         },
       ],
@@ -109,94 +109,37 @@ const LogStatusPage: React.FC = () => {
       fixed: "left",
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: "user.userid",
-      render: (text, record) => text || record.user?.userid || "unknown",
-    },
-    {
-      title: t("os"),
-      dataIndex: "os",
-      key: "os",
-      render(value) {
-        if (value.toLowerCase().includes("window")) {
-          return (
-            <Tag
-              bordered={false}
-              icon={<FaWindows />}
-              color="blue"
-              className="!flex items-center gap-1"
-            >
-              {value}
-            </Tag>
-          );
-        } else if (value.toLowerCase().includes("linux")) {
-          return (
-            <Tag
-              bordered={false}
-              icon={<FaLinux />}
-              color="orange"
-              className="!flex items-center gap-1"
-            >
-              {value}
-            </Tag>
-          );
-        } else {
-          return (
-            <Tag
-              bordered={false}
-              icon={<FaApple />}
-              color="purple"
-              className="!flex items-center gap-1"
-            >
-              {value}
-            </Tag>
-          );
-        }
-      },
-    },
-    {
-      title: t("device"),
-      dataIndex: "device",
-      key: "device",
-    },
-    {
-      title: "IP",
+      title: t("IP"),
       dataIndex: "ip",
       key: "ip",
-    },
-    {
-      title: t("path"),
-      dataIndex: "path",
-      key: "path",
-      render(value, record) {
-        return (
-          <pre>
-            <Tag
-              color={record.status == "success" ? "success" : "red"}
-            >
-              {record.method}
-            </Tag>
-            {value}
-          </pre>
-        );
-      },
     },
     {
       title: t("data"),
       dataIndex: "data",
       key: "data",
-      width: 400,
     },
+    {
+      title: t("verificationNumber"),
+      dataIndex: "verificationNumber",
+      key: "verificationNumber",
+      render: (text) => text ?? "000000",
+    },
+    /* {
+      title: t("data"),
+      dataIndex: "data",
+      key: "data",
+    }, */
+    {
+      title: t("phone"),
+      dataIndex: "phone",
+      key: "phone",
+    },
+
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text) => (
-        <Tag bordered={false} color={text == "success" ? "success" : "red"}>
-          {text.toUpperCase() || "UNKNOWN"}
-        </Tag>
-      ),
+      render: (text) => <Tag color={text}>{text.toUpperCase()}</Tag>,
     },
     {
       title: t("createdAt"),
@@ -238,13 +181,9 @@ const LogStatusPage: React.FC = () => {
     sorter,
     extra
   ) => {
-    console.log({
-      ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions?.filters,
-    });
     setTableOptions({
       ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions?.filters,
+      filters: tableOptions.filters,
     });
   };
 
@@ -259,6 +198,7 @@ const LogStatusPage: React.FC = () => {
   useEffect(() => {
     refetch(tableOptions ?? undefined)
       .then((res) => {
+        console.log({ res });
         setLogs(
           res.data?.response?.logs?.map((u: any) => {
             return { ...u, key: u.id };
@@ -299,7 +239,7 @@ const LogStatusPage: React.FC = () => {
             <Space>
               <Input.Search
                 size="small"
-                placeholder="IP,Phone"
+                placeholder="IP,Phone Number"
                 suffix={
                   <Button
                     size="small"
