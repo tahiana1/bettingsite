@@ -112,7 +112,7 @@ const LogStatusPage: React.FC = () => {
       title: t("userid"),
       dataIndex: "user.userid",
       key: "user.userid",
-      render: (text, record) => text || record.user?.userid || "internal",
+      render: (text, record) => text || record.user?.userid || "unknown",
     },
     {
       title: t("os"),
