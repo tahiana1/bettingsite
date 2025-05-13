@@ -56,6 +56,30 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	AdminPermission struct {
+		CreatedAt   func(childComplexity int) int
+		DeletedAt   func(childComplexity int) int
+		Dwdelete    func(childComplexity int) int
+		Financials  func(childComplexity int) int
+		Game        func(childComplexity int) int
+		ID          func(childComplexity int) int
+		IP          func(childComplexity int) int
+		Membership  func(childComplexity int) int
+		Qna         func(childComplexity int) int
+		Sale        func(childComplexity int) int
+		Settlement  func(childComplexity int) int
+		Statistical func(childComplexity int) int
+		Status      func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
+		UserID      func(childComplexity int) int
+	}
+
+	AdminPermissionList struct {
+		AdminPermissions func(childComplexity int) int
+		Total            func(childComplexity int) int
+	}
+
 	Announcement struct {
 		CreatedAt   func(childComplexity int) int
 		DeletedAt   func(childComplexity int) int
@@ -187,34 +211,36 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ApproveUser        func(childComplexity int, id uint) int
-		BlockUser          func(childComplexity int, id uint) int
-		CreateAnnouncement func(childComplexity int, input model.NewAnnouncementInput) int
-		CreateDomain       func(childComplexity int, input model.NewDomainInput) int
-		CreateEvent        func(childComplexity int, input model.NewEventInput) int
-		CreateInbox        func(childComplexity int, input model.NewInboxInput) int
-		CreateLog          func(childComplexity int, input model.NewLogInput) int
-		CreateMenu         func(childComplexity int, input model.NewMenuInput) int
-		CreateNotification func(childComplexity int, input model.NewNotificationInput) int
-		CreateTodo         func(childComplexity int, input model.NewTodo) int
-		DeleteAnnouncement func(childComplexity int, id uint) int
-		DeleteDomain       func(childComplexity int, id uint) int
-		DeleteEvent        func(childComplexity int, id uint) int
-		DeleteInbox        func(childComplexity int, id uint) int
-		DeleteLog          func(childComplexity int, id uint) int
-		DeleteMenu         func(childComplexity int, id uint) int
-		DeleteNotification func(childComplexity int, id uint) int
-		DeleteProfile      func(childComplexity int, id uint) int
-		Time               func(childComplexity int) int
-		UpdateAnnouncement func(childComplexity int, id uint, input model.UpdateAnnouncementInput) int
-		UpdateDomain       func(childComplexity int, id uint, input model.UpdateDomainInput) int
-		UpdateEvent        func(childComplexity int, id uint, input model.UpdateEventInput) int
-		UpdateInbox        func(childComplexity int, id uint, input model.UpdateInboxInput) int
-		UpdateMenu         func(childComplexity int, id uint, input model.UpdateMenuInput) int
-		UpdateNotification func(childComplexity int, id uint, input model.UpdateNotificationInput) int
-		UpdateProfile      func(childComplexity int, id uint, input model.UpdateProfile) int
-		UpdateUser         func(childComplexity int, id uint, input model.UpdateUser) int
-		UploadFile         func(childComplexity int, file graphql.Upload) int
+		ApproveUser           func(childComplexity int, id uint) int
+		BlockUser             func(childComplexity int, id uint) int
+		CreateAdminPermission func(childComplexity int, input model.NewAdminPermission) int
+		CreateAnnouncement    func(childComplexity int, input model.NewAnnouncementInput) int
+		CreateDomain          func(childComplexity int, input model.NewDomainInput) int
+		CreateEvent           func(childComplexity int, input model.NewEventInput) int
+		CreateInbox           func(childComplexity int, input model.NewInboxInput) int
+		CreateLog             func(childComplexity int, input model.NewLogInput) int
+		CreateMenu            func(childComplexity int, input model.NewMenuInput) int
+		CreateNotification    func(childComplexity int, input model.NewNotificationInput) int
+		CreateTodo            func(childComplexity int, input model.NewTodo) int
+		DeleteAnnouncement    func(childComplexity int, id uint) int
+		DeleteDomain          func(childComplexity int, id uint) int
+		DeleteEvent           func(childComplexity int, id uint) int
+		DeleteInbox           func(childComplexity int, id uint) int
+		DeleteLog             func(childComplexity int, id uint) int
+		DeleteMenu            func(childComplexity int, id uint) int
+		DeleteNotification    func(childComplexity int, id uint) int
+		DeleteProfile         func(childComplexity int, id uint) int
+		Time                  func(childComplexity int) int
+		UpdateAdminPermission func(childComplexity int, id uint, input model.UpdateAdminPermissionInput) int
+		UpdateAnnouncement    func(childComplexity int, id uint, input model.UpdateAnnouncementInput) int
+		UpdateDomain          func(childComplexity int, id uint, input model.UpdateDomainInput) int
+		UpdateEvent           func(childComplexity int, id uint, input model.UpdateEventInput) int
+		UpdateInbox           func(childComplexity int, id uint, input model.UpdateInboxInput) int
+		UpdateMenu            func(childComplexity int, id uint, input model.UpdateMenuInput) int
+		UpdateNotification    func(childComplexity int, id uint, input model.UpdateNotificationInput) int
+		UpdateProfile         func(childComplexity int, id uint, input model.UpdateProfile) int
+		UpdateUser            func(childComplexity int, id uint, input model.UpdateUser) int
+		UploadFile            func(childComplexity int, file graphql.Upload) int
 	}
 
 	Notification struct {
@@ -266,6 +292,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		AdminPermissions func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		Announcements    func(childComplexity int) int
 		ConnectedUsers   func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		Domains          func(childComplexity int) int
@@ -341,6 +368,8 @@ type LogResolver interface {
 type MutationResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
 	UploadFile(ctx context.Context, file graphql.Upload) (string, error)
+	CreateAdminPermission(ctx context.Context, input model.NewAdminPermission) (*models.AdminPermission, error)
+	UpdateAdminPermission(ctx context.Context, id uint, input model.UpdateAdminPermissionInput) (*models.AdminPermission, error)
 	CreateAnnouncement(ctx context.Context, input model.NewAnnouncementInput) (*models.Announcement, error)
 	UpdateAnnouncement(ctx context.Context, id uint, input model.UpdateAnnouncementInput) (*models.Announcement, error)
 	DeleteAnnouncement(ctx context.Context, id uint) (bool, error)
@@ -370,6 +399,7 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
+	AdminPermissions(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.AdminPermissionList, error)
 	Announcements(ctx context.Context) ([]*models.Announcement, error)
 	GetAnnouncements(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.AnnouncementList, error)
 	Domains(ctx context.Context) ([]*models.Domain, error)
@@ -420,6 +450,132 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "AdminPermission.createdAt":
+		if e.complexity.AdminPermission.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.CreatedAt(childComplexity), true
+
+	case "AdminPermission.deletedAt":
+		if e.complexity.AdminPermission.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.DeletedAt(childComplexity), true
+
+	case "AdminPermission.dwdelete":
+		if e.complexity.AdminPermission.Dwdelete == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Dwdelete(childComplexity), true
+
+	case "AdminPermission.financials":
+		if e.complexity.AdminPermission.Financials == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Financials(childComplexity), true
+
+	case "AdminPermission.game":
+		if e.complexity.AdminPermission.Game == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Game(childComplexity), true
+
+	case "AdminPermission.id":
+		if e.complexity.AdminPermission.ID == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.ID(childComplexity), true
+
+	case "AdminPermission.ip":
+		if e.complexity.AdminPermission.IP == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.IP(childComplexity), true
+
+	case "AdminPermission.membership":
+		if e.complexity.AdminPermission.Membership == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Membership(childComplexity), true
+
+	case "AdminPermission.qna":
+		if e.complexity.AdminPermission.Qna == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Qna(childComplexity), true
+
+	case "AdminPermission.sale":
+		if e.complexity.AdminPermission.Sale == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Sale(childComplexity), true
+
+	case "AdminPermission.settlement":
+		if e.complexity.AdminPermission.Settlement == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Settlement(childComplexity), true
+
+	case "AdminPermission.statistical":
+		if e.complexity.AdminPermission.Statistical == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Statistical(childComplexity), true
+
+	case "AdminPermission.status":
+		if e.complexity.AdminPermission.Status == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.Status(childComplexity), true
+
+	case "AdminPermission.updatedAt":
+		if e.complexity.AdminPermission.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.UpdatedAt(childComplexity), true
+
+	case "AdminPermission.user":
+		if e.complexity.AdminPermission.User == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.User(childComplexity), true
+
+	case "AdminPermission.userId":
+		if e.complexity.AdminPermission.UserID == nil {
+			break
+		}
+
+		return e.complexity.AdminPermission.UserID(childComplexity), true
+
+	case "AdminPermissionList.adminPermissions":
+		if e.complexity.AdminPermissionList.AdminPermissions == nil {
+			break
+		}
+
+		return e.complexity.AdminPermissionList.AdminPermissions(childComplexity), true
+
+	case "AdminPermissionList.total":
+		if e.complexity.AdminPermissionList.Total == nil {
+			break
+		}
+
+		return e.complexity.AdminPermissionList.Total(childComplexity), true
 
 	case "Announcement.createdAt":
 		if e.complexity.Announcement.CreatedAt == nil {
@@ -1103,6 +1259,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.BlockUser(childComplexity, args["id"].(uint)), true
 
+	case "Mutation.createAdminPermission":
+		if e.complexity.Mutation.CreateAdminPermission == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createAdminPermission_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateAdminPermission(childComplexity, args["input"].(model.NewAdminPermission)), true
+
 	case "Mutation.createAnnouncement":
 		if e.complexity.Mutation.CreateAnnouncement == nil {
 			break
@@ -1301,6 +1469,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.Time(childComplexity), true
+
+	case "Mutation.updateAdminPermission":
+		if e.complexity.Mutation.UpdateAdminPermission == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateAdminPermission_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateAdminPermission(childComplexity, args["id"].(uint), args["input"].(model.UpdateAdminPermissionInput)), true
 
 	case "Mutation.updateAnnouncement":
 		if e.complexity.Mutation.UpdateAnnouncement == nil {
@@ -1682,6 +1862,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Profile.UserID(childComplexity), true
+
+	case "Query.adminPermissions":
+		if e.complexity.Query.AdminPermissions == nil {
+			break
+		}
+
+		args, err := ec.field_Query_adminPermissions_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AdminPermissions(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
 
 	case "Query.announcements":
 		if e.complexity.Query.Announcements == nil {
@@ -2125,6 +2317,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputFilter,
+		ec.unmarshalInputNewAdminPermission,
 		ec.unmarshalInputNewAnnouncementInput,
 		ec.unmarshalInputNewDomainInput,
 		ec.unmarshalInputNewEventInput,
@@ -2136,6 +2329,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewTodo,
 		ec.unmarshalInputOrder,
 		ec.unmarshalInputPagination,
+		ec.unmarshalInputUpdateAdminPermissionInput,
 		ec.unmarshalInputUpdateAnnouncementInput,
 		ec.unmarshalInputUpdateDomainInput,
 		ec.unmarshalInputUpdateEventInput,
@@ -2258,6 +2452,73 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../schema/admin_permission.graphql", Input: `# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type AdminPermission {
+  id: ID!
+  userId: ID!
+  user: User!
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  statistical: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+  status: Boolean
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewAdminPermission {
+  userId: ID!
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  status: Boolean
+  statistical: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+}
+input UpdateAdminPermissionInput {
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  statistical: Boolean
+  status: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+}
+
+type AdminPermissionList {
+  adminPermissions: [AdminPermission!]!
+  total: Int!
+}
+
+extend type Query {
+  adminPermissions(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): AdminPermissionList!
+}
+
+extend type Mutation {
+  createAdminPermission(input: NewAdminPermission!): AdminPermission!
+  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission!
+}
+`, BuiltIn: false},
 	{Name: "../schema/announcement.graphql", Input: `type Announcement {
   id: ID!
   title: String!
@@ -3003,6 +3264,29 @@ func (ec *executionContext) field_Mutation_blockUser_argsID(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createAdminPermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createAdminPermission_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createAdminPermission_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.NewAdminPermission, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNNewAdminPermission2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAdminPermission(ctx, tmp)
+	}
+
+	var zeroVal model.NewAdminPermission
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createAnnouncement_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3368,6 +3652,47 @@ func (ec *executionContext) field_Mutation_deleteProfile_argsID(
 	}
 
 	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateAdminPermission_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateAdminPermission_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_updateAdminPermission_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateAdminPermission_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateAdminPermission_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.UpdateAdminPermissionInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateAdminPermissionInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateAdminPermissionInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateAdminPermissionInput
 	return zeroVal, nil
 }
 
@@ -3742,6 +4067,65 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_adminPermissions_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_adminPermissions_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_adminPermissions_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_adminPermissions_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_adminPermissions_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_adminPermissions_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_adminPermissions_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
 	return zeroVal, nil
 }
 
@@ -4457,6 +4841,849 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _AdminPermission_id(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalNID2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_userId(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalNID2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_user(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(models.User)
+	fc.Result = res
+	return ec.marshalNUser2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "userid":
+				return ec.fieldContext_User_userid(ctx, field)
+			case "type":
+				return ec.fieldContext_User_type(ctx, field)
+			case "role":
+				return ec.fieldContext_User_role(ctx, field)
+			case "usdtAddress":
+				return ec.fieldContext_User_usdtAddress(ctx, field)
+			case "currentIP":
+				return ec.fieldContext_User_currentIP(ctx, field)
+			case "IP":
+				return ec.fieldContext_User_IP(ctx, field)
+			case "rootId":
+				return ec.fieldContext_User_rootId(ctx, field)
+			case "root":
+				return ec.fieldContext_User_root(ctx, field)
+			case "parentId":
+				return ec.fieldContext_User_parentId(ctx, field)
+			case "parent":
+				return ec.fieldContext_User_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_User_children(ctx, field)
+			case "childrenCount":
+				return ec.fieldContext_User_childrenCount(ctx, field)
+			case "profile":
+				return ec.fieldContext_User_profile(ctx, field)
+			case "status":
+				return ec.fieldContext_User_status(ctx, field)
+			case "blackMemo":
+				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_User_orderNum(ctx, field)
+			case "os":
+				return ec.fieldContext_User_os(ctx, field)
+			case "device":
+				return ec.fieldContext_User_device(ctx, field)
+			case "fingerPrint":
+				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_User_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_User_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_membership(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_membership(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Membership, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_membership(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_financials(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_financials(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Financials, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_financials(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_qna(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_qna(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Qna, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_qna(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_game(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_game(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Game, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_game(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_settlement(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_settlement(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Settlement, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_settlement(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_sale(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_sale(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sale, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_sale(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_statistical(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_statistical(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Statistical, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_statistical(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_ip(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_ip(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_ip(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_dwdelete(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_dwdelete(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Dwdelete, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_dwdelete(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_status(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermission_deletedAt(ctx context.Context, field graphql.CollectedField, obj *models.AdminPermission) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermission_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gorm.DeletedAt)
+	fc.Result = res
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermission_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermission",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DeletedAt does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermissionList_adminPermissions(ctx context.Context, field graphql.CollectedField, obj *model.AdminPermissionList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermissionList_adminPermissions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AdminPermissions, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.AdminPermission)
+	fc.Result = res
+	return ec.marshalNAdminPermission2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermissionᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermissionList_adminPermissions(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermissionList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_AdminPermission_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_AdminPermission_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_AdminPermission_user(ctx, field)
+			case "membership":
+				return ec.fieldContext_AdminPermission_membership(ctx, field)
+			case "financials":
+				return ec.fieldContext_AdminPermission_financials(ctx, field)
+			case "qna":
+				return ec.fieldContext_AdminPermission_qna(ctx, field)
+			case "game":
+				return ec.fieldContext_AdminPermission_game(ctx, field)
+			case "settlement":
+				return ec.fieldContext_AdminPermission_settlement(ctx, field)
+			case "sale":
+				return ec.fieldContext_AdminPermission_sale(ctx, field)
+			case "statistical":
+				return ec.fieldContext_AdminPermission_statistical(ctx, field)
+			case "ip":
+				return ec.fieldContext_AdminPermission_ip(ctx, field)
+			case "dwdelete":
+				return ec.fieldContext_AdminPermission_dwdelete(ctx, field)
+			case "status":
+				return ec.fieldContext_AdminPermission_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_AdminPermission_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_AdminPermission_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_AdminPermission_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AdminPermission", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AdminPermissionList_total(ctx context.Context, field graphql.CollectedField, obj *model.AdminPermissionList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AdminPermissionList_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AdminPermissionList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AdminPermissionList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Announcement_id(ctx context.Context, field graphql.CollectedField, obj *models.Announcement) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Announcement_id(ctx, field)
@@ -9128,6 +10355,184 @@ func (ec *executionContext) fieldContext_Mutation_uploadFile(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createAdminPermission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createAdminPermission(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateAdminPermission(rctx, fc.Args["input"].(model.NewAdminPermission))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.AdminPermission)
+	fc.Result = res
+	return ec.marshalNAdminPermission2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermission(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createAdminPermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_AdminPermission_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_AdminPermission_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_AdminPermission_user(ctx, field)
+			case "membership":
+				return ec.fieldContext_AdminPermission_membership(ctx, field)
+			case "financials":
+				return ec.fieldContext_AdminPermission_financials(ctx, field)
+			case "qna":
+				return ec.fieldContext_AdminPermission_qna(ctx, field)
+			case "game":
+				return ec.fieldContext_AdminPermission_game(ctx, field)
+			case "settlement":
+				return ec.fieldContext_AdminPermission_settlement(ctx, field)
+			case "sale":
+				return ec.fieldContext_AdminPermission_sale(ctx, field)
+			case "statistical":
+				return ec.fieldContext_AdminPermission_statistical(ctx, field)
+			case "ip":
+				return ec.fieldContext_AdminPermission_ip(ctx, field)
+			case "dwdelete":
+				return ec.fieldContext_AdminPermission_dwdelete(ctx, field)
+			case "status":
+				return ec.fieldContext_AdminPermission_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_AdminPermission_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_AdminPermission_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_AdminPermission_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AdminPermission", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createAdminPermission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateAdminPermission(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateAdminPermission(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateAdminPermission(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateAdminPermissionInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.AdminPermission)
+	fc.Result = res
+	return ec.marshalNAdminPermission2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermission(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateAdminPermission(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_AdminPermission_id(ctx, field)
+			case "userId":
+				return ec.fieldContext_AdminPermission_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_AdminPermission_user(ctx, field)
+			case "membership":
+				return ec.fieldContext_AdminPermission_membership(ctx, field)
+			case "financials":
+				return ec.fieldContext_AdminPermission_financials(ctx, field)
+			case "qna":
+				return ec.fieldContext_AdminPermission_qna(ctx, field)
+			case "game":
+				return ec.fieldContext_AdminPermission_game(ctx, field)
+			case "settlement":
+				return ec.fieldContext_AdminPermission_settlement(ctx, field)
+			case "sale":
+				return ec.fieldContext_AdminPermission_sale(ctx, field)
+			case "statistical":
+				return ec.fieldContext_AdminPermission_statistical(ctx, field)
+			case "ip":
+				return ec.fieldContext_AdminPermission_ip(ctx, field)
+			case "dwdelete":
+				return ec.fieldContext_AdminPermission_dwdelete(ctx, field)
+			case "status":
+				return ec.fieldContext_AdminPermission_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_AdminPermission_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_AdminPermission_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_AdminPermission_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AdminPermission", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateAdminPermission_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createAnnouncement(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createAnnouncement(ctx, field)
 	if err != nil {
@@ -13375,6 +14780,67 @@ func (ec *executionContext) fieldContext_Query_time(_ context.Context, field gra
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_adminPermissions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_adminPermissions(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AdminPermissions(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AdminPermissionList)
+	fc.Result = res
+	return ec.marshalNAdminPermissionList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐAdminPermissionList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_adminPermissions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "adminPermissions":
+				return ec.fieldContext_AdminPermissionList_adminPermissions(ctx, field)
+			case "total":
+				return ec.fieldContext_AdminPermissionList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AdminPermissionList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_adminPermissions_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -19085,6 +20551,103 @@ func (ec *executionContext) unmarshalInputFilter(ctx context.Context, obj any) (
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewAdminPermission(ctx context.Context, obj any) (model.NewAdminPermission, error) {
+	var it model.NewAdminPermission
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"userId", "membership", "financials", "qna", "game", "settlement", "sale", "status", "statistical", "ip", "dwdelete"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "userId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			data, err := ec.unmarshalNID2uint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		case "membership":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("membership"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Membership = data
+		case "financials":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("financials"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Financials = data
+		case "qna":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("qna"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Qna = data
+		case "game":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Game = data
+		case "settlement":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settlement"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Settlement = data
+		case "sale":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sale"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sale = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "statistical":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statistical"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Statistical = data
+		case "ip":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ip"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IP = data
+		case "dwdelete":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dwdelete"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Dwdelete = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewAnnouncementInput(ctx context.Context, obj any) (model.NewAnnouncementInput, error) {
 	var it model.NewAnnouncementInput
 	asMap := map[string]any{}
@@ -19834,6 +21397,96 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj an
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateAdminPermissionInput(ctx context.Context, obj any) (model.UpdateAdminPermissionInput, error) {
+	var it model.UpdateAdminPermissionInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"membership", "financials", "qna", "game", "settlement", "sale", "statistical", "status", "ip", "dwdelete"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "membership":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("membership"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Membership = data
+		case "financials":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("financials"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Financials = data
+		case "qna":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("qna"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Qna = data
+		case "game":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("game"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Game = data
+		case "settlement":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("settlement"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Settlement = data
+		case "sale":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sale"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Sale = data
+		case "statistical":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statistical"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Statistical = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "ip":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ip"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IP = data
+		case "dwdelete":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("dwdelete"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Dwdelete = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateAnnouncementInput(ctx context.Context, obj any) (model.UpdateAnnouncementInput, error) {
 	var it model.UpdateAnnouncementInput
 	asMap := map[string]any{}
@@ -20512,6 +22165,131 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var adminPermissionImplementors = []string{"AdminPermission"}
+
+func (ec *executionContext) _AdminPermission(ctx context.Context, sel ast.SelectionSet, obj *models.AdminPermission) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, adminPermissionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AdminPermission")
+		case "id":
+			out.Values[i] = ec._AdminPermission_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._AdminPermission_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "user":
+			out.Values[i] = ec._AdminPermission_user(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "membership":
+			out.Values[i] = ec._AdminPermission_membership(ctx, field, obj)
+		case "financials":
+			out.Values[i] = ec._AdminPermission_financials(ctx, field, obj)
+		case "qna":
+			out.Values[i] = ec._AdminPermission_qna(ctx, field, obj)
+		case "game":
+			out.Values[i] = ec._AdminPermission_game(ctx, field, obj)
+		case "settlement":
+			out.Values[i] = ec._AdminPermission_settlement(ctx, field, obj)
+		case "sale":
+			out.Values[i] = ec._AdminPermission_sale(ctx, field, obj)
+		case "statistical":
+			out.Values[i] = ec._AdminPermission_statistical(ctx, field, obj)
+		case "ip":
+			out.Values[i] = ec._AdminPermission_ip(ctx, field, obj)
+		case "dwdelete":
+			out.Values[i] = ec._AdminPermission_dwdelete(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._AdminPermission_status(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._AdminPermission_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._AdminPermission_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._AdminPermission_deletedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var adminPermissionListImplementors = []string{"AdminPermissionList"}
+
+func (ec *executionContext) _AdminPermissionList(ctx context.Context, sel ast.SelectionSet, obj *model.AdminPermissionList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, adminPermissionListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AdminPermissionList")
+		case "adminPermissions":
+			out.Values[i] = ec._AdminPermissionList_adminPermissions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._AdminPermissionList_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var announcementImplementors = []string{"Announcement"}
 
@@ -21362,6 +23140,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createAdminPermission":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createAdminPermission(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateAdminPermission":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateAdminPermission(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createAnnouncement":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createAnnouncement(ctx, field)
@@ -21842,6 +23634,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_time(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "adminPermissions":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_adminPermissions(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
 				return res
 			}
 
@@ -22981,6 +24795,78 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
+func (ec *executionContext) marshalNAdminPermission2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermission(ctx context.Context, sel ast.SelectionSet, v models.AdminPermission) graphql.Marshaler {
+	return ec._AdminPermission(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAdminPermission2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermissionᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.AdminPermission) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAdminPermission2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermission(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNAdminPermission2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAdminPermission(ctx context.Context, sel ast.SelectionSet, v *models.AdminPermission) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AdminPermission(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNAdminPermissionList2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐAdminPermissionList(ctx context.Context, sel ast.SelectionSet, v model.AdminPermissionList) graphql.Marshaler {
+	return ec._AdminPermissionList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNAdminPermissionList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐAdminPermissionList(ctx context.Context, sel ast.SelectionSet, v *model.AdminPermissionList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._AdminPermissionList(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNAnnouncement2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐAnnouncement(ctx context.Context, sel ast.SelectionSet, v models.Announcement) graphql.Marshaler {
 	return ec._Announcement(ctx, sel, &v)
 }
@@ -23531,6 +25417,11 @@ func (ec *executionContext) marshalNMyCustomBooleanScalar2bool(ctx context.Conte
 	return res
 }
 
+func (ec *executionContext) unmarshalNNewAdminPermission2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAdminPermission(ctx context.Context, v any) (model.NewAdminPermission, error) {
+	res, err := ec.unmarshalInputNewAdminPermission(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNNewAnnouncementInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAnnouncementInput(ctx context.Context, v any) (model.NewAnnouncementInput, error) {
 	res, err := ec.unmarshalInputNewAnnouncementInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -23794,6 +25685,11 @@ func (ec *executionContext) marshalNUint2uint(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateAdminPermissionInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateAdminPermissionInput(ctx context.Context, v any) (model.UpdateAdminPermissionInput, error) {
+	res, err := ec.unmarshalInputUpdateAdminPermissionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateAnnouncementInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateAnnouncementInput(ctx context.Context, v any) (model.UpdateAnnouncementInput, error) {

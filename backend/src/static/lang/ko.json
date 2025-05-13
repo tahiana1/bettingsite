@@ -196,6 +196,11 @@
   "device": "장치",
   "host": "호스트",
   "autoReg": "자동 등록",
+  "membership": "멤버십",
+  "settlement": "결제",
+  "game": "게임",
+  "sale": "판매",
+  "dwdelete": "입금/출금 삭제",
 
   "abroad": "해외",
   "domestic": "국내",

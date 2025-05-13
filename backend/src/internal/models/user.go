@@ -21,8 +21,13 @@ type User struct {
 	Children      []User `json:"children" gorm:"foreignKey:ParentID"`
 	ChildrenCount uint   `json:"childrenCount" gorm:"default:0"`
 
-	Type                 string     `json:"type" gorm:"default:'G';size:20"`
-	Role                 string     `json:"role" gorm:"default:'U';size:20"`
+	Type         string           `json:"type" gorm:"default:'G';size:20"` // User type
+	Role         string           `json:"role" gorm:"default:'U';size:20"` // Admin, Partner, User
+	PermissionID *uint            `json:"permissionId"`
+	Permission   *AdminPermission `json:"permission"`
+
+	Level string `json:"level" gorm:"default:'G';size:20"` // Role level Top - T, Middle-M, General-G
+
 	PasswordResetToken   string     `json:"-" gorm:"size:255"`
 	PasswordResetExpires *time.Time `json:"-"`
 

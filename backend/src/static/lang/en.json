@@ -198,6 +198,13 @@
   "host": "Host",
   "autoReg": "Auto Reg",
 
+  "membership":"Membership",
+  "settlement":"Settlement",
+  "game":"Game",
+  "sale":"Sale",
+  "dwdelete":"Deposit/Withdraw Delete",
+
+
   "abroad": "Abroad",
   "domestic": "Domestic",
   "live": "Live",

@@ -125,6 +125,8 @@ func ConnectDB() {
 		models.Notification{},
 		models.Menu{},
 		models.Log{},
+		models.AdminPermission{},
+		models.AdminMenu{},
 	)
 
 	if err != nil {

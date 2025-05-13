@@ -12,6 +12,11 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
+type AdminPermissionList struct {
+	AdminPermissions []*models.AdminPermission `json:"adminPermissions"`
+	Total            int32                     `json:"total"`
+}
+
 type AnnouncementList struct {
 	Announcements []*models.Announcement `json:"announcements"`
 	Total         int32                  `json:"total"`
@@ -51,6 +56,20 @@ type MenuList struct {
 }
 
 type Mutation struct {
+}
+
+type NewAdminPermission struct {
+	UserID      uint  `json:"userId"`
+	Membership  *bool `json:"membership,omitempty"`
+	Financials  *bool `json:"financials,omitempty"`
+	Qna         *bool `json:"qna,omitempty"`
+	Game        *bool `json:"game,omitempty"`
+	Settlement  *bool `json:"settlement,omitempty"`
+	Sale        *bool `json:"sale,omitempty"`
+	Status      *bool `json:"status,omitempty"`
+	Statistical *bool `json:"statistical,omitempty"`
+	IP          *bool `json:"ip,omitempty"`
+	Dwdelete    *bool `json:"dwdelete,omitempty"`
 }
 
 type NewAnnouncementInput struct {
@@ -176,6 +195,19 @@ type Todo struct {
 	Text string       `json:"text"`
 	Done bool         `json:"done"`
 	User *models.User `json:"user"`
+}
+
+type UpdateAdminPermissionInput struct {
+	Membership  *bool `json:"membership,omitempty"`
+	Financials  *bool `json:"financials,omitempty"`
+	Qna         *bool `json:"qna,omitempty"`
+	Game        *bool `json:"game,omitempty"`
+	Settlement  *bool `json:"settlement,omitempty"`
+	Sale        *bool `json:"sale,omitempty"`
+	Statistical *bool `json:"statistical,omitempty"`
+	Status      *bool `json:"status,omitempty"`
+	IP          *bool `json:"ip,omitempty"`
+	Dwdelete    *bool `json:"dwdelete,omitempty"`
 }
 
 type UpdateAnnouncementInput struct {

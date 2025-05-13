@@ -217,3 +217,7 @@ models:
   Log:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Log
+
+  AdminPermission:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.AdminPermission

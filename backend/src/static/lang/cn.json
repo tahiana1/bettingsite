@@ -198,6 +198,12 @@
   "host": "主机",
   "autoReg": "自动注册",
 
+  "membership": "会员",
+  "settlement": "结算",
+  "game": "游戏",
+  "sale": "销售",
+  "dwdelete": "充值/提现删除",
+
   "abroad": "国外",
   "domestic": "国内",
   "live": "直播",

@@ -1,0 +1,66 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type AdminPermission {
+  id: ID!
+  userId: ID!
+  user: User!
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  statistical: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+  status: Boolean
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewAdminPermission {
+  userId: ID!
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  status: Boolean
+  statistical: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+}
+input UpdateAdminPermissionInput {
+  membership: Boolean
+  financials: Boolean
+  qna: Boolean
+  game: Boolean
+  settlement: Boolean
+  sale: Boolean
+  statistical: Boolean
+  status: Boolean
+  ip: Boolean
+  dwdelete: Boolean
+}
+
+type AdminPermissionList {
+  adminPermissions: [AdminPermission!]!
+  total: Int!
+}
+
+extend type Query {
+  adminPermissions(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): AdminPermissionList!
+}
+
+extend type Mutation {
+  createAdminPermission(input: NewAdminPermission!): AdminPermission!
+  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission!
+}
