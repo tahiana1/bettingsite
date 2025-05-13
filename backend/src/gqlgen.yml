@@ -221,3 +221,7 @@ models:
   AdminPermission:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.AdminPermission
+
+  Bank:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Bank

@@ -38,10 +38,10 @@ func main() {
 		models.Transaction{},
 		models.Announcement{},
 		models.Attendance{},
-		models.Bet{},
 		models.Inbox{},
 		models.Notification{},
 		models.Menu{},
+		models.Bank{},
 	)
 
 	if err != nil {

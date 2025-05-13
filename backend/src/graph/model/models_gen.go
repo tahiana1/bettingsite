@@ -23,6 +23,11 @@ type AnnouncementList struct {
 	Total         int32                  `json:"total"`
 }
 
+type BankList struct {
+	Banks []*models.Bank `json:"banks"`
+	Total int32          `json:"total"`
+}
+
 type DomainList struct {
 	Domains []*models.Domain `json:"domains"`
 	Total   int32            `json:"total"`
@@ -82,13 +87,33 @@ type NewAnnouncementInput struct {
 	ShowTo      *time.Time `json:"showTo,omitempty"`
 }
 
+type NewBankInput struct {
+	Name     string `json:"name"`
+	OrderNum *uint  `json:"orderNum,omitempty"`
+	Status   *bool  `json:"status,omitempty"`
+}
+
 type NewDomainInput struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Status      *bool  `json:"status,omitempty"`
-	UserID      uint   `json:"userId"`
-	AutoReg     *bool  `json:"autoReg,omitempty"`
-	OrderNum    *uint  `json:"orderNum,omitempty"`
+	Name              string  `json:"name"`
+	Description       string  `json:"description"`
+	Status            *bool   `json:"status,omitempty"`
+	UserID            uint    `json:"userId"`
+	AutoReg           *bool   `json:"autoReg,omitempty"`
+	OrderNum          *uint   `json:"orderNum,omitempty"`
+	UseTelegram       *bool   `json:"useTelegram,omitempty"`
+	Telegram          *string `json:"telegram,omitempty"`
+	TelegramLink      *string `json:"telegramLink,omitempty"`
+	UseKakaoTalk      *bool   `json:"useKakaoTalk,omitempty"`
+	KakaoTalk         *string `json:"kakaoTalk,omitempty"`
+	KakaoTalkLink     *string `json:"kakaoTalkLink,omitempty"`
+	UseServiceCenter  *bool   `json:"useServiceCenter,omitempty"`
+	ServiceCenter     *string `json:"serviceCenter,omitempty"`
+	ServiceCenterLink *string `json:"serviceCenterLink,omitempty"`
+	UseLiveDomain     *bool   `json:"useLiveDomain,omitempty"`
+	LiveDomain        *string `json:"liveDomain,omitempty"`
+	LiveDomainLink    *string `json:"liveDomainLink,omitempty"`
+	MemberLevel       *uint   `json:"memberLevel,omitempty"`
+	DistributorLevel  *uint   `json:"distributorLevel,omitempty"`
 }
 
 type NewEventInput struct {
@@ -268,13 +293,33 @@ type UpdateAnnouncementInput struct {
 	Level       *uint      `json:"level,omitempty"`
 }
 
+type UpdateBankInput struct {
+	Name     *string `json:"name,omitempty"`
+	OrderNum *uint   `json:"orderNum,omitempty"`
+	Status   *bool   `json:"status,omitempty"`
+}
+
 type UpdateDomainInput struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Status      *bool   `json:"status,omitempty"`
-	UserID      *uint   `json:"userId,omitempty"`
-	AutoReg     *bool   `json:"autoReg,omitempty"`
-	OrderNum    *uint   `json:"orderNum,omitempty"`
+	Name              *string `json:"name,omitempty"`
+	Description       *string `json:"description,omitempty"`
+	Status            *bool   `json:"status,omitempty"`
+	UserID            *uint   `json:"userId,omitempty"`
+	AutoReg           *bool   `json:"autoReg,omitempty"`
+	OrderNum          *uint   `json:"orderNum,omitempty"`
+	UseTelegram       *bool   `json:"useTelegram,omitempty"`
+	Telegram          *string `json:"telegram,omitempty"`
+	TelegramLink      *string `json:"telegramLink,omitempty"`
+	UseKakaoTalk      *bool   `json:"useKakaoTalk,omitempty"`
+	KakaoTalk         *string `json:"kakaoTalk,omitempty"`
+	KakaoTalkLink     *string `json:"kakaoTalkLink,omitempty"`
+	UseServiceCenter  *bool   `json:"useServiceCenter,omitempty"`
+	ServiceCenter     *string `json:"serviceCenter,omitempty"`
+	ServiceCenterLink *string `json:"serviceCenterLink,omitempty"`
+	UseLiveDomain     *bool   `json:"useLiveDomain,omitempty"`
+	LiveDomain        *string `json:"liveDomain,omitempty"`
+	LiveDomainLink    *string `json:"liveDomainLink,omitempty"`
+	MemberLevel       *uint   `json:"memberLevel,omitempty"`
+	DistributorLevel  *uint   `json:"distributorLevel,omitempty"`
 }
 
 type UpdateEventInput struct {

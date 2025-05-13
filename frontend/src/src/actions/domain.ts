@@ -18,6 +18,22 @@ export const GET_DOMAINS = gql`
         orderNum
         autoReg
         status
+
+        useTelegram
+        telegram
+        telegramLink
+        useKakaoTalk
+        kakaoTalk
+        kakaoTalkLink
+        useServiceCenter
+        serviceCenter
+        serviceCenterLink
+        useLiveDomain
+        liveDomain
+        liveDomainLink
+        memberLevel
+        distributorLevel
+
         user {
           id
           name
@@ -41,6 +57,22 @@ export const CREATE_DOMAIN = gql`
       orderNum
       autoReg
       status
+
+      useTelegram
+      telegram
+      telegramLink
+      useKakaoTalk
+      kakaoTalk
+      kakaoTalkLink
+      useServiceCenter
+      serviceCenter
+      serviceCenterLink
+      useLiveDomain
+      liveDomain
+      liveDomainLink
+      memberLevel
+      distributorLevel
+
       user {
         id
         name
@@ -62,6 +94,22 @@ export const UPDATE_DOMAIN = gql`
       orderNum
       autoReg
       status
+
+      useTelegram
+      telegram
+      telegramLink
+      useKakaoTalk
+      kakaoTalk
+      kakaoTalkLink
+      useServiceCenter
+      serviceCenter
+      serviceCenterLink
+      useLiveDomain
+      liveDomain
+      liveDomainLink
+      memberLevel
+      distributorLevel
+
       user {
         id
         name

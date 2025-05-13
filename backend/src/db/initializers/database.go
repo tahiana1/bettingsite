@@ -120,13 +120,13 @@ func ConnectDB() {
 		models.Transaction{},
 		models.Announcement{},
 		models.Attendance{},
-		models.Bet{},
 		models.Inbox{},
 		models.Notification{},
 		models.Menu{},
 		models.Log{},
 		models.AdminPermission{},
 		models.AdminMenu{},
+		models.Bank{},
 	)
 
 	if err != nil {

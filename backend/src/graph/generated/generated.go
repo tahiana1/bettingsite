@@ -100,18 +100,47 @@ type ComplexityRoot struct {
 		Total         func(childComplexity int) int
 	}
 
+	Bank struct {
+		CreatedAt func(childComplexity int) int
+		DeletedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		OrderNum  func(childComplexity int) int
+		Status    func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
+	BankList struct {
+		Banks func(childComplexity int) int
+		Total func(childComplexity int) int
+	}
+
 	Domain struct {
-		AutoReg     func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Name        func(childComplexity int) int
-		OrderNum    func(childComplexity int) int
-		Status      func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		User        func(childComplexity int) int
-		UserID      func(childComplexity int) int
+		AutoReg           func(childComplexity int) int
+		CreatedAt         func(childComplexity int) int
+		DeletedAt         func(childComplexity int) int
+		Description       func(childComplexity int) int
+		DistributorLevel  func(childComplexity int) int
+		ID                func(childComplexity int) int
+		KakaoTalk         func(childComplexity int) int
+		KakaoTalkLink     func(childComplexity int) int
+		LiveDomain        func(childComplexity int) int
+		LiveDomainLink    func(childComplexity int) int
+		MemberLevel       func(childComplexity int) int
+		Name              func(childComplexity int) int
+		OrderNum          func(childComplexity int) int
+		ServiceCenter     func(childComplexity int) int
+		ServiceCenterLink func(childComplexity int) int
+		Status            func(childComplexity int) int
+		Telegram          func(childComplexity int) int
+		TelegramLink      func(childComplexity int) int
+		UpdatedAt         func(childComplexity int) int
+		UseKakaoTalk      func(childComplexity int) int
+		UseLiveDomain     func(childComplexity int) int
+		UseServiceCenter  func(childComplexity int) int
+		UseTelegram       func(childComplexity int) int
+		User              func(childComplexity int) int
+		UserID            func(childComplexity int) int
 	}
 
 	DomainList struct {
@@ -215,6 +244,7 @@ type ComplexityRoot struct {
 		BlockUser             func(childComplexity int, id uint) int
 		CreateAdminPermission func(childComplexity int, input model.NewAdminPermission) int
 		CreateAnnouncement    func(childComplexity int, input model.NewAnnouncementInput) int
+		CreateBank            func(childComplexity int, input model.NewBankInput) int
 		CreateDomain          func(childComplexity int, input model.NewDomainInput) int
 		CreateEvent           func(childComplexity int, input model.NewEventInput) int
 		CreateInbox           func(childComplexity int, input model.NewInboxInput) int
@@ -224,6 +254,7 @@ type ComplexityRoot struct {
 		CreateSetting         func(childComplexity int, input model.NewSettingInput) int
 		CreateTodo            func(childComplexity int, input model.NewTodo) int
 		DeleteAnnouncement    func(childComplexity int, id uint) int
+		DeleteBank            func(childComplexity int, id uint) int
 		DeleteDomain          func(childComplexity int, id uint) int
 		DeleteEvent           func(childComplexity int, id uint) int
 		DeleteInbox           func(childComplexity int, id uint) int
@@ -235,6 +266,7 @@ type ComplexityRoot struct {
 		Time                  func(childComplexity int) int
 		UpdateAdminPermission func(childComplexity int, id uint, input model.UpdateAdminPermissionInput) int
 		UpdateAnnouncement    func(childComplexity int, id uint, input model.UpdateAnnouncementInput) int
+		UpdateBank            func(childComplexity int, id uint, input model.UpdateBankInput) int
 		UpdateDomain          func(childComplexity int, id uint, input model.UpdateDomainInput) int
 		UpdateEvent           func(childComplexity int, id uint, input model.UpdateEventInput) int
 		UpdateInbox           func(childComplexity int, id uint, input model.UpdateInboxInput) int
@@ -302,6 +334,7 @@ type ComplexityRoot struct {
 		Events           func(childComplexity int) int
 		FilterUsers      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetAnnouncements func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetBanks         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetDistributors  func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetDomains       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetEvents        func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
@@ -403,6 +436,9 @@ type MutationResolver interface {
 	CreateAnnouncement(ctx context.Context, input model.NewAnnouncementInput) (*models.Announcement, error)
 	UpdateAnnouncement(ctx context.Context, id uint, input model.UpdateAnnouncementInput) (*models.Announcement, error)
 	DeleteAnnouncement(ctx context.Context, id uint) (bool, error)
+	CreateBank(ctx context.Context, input model.NewBankInput) (*models.Bank, error)
+	UpdateBank(ctx context.Context, id uint, input model.UpdateBankInput) (*models.Bank, error)
+	DeleteBank(ctx context.Context, id uint) (bool, error)
 	CreateDomain(ctx context.Context, input model.NewDomainInput) (*models.Domain, error)
 	UpdateDomain(ctx context.Context, id uint, input model.UpdateDomainInput) (*models.Domain, error)
 	DeleteDomain(ctx context.Context, id uint) (bool, error)
@@ -435,6 +471,7 @@ type QueryResolver interface {
 	AdminPermissions(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.AdminPermissionList, error)
 	Announcements(ctx context.Context) ([]*models.Announcement, error)
 	GetAnnouncements(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.AnnouncementList, error)
+	GetBanks(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.BankList, error)
 	Domains(ctx context.Context) ([]*models.Domain, error)
 	GetDomains(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.DomainList, error)
 	TopEvents(ctx context.Context) ([]*models.Event, error)
@@ -709,6 +746,69 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.AnnouncementList.Total(childComplexity), true
 
+	case "Bank.createdAt":
+		if e.complexity.Bank.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Bank.CreatedAt(childComplexity), true
+
+	case "Bank.deletedAt":
+		if e.complexity.Bank.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.Bank.DeletedAt(childComplexity), true
+
+	case "Bank.id":
+		if e.complexity.Bank.ID == nil {
+			break
+		}
+
+		return e.complexity.Bank.ID(childComplexity), true
+
+	case "Bank.name":
+		if e.complexity.Bank.Name == nil {
+			break
+		}
+
+		return e.complexity.Bank.Name(childComplexity), true
+
+	case "Bank.orderNum":
+		if e.complexity.Bank.OrderNum == nil {
+			break
+		}
+
+		return e.complexity.Bank.OrderNum(childComplexity), true
+
+	case "Bank.status":
+		if e.complexity.Bank.Status == nil {
+			break
+		}
+
+		return e.complexity.Bank.Status(childComplexity), true
+
+	case "Bank.updatedAt":
+		if e.complexity.Bank.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Bank.UpdatedAt(childComplexity), true
+
+	case "BankList.banks":
+		if e.complexity.BankList.Banks == nil {
+			break
+		}
+
+		return e.complexity.BankList.Banks(childComplexity), true
+
+	case "BankList.total":
+		if e.complexity.BankList.Total == nil {
+			break
+		}
+
+		return e.complexity.BankList.Total(childComplexity), true
+
 	case "Domain.autoReg":
 		if e.complexity.Domain.AutoReg == nil {
 			break
@@ -737,12 +837,54 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Domain.Description(childComplexity), true
 
+	case "Domain.distributorLevel":
+		if e.complexity.Domain.DistributorLevel == nil {
+			break
+		}
+
+		return e.complexity.Domain.DistributorLevel(childComplexity), true
+
 	case "Domain.id":
 		if e.complexity.Domain.ID == nil {
 			break
 		}
 
 		return e.complexity.Domain.ID(childComplexity), true
+
+	case "Domain.kakaoTalk":
+		if e.complexity.Domain.KakaoTalk == nil {
+			break
+		}
+
+		return e.complexity.Domain.KakaoTalk(childComplexity), true
+
+	case "Domain.kakaoTalkLink":
+		if e.complexity.Domain.KakaoTalkLink == nil {
+			break
+		}
+
+		return e.complexity.Domain.KakaoTalkLink(childComplexity), true
+
+	case "Domain.liveDomain":
+		if e.complexity.Domain.LiveDomain == nil {
+			break
+		}
+
+		return e.complexity.Domain.LiveDomain(childComplexity), true
+
+	case "Domain.liveDomainLink":
+		if e.complexity.Domain.LiveDomainLink == nil {
+			break
+		}
+
+		return e.complexity.Domain.LiveDomainLink(childComplexity), true
+
+	case "Domain.memberLevel":
+		if e.complexity.Domain.MemberLevel == nil {
+			break
+		}
+
+		return e.complexity.Domain.MemberLevel(childComplexity), true
 
 	case "Domain.name":
 		if e.complexity.Domain.Name == nil {
@@ -758,6 +900,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Domain.OrderNum(childComplexity), true
 
+	case "Domain.serviceCenter":
+		if e.complexity.Domain.ServiceCenter == nil {
+			break
+		}
+
+		return e.complexity.Domain.ServiceCenter(childComplexity), true
+
+	case "Domain.serviceCenterLink":
+		if e.complexity.Domain.ServiceCenterLink == nil {
+			break
+		}
+
+		return e.complexity.Domain.ServiceCenterLink(childComplexity), true
+
 	case "Domain.status":
 		if e.complexity.Domain.Status == nil {
 			break
@@ -765,12 +921,54 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Domain.Status(childComplexity), true
 
+	case "Domain.telegram":
+		if e.complexity.Domain.Telegram == nil {
+			break
+		}
+
+		return e.complexity.Domain.Telegram(childComplexity), true
+
+	case "Domain.telegramLink":
+		if e.complexity.Domain.TelegramLink == nil {
+			break
+		}
+
+		return e.complexity.Domain.TelegramLink(childComplexity), true
+
 	case "Domain.updatedAt":
 		if e.complexity.Domain.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.Domain.UpdatedAt(childComplexity), true
+
+	case "Domain.useKakaoTalk":
+		if e.complexity.Domain.UseKakaoTalk == nil {
+			break
+		}
+
+		return e.complexity.Domain.UseKakaoTalk(childComplexity), true
+
+	case "Domain.useLiveDomain":
+		if e.complexity.Domain.UseLiveDomain == nil {
+			break
+		}
+
+		return e.complexity.Domain.UseLiveDomain(childComplexity), true
+
+	case "Domain.useServiceCenter":
+		if e.complexity.Domain.UseServiceCenter == nil {
+			break
+		}
+
+		return e.complexity.Domain.UseServiceCenter(childComplexity), true
+
+	case "Domain.useTelegram":
+		if e.complexity.Domain.UseTelegram == nil {
+			break
+		}
+
+		return e.complexity.Domain.UseTelegram(childComplexity), true
 
 	case "Domain.user":
 		if e.complexity.Domain.User == nil {
@@ -1317,6 +1515,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateAnnouncement(childComplexity, args["input"].(model.NewAnnouncementInput)), true
 
+	case "Mutation.createBank":
+		if e.complexity.Mutation.CreateBank == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createBank_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateBank(childComplexity, args["input"].(model.NewBankInput)), true
+
 	case "Mutation.createDomain":
 		if e.complexity.Mutation.CreateDomain == nil {
 			break
@@ -1424,6 +1634,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.DeleteAnnouncement(childComplexity, args["id"].(uint)), true
+
+	case "Mutation.deleteBank":
+		if e.complexity.Mutation.DeleteBank == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteBank_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteBank(childComplexity, args["id"].(uint)), true
 
 	case "Mutation.deleteDomain":
 		if e.complexity.Mutation.DeleteDomain == nil {
@@ -1551,6 +1773,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateAnnouncement(childComplexity, args["id"].(uint), args["input"].(model.UpdateAnnouncementInput)), true
+
+	case "Mutation.updateBank":
+		if e.complexity.Mutation.UpdateBank == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateBank_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateBank(childComplexity, args["id"].(uint), args["input"].(model.UpdateBankInput)), true
 
 	case "Mutation.updateDomain":
 		if e.complexity.Mutation.UpdateDomain == nil {
@@ -2001,6 +2235,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetAnnouncements(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
+	case "Query.getBanks":
+		if e.complexity.Query.GetBanks == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getBanks_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetBanks(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
 
 	case "Query.getDistributors":
 		if e.complexity.Query.GetDistributors == nil {
@@ -2557,6 +2803,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputFilter,
 		ec.unmarshalInputNewAdminPermission,
 		ec.unmarshalInputNewAnnouncementInput,
+		ec.unmarshalInputNewBankInput,
 		ec.unmarshalInputNewDomainInput,
 		ec.unmarshalInputNewEventInput,
 		ec.unmarshalInputNewInboxInput,
@@ -2570,6 +2817,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPagination,
 		ec.unmarshalInputUpdateAdminPermissionInput,
 		ec.unmarshalInputUpdateAnnouncementInput,
+		ec.unmarshalInputUpdateBankInput,
 		ec.unmarshalInputUpdateDomainInput,
 		ec.unmarshalInputUpdateEventInput,
 		ec.unmarshalInputUpdateInboxInput,
@@ -2815,12 +3063,73 @@ extend type Mutation {
   deleteAnnouncement(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
+	{Name: "../schema/bank.graphql", Input: `# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Bank {
+  id: ID!
+  name: String!
+  orderNum: Uint
+  status: Boolean!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewBankInput {
+  name: String!
+  orderNum: Uint
+  status: Boolean
+}
+
+input UpdateBankInput {
+  name: String
+  orderNum: Uint
+  status: Boolean
+}
+
+type BankList {
+  banks: [Bank!]!
+  total: Int!
+}
+
+extend type Query {
+  getBanks(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): BankList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createBank(input: NewBankInput!): Bank!
+  updateBank(id: ID!, input: UpdateBankInput!): Bank!
+  deleteBank(id: ID!): Boolean!
+}
+`, BuiltIn: false},
 	{Name: "../schema/domain.graphql", Input: `type Domain {
   id: ID!
   name: String!
   description: String!
   status: Boolean!
-  autoReg: MyCustomBooleanScalar!
+  autoReg: Boolean!
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
+
   orderNum: Uint
   userId: ID!
   user: User!
@@ -2836,6 +3145,21 @@ input UpdateDomainInput {
   userId: ID
   autoReg: Boolean
   orderNum: Uint
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
 }
 
 input NewDomainInput {
@@ -2845,6 +3169,21 @@ input NewDomainInput {
   userId: ID!
   autoReg: Boolean
   orderNum: Uint
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
 }
 
 type DomainList {
@@ -3652,6 +3991,29 @@ func (ec *executionContext) field_Mutation_createAnnouncement_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createBank_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createBank_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createBank_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.NewBankInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNNewBankInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewBankInput(ctx, tmp)
+	}
+
+	var zeroVal model.NewBankInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createDomain_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -3847,6 +4209,29 @@ func (ec *executionContext) field_Mutation_deleteAnnouncement_args(ctx context.C
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_deleteAnnouncement_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteBank_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_deleteBank_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteBank_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (uint, error) {
@@ -4122,6 +4507,47 @@ func (ec *executionContext) field_Mutation_updateAnnouncement_argsInput(
 	}
 
 	var zeroVal model.UpdateAnnouncementInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateBank_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateBank_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_updateBank_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateBank_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateBank_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.UpdateBankInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateBankInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateBankInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateBankInput
 	return zeroVal, nil
 }
 
@@ -4723,6 +5149,65 @@ func (ec *executionContext) field_Query_getAnnouncements_argsOrders(
 }
 
 func (ec *executionContext) field_Query_getAnnouncements_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getBanks_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getBanks_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_getBanks_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_getBanks_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_getBanks_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getBanks_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getBanks_argsPagination(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*model.Pagination, error) {
@@ -6794,6 +7279,412 @@ func (ec *executionContext) fieldContext_AnnouncementList_total(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Bank_id(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalNID2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_name(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_orderNum(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_orderNum(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OrderNum, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_orderNum(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_status(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_updatedAt(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Bank_deletedAt(ctx context.Context, field graphql.CollectedField, obj *models.Bank) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Bank_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gorm.DeletedAt)
+	fc.Result = res
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Bank_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Bank",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DeletedAt does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _BankList_banks(ctx context.Context, field graphql.CollectedField, obj *model.BankList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BankList_banks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Banks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*models.Bank)
+	fc.Result = res
+	return ec.marshalNBank2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBankᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BankList_banks(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BankList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Bank_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Bank_name(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Bank_orderNum(ctx, field)
+			case "status":
+				return ec.fieldContext_Bank_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Bank_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Bank_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Bank_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Bank", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _BankList_total(ctx context.Context, field graphql.CollectedField, obj *model.BankList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BankList_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BankList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BankList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Domain_id(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Domain_id(ctx, field)
 	if err != nil {
@@ -6998,7 +7889,7 @@ func (ec *executionContext) _Domain_autoReg(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNMyCustomBooleanScalar2bool(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Domain_autoReg(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -7008,7 +7899,581 @@ func (ec *executionContext) fieldContext_Domain_autoReg(_ context.Context, field
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type MyCustomBooleanScalar does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_useTelegram(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_useTelegram(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UseTelegram, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_useTelegram(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_telegram(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_telegram(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Telegram, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_telegram(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_telegramLink(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_telegramLink(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TelegramLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_telegramLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_useKakaoTalk(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UseKakaoTalk, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_useKakaoTalk(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_kakaoTalk(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_kakaoTalk(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KakaoTalk, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_kakaoTalk(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_kakaoTalkLink(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KakaoTalkLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_kakaoTalkLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_useServiceCenter(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_useServiceCenter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UseServiceCenter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_useServiceCenter(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_serviceCenter(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_serviceCenter(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceCenter, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_serviceCenter(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_serviceCenterLink(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceCenterLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_serviceCenterLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_useLiveDomain(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_useLiveDomain(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UseLiveDomain, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_useLiveDomain(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_liveDomain(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_liveDomain(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiveDomain, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_liveDomain(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_liveDomainLink(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_liveDomainLink(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiveDomainLink, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_liveDomainLink(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_memberLevel(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_memberLevel(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MemberLevel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_memberLevel(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Domain_distributorLevel(ctx context.Context, field graphql.CollectedField, obj *models.Domain) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Domain_distributorLevel(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistributorLevel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Domain_distributorLevel(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Domain",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7371,6 +8836,34 @@ func (ec *executionContext) fieldContext_DomainList_domains(_ context.Context, f
 				return ec.fieldContext_Domain_status(ctx, field)
 			case "autoReg":
 				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
 			case "userId":
@@ -7920,6 +9413,34 @@ func (ec *executionContext) fieldContext_Event_domain(_ context.Context, field g
 				return ec.fieldContext_Domain_status(ctx, field)
 			case "autoReg":
 				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
 			case "userId":
@@ -11260,6 +12781,203 @@ func (ec *executionContext) fieldContext_Mutation_deleteAnnouncement(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createBank(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createBank(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateBank(rctx, fc.Args["input"].(model.NewBankInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Bank)
+	fc.Result = res
+	return ec.marshalNBank2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBank(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createBank(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Bank_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Bank_name(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Bank_orderNum(ctx, field)
+			case "status":
+				return ec.fieldContext_Bank_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Bank_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Bank_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Bank_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Bank", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createBank_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateBank(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateBank(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateBank(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateBankInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*models.Bank)
+	fc.Result = res
+	return ec.marshalNBank2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBank(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateBank(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Bank_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Bank_name(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Bank_orderNum(ctx, field)
+			case "status":
+				return ec.fieldContext_Bank_status(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Bank_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Bank_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Bank_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Bank", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateBank_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteBank(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteBank(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeleteBank(rctx, fc.Args["id"].(uint))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteBank(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteBank_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createDomain(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createDomain(ctx, field)
 	if err != nil {
@@ -11336,6 +13054,34 @@ func (ec *executionContext) fieldContext_Mutation_createDomain(ctx context.Conte
 				return ec.fieldContext_Domain_status(ctx, field)
 			case "autoReg":
 				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
 			case "userId":
@@ -11442,6 +13188,34 @@ func (ec *executionContext) fieldContext_Mutation_updateDomain(ctx context.Conte
 				return ec.fieldContext_Domain_status(ctx, field)
 			case "autoReg":
 				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
 			case "userId":
@@ -15774,6 +17548,94 @@ func (ec *executionContext) fieldContext_Query_getAnnouncements(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getBanks(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getBanks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetBanks(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.BankList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.BankList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.BankList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.BankList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.BankList)
+	fc.Result = res
+	return ec.marshalNBankList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐBankList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getBanks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "banks":
+				return ec.fieldContext_BankList_banks(ctx, field)
+			case "total":
+				return ec.fieldContext_BankList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type BankList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getBanks_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_domains(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_domains(ctx, field)
 	if err != nil {
@@ -15820,6 +17682,34 @@ func (ec *executionContext) fieldContext_Query_domains(_ context.Context, field 
 				return ec.fieldContext_Domain_status(ctx, field)
 			case "autoReg":
 				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Domain_orderNum(ctx, field)
 			case "userId":
@@ -22596,6 +24486,47 @@ func (ec *executionContext) unmarshalInputNewAnnouncementInput(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewBankInput(ctx context.Context, obj any) (model.NewBankInput, error) {
+	var it model.NewBankInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "orderNum", "status"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "orderNum":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrderNum = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewDomainInput(ctx context.Context, obj any) (model.NewDomainInput, error) {
 	var it model.NewDomainInput
 	asMap := map[string]any{}
@@ -22603,7 +24534,7 @@ func (ec *executionContext) unmarshalInputNewDomainInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum"}
+	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum", "useTelegram", "telegram", "telegramLink", "useKakaoTalk", "kakaoTalk", "kakaoTalkLink", "useServiceCenter", "serviceCenter", "serviceCenterLink", "useLiveDomain", "liveDomain", "liveDomainLink", "memberLevel", "distributorLevel"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22652,6 +24583,104 @@ func (ec *executionContext) unmarshalInputNewDomainInput(ctx context.Context, ob
 				return it, err
 			}
 			it.OrderNum = data
+		case "useTelegram":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useTelegram"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseTelegram = data
+		case "telegram":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegram"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Telegram = data
+		case "telegramLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegramLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TelegramLink = data
+		case "useKakaoTalk":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useKakaoTalk"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseKakaoTalk = data
+		case "kakaoTalk":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kakaoTalk"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KakaoTalk = data
+		case "kakaoTalkLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kakaoTalkLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KakaoTalkLink = data
+		case "useServiceCenter":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useServiceCenter"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseServiceCenter = data
+		case "serviceCenter":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceCenter"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceCenter = data
+		case "serviceCenterLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceCenterLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceCenterLink = data
+		case "useLiveDomain":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useLiveDomain"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseLiveDomain = data
+		case "liveDomain":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("liveDomain"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiveDomain = data
+		case "liveDomainLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("liveDomainLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiveDomainLink = data
+		case "memberLevel":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("memberLevel"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MemberLevel = data
+		case "distributorLevel":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("distributorLevel"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DistributorLevel = data
 		}
 	}
 
@@ -23588,6 +25617,47 @@ func (ec *executionContext) unmarshalInputUpdateAnnouncementInput(ctx context.Co
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateBankInput(ctx context.Context, obj any) (model.UpdateBankInput, error) {
+	var it model.UpdateBankInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "orderNum", "status"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "orderNum":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrderNum = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateDomainInput(ctx context.Context, obj any) (model.UpdateDomainInput, error) {
 	var it model.UpdateDomainInput
 	asMap := map[string]any{}
@@ -23595,7 +25665,7 @@ func (ec *executionContext) unmarshalInputUpdateDomainInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum"}
+	fieldsInOrder := [...]string{"name", "description", "status", "userId", "autoReg", "orderNum", "useTelegram", "telegram", "telegramLink", "useKakaoTalk", "kakaoTalk", "kakaoTalkLink", "useServiceCenter", "serviceCenter", "serviceCenterLink", "useLiveDomain", "liveDomain", "liveDomainLink", "memberLevel", "distributorLevel"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -23644,6 +25714,104 @@ func (ec *executionContext) unmarshalInputUpdateDomainInput(ctx context.Context,
 				return it, err
 			}
 			it.OrderNum = data
+		case "useTelegram":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useTelegram"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseTelegram = data
+		case "telegram":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegram"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Telegram = data
+		case "telegramLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegramLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TelegramLink = data
+		case "useKakaoTalk":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useKakaoTalk"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseKakaoTalk = data
+		case "kakaoTalk":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kakaoTalk"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KakaoTalk = data
+		case "kakaoTalkLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kakaoTalkLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.KakaoTalkLink = data
+		case "useServiceCenter":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useServiceCenter"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseServiceCenter = data
+		case "serviceCenter":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceCenter"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceCenter = data
+		case "serviceCenterLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceCenterLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceCenterLink = data
+		case "useLiveDomain":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("useLiveDomain"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UseLiveDomain = data
+		case "liveDomain":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("liveDomain"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiveDomain = data
+		case "liveDomainLink":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("liveDomainLink"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiveDomainLink = data
+		case "memberLevel":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("memberLevel"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MemberLevel = data
+		case "distributorLevel":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("distributorLevel"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DistributorLevel = data
 		}
 	}
 
@@ -24595,6 +26763,113 @@ func (ec *executionContext) _AnnouncementList(ctx context.Context, sel ast.Selec
 	return out
 }
 
+var bankImplementors = []string{"Bank"}
+
+func (ec *executionContext) _Bank(ctx context.Context, sel ast.SelectionSet, obj *models.Bank) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, bankImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Bank")
+		case "id":
+			out.Values[i] = ec._Bank_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Bank_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "orderNum":
+			out.Values[i] = ec._Bank_orderNum(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._Bank_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._Bank_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._Bank_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._Bank_deletedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var bankListImplementors = []string{"BankList"}
+
+func (ec *executionContext) _BankList(ctx context.Context, sel ast.SelectionSet, obj *model.BankList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, bankListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("BankList")
+		case "banks":
+			out.Values[i] = ec._BankList_banks(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._BankList_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var domainImplementors = []string{"Domain"}
 
 func (ec *executionContext) _Domain(ctx context.Context, sel ast.SelectionSet, obj *models.Domain) graphql.Marshaler {
@@ -24631,6 +26906,34 @@ func (ec *executionContext) _Domain(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "useTelegram":
+			out.Values[i] = ec._Domain_useTelegram(ctx, field, obj)
+		case "telegram":
+			out.Values[i] = ec._Domain_telegram(ctx, field, obj)
+		case "telegramLink":
+			out.Values[i] = ec._Domain_telegramLink(ctx, field, obj)
+		case "useKakaoTalk":
+			out.Values[i] = ec._Domain_useKakaoTalk(ctx, field, obj)
+		case "kakaoTalk":
+			out.Values[i] = ec._Domain_kakaoTalk(ctx, field, obj)
+		case "kakaoTalkLink":
+			out.Values[i] = ec._Domain_kakaoTalkLink(ctx, field, obj)
+		case "useServiceCenter":
+			out.Values[i] = ec._Domain_useServiceCenter(ctx, field, obj)
+		case "serviceCenter":
+			out.Values[i] = ec._Domain_serviceCenter(ctx, field, obj)
+		case "serviceCenterLink":
+			out.Values[i] = ec._Domain_serviceCenterLink(ctx, field, obj)
+		case "useLiveDomain":
+			out.Values[i] = ec._Domain_useLiveDomain(ctx, field, obj)
+		case "liveDomain":
+			out.Values[i] = ec._Domain_liveDomain(ctx, field, obj)
+		case "liveDomainLink":
+			out.Values[i] = ec._Domain_liveDomainLink(ctx, field, obj)
+		case "memberLevel":
+			out.Values[i] = ec._Domain_memberLevel(ctx, field, obj)
+		case "distributorLevel":
+			out.Values[i] = ec._Domain_distributorLevel(ctx, field, obj)
 		case "orderNum":
 			out.Values[i] = ec._Domain_orderNum(ctx, field, obj)
 		case "userId":
@@ -25353,6 +27656,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createBank":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createBank(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateBank":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateBank(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteBank":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteBank(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createDomain":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createDomain(ctx, field)
@@ -25896,6 +28220,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getAnnouncements(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getBanks":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getBanks(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -27243,6 +29589,78 @@ func (ec *executionContext) marshalNAnnouncementList2ᚖgithubᚗcomᚋhotbrainy
 	return ec._AnnouncementList(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNBank2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBank(ctx context.Context, sel ast.SelectionSet, v models.Bank) graphql.Marshaler {
+	return ec._Bank(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBank2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBankᚄ(ctx context.Context, sel ast.SelectionSet, v []*models.Bank) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNBank2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBank(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNBank2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐBank(ctx context.Context, sel ast.SelectionSet, v *models.Bank) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Bank(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNBankList2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐBankList(ctx context.Context, sel ast.SelectionSet, v model.BankList) graphql.Marshaler {
+	return ec._BankList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNBankList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐBankList(ctx context.Context, sel ast.SelectionSet, v *model.BankList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._BankList(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -27706,21 +30124,6 @@ func (ec *executionContext) marshalNMenuList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑ
 	return ec._MenuList(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNMyCustomBooleanScalar2bool(ctx context.Context, v any) (bool, error) {
-	res, err := scalar.UnmarshalMyCustomBooleanScalar(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNMyCustomBooleanScalar2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
-	res := scalar.MarshalMyCustomBooleanScalar(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
 func (ec *executionContext) unmarshalNNewAdminPermission2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAdminPermission(ctx context.Context, v any) (model.NewAdminPermission, error) {
 	res, err := ec.unmarshalInputNewAdminPermission(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -27728,6 +30131,11 @@ func (ec *executionContext) unmarshalNNewAdminPermission2githubᚗcomᚋhotbrain
 
 func (ec *executionContext) unmarshalNNewAnnouncementInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewAnnouncementInput(ctx context.Context, v any) (model.NewAnnouncementInput, error) {
 	res, err := ec.unmarshalInputNewAnnouncementInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewBankInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewBankInput(ctx context.Context, v any) (model.NewBankInput, error) {
+	res, err := ec.unmarshalInputNewBankInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -28017,6 +30425,11 @@ func (ec *executionContext) unmarshalNUpdateAdminPermissionInput2githubᚗcomᚋ
 
 func (ec *executionContext) unmarshalNUpdateAnnouncementInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateAnnouncementInput(ctx context.Context, v any) (model.UpdateAnnouncementInput, error) {
 	res, err := ec.unmarshalInputUpdateAnnouncementInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateBankInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateBankInput(ctx context.Context, v any) (model.UpdateBankInput, error) {
+	res, err := ec.unmarshalInputUpdateBankInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

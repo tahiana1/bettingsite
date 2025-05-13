@@ -243,7 +243,16 @@
   "etc": "Etc",
   "headOffice": "Head Office Line",
   "primaryDomain": "Primary Domain",
-
+  "period": "Period",
+  "telegram": "Telegram",
+  "kakaoTalk": "KakaoTalk",
+  "serviceCenter": "Service Center",
+  "liveDomain": "Live Domain",
+  "currentName": "Current Name",
+  "link": "Link",
+  "memberLevelUponSignup": "Member Level upon sign up",
+  "distributorLevelUponSignup": "Distributor Level upon sign up",
+  
   "abroad": "Abroad",
   "domestic": "Domestic",
   "live": "Live",

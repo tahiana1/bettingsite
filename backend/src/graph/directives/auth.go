@@ -2,11 +2,11 @@ package directives
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func Auth(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
@@ -14,13 +14,23 @@ func Auth(ctx context.Context, obj interface{}, next graphql.Resolver) (interfac
 	// fmt.Println(authUser)
 
 	if err != nil {
-		return nil, fmt.Errorf("❌ Unauthorized!")
+		return nil, &gqlerror.Error{
+			Message: "❌ Authentication required",
+			Extensions: map[string]interface{}{
+				"code": "UNAUTHENTICATED",
+			},
+		}
 	}
 	if authUser.Userid == "admin" {
 		return next(ctx)
 	}
 	if authUser.Status != "A" {
-		return nil, fmt.Errorf("❌ Disabled!")
+		return nil, &gqlerror.Error{
+			Message: "❌ Disabled",
+			Extensions: map[string]interface{}{
+				"code": "UNAUTHENTICATED",
+			},
+		}
 	}
 
 	return next(ctx)
@@ -31,7 +41,12 @@ func HasRole(ctx context.Context, obj interface{}, next graphql.Resolver, role m
 	authUser, err := helpers.GetAuthUser(ctx)
 
 	if err != nil {
-		return nil, fmt.Errorf("❌ unauthorized!")
+		return nil, &gqlerror.Error{
+			Message: "❌ Authentication required",
+			Extensions: map[string]interface{}{
+				"code": "UNAUTHENTICATED",
+			},
+		}
 	}
 
 	if authUser.Userid == "admin" {
@@ -39,12 +54,22 @@ func HasRole(ctx context.Context, obj interface{}, next graphql.Resolver, role m
 	}
 
 	if authUser.Status != "A" {
-		return nil, fmt.Errorf("❌ Disabled!")
+		return nil, &gqlerror.Error{
+			Message: "❌ Disabled",
+			Extensions: map[string]interface{}{
+				"code": "UNAUTHENTICATED",
+			},
+		}
 	}
 
 	if authUser.Role != string(role) {
 		// block calling the next resolver
-		return nil, fmt.Errorf("🚫 Access Denied!")
+		return nil, &gqlerror.Error{
+			Message: "🚫 Access Denied!",
+			Extensions: map[string]interface{}{
+				"code": "FORBBIDEN",
+			},
+		}
 	}
 
 	// or let it pass through

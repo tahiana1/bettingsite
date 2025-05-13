@@ -59,7 +59,8 @@ const EventPage: React.FC = () => {
     refetch: refetchDomain,
   } = useQuery(GET_DOMAINS);
 
-  const [updateEvent, /* { loading: loadingUpdate } */] = useMutation(UPDATE_EVENT);
+  const [updateEvent /* { loading: loadingUpdate } */] =
+    useMutation(UPDATE_EVENT);
   const [createEvent, { loading: loadingCreate }] = useMutation(CREATE_EVENT);
   const [deleteEvent, { loading: loadingDelete }] = useMutation(DELETE_EVENT);
   const [open, setOpen] = useState(false);
@@ -224,7 +225,7 @@ const EventPage: React.FC = () => {
       ),
     },
     {
-      title: "Period",
+      title: t("period"),
       children: [
         {
           title: t("showFrom"),

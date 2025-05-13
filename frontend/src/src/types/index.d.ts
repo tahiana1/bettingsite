@@ -167,3 +167,11 @@ interface AdminPermission {
   sales: boolean;
   qna: boolean;
 }
+
+interface Bank {
+  key: string;
+  id: number;
+  name: string;
+  status: boolean;
+  orderNum: number;
+}

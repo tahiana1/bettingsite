@@ -3,7 +3,23 @@ type Domain {
   name: String!
   description: String!
   status: Boolean!
-  autoReg: MyCustomBooleanScalar!
+  autoReg: Boolean!
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
+
   orderNum: Uint
   userId: ID!
   user: User!
@@ -19,6 +35,21 @@ input UpdateDomainInput {
   userId: ID
   autoReg: Boolean
   orderNum: Uint
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
 }
 
 input NewDomainInput {
@@ -28,6 +59,21 @@ input NewDomainInput {
   userId: ID!
   autoReg: Boolean
   orderNum: Uint
+
+  useTelegram: Boolean
+  telegram: String
+  telegramLink: String
+  useKakaoTalk: Boolean
+  kakaoTalk: String
+  kakaoTalkLink: String
+  useServiceCenter: Boolean
+  serviceCenter: String
+  serviceCenterLink: String
+  useLiveDomain: Boolean
+  liveDomain: String
+  liveDomainLink: String
+  memberLevel: Uint
+  distributorLevel: Uint
 }
 
 type DomainList {

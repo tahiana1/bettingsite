@@ -48,9 +48,9 @@ func (u *domainReader) getDomains(ctx context.Context, nIDs []uint) ([]*models.D
 	return result, errs
 }
 
-func (nr *domainReader) getDomainsByDomainID(ctx context.Context, nIDs []uint) ([]*models.Domain, []error) {
+func (dr *domainReader) getDomainsByDomainID(ctx context.Context, nIDs []uint) ([]*models.Domain, []error) {
 	var domains []*models.Domain
-	err := nr.db.Where("domain_id IN ?", nIDs).Find(&domains).Error
+	err := dr.db.Where("domain_id IN ?", nIDs).Find(&domains).Error
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -80,10 +80,10 @@ func GetDomain(ctx context.Context, domainID uint) (*models.Domain, error) {
 }
 
 // GetDomains returns many domains by ids efficiently
-func (nr *domainReader) GetDomains(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.DomainList, error) {
+func (dr *domainReader) GetDomains(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.DomainList, error) {
 	var domains []*models.Domain
 
-	db := nr.db.Model(&models.Domain{}).Joins("User").Preload("User", func(db *gorm.DB) *gorm.DB {
+	db := dr.db.Model(&models.Domain{}).Joins("User").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Select("id, userid, name")
 	})
 	// Filtering
@@ -117,7 +117,7 @@ func (nr *domainReader) GetDomains(ctx context.Context, filters []*model.Filter,
 }
 
 // CreateDomain updates a domain by ID
-func (nr *domainReader) CreateDomain(ctx context.Context, updates model.NewDomainInput) (*models.Domain, error) {
+func (dr *domainReader) CreateDomain(ctx context.Context, updates model.NewDomainInput) (*models.Domain, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic111:", r)
@@ -135,7 +135,7 @@ func (nr *domainReader) CreateDomain(ctx context.Context, updates model.NewDomai
 	}
 	fmt.Println(updates)
 
-	if err := nr.db.Save(&domain).Error; err != nil {
+	if err := dr.db.Save(&domain).Error; err != nil {
 		return nil, err
 	}
 
@@ -143,7 +143,7 @@ func (nr *domainReader) CreateDomain(ctx context.Context, updates model.NewDomai
 }
 
 // UpdateDomain updates a domain by ID
-func (nr *domainReader) UpdateDomain(ctx context.Context, nID uint, updates model.UpdateDomainInput) (*models.Domain, error) {
+func (dr *domainReader) UpdateDomain(ctx context.Context, nID uint, updates model.UpdateDomainInput) (*models.Domain, error) {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -180,19 +180,70 @@ func (nr *domainReader) UpdateDomain(ctx context.Context, nID uint, updates mode
 		domain.OrderNum = *updates.OrderNum
 	}
 
-	nr.db.Save(domain)
+	if updates.UseTelegram != nil {
+		domain.UseTelegram = *updates.UseTelegram
+	}
+
+	if updates.Telegram != nil {
+		domain.Telegram = *updates.Telegram
+	}
+
+	if updates.TelegramLink != nil {
+		domain.TelegramLink = *updates.TelegramLink
+	}
+
+	if updates.UseKakaoTalk != nil {
+		domain.UseKakaoTalk = *updates.UseKakaoTalk
+	}
+
+	if updates.KakaoTalk != nil {
+		domain.KakaoTalk = *updates.KakaoTalk
+	}
+
+	if updates.KakaoTalkLink != nil {
+		domain.KakaoTalkLink = *updates.KakaoTalkLink
+	}
+
+	if updates.UseLiveDomain != nil {
+		domain.UseLiveDomain = *updates.UseLiveDomain
+	}
+	if updates.LiveDomain != nil {
+		domain.LiveDomain = *updates.LiveDomain
+	}
+	if updates.LiveDomainLink != nil {
+		domain.LiveDomainLink = *updates.LiveDomainLink
+	}
+
+	if updates.UseServiceCenter != nil {
+		domain.UseServiceCenter = *updates.UseServiceCenter
+	}
+	if updates.ServiceCenterLink != nil {
+		domain.ServiceCenterLink = *updates.ServiceCenterLink
+	}
+	if updates.ServiceCenter != nil {
+		domain.ServiceCenter = *updates.ServiceCenter
+	}
+
+	if updates.MemberLevel != nil {
+		domain.MemberLevel = *updates.MemberLevel
+	}
+	if updates.DistributorLevel != nil {
+		domain.DistributorLevel = *updates.DistributorLevel
+	}
+
+	dr.db.Save(domain)
 
 	return &domain, nil
 }
 
 // DeleteDomain deletes a domain by ID (soft delete if GORM soft delete is enabled)
-func (nr *domainReader) DeleteDomain(ctx context.Context, nid uint) (bool, error) {
+func (dr *domainReader) DeleteDomain(ctx context.Context, nid uint) (bool, error) {
 	n := &models.Domain{}
-	err := nr.db.Model(&models.Domain{}).First(&n, nid).Error
+	err := dr.db.Model(&models.Domain{}).First(&n, nid).Error
 	if err != nil {
 		return false, err
 	}
-	if err := nr.db.Delete(&models.Domain{}, nid).Error; err != nil {
+	if err := dr.db.Delete(&models.Domain{}, nid).Error; err != nil {
 		return false, err
 	}
 	return true, nil

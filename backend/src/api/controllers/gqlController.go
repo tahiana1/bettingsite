@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/hotbrainy/go-betting/backend/api/middleware"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph"
 	"github.com/hotbrainy/go-betting/backend/graph/directives"
@@ -14,6 +15,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/graph/resolver"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
@@ -44,13 +46,20 @@ func GraphqlHandler() gin.HandlerFunc {
 			WriteBufferSize: 1024,
 		},
 	})
+
 	h.Use(extension.Introspection{})
 
+	h.AroundResponses(func(ctx context.Context, next graphql.ResponseHandler) *graphql.Response {
+		return middleware.ExtensionMiddleware(ctx, next)
+	})
+
 	srv := graph.NewServerWithLoaders(initializers.DB, h)
+
 	// h.SetQueryCache(lru.New[*ast.QueryDocument](1000))
 	// h.Use(extension.AutomaticPersistedQuery{
 	// 	Cache: lru.New[string](100),
 	// })
+
 	return func(c *gin.Context) {
 		authUser, err := helpers.GetGinAuthUser(c)
 		if err == nil {

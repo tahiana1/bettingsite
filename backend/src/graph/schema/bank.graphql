@@ -1,0 +1,44 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Bank {
+  id: ID!
+  name: String!
+  orderNum: Uint
+  status: Boolean!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewBankInput {
+  name: String!
+  orderNum: Uint
+  status: Boolean
+}
+
+input UpdateBankInput {
+  name: String
+  orderNum: Uint
+  status: Boolean
+}
+
+type BankList {
+  banks: [Bank!]!
+  total: Int!
+}
+
+extend type Query {
+  getBanks(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): BankList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createBank(input: NewBankInput!): Bank!
+  updateBank(id: ID!, input: UpdateBankInput!): Bank!
+  deleteBank(id: ID!): Boolean!
+}

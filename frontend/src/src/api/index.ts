@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-
+import { message } from "antd";
 let host = process.env.NEXT_PUBLIC_API_ADDR;
 let isSSL = "";
 if (typeof window !== "undefined") {
@@ -32,6 +32,7 @@ export default function api(url: string, config?: AxiosRequestConfig) {
       return res.data;
     })
     .catch((err: AxiosError) => {
+      message.error(err.message);
       throw err;
     });
 }
