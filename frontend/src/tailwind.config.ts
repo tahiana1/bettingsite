@@ -8,6 +8,9 @@ const config: Config = {
       wrapperClass: "content",
     },
     extend: {
+      fontSize: {
+        base: ["11px", { lineHeight: "1.5" }],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

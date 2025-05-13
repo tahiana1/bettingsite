@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	"gorm.io/gorm"
 )
 
 type AdminPermissionList struct {
@@ -164,6 +165,27 @@ type NewProfile struct {
 	SocialLinks   *string    `json:"socialLinks,omitempty"`
 }
 
+type NewSettingInput struct {
+	Status        *bool      `json:"status,omitempty"`
+	Title         *string    `json:"title,omitempty"`
+	Description   *string    `json:"description,omitempty"`
+	PrimaryDomain *uint      `json:"primaryDomain,omitempty"`
+	UserID        *uint      `json:"userId,omitempty"`
+	OrderNum      *uint      `json:"orderNum,omitempty"`
+	TotalExStatus *bool      `json:"totalExStatus,omitempty"`
+	TotalExFrom   *time.Time `json:"totalExFrom,omitempty"`
+	TotalExTo     *time.Time `json:"totalExTo,omitempty"`
+	TotalReStatus *bool      `json:"totalReStatus,omitempty"`
+	TotalReFrom   *time.Time `json:"totalReFrom,omitempty"`
+	TotalReTo     *time.Time `json:"totalReTo,omitempty"`
+	UserExStatus  *bool      `json:"userExStatus,omitempty"`
+	UserExFrom    *time.Time `json:"userExFrom,omitempty"`
+	UserExTo      *time.Time `json:"userExTo,omitempty"`
+	UserReStatus  *bool      `json:"userReStatus,omitempty"`
+	UserReFrom    *time.Time `json:"userReFrom,omitempty"`
+	UserReTo      *time.Time `json:"userReTo,omitempty"`
+}
+
 type NewTodo struct {
 	Text   string `json:"text"`
 	UserID string `json:"userId"`
@@ -185,6 +207,32 @@ type Pagination struct {
 }
 
 type Query struct {
+}
+
+type Setting struct {
+	ID            uint            `json:"id"`
+	Status        *bool           `json:"status,omitempty"`
+	Title         *string         `json:"title,omitempty"`
+	Description   *string         `json:"description,omitempty"`
+	PrimaryDomain *uint           `json:"primaryDomain,omitempty"`
+	UserID        *uint           `json:"userId,omitempty"`
+	User          *models.User    `json:"user,omitempty"`
+	OrderNum      *uint           `json:"orderNum,omitempty"`
+	TotalExStatus *bool           `json:"totalExStatus,omitempty"`
+	TotalExFrom   *time.Time      `json:"totalExFrom,omitempty"`
+	TotalExTo     *time.Time      `json:"totalExTo,omitempty"`
+	TotalReStatus *bool           `json:"totalReStatus,omitempty"`
+	TotalReFrom   *time.Time      `json:"totalReFrom,omitempty"`
+	TotalReTo     *time.Time      `json:"totalReTo,omitempty"`
+	UserExStatus  *bool           `json:"userExStatus,omitempty"`
+	UserExFrom    *time.Time      `json:"userExFrom,omitempty"`
+	UserExTo      *time.Time      `json:"userExTo,omitempty"`
+	UserReStatus  *bool           `json:"userReStatus,omitempty"`
+	UserReFrom    *time.Time      `json:"userReFrom,omitempty"`
+	UserReTo      *time.Time      `json:"userReTo,omitempty"`
+	CreatedAt     *time.Time      `json:"createdAt,omitempty"`
+	UpdatedAt     *time.Time      `json:"updatedAt,omitempty"`
+	DeletedAt     *gorm.DeletedAt `json:"deletedAt,omitempty"`
 }
 
 type Subscription struct {
@@ -293,6 +341,27 @@ type UpdateProfile struct {
 	CurrentPassword *string    `json:"currentPassword,omitempty"`
 	ConfirmPassword *string    `json:"confirmPassword,omitempty"`
 	NewPassword     *string    `json:"newPassword,omitempty"`
+}
+
+type UpdateSettingInput struct {
+	Status        *bool      `json:"status,omitempty"`
+	Title         *string    `json:"title,omitempty"`
+	Description   *string    `json:"description,omitempty"`
+	PrimaryDomain *uint      `json:"primaryDomain,omitempty"`
+	UserID        *uint      `json:"userId,omitempty"`
+	OrderNum      *uint      `json:"orderNum,omitempty"`
+	TotalExStatus *bool      `json:"totalExStatus,omitempty"`
+	TotalExFrom   *time.Time `json:"totalExFrom,omitempty"`
+	TotalExTo     *time.Time `json:"totalExTo,omitempty"`
+	TotalReStatus *bool      `json:"totalReStatus,omitempty"`
+	TotalReFrom   *time.Time `json:"totalReFrom,omitempty"`
+	TotalReTo     *time.Time `json:"totalReTo,omitempty"`
+	UserExStatus  *bool      `json:"userExStatus,omitempty"`
+	UserExFrom    *time.Time `json:"userExFrom,omitempty"`
+	UserExTo      *time.Time `json:"userExTo,omitempty"`
+	UserReStatus  *bool      `json:"userReStatus,omitempty"`
+	UserReFrom    *time.Time `json:"userReFrom,omitempty"`
+	UserReTo      *time.Time `json:"userReTo,omitempty"`
 }
 
 type UpdateUser struct {

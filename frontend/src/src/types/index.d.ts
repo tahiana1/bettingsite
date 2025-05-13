@@ -152,3 +152,18 @@ interface Log {
   profile?: Profile;
   status: string;
 }
+
+interface AdminPermission {
+  key: string;
+  id: number;
+  user: User;
+  memebership: boolean;
+  game: boolean;
+  ip: boolean;
+  statistical: boolean;
+  financials: boolean;
+  dwdelete: boolean;
+  settlment: boolean;
+  sales: boolean;
+  qna: boolean;
+}

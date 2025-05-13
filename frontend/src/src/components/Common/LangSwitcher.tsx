@@ -7,11 +7,11 @@ import { MenuItemType } from "antd/es/menu/interface";
 
 import "dayjs/locale/en";
 import "dayjs/locale/zh-cn";
-import "dayjs/locale/ko";
+// import "dayjs/locale/ko";
 
 import eNFlag from "@/assets/img/flags/us.svg";
 import cnFlag from "@/assets/img/flags/cn.svg";
-import koFlag from "@/assets/img/flags/kr.svg";
+// import koFlag from "@/assets/img/flags/kr.svg";
 import dayjs from "dayjs";
 
 const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
@@ -34,12 +34,12 @@ const LangSwitcher: React.FC<{ locale: Locale }> = ({ locale }) => {
       icon: <Image src={cnFlag.src} width={24} height={12} alt="cn" />,
       onClick: (info) => handleChange(info.key),
     },
-    {
+    /* {
       key: "ko",
       label: "KO",
       icon: <Image src={koFlag.src} width={24} height={12} alt="ko" />,
       onClick: (info) => handleChange(info.key),
-    },
+    }, */
   ];
   const handleChange = (value: Locale) => {
     setLang(value);

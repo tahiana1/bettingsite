@@ -95,7 +95,7 @@ const PendingUsers: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("Recent user deposits and withdrawals")}
+          title={t("admin/menu/smsSetting")}
           classNames={{
             body: "!p-0",
           }}

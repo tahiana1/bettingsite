@@ -214,7 +214,7 @@ const LogStatusPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("logs")}
+          title={t("admin/menu/smslogs")}
           classNames={{
             body: "!p-0",
           }}

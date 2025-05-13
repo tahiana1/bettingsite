@@ -25,25 +25,13 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { BiEdit, BiTrash } from "react-icons/bi";
 
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { parseTableOptions } from "@/lib";
-// import {
-//   CREATE_INBOX,
-//   DELETE_INBOX,
-//   GET_INBOXES,
-//   UPDATE_INBOX,
-// } from "@/actions/inbox";
-
-// import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
 import {
   CREATE_MENU,
   DELETE_MENU,
   GET_MENUS,
   UPDATE_MENU,
 } from "@/actions/menu";
-// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
-
-// type UserIndex = keyof User;
 
 const MenuPage: React.FC = () => {
   const t = useTranslations();
@@ -71,10 +59,6 @@ const MenuPage: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
 
   const [currentMenu, setCurrentMenu] = useState<Menu | null>(null);
-
-  // const showModal = () => {
-  //   setOpen(true);
-  // };
 
   const onStatusChange = (ann: Menu, checked: boolean) => {
     updateMenu({
@@ -225,7 +209,7 @@ const MenuPage: React.FC = () => {
       render: (text, record) => (
         <Switch
           size="small"
-          checked={text}
+          defaultChecked={text}
           onChange={(checked) => onStatusChange(record, checked)}
         ></Switch>
       ),
@@ -390,18 +374,18 @@ const MenuPage: React.FC = () => {
               initialValues={currentMenu ?? {}}
               onFinish={onUpdate}
             >
-              <Form.Item name="userId" label={t("recipient")}>
+              <Form.Item name="parentId" label={t("parentMenu")}>
                 <Select
                   showSearch
                   style={{ width: 200 }}
-                  placeholder="Search Domain"
+                  placeholder={t("search")}
                   optionFilterProp="label"
                   onSearch={onSearchParent}
                   loading={loadingParent}
                   options={pMenus}
                 />
               </Form.Item>
-              <Form.Item name="title" label={t("title")}>
+              <Form.Item name="label" label={t("label")}>
                 <Input />
               </Form.Item>
               <Form.Item name="description" label={t("desc")}>

@@ -28,6 +28,7 @@ export const currentFixtureState = atom<any>([]);
 
 export const rateState = atom<any[]>([]);
 
+export const breadcrumbState = atom<string[]>([]);
 export const betAmount = atom<number>(0);
 
 export const expectedWinningAmount = atom<Promise<number>>(async (get) => {

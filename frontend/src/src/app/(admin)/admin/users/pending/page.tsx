@@ -226,20 +226,20 @@ const PendingUserPage: React.FC = () => {
       key: "IP",
     },
     {
-      title: "Coupon",
+      title: t("coupon"),
       dataIndex: "profile.coupon",
       key: "profile.coupon",
       render: (_, { profile }) => profile.coupon,
     },
     {
-      title: "Last Deposit",
+      title: t("lastDeposit"),
       dataIndex: "profile.lastDeposit",
       key: "lastDeposit",
       render: (_, { profile }) =>
         profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
     },
     {
-      title: "Last Withdraw",
+      title: t("lastWithdraw"),
       dataIndex: "profile.lastWithdraw",
       key: "lastWithdraw",
       render: (_, { profile }) =>

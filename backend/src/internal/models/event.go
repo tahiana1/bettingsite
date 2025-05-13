@@ -11,7 +11,7 @@ type Event struct {
 
 	Type string `json:"type" gorm:"size:100"`
 
-	Title       string `json:"name" gorm:"size:500" validate:"required,min=2"`
+	Title       string `json:"title" gorm:"size:500" validate:"required,min=2"`
 	Description string `json:"description"`
 	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 

@@ -20,7 +20,8 @@ func (r *mutationResolver) CreateMenu(ctx context.Context, input model.NewMenuIn
 
 // UpdateMenu is the resolver for the updateMenu field.
 func (r *mutationResolver) UpdateMenu(ctx context.Context, id uint, input model.UpdateMenuInput) (*models.Menu, error) {
-	panic(fmt.Errorf("not implemented: UpdateMenu - updateMenu"))
+	ldr := loaders.For(ctx)
+	return ldr.MenuReader.UpdateMenu(ctx, id, input)
 }
 
 // DeleteMenu is the resolver for the deleteMenu field.

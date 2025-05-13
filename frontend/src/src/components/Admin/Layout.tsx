@@ -34,10 +34,11 @@ import {
 import { GrUserAdmin } from "react-icons/gr";
 import { BsRobot, BsSpeedometer2 } from "react-icons/bs";
 import LayoutContext from "@/contexts/LayoutContextProvider";
+import RouteTracker from "@/components/Common/RouteTracker";
 
 import { useLocale, useTranslations } from "next-intl";
 import LangSwitcher from "../Common/LangSwitcher";
-import { currentAdminTheme, userState } from "@/state/state";
+import { breadcrumbState, currentAdminTheme, userState } from "@/state/state";
 import { useAtom } from "jotai";
 import api from "@/api";
 import { ROUTES } from "@/routes";
@@ -68,92 +69,92 @@ export default function AdminRootLayout({
   const [selectedkeys, setSelectedkeys] = useState<string[]>(["home"]);
   const [isDarkTheme, setDarkTheme] = useAtom<boolean>(currentAdminTheme);
   const [isAdmin, setAdmin] = useState<boolean>(false);
-
+  const [currentMenuItems, setCurrentMenuItems] = useState<any[]>([]);
   const [notiApi, contextHolder] = notification.useNotification();
-
+  const [breadcrumbMenu] = useAtom<string[]>(breadcrumbState);
   const t = useTranslations();
   const locale = useLocale();
 
   const [currentUser, setUser] = useAtom<any>(userState);
 
-  const [data] = useState<{ label: string; value: number; color?: string }[]>([
+  const data = [
     {
-      label: "Honor Link",
+      label: t("honorLink"),
       value: 2321,
       color: "cyan",
     },
     {
-      label: "Deposit today",
+      label: t("depositToday"),
       value: 0,
       color: "lightgreen",
     },
     {
-      label: "Withdrawl today",
+      label: t("withdrawlToday"),
       value: 0,
       color: "tomato",
     },
     {
-      label: "Betting today",
+      label: t("bettingToday"),
       value: 23210,
       color: "lightgreen",
     },
     {
-      label: "Today's winner",
+      label: t("todaysWinner"),
       value: 23212,
       color: "yellow",
     },
     {
-      label: "User ammount",
+      label: t("userAmount"),
       value: 2321234,
       color: "tomato",
     },
     {
-      label: "User Points",
+      label: t("userPoints"),
       value: 2322321,
       color: "lightgreen",
     },
     {
-      label: "Total amount of distribution reserves",
+      label: t("totalAmountOfDistributionReserves"),
       value: 94232321,
       color: "yellow",
     },
     {
-      label: "Total points",
+      label: t("totalPoints"),
       value: 832321,
       color: "yellow",
     },
     {
-      label: "Total loss",
+      label: t("totalLoss"),
       value: 4222321,
       color: "yellow",
     },
     {
-      label: "Rolling the total",
+      label: t("rollingTheTotal"),
       value: 200232321,
       color: "yellow",
     },
     {
-      label: "Total sales loss today",
+      label: t("totalSalesLossToday"),
       value: 0,
       color: "tomato",
     },
     {
-      label: "Today's distribution rolling",
+      label: t("todaysDistributionRolling"),
       value: 0,
       color: "tomato",
     },
     {
-      label: "Sports Pending Betting",
+      label: t("sportsPendingBetting"),
       value: 0,
       color: "lightgreen",
     },
 
     {
-      label: "Sports Rebate Betting",
+      label: t("sportsRebateBetting"),
       value: 0,
       color: "lightgreen",
     },
-  ]);
+  ];
 
   const onLogout = () => {
     api("auth/logout", { method: "POST" }).then(() => {
@@ -169,7 +170,7 @@ export default function AdminRootLayout({
       label: (
         <List
           className="!text-white"
-          header={"Home"}
+          header={t("home")}
           dataSource={data}
           renderItem={(item: any) => {
             return (
@@ -195,7 +196,7 @@ export default function AdminRootLayout({
       children: [
         {
           key: "admin/settlements/",
-          label: `Home`,
+          label: t(`home`),
         },
       ],
     },
@@ -212,7 +213,7 @@ export default function AdminRootLayout({
         {
           key: "dashboard",
           icon: <BsSpeedometer2 />,
-          label: `Dashboard`,
+          label: t(`dashboard`),
         },
       ],
     },
@@ -249,12 +250,16 @@ export default function AdminRootLayout({
           label: t(`admin/menu/pendings`),
         },
         {
+          key: "admin/users/blocked",
+          label: t(`admin/menu/blocked`),
+        },
+        {
           key: "admin/users/status",
           label: t(`admin/menu/userStatus`),
         },
         {
-          key: "admin/users/logs",
-          label: t(`admin/menu/logs`),
+          key: "admin/users/smslog",
+          label: t(`admin/menu/smslogs`),
         },
         {
           key: "admin/users/activity",
@@ -307,8 +312,8 @@ export default function AdminRootLayout({
           label: t("admin/menu/domainSetting"),
         },
         {
-          key: "admin/settings/auth",
-          label: t("admin/menu/authSetting"),
+          key: "admin/settings/sms",
+          label: t("admin/menu/smsSetting"),
         },
         {
           key: "admin/settings/alarm",
@@ -396,17 +401,17 @@ export default function AdminRootLayout({
     {
       key: "myprofile",
       icon: <UserOutlined />,
-      label: `Profile`,
+      label: t(`profile`),
     },
     {
       key: "setting",
       icon: <SettingOutlined />,
-      label: `Setting`,
+      label: t(`setting`),
     },
     {
       key: "logout",
       icon: <LogoutOutlined />,
-      label: `Logout`,
+      label: t(`logout`),
       onClick: onLogout,
     },
   ];
@@ -420,9 +425,26 @@ export default function AdminRootLayout({
     setDarkTheme(!isDarkTheme);
   };
   const onMenuClick = (e: MenuInfo) => {
+    console.log({ e });
     setSelectedkeys(e.keyPath);
     router.push("/" + e.key);
     // router.push("/" + e.keyPath.reverse().join("/"));
+  };
+
+  // Recursive search for current item
+  const findActiveMenuItem: any = (items: any[], pathname: string) => {
+    for (const item of items) {
+      if (item.key === pathname) {
+        return item;
+      }
+
+      if (item.children) {
+        const found = findActiveMenuItem(item.children, pathname);
+        if (found) return found;
+      }
+    }
+
+    return null;
   };
 
   useEffect(() => {
@@ -454,6 +476,7 @@ export default function AdminRootLayout({
     setDarkTheme(false);
     document.documentElement.classList.remove("dark");
   }, []);
+
   useEffect(() => {
     if (currentUser?.role === "A") {
       setAdmin(true);
@@ -461,13 +484,22 @@ export default function AdminRootLayout({
       setAdmin(false);
     }
   }, [currentUser]);
+  useEffect(() => {
+    const d = breadcrumbMenu
+      ?.map((b) => findActiveMenuItem(sideBarItems, b))
+      .filter(Boolean);
+    setCurrentMenuItems(d);
+    console.log({ d });
+  }, [breadcrumbMenu, locale]);
   return mounted ? (
     <ApolloProvider client={client}>
       <ConfigProvider
+        componentSize="small"
         theme={{
           token: {
             borderRadius: 0,
             motion: false,
+            fontSize: 12
           },
           components: {
             Card: {
@@ -483,6 +515,7 @@ export default function AdminRootLayout({
           value={{ isDarkTheme, collapsed, setCollapsed }}
         >
           <Layout>
+            <RouteTracker />
             {isAdmin ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
@@ -499,7 +532,7 @@ export default function AdminRootLayout({
               >
                 <Space
                   direction="vertical"
-                  className="h-screen overflow-y-auto"
+                  className="w-full h-screen overflow-y-auto"
                 >
                   <div
                     className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
@@ -537,7 +570,7 @@ export default function AdminRootLayout({
                     onClick={() => setCollapsed(!collapsed)}
                     className="!w-10 !h-10 text-base !hidden lg:!block"
                   />
-                  <Space className="w-full">Admin</Space>
+                  <Space className="w-full">{t("admin")}</Space>
                   <Flex
                     align="flex-end"
                     justify="space-between"
@@ -569,11 +602,11 @@ export default function AdminRootLayout({
                   className="!p-2 shadow"
                   items={[
                     {
-                      title: <Link href="/admin">Home</Link>,
+                      title: <Link href="/admin">{t("home")}</Link>,
                     },
-                    {
-                      title: <Link href="/admin">Dashboard</Link>,
-                    },
+                    ...(currentMenuItems?.map((c: any) => ({
+                      title: <Link href={"#"}>{c.label}</Link>,
+                    })) ?? []),
                   ]}
                 />
               ) : null}

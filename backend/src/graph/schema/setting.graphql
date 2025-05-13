@@ -1,0 +1,101 @@
+type Setting {
+  id: ID!
+
+  status: Boolean
+
+  title: String
+  description: String
+  primaryDomain: Uint
+
+  userId: ID
+  user: User
+
+  orderNum: Uint
+
+  totalExStatus: Boolean
+  totalExFrom: Time
+  totalExTo: Time
+
+  totalReStatus: Boolean
+  totalReFrom: Time
+  totalReTo: Time
+
+  userExStatus: Boolean
+  userExFrom: Time
+  userExTo: Time
+
+  userReStatus: Boolean
+  userReFrom: Time
+  userReTo: Time
+
+  createdAt: Time
+  updatedAt: Time
+  deletedAt: DeletedAt
+}
+
+input UpdateSettingInput {
+  status: Boolean
+
+  title: String
+  description: String
+  primaryDomain: Uint
+
+  userId: ID 
+
+  orderNum: Uint
+
+  totalExStatus: Boolean
+  totalExFrom: Time
+  totalExTo: Time
+
+  totalReStatus: Boolean
+  totalReFrom: Time
+  totalReTo: Time
+
+  userExStatus: Boolean
+  userExFrom: Time
+  userExTo: Time
+
+  userReStatus: Boolean
+  userReFrom: Time
+  userReTo: Time
+}
+
+input NewSettingInput {
+  status: Boolean
+
+  title: String
+  description: String
+  primaryDomain: Uint
+
+  userId: ID 
+
+  orderNum: Uint
+
+  totalExStatus: Boolean
+  totalExFrom: Time
+  totalExTo: Time
+
+  totalReStatus: Boolean
+  totalReFrom: Time
+  totalReTo: Time
+
+  userExStatus: Boolean
+  userExFrom: Time
+  userExTo: Time
+
+  userReStatus: Boolean
+  userReFrom: Time
+  userReTo: Time
+}
+ 
+
+extend type Query {  
+  getSetting: Setting! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createSetting(input: NewSettingInput!): Setting! @hasRole(role: A)
+  updateSetting(id: ID!, input: UpdateSettingInput!): Setting! @hasRole(role: A)
+  deleteSetting(id: ID!): Boolean! @hasRole(role: A)
+}

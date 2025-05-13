@@ -31,10 +31,18 @@ import { USER_STATUS } from "@/constants";
 
 // type UserIndex = keyof User;
 
-const DistStatusPage: React.FC = () => {
+const AdminStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        field: "role",
+        value: "A",
+        op: "eq",
+      },
+    ],
+  });
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
@@ -149,20 +157,20 @@ const DistStatusPage: React.FC = () => {
       key: "IP",
     },
     {
-      title: "Coupon",
+      title: t("coupon"),
       dataIndex: "profile.coupon",
       key: "profile.coupon",
       render: (_, { profile }) => profile.coupon,
     },
     {
-      title: "Last Deposit",
+      title: t("lastDeposit"),
       dataIndex: "profile.lastDeposit",
       key: "lastDeposit",
       render: (_, { profile }) =>
         profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
     },
     {
-      title: "Last Withdraw",
+      title: t("lastWithdraw"),
       dataIndex: "profile.lastWithdraw",
       key: "lastWithdraw",
       render: (_, { profile }) =>
@@ -356,4 +364,4 @@ const DistStatusPage: React.FC = () => {
   );
 };
 
-export default DistStatusPage;
+export default AdminStatusPage;

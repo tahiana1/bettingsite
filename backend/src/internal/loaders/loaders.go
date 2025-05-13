@@ -28,6 +28,7 @@ type Loaders struct {
 	MenuLoader            *dataloadgen.Loader[uint, *models.Menu]
 	LogLoader             *dataloadgen.Loader[uint, *models.Log]
 	AdminPermissionLoader *dataloadgen.Loader[uint, *models.AdminPermission]
+	SettingLoader         *dataloadgen.Loader[uint, *models.Setting]
 	ProfileReader         *profileReader
 	UserReader            *userReader
 	NotificationReader    *notificationReader
@@ -38,6 +39,7 @@ type Loaders struct {
 	MenuReader            *menuReader
 	LogReader             *logReader
 	AdminPermissionReader *adminPermissionReader
+	SettingReader         *settingReader
 }
 
 func NewLoaders(db *gorm.DB) *Loaders {
@@ -51,6 +53,7 @@ func NewLoaders(db *gorm.DB) *Loaders {
 	mr := &menuReader{db: db}
 	lr := &logReader{db: db}
 	adr := &adminPermissionReader{db: db}
+	sr := &settingReader{db: db}
 
 	return &Loaders{
 		ProfileLoader:         dataloadgen.NewLoader(pr.getProfiles, dataloadgen.WithWait(time.Millisecond)),
@@ -66,6 +69,7 @@ func NewLoaders(db *gorm.DB) *Loaders {
 		MenuReader:            mr,
 		LogReader:             lr,
 		AdminPermissionReader: adr,
+		SettingReader:         sr,
 	}
 }
 

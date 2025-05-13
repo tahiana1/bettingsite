@@ -21,7 +21,6 @@ export default function RootLayout({
   return (
     <AdminRootLayout>
       <DeviceTracker />
-
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         {children}
       </Content>

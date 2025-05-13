@@ -24,29 +24,20 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { GET_LOGS } from "@/actions/log";
+import { FaApple, FaLinux, FaWindows } from "react-icons/fa6";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type LogIndex = keyof Log;
 
-const LogStatusPage: React.FC = () => {
+const AdminLogPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [total, setTotal] = useState<number>(0);
   const [logs, setLogs] = useState<any[]>([]);
-  const { loading,  data, refetch } = useQuery(GET_LOGS, {
-    variables: {
-      filters: [
-        {
-          field: "type",
-          value: "L",
-          op: "eq",
-        },
-      ],
-    },
-  });
+  const { loading, data, refetch } = useQuery(GET_LOGS, {});
   const onSearchLog = (v: string) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
@@ -109,30 +100,77 @@ const LogStatusPage: React.FC = () => {
       fixed: "left",
     },
     {
-      title: t("IP"),
+      title: "IP",
       dataIndex: "ip",
       key: "ip",
     },
     {
+      title: t("os"),
+      dataIndex: "os",
+      key: "os",
+      render(value) {
+        if (value.toLowerCase().includes("window")) {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaWindows />}
+              color="blue"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        } else if (value.toLowerCase().includes("linux")) {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaLinux />}
+              color="orange"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        } else {
+          return (
+            <Tag
+              bordered={false}
+              icon={<FaApple />}
+              color="purple"
+              className="!flex items-center gap-1"
+            >
+              {value}
+            </Tag>
+          );
+        }
+      },
+    },
+    {
+      title: t("device"),
+      dataIndex: "device",
+      key: "device",
+    },
+    {
+      title: t("path"),
+      dataIndex: "path",
+      key: "path",
+      render(value, record) {
+        return (
+          <pre>
+            <Tag color={record.status == "success" ? "success" : "red"}>
+              {record.method}
+            </Tag>
+            {value}
+          </pre>
+        );
+      },
+    },
+
+    {
       title: t("data"),
       dataIndex: "data",
       key: "data",
-    },
-    {
-      title: t("verificationNumber"),
-      dataIndex: "verificationNumber",
-      key: "verificationNumber",
-      render: (text) => text ?? "000000",
-    },
-    /* {
-      title: t("data"),
-      dataIndex: "data",
-      key: "data",
-    }, */
-    {
-      title: t("phone"),
-      dataIndex: "phone",
-      key: "phone",
+      width: 450,
     },
 
     {
@@ -214,7 +252,7 @@ const LogStatusPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("logs")}
+          title={t("admin/menu/adminLog")}
           classNames={{
             body: "!p-0",
           }}
@@ -302,4 +340,4 @@ const LogStatusPage: React.FC = () => {
   );
 };
 
-export default LogStatusPage;
+export default AdminLogPage;

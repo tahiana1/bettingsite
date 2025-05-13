@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 import { ConfigProvider, Layout, theme } from "antd";
 
-
 import { ApolloProvider } from "@apollo/client";
 import client from "@/api/apollo-client-ws";
 
@@ -15,7 +14,6 @@ import { currentTheme } from "@/state/state";
 import { useAtom } from "jotai";
 import Head from "./Header";
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,11 +23,8 @@ export default function RootLayout({
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [isDarkTheme] = useAtom<boolean>(currentTheme);
 
-  // const { data, loading, refetch } = useQuery(GET_MENUS);
-
   useEffect(() => {
     setMount(true);
-    // console.log({ data });
   }, []);
 
   useEffect(() => {
@@ -46,6 +41,7 @@ export default function RootLayout({
           token: {
             borderRadius: 0,
             motion: false,
+            fontSize: 12,
           },
           algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }}
