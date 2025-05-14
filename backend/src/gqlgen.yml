@@ -225,3 +225,11 @@ models:
   Bank:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Bank
+
+  SMSApi:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.SMSApi
+
+  Qna:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Qna

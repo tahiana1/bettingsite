@@ -30,6 +30,9 @@ type Loaders struct {
 	AdminPermissionLoader *dataloadgen.Loader[uint, *models.AdminPermission]
 	SettingLoader         *dataloadgen.Loader[uint, *models.Setting]
 	BankLoader            *dataloadgen.Loader[uint, *models.Bank]
+	SMSApiLoader          *dataloadgen.Loader[uint, *models.SMSApi]
+	TransactionLoader     *dataloadgen.Loader[uint, *models.Transaction]
+	QnaLoader             *dataloadgen.Loader[uint, *models.Qna]
 	ProfileReader         *profileReader
 	UserReader            *userReader
 	NotificationReader    *notificationReader
@@ -42,6 +45,9 @@ type Loaders struct {
 	AdminPermissionReader *adminPermissionReader
 	SettingReader         *settingReader
 	BankReader            *bankReader
+	SMSApiReader          *smsApiReader
+	TransactionReader     *transactionReader
+	QnaReader             *qnaReader
 }
 
 func NewLoaders(db *gorm.DB) *Loaders {
@@ -57,6 +63,9 @@ func NewLoaders(db *gorm.DB) *Loaders {
 	adr := &adminPermissionReader{db: db}
 	sr := &settingReader{db: db}
 	br := &bankReader{db: db}
+	smr := &smsApiReader{db: db}
+	tr := &transactionReader{db: db}
+	qr := &qnaReader{db: db}
 
 	return &Loaders{
 		ProfileLoader:         dataloadgen.NewLoader(pr.getProfiles, dataloadgen.WithWait(time.Millisecond)),
@@ -74,6 +83,9 @@ func NewLoaders(db *gorm.DB) *Loaders {
 		AdminPermissionReader: adr,
 		SettingReader:         sr,
 		BankReader:            br,
+		SMSApiReader:          smr,
+		TransactionReader:     tr,
+		QnaReader:             qr,
 	}
 }
 

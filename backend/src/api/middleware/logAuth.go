@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,6 +32,11 @@ func LogAuth(c *gin.Context) {
 	bodyBytes, err := io.ReadAll(c.Request.Body)
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 	l.Data = string(bodyBytes)
+	sg := strings.Split(c.Request.Host, ":")
+
+	if len(sg) > 0 {
+		c.Set("accessDomain", sg[0])
+	}
 
 	if err != nil {
 		l.Data = err.Error()

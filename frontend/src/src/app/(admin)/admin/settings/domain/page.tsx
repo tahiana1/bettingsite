@@ -91,8 +91,8 @@ const DomainSettingPage: React.FC = () => {
   ].map((i) => ({
     value: i,
     label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-  })); 
-  const onSubmitSetting = (v: any) => { 
+  }));
+  const onSubmitSetting = (v: any) => {
     const { id, ...input } = v;
     updateDomain({
       variables: {
@@ -155,6 +155,7 @@ const DomainSettingPage: React.FC = () => {
                     </Form.Item>
                   </div>
                   <Divider className="!p-0 !m-0" />
+
                   <table className="min-w-full table-auto border border-gray-200 mb-4">
                     <thead className="bg-gray-100">
                       <tr>

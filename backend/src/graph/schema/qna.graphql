@@ -1,0 +1,58 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Qna {
+  id: ID!
+
+  userId: Uint!
+  user: User
+
+  domainId: Uint
+  domain: Domain
+
+  size: String
+  question: String
+  answer: String
+
+  status: String
+
+  repliedAt: Time
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewQnaInput {
+  question: String!
+  type: String
+  status: String
+}
+
+input UpdateQnaInput {
+  question: String
+  type: String
+  answer: String
+  status: String
+}
+
+type QnaList {
+  qnas: [Qna!]!
+  total: Int!
+}
+
+extend type Query {
+  getQnas(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): QnaList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createQna(input: NewQnaInput!): Qna!
+  updateQna(id: ID!, input: UpdateQnaInput!): Qna!
+  replyQna(id: ID!, input: UpdateQnaInput!): Qna!
+  deleteQna(id: ID!): Boolean!
+  completeQna(id: ID!): Boolean!
+}

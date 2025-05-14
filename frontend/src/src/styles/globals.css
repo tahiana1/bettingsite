@@ -11,8 +11,11 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-} 
+}
 
+* {
+  user-select: none !important;
+}
 body {
   color: var(--foreground);
   background: var(--background);
@@ -24,7 +27,6 @@ body {
     text-wrap: balance;
   }
 }
-
 
 .chat-ui {
   padding: 20px;

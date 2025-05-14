@@ -175,3 +175,54 @@ interface Bank {
   status: boolean;
   orderNum: number;
 }
+
+interface SmsApi {
+  key: string;
+  id: number;
+  name: string;
+  url: string;
+  agent: string;
+  token: string;
+  passwork: string;
+  status: boolean;
+  orderNum: number;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  deletedAt: Date | string;
+}
+
+interface Transaction {
+  id: number;
+  userId: number;
+  user: User;
+  type: string;
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  pointBefore: number;
+  pointAfter: number;
+  status: string;
+  shortcut: string;
+  usdtDesc: string;
+  transactionAt: Date | string | undefined | null;
+  approvedAt: Date | string | undefined | null;
+  createdAt: Date | string | undefined | null;
+  updatedAt: Date | string | undefined | null;
+  deletedAt: ate | string | undefined | null;
+}
+
+interface Qna {
+  key: string;
+  id: number;
+  question: string;
+  answer: string;
+  userId: number;
+  user: User;
+  domainId: number;
+  domain: Domain;
+  status: boolean;
+  repliedAt: Date | string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  deletedAt: Date | string;
+}

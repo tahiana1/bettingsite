@@ -1,0 +1,83 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Transaction {
+  id: ID!
+
+  userId: ID!
+  user: User
+
+  type: String
+  amount: Float
+
+  balanceBefore: Float
+  balanceAfter: Float
+
+  pointBefore: Float
+  pointAfter: Float
+
+  status: String
+  shortcut: String
+  usdtDesc: String
+
+  transactionAt: Time
+  approvedAt: Time
+
+  createdAt: Time
+  updatedAt: Time
+  deletedAt: DeletedAt
+}
+
+input NewTransactionInput {
+  userId: ID!
+  type: String
+  amount: Float
+
+  balanceBefore: Float
+  balanceAfter: Float
+
+  pointBefore: Float
+  pointAfter: Float
+
+  status: String
+  shortcut: String
+  usdtDesc: String
+}
+
+input UpdateTransactionInput {
+  type: String
+  amount: Float
+
+  balanceBefore: Float
+  balanceAfter: Float
+
+  pointBefore: Float
+  pointAfter: Float
+
+  status: String
+  shortcut: String
+  usdtDesc: String
+}
+
+type TransactionList {
+  transactions: [Transaction!]!
+  total: Int!
+}
+
+extend type Query {
+  getTransactions(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): TransactionList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createTransaction(input: NewTransactionInput!): Transaction!
+  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
+  deleteTransaction(id: ID!): Boolean!
+  approveTransaction(id: ID!): Boolean!
+  blockTransaction(id: ID!): Boolean!
+  cancelTransaction(id: ID!): Boolean!
+}

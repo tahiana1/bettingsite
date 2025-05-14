@@ -843,7 +843,11 @@ const UserPage: React.FC = () => {
             onChange={onChange}
             pagination={{
               showTotal(total, range) {
-                return `${range[0]} to ${range[1]} in Total ${total} `;
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
               },
               total: total,
               showSizeChanger: true,

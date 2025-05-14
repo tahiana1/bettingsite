@@ -82,3 +82,7 @@ export const buildTree = (data: any[]) => {
 
   return roots;
 };
+
+export const isValidDate = (d: any): boolean => {
+  return new Date(d).toString() !== "Invalid Date";
+};

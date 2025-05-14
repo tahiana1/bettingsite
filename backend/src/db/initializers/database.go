@@ -127,6 +127,8 @@ func ConnectDB() {
 		models.AdminPermission{},
 		models.AdminMenu{},
 		models.Bank{},
+		models.SMSApi{},
+		models.Qna{},
 	)
 
 	if err != nil {

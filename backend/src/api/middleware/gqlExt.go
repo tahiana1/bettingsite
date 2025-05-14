@@ -15,7 +15,7 @@ func ExtensionMiddleware(ctx context.Context, next graphql.ResponseHandler) *gra
 			resp.Extensions = map[string]interface{}{}
 		}
 
-		resp.Extensions["poweredBy"] = "gqlgen"
+		resp.Extensions["poweredBy"] = "GraphQL by TotoClub"
 		resp.Extensions["timestamp"] = time.Now().UTC().Format(time.RFC3339)
 	}
 

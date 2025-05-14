@@ -65,7 +65,9 @@ func GraphqlHandler() gin.HandlerFunc {
 		if err == nil {
 			fmt.Println("❤️  GQL Auth Passed!")
 		}
+
 		ctx := context.WithValue(c.Request.Context(), "authUser", authUser)
+		ctx = context.WithValue(ctx, "accessDomain", c.Value("accessDomain"))
 		c.Request = c.Request.WithContext(ctx)
 		srv.ServeHTTP(c.Writer, c.Request)
 	}

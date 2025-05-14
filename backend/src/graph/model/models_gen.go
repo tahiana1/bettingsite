@@ -190,6 +190,21 @@ type NewProfile struct {
 	SocialLinks   *string    `json:"socialLinks,omitempty"`
 }
 
+type NewQnaInput struct {
+	Question string  `json:"question"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type NewSMSApiInput struct {
+	Name     string  `json:"name"`
+	URL      *string `json:"url,omitempty"`
+	Agent    *string `json:"agent,omitempty"`
+	Password *string `json:"password,omitempty"`
+	Token    *string `json:"token,omitempty"`
+	OrderNum *uint   `json:"orderNum,omitempty"`
+	Status   *bool   `json:"status,omitempty"`
+}
+
 type NewSettingInput struct {
 	Status        *bool      `json:"status,omitempty"`
 	Title         *string    `json:"title,omitempty"`
@@ -216,6 +231,19 @@ type NewTodo struct {
 	UserID string `json:"userId"`
 }
 
+type NewTransactionInput struct {
+	UserID        uint     `json:"userId"`
+	Type          *string  `json:"type,omitempty"`
+	Amount        *float64 `json:"amount,omitempty"`
+	BalanceBefore *float64 `json:"balanceBefore,omitempty"`
+	BalanceAfter  *float64 `json:"balanceAfter,omitempty"`
+	PointBefore   *float64 `json:"pointBefore,omitempty"`
+	PointAfter    *float64 `json:"pointAfter,omitempty"`
+	Status        *string  `json:"status,omitempty"`
+	Shortcut      *string  `json:"shortcut,omitempty"`
+	UsdtDesc      *string  `json:"usdtDesc,omitempty"`
+}
+
 type NotificationList struct {
 	Notifications []*models.Notification `json:"notifications"`
 	Total         int32                  `json:"total"`
@@ -231,7 +259,17 @@ type Pagination struct {
 	Offset *int32 `json:"offset,omitempty"`
 }
 
+type QnaList struct {
+	Qnas  []*models.Qna `json:"qnas"`
+	Total int32         `json:"total"`
+}
+
 type Query struct {
+}
+
+type SMSApiList struct {
+	SmsApis []*models.SMSApi `json:"smsApis"`
+	Total   int32            `json:"total"`
 }
 
 type Setting struct {
@@ -268,6 +306,11 @@ type Todo struct {
 	Text string       `json:"text"`
 	Done bool         `json:"done"`
 	User *models.User `json:"user"`
+}
+
+type TransactionList struct {
+	Transactions []*models.Transaction `json:"transactions"`
+	Total        int32                 `json:"total"`
 }
 
 type UpdateAdminPermissionInput struct {
@@ -388,6 +431,22 @@ type UpdateProfile struct {
 	NewPassword     *string    `json:"newPassword,omitempty"`
 }
 
+type UpdateQnaInput struct {
+	Question *string `json:"question,omitempty"`
+	Answer   *string `json:"answer,omitempty"`
+	Status   *string `json:"status,omitempty"`
+}
+
+type UpdateSMSApiInput struct {
+	Name     *string `json:"name,omitempty"`
+	URL      *string `json:"url,omitempty"`
+	Agent    *string `json:"agent,omitempty"`
+	Password *string `json:"password,omitempty"`
+	Token    *string `json:"token,omitempty"`
+	OrderNum *uint   `json:"orderNum,omitempty"`
+	Status   *bool   `json:"status,omitempty"`
+}
+
 type UpdateSettingInput struct {
 	Status        *bool      `json:"status,omitempty"`
 	Title         *string    `json:"title,omitempty"`
@@ -407,6 +466,18 @@ type UpdateSettingInput struct {
 	UserReStatus  *bool      `json:"userReStatus,omitempty"`
 	UserReFrom    *time.Time `json:"userReFrom,omitempty"`
 	UserReTo      *time.Time `json:"userReTo,omitempty"`
+}
+
+type UpdateTransactionInput struct {
+	Type          *string  `json:"type,omitempty"`
+	Amount        *float64 `json:"amount,omitempty"`
+	BalanceBefore *float64 `json:"balanceBefore,omitempty"`
+	BalanceAfter  *float64 `json:"balanceAfter,omitempty"`
+	PointBefore   *float64 `json:"pointBefore,omitempty"`
+	PointAfter    *float64 `json:"pointAfter,omitempty"`
+	Status        *string  `json:"status,omitempty"`
+	Shortcut      *string  `json:"shortcut,omitempty"`
+	UsdtDesc      *string  `json:"usdtDesc,omitempty"`
 }
 
 type UpdateUser struct {

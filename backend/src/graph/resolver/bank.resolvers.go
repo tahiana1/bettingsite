@@ -32,7 +32,6 @@ func (r *mutationResolver) DeleteBank(ctx context.Context, id uint) (bool, error
 
 // GetBanks is the resolver for the getBanks field.
 func (r *queryResolver) GetBanks(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.BankList, error) {
-
 	ldr := loaders.For(ctx)
 	return ldr.BankReader.GetBanks(ctx, filters, orders, pagination)
 }

@@ -1,0 +1,56 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type SMSApi {
+  id: ID!
+  name: String!
+  url: String
+  agent: String
+  password: String
+  token: String
+  orderNum: Uint
+  status: Boolean!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewSMSApiInput {
+  name: String!
+  url: String
+  agent: String
+  password: String
+  token: String
+  orderNum: Uint
+  status: Boolean
+}
+
+input UpdateSMSApiInput {
+  name: String
+  url: String
+  agent: String
+  password: String
+  token: String
+  orderNum: Uint
+  status: Boolean
+}
+
+type SMSApiList {
+  smsApis: [SMSApi!]!
+  total: Int!
+}
+
+extend type Query {
+  getSMSApis(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): SMSApiList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createSMSApi(input: NewSMSApiInput!): SMSApi!
+  updateSMSApi(id: ID!, input: UpdateSMSApiInput!): SMSApi!
+  deleteSMSApi(id: ID!): Boolean!
+}
