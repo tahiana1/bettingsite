@@ -350,6 +350,7 @@ type ComplexityRoot struct {
 		Question  func(childComplexity int) int
 		RepliedAt func(childComplexity int) int
 		Status    func(childComplexity int) int
+		Type      func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 		User      func(childComplexity int) int
 		UserID    func(childComplexity int) int
@@ -2496,6 +2497,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Qna.Status(childComplexity), true
 
+	case "Qna.type":
+		if e.complexity.Qna.Type == nil {
+			break
+		}
+
+		return e.complexity.Qna.Type(childComplexity), true
+
 	case "Qna.updatedAt":
 		if e.complexity.Qna.UpdatedAt == nil {
 			break
@@ -3633,8 +3641,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  createAdminPermission(input: NewAdminPermission!): AdminPermission!
-  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission!
+  createAdminPermission(input: NewAdminPermission!): AdminPermission! @hasRole(role: A)
+  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/announcement.graphql", Input: `type Announcement {
@@ -3733,9 +3741,9 @@ extend type Query {
 }
 
 extend type Mutation {
-  createBank(input: NewBankInput!): Bank!
-  updateBank(id: ID!, input: UpdateBankInput!): Bank!
-  deleteBank(id: ID!): Boolean!
+  createBank(input: NewBankInput!): Bank! @hasRole(role: A)
+  updateBank(id: ID!, input: UpdateBankInput!): Bank! @hasRole(role: A)
+  deleteBank(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/domain.graphql", Input: `type Domain {
@@ -4210,6 +4218,7 @@ type Qna {
   domainId: Uint
   domain: Domain
 
+  type: String
   question: String
   answer: String
 
@@ -4223,11 +4232,13 @@ type Qna {
 
 input NewQnaInput {
   question: String!
+  type: String
   status: String
 }
 
 input UpdateQnaInput {
   question: String
+  type: String
   answer: String
   status: String
 }
@@ -4246,11 +4257,11 @@ extend type Query {
 }
 
 extend type Mutation {
-  createQna(input: NewQnaInput!): Qna!
-  updateQna(id: ID!, input: UpdateQnaInput!): Qna!
-  replyQna(id: ID!, input: UpdateQnaInput!): Qna!
-  deleteQna(id: ID!): Boolean!
-  completeQna(id: ID!): Boolean!
+  createQna(input: NewQnaInput!): Qna! @auth
+  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @auth
+  replyQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
+  deleteQna(id: ID!): Boolean! @hasRole(role: A)
+  completeQna(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/setting.graphql", Input: `type Setting {
@@ -4407,9 +4418,9 @@ extend type Query {
 }
 
 extend type Mutation {
-  createSMSApi(input: NewSMSApiInput!): SMSApi!
-  updateSMSApi(id: ID!, input: UpdateSMSApiInput!): SMSApi!
-  deleteSMSApi(id: ID!): Boolean!
+  createSMSApi(input: NewSMSApiInput!): SMSApi! @hasRole(role: A)
+  updateSMSApi(id: ID!, input: UpdateSMSApiInput!): SMSApi! @hasRole(role: A)
+  deleteSMSApi(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/todo.graphql", Input: `# GraphQL schema example
@@ -4512,12 +4523,12 @@ extend type Query {
 }
 
 extend type Mutation {
-  createTransaction(input: NewTransactionInput!): Transaction!
-  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
-  deleteTransaction(id: ID!): Boolean!
-  approveTransaction(id: ID!): Boolean!
-  blockTransaction(id: ID!): Boolean!
-  cancelTransaction(id: ID!): Boolean!
+  createTransaction(input: NewTransactionInput!): Transaction! @hasRole(role: A)
+  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction! @hasRole(role: A)
+  deleteTransaction(id: ID!): Boolean! @hasRole(role: A)
+  approveTransaction(id: ID!): Boolean! @hasRole(role: A)
+  blockTransaction(id: ID!): Boolean! @hasRole(role: A)
+  cancelTransaction(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
 	{Name: "../schema/user.graphql", Input: `enum UserStatus {
@@ -13716,8 +13727,35 @@ func (ec *executionContext) _Mutation_createAdminPermission(ctx context.Context,
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateAdminPermission(rctx, fc.Args["input"].(model.NewAdminPermission))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateAdminPermission(rctx, fc.Args["input"].(model.NewAdminPermission))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.AdminPermission
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.AdminPermission
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.AdminPermission); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.AdminPermission`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13805,8 +13843,35 @@ func (ec *executionContext) _Mutation_updateAdminPermission(ctx context.Context,
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateAdminPermission(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateAdminPermissionInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateAdminPermission(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateAdminPermissionInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.AdminPermission
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.AdminPermission
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.AdminPermission); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.AdminPermission`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14192,8 +14257,35 @@ func (ec *executionContext) _Mutation_createBank(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateBank(rctx, fc.Args["input"].(model.NewBankInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateBank(rctx, fc.Args["input"].(model.NewBankInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.Bank
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Bank
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Bank); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Bank`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14263,8 +14355,35 @@ func (ec *executionContext) _Mutation_updateBank(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateBank(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateBankInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateBank(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateBankInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.Bank
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Bank
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Bank); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Bank`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14334,8 +14453,35 @@ func (ec *executionContext) _Mutation_deleteBank(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteBank(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteBank(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16149,8 +16295,30 @@ func (ec *executionContext) _Mutation_createQna(ctx context.Context, field graph
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateQna(rctx, fc.Args["input"].(model.NewQnaInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateQna(rctx, fc.Args["input"].(model.NewQnaInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Auth == nil {
+				var zeroVal *models.Qna
+				return zeroVal, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Qna); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Qna`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16185,6 +16353,8 @@ func (ec *executionContext) fieldContext_Mutation_createQna(ctx context.Context,
 				return ec.fieldContext_Qna_domainId(ctx, field)
 			case "domain":
 				return ec.fieldContext_Qna_domain(ctx, field)
+			case "type":
+				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
 			case "answer":
@@ -16230,8 +16400,30 @@ func (ec *executionContext) _Mutation_updateQna(ctx context.Context, field graph
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateQna(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateQnaInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateQna(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateQnaInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			if ec.directives.Auth == nil {
+				var zeroVal *models.Qna
+				return zeroVal, errors.New("directive auth is not implemented")
+			}
+			return ec.directives.Auth(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Qna); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Qna`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16266,6 +16458,8 @@ func (ec *executionContext) fieldContext_Mutation_updateQna(ctx context.Context,
 				return ec.fieldContext_Qna_domainId(ctx, field)
 			case "domain":
 				return ec.fieldContext_Qna_domain(ctx, field)
+			case "type":
+				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
 			case "answer":
@@ -16311,8 +16505,35 @@ func (ec *executionContext) _Mutation_replyQna(ctx context.Context, field graphq
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ReplyQna(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateQnaInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ReplyQna(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateQnaInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.Qna
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Qna
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Qna); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Qna`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16347,6 +16568,8 @@ func (ec *executionContext) fieldContext_Mutation_replyQna(ctx context.Context, 
 				return ec.fieldContext_Qna_domainId(ctx, field)
 			case "domain":
 				return ec.fieldContext_Qna_domain(ctx, field)
+			case "type":
+				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
 			case "answer":
@@ -16392,8 +16615,35 @@ func (ec *executionContext) _Mutation_deleteQna(ctx context.Context, field graph
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteQna(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteQna(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16447,8 +16697,35 @@ func (ec *executionContext) _Mutation_completeQna(ctx context.Context, field gra
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CompleteQna(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CompleteQna(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16844,8 +17121,35 @@ func (ec *executionContext) _Mutation_createSMSApi(ctx context.Context, field gr
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSMSApi(rctx, fc.Args["input"].(model.NewSMSApiInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateSMSApi(rctx, fc.Args["input"].(model.NewSMSApiInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.SMSApi
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.SMSApi
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.SMSApi); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.SMSApi`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16923,8 +17227,35 @@ func (ec *executionContext) _Mutation_updateSMSApi(ctx context.Context, field gr
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateSMSApi(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateSMSApiInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateSMSApi(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateSMSApiInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.SMSApi
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.SMSApi
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.SMSApi); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.SMSApi`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17002,8 +17333,35 @@ func (ec *executionContext) _Mutation_deleteSMSApi(ctx context.Context, field gr
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteSMSApi(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteSMSApi(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17122,8 +17480,35 @@ func (ec *executionContext) _Mutation_createTransaction(ctx context.Context, fie
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTransaction(rctx, fc.Args["input"].(model.NewTransactionInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateTransaction(rctx, fc.Args["input"].(model.NewTransactionInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.Transaction
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Transaction
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Transaction); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Transaction`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17213,8 +17598,35 @@ func (ec *executionContext) _Mutation_updateTransaction(ctx context.Context, fie
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTransaction(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateTransactionInput))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateTransaction(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateTransactionInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *models.Transaction
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Transaction
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*models.Transaction); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/internal/models.Transaction`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17304,8 +17716,35 @@ func (ec *executionContext) _Mutation_deleteTransaction(ctx context.Context, fie
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTransaction(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteTransaction(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17359,8 +17798,35 @@ func (ec *executionContext) _Mutation_approveTransaction(ctx context.Context, fi
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ApproveTransaction(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().ApproveTransaction(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17414,8 +17880,35 @@ func (ec *executionContext) _Mutation_blockTransaction(ctx context.Context, fiel
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().BlockTransaction(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().BlockTransaction(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -17469,8 +17962,35 @@ func (ec *executionContext) _Mutation_cancelTransaction(ctx context.Context, fie
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelTransaction(rctx, fc.Args["id"].(uint))
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CancelTransaction(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19967,6 +20487,47 @@ func (ec *executionContext) fieldContext_Qna_domain(_ context.Context, field gra
 	return fc, nil
 }
 
+func (ec *executionContext) _Qna_type(ctx context.Context, field graphql.CollectedField, obj *models.Qna) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Qna_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Qna_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Qna",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Qna_question(ctx context.Context, field graphql.CollectedField, obj *models.Qna) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Qna_question(ctx, field)
 	if err != nil {
@@ -20309,6 +20870,8 @@ func (ec *executionContext) fieldContext_QnaList_qnas(_ context.Context, field g
 				return ec.fieldContext_Qna_domainId(ctx, field)
 			case "domain":
 				return ec.fieldContext_Qna_domain(ctx, field)
+			case "type":
+				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
 			case "answer":
@@ -30011,7 +30574,7 @@ func (ec *executionContext) unmarshalInputNewQnaInput(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"question", "status"}
+	fieldsInOrder := [...]string{"question", "type", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30025,6 +30588,13 @@ func (ec *executionContext) unmarshalInputNewQnaInput(ctx context.Context, obj a
 				return it, err
 			}
 			it.Question = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -31280,7 +31850,7 @@ func (ec *executionContext) unmarshalInputUpdateQnaInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"question", "answer", "status"}
+	fieldsInOrder := [...]string{"question", "type", "answer", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31294,6 +31864,13 @@ func (ec *executionContext) unmarshalInputUpdateQnaInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Question = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "answer":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("answer"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33444,6 +34021,8 @@ func (ec *executionContext) _Qna(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._Qna_domainId(ctx, field, obj)
 		case "domain":
 			out.Values[i] = ec._Qna_domain(ctx, field, obj)
+		case "type":
+			out.Values[i] = ec._Qna_type(ctx, field, obj)
 		case "question":
 			out.Values[i] = ec._Qna_question(ctx, field, obj)
 		case "answer":

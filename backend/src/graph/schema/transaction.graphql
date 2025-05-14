@@ -74,10 +74,10 @@ extend type Query {
 }
 
 extend type Mutation {
-  createTransaction(input: NewTransactionInput!): Transaction!
-  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction!
-  deleteTransaction(id: ID!): Boolean!
-  approveTransaction(id: ID!): Boolean!
-  blockTransaction(id: ID!): Boolean!
-  cancelTransaction(id: ID!): Boolean!
+  createTransaction(input: NewTransactionInput!): Transaction! @hasRole(role: A)
+  updateTransaction(id: ID!, input: UpdateTransactionInput!): Transaction! @hasRole(role: A)
+  deleteTransaction(id: ID!): Boolean! @hasRole(role: A)
+  approveTransaction(id: ID!): Boolean! @hasRole(role: A)
+  blockTransaction(id: ID!): Boolean! @hasRole(role: A)
+  cancelTransaction(id: ID!): Boolean! @hasRole(role: A)
 }

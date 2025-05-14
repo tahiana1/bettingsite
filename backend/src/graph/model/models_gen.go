@@ -192,6 +192,7 @@ type NewProfile struct {
 
 type NewQnaInput struct {
 	Question string  `json:"question"`
+	Type     *string `json:"type,omitempty"`
 	Status   *string `json:"status,omitempty"`
 }
 
@@ -433,6 +434,7 @@ type UpdateProfile struct {
 
 type UpdateQnaInput struct {
 	Question *string `json:"question,omitempty"`
+	Type     *string `json:"type,omitempty"`
 	Answer   *string `json:"answer,omitempty"`
 	Status   *string `json:"status,omitempty"`
 }

@@ -61,6 +61,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  createAdminPermission(input: NewAdminPermission!): AdminPermission!
-  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission!
+  createAdminPermission(input: NewAdminPermission!): AdminPermission! @hasRole(role: A)
+  updateAdminPermission(id:ID!, input: UpdateAdminPermissionInput!): AdminPermission! @hasRole(role: A)
 }

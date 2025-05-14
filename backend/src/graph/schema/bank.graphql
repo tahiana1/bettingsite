@@ -38,7 +38,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  createBank(input: NewBankInput!): Bank!
-  updateBank(id: ID!, input: UpdateBankInput!): Bank!
-  deleteBank(id: ID!): Boolean!
+  createBank(input: NewBankInput!): Bank! @hasRole(role: A)
+  updateBank(id: ID!, input: UpdateBankInput!): Bank! @hasRole(role: A)
+  deleteBank(id: ID!): Boolean! @hasRole(role: A)
 }

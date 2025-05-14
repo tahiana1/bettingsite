@@ -11,7 +11,7 @@ type Qna {
   domainId: Uint
   domain: Domain
 
-  size: String
+  type: String
   question: String
   answer: String
 
@@ -50,9 +50,9 @@ extend type Query {
 }
 
 extend type Mutation {
-  createQna(input: NewQnaInput!): Qna!
-  updateQna(id: ID!, input: UpdateQnaInput!): Qna!
-  replyQna(id: ID!, input: UpdateQnaInput!): Qna!
-  deleteQna(id: ID!): Boolean!
-  completeQna(id: ID!): Boolean!
+  createQna(input: NewQnaInput!): Qna! @auth
+  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @auth
+  replyQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
+  deleteQna(id: ID!): Boolean! @hasRole(role: A)
+  completeQna(id: ID!): Boolean! @hasRole(role: A)
 }
