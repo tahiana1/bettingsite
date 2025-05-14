@@ -357,6 +357,18 @@ const SMSSettingPage: React.FC = () => {
             <Form.Item name="name" label={t("title")}>
               <Input />
             </Form.Item>
+            <Form.Item name="url" label={t("url")}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="agent" label={t("agent")}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="password" label={t("password")}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="token" label={t("token")}>
+              <Input />
+            </Form.Item>
             <Form.Item name="status" label={t("status")}>
               <Switch />
             </Form.Item>

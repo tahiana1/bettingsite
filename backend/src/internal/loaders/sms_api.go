@@ -126,6 +126,18 @@ func (br *smsApiReader) CreateSMSApi(ctx context.Context, updates model.NewSMSAp
 		Name: updates.Name,
 	}
 
+	if updates.URL != nil {
+		smsApi.Url = *updates.URL
+	}
+	if updates.Token != nil {
+		smsApi.Token = *updates.Token
+	}
+	if updates.Password != nil {
+		smsApi.Password = *updates.Password
+	}
+	if updates.Agent != nil {
+		smsApi.Agent = *updates.Agent
+	}
 	if updates.OrderNum != nil {
 		smsApi.OrderNum = *updates.OrderNum
 	}
@@ -157,6 +169,18 @@ func (br *smsApiReader) UpdateSMSApi(ctx context.Context, nID uint, updates mode
 		smsApi.Name = *updates.Name
 	}
 
+	if updates.URL != nil {
+		smsApi.Url = *updates.URL
+	}
+	if updates.Token != nil {
+		smsApi.Token = *updates.Token
+	}
+	if updates.Password != nil {
+		smsApi.Password = *updates.Password
+	}
+	if updates.Agent != nil {
+		smsApi.Agent = *updates.Agent
+	}
 	if updates.OrderNum != nil {
 		smsApi.OrderNum = *updates.OrderNum
 	}
