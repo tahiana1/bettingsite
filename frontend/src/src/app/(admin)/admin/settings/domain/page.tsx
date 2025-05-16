@@ -12,6 +12,8 @@ import {
   Switch,
   Divider,
   Flex,
+  Descriptions,
+  Space,
 } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -155,117 +157,130 @@ const DomainSettingPage: React.FC = () => {
                     </Form.Item>
                   </div>
                   <Divider className="!p-0 !m-0" />
+                  <Descriptions
+                    layout="vertical"
+                    bordered
+                    column={4}
+                    items={[
+                      {
+                        key: "1",
+                        label: t("name"),
+                        children: (
+                          <Space
+                            direction="vertical"
+                            className="flex justify-between !gap-3"
+                            align="center"
+                          >
+                            <div className="whitespace-nowrap">
+                              {t("telegram")}
+                            </div>
+                            <div className="whitespace-nowrap">
+                              {t("kakaoTalk")}
+                            </div>
+                            <div className="whitespace-nowrap">
+                              {t("serviceCenter")}
+                            </div>
+                            <div className="whitespace-nowrap">
+                              {t("liveDomain")}
+                            </div>
+                          </Space>
+                        ),
+                      },
+                      {
+                        key: "2",
+                        label: t("status"),
+                        children: (
+                          <Space
+                            direction="vertical"
+                            className="justify-between"
+                          >
+                            <Form.Item name="useTelegram" className="!p-0 !m-0">
+                              <Switch />
+                            </Form.Item>
+                            <Form.Item
+                              name="useKakaoTalk"
+                              className="!p-0 !m-0"
+                            >
+                              <Switch />
+                            </Form.Item>
+                            <Form.Item
+                              name="useServiceCenter"
+                              className="!p-0 !m-0"
+                            >
+                              <Switch />
+                            </Form.Item>
+                            <Form.Item
+                              name="useLiveDomain"
+                              className="!p-0 !m-0"
+                            >
+                              <Switch />
+                            </Form.Item>
+                          </Space>
+                        ),
+                      },
+                      {
+                        key: "3",
+                        label: t("currentName"),
+                        children: (
+                          <Space direction="vertical">
+                            <Form.Item name="telegram" className="!p-0 !m-0">
+                              <Input />
+                            </Form.Item>
+                            <Form.Item name="kakaoTalk" className="!p-0 !m-0">
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              name="serviceCenter"
+                              className="!p-0 !m-0"
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item name="liveDomain" className="!p-0 !m-0">
+                              <Input />
+                            </Form.Item>
+                          </Space>
+                        ),
+                      },
+                      {
+                        key: "4",
+                        label: t("link"),
+                        children: (
+                          <Space direction="vertical">
+                            <Form.Item
+                              name="telegramLink"
+                              className="!p-0 !m-0"
+                            >
+                              <Input />
+                            </Form.Item>
 
-                  <table className="min-w-full table-auto border border-gray-200 mb-4">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="px-2 py-1 items-center text-left font-medium">
-                          {t("name")}
-                        </th>
-                        <th className="px-2 py-1 items-center text-left font-medium">
-                          {t("status")}
-                        </th>
-                        <th className="px-2 py-1 items-center text-left font-medium">
-                          {t("currentName")}
-                        </th>
-                        <th className="px-2 py-1 items-center text-left font-medium">
-                          {t("link")}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-2 py-1 items-center">
-                          {t("telegram")}
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="useTelegram" className="!p-0 !m-0">
-                            <Switch />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="telegram" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="telegramLink" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-2 py-1 items-center">
-                          {t("kakaoTalk")}
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="useKakaoTalk" className="!p-0 !m-0">
-                            <Switch />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="kakaoTalk" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="kakaoTalkLink" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-2 py-1 items-center">
-                          {t("serviceCenter")}
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item
-                            name="useServiceCenter"
-                            className="!p-0 !m-0"
-                          >
-                            <Switch />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="serviceCenter" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item
-                            name="serviceCenterLink"
-                            className="!p-0 !m-0"
-                          >
-                            <Input />
-                          </Form.Item>
-                        </td>
-                      </tr>
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-2 py-1 items-center">
-                          {t("liveDomain")}
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="useLiveDomain" className="!p-0 !m-0">
-                            <Switch />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item name="liveDomain" className="!p-0 !m-0">
-                            <Input />
-                          </Form.Item>
-                        </td>
-                        <td className="px-2 py-1 items-center">
-                          <Form.Item
-                            name="liveDomainLink"
-                            className="!p-0 !m-0"
-                          >
-                            <Input />
-                          </Form.Item>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <Form.Item>
+                            <Form.Item
+                              name="kakaoTalkLink"
+                              className="!p-0 !m-0"
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              name="serviceCenterLink"
+                              className="!p-0 !m-0"
+                            >
+                              <Input />
+                            </Form.Item>
+                            <Form.Item
+                              name="liveDomainLink"
+                              className="!p-0 !m-0"
+                            >
+                              <Input />
+                            </Form.Item>
+                          </Space>
+                        ),
+                      },
+                    ]}
+                    className="!mb-4"
+                  />
+                  <Form.Item
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 8, offset: 4 }}
+                  >
                     <Button type="primary" htmlType="submit">
                       {t("submit")}
                     </Button>
