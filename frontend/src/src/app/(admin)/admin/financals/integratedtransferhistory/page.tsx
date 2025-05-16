@@ -36,7 +36,7 @@ import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
  
 
-const GeneralDWPage: React.FC = () => {
+const IntegratedTransferPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
@@ -663,4 +663,4 @@ const GeneralDWPage: React.FC = () => {
   );
 };
 
-export default GeneralDWPage;
+export default IntegratedTransferPage;

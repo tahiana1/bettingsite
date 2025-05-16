@@ -25,8 +25,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
-
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
+ 
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
@@ -34,11 +33,7 @@ import {
   DELETE_ANNOUNCEMENT,
   GET_ANNOUNCEMENTS,
   UPDATE_ANNOUNCEMENT,
-} from "@/actions/announcement";
-
-// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
-
-// type UserIndex = keyof User;
+} from "@/actions/announcement"; 
 
 const AnnouncementPage: React.FC = () => {
   const t = useTranslations();

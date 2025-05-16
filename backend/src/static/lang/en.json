@@ -58,6 +58,16 @@
 
   "admin/menu/administrations": "Administrations",
   "admin/menu/settlements": "Settlements",
+
+  "admin/menu/settlements/rollingconversionhistory": "Rolling Conversion History",
+  "admin/menu/settlements/fullpointshistory": "Full Points History",
+  "admin/menu/settlements/fullcoupondetail": "Full Coupon History",
+  "admin/menu/settlements/rollingaccumulationhistory": "Rolling Accumulation History",
+  "admin/menu/settlements/losingaccumulationhistory": "Losing Accumulation History",
+  "admin/menu/settlements/losingdetail": "Losing Detail",
+  "admin/menu/settlements/distributorStatistics": "Distributor Statistics",
+  "admin/menu/settlements/distributorStatisticsDetail": "Distributor Statistics Detail",
+
   "admin/menu/financals": "Financials",
 
   "admin/menu/generaldwdetail": "General Deposit/Withdraw Detail",
@@ -384,7 +394,8 @@
   "answered": "Answered",
   "checked": "Checked",
   "select_dist": "Select Distributor",
-  
+  "rolling": "Rolling",
+
   "times": "times",
   "search": "Search",
   "block": "Block",
