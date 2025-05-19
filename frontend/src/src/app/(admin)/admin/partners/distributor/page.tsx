@@ -9,12 +9,12 @@ import {
   Button,
   Popconfirm,
   Input,
-  DatePicker,
   Radio,
   Select,
   Modal,
   Form,
   Checkbox,
+  Switch,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -23,18 +23,13 @@ import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { APPROVE_USER, BLOCK_USER, GET_DISTRIBUTORS } from "@/actions/user";
-import { BiBlock } from "react-icons/bi";
+import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
-import { RxLetterCaseToggle } from "react-icons/rx";
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-import dayjs from "dayjs";
+import { RxLetterCaseToggle } from "react-icons/rx"; 
 import { buildTree, parseTableOptions } from "@/lib";
-import { USER_STATUS, USER_TYPE } from "@/constants";
-
-// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
-
-// type UserIndex = keyof User;
-
+import { USER_STATUS } from "@/constants";
+import { GiNightSleep } from "react-icons/gi";
+ 
 const PartnerPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
@@ -67,7 +62,7 @@ const PartnerPage: React.FC = () => {
   const { data: childrenData, refetch: refetchChildren } =
     useQuery(GET_DISTRIBUTORS);
 
-  const [colorModal, setColorModal] = useState<boolean>(false);
+  const [regModal, setRegModal] = useState<boolean>(false);
 
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
@@ -86,8 +81,7 @@ const PartnerPage: React.FC = () => {
 
   const onApproveUser = (user: User) => {
     approveUser({ variables: { id: user.id } })
-      .then((res) => {
-        console.log({ res });
+      .then((res) => { 
         if (res.data?.success) {
         }
         refetch();
@@ -150,12 +144,10 @@ const PartnerPage: React.FC = () => {
       },
     },
     {
-      title: t("top_dist"),
-      dataIndex: "top_dist",
-      key: "top_dist",
-      render(_, record) {
-        return record.parent?.userid;
-      },
+      title: t("member_count"),
+      dataIndex: "member_count",
+      key: "member_count",
+      render: (_, { profile }) => profile.comp,
     },
     {
       title: t("nickname"),
@@ -169,50 +161,33 @@ const PartnerPage: React.FC = () => {
       ),
     },
     {
-      title: t("holderName"),
-      dataIndex: "profile.holderName",
-      key: '"Profile"."holder_name"',
-      render: (_, { profile }) => profile.holderName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("phone"),
-      dataIndex: "profile.phone",
-      key: '"Profile"."phone"',
-      render: (_, { profile }) => profile.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("birthday"),
-      dataIndex: "profile.birthday",
-      key: "birthday",
-      render: (_, { profile }) =>
-        f.dateTime(new Date(profile.birthday) ?? null),
-    },
-    {
-      title: t("level"),
-      dataIndex: "profile.level",
-      key: "level",
-    },
-    {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
-      render: (text) => USER_TYPE[text],
-    },
-    {
       title: t("status"),
       dataIndex: "status",
       key: "status",
       render: (text) => USER_STATUS[text],
+    },
+    {
+      title: t("entry/exit"),
+      dataIndex: "status",
+      key: "status",
+      render: () => [
+        <Button
+          title={t("deposit/withdraw")}
+          variant="outlined"
+          color="blue"
+          key={"deposit"}
+        >
+          {t("deposit/withdraw")}
+        </Button>,
+        <Button
+          title={t("points") + "+"}
+          variant="outlined"
+          color="blue"
+          key={"point"}
+        >
+          {t("points") + "+"}
+        </Button>,
+      ],
     },
     {
       title: t("balance"),
@@ -227,99 +202,78 @@ const PartnerPage: React.FC = () => {
       render: (_, { profile }) => profile.point,
     },
     {
-      title: t("comp"),
-      dataIndex: "comp",
-      key: "comp",
+      title: t("settlementType"),
+      dataIndex: "settlementType",
+      key: "settlementType",
       render: (_, { profile }) => profile.comp,
     },
     {
-      title: t("usdtAddress"),
-      dataIndex: "usdtAddress",
-      key: "usdtAddress",
+      title: t("rollingRate"),
+      dataIndex: "rollingRate",
+      key: "rollingRate",
     },
     {
-      title: t("currentIP"),
-      dataIndex: "currentIP",
-      key: "currentIP",
+      title: t("rolling"),
+      dataIndex: "rolling",
+      key: "rolling",
     },
     {
-      title: "IP",
-      dataIndex: "IP",
-      key: "IP",
+      title: t("losingRate"),
+      dataIndex: "losingRate",
+      key: "losingRate",
     },
     {
-      title: t("coupon"),
-      dataIndex: "profile.coupon",
-      key: "profile.coupon",
-      render: (_, { profile }) => profile.coupon,
+      title: t("losing"),
+      dataIndex: "losing",
+      key: "losing",
     },
-    {
-      title: t("lastDeposit"),
-      dataIndex: "profile.lastDeposit",
-      key: "lastDeposit",
-      render: (_, { profile }) =>
-        profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
-    },
-    {
-      title: t("lastWithdraw"),
-      dataIndex: "profile.lastWithdraw",
-      key: "lastWithdraw",
-      render: (_, { profile }) =>
-        profile.lastWithdraw
-          ? f.dateTime(new Date(profile.lastWithdraw))
-          : null,
-    },
-    {
-      title: t("role"),
-      key: "role",
-      dataIndex: "role",
-    },
-    {
-      title: t("lastLogin"),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      sorter: {
-        compare: (a, b) => {
-          return new Date(a.updatedAt) > new Date(b.updatedAt) ? -1 : 1;
-        },
-        multiple: 2,
-      },
-      render: (text) => f.dateTime(new Date(text) ?? null),
-      // defaultFilteredValue: getDefaultFilter("updatedAt"),
-      filterDropdown: (props) => (
-        <FilterDropdown
-          {...props}
-          mapValue={(selectedKeys, event) => {
-            if (event === "value") {
-              return selectedKeys?.map((key) => {
-                if (typeof key === "string") {
-                  return dayjs(key);
-                }
 
-                return key;
-              });
-            }
-
-            if (event === "onChange") {
-              if (selectedKeys.every(dayjs.isDayjs)) {
-                return selectedKeys?.map((date: any) =>
-                  dayjs(date).toISOString()
-                );
-              }
-            }
-
-            return selectedKeys;
-          }}
+    {
+      title: t("membership"),
+      dataIndex: "membership",
+      key: "membership",
+      render: () => [
+        <Button
+          title={t("domainRegistration")}
+          variant="outlined"
+          color="blue"
+          key={"domainRegistration"}
         >
-          <DatePicker.RangePicker />
-        </FilterDropdown>
-      ),
+          {t("domainRegistration")}
+        </Button>,
+        <Button
+          title={t("losingRollingSetting")}
+          variant="outlined"
+          color="blue"
+          key={"losingRollingSetting"}
+        >
+          {t("losingRollingSetting")}
+        </Button>,
+        <Button title={t("move")} variant="outlined" color="blue" key={"move"}>
+          {t("move")}
+        </Button>,
+        <Button
+          title={t("lower")}
+          variant="outlined"
+          color="blue"
+          key={"lower"}
+        >
+          {t("lower")}
+        </Button>,
+      ],
     },
     {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      title: t("shortcut"),
+      dataIndex: "shortcut",
+      key: "shortcut",
+      render: () => [
+        <Button title={t("money")} variant="outlined" color="red" key={"money"}>
+          {t("money")}
+        </Button>,
+        <Button title={t("bet")} variant="outlined" color="blue" key={"bet"}>
+          {t("bet")}
+        </Button>,
+      ],
     },
     {
       title: t("action"),
@@ -349,11 +303,24 @@ const PartnerPage: React.FC = () => {
               <Button
                 title={t("approve")}
                 variant="outlined"
-                color="blue"
+                color="red"
                 icon={<PiUserCircleCheckLight />}
               />
             )}
           </Popconfirm>
+
+          <Button
+            title={t("dormancy")}
+            variant="outlined"
+            color="red"
+            icon={<GiNightSleep />}
+          />
+          <Button
+            title={t("delete")}
+            variant="outlined"
+            color="red"
+            icon={<BiTrash />}
+          />
         </Space.Compact>
       ),
     },
@@ -399,7 +366,7 @@ const PartnerPage: React.FC = () => {
 
   const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
-    setColorModal(false);
+    setRegModal(false);
   };
   const onExpand = (expanded: boolean, record: User) => {
     if (expanded) {
@@ -411,8 +378,7 @@ const PartnerPage: React.FC = () => {
             op: "eq",
           },
         ],
-      }).then((res) => {
-        console.log({ res });
+      }).then((res) => { 
         setUsers([
           ...(users ?? []),
           ...(childrenData?.response?.users?.map((u: any) => {
@@ -431,8 +397,7 @@ const PartnerPage: React.FC = () => {
     setTotal(data?.response?.total);
   }, [data]);
 
-  useEffect(() => {
-    console.log(buildTree(users ?? []));
+  useEffect(() => { 
     setTreeUsers(buildTree(users ?? []));
     // setTotal(data?.response?.total);
   }, [users]);
@@ -575,6 +540,9 @@ const PartnerPage: React.FC = () => {
                 <Button size="small">{t("only_root_distributor")}</Button>
                 <Checkbox> {t("only_direct_member")}</Checkbox>
               </Space>
+              <Button size="small" onClick={() => setRegModal(true)}>
+                {t("register")}
+              </Button>
             </Space>
           </Space>
           <Table<User>
@@ -603,34 +571,80 @@ const PartnerPage: React.FC = () => {
             }}
           />
           <Modal
-            open={colorModal}
-            onCancel={() => setColorModal(false)}
+            title={t("register")}
+            open={regModal}
+            onCancel={() => setRegModal(false)}
             onOk={onChangeColors}
           >
-            <Space direction="vertical" className="gap-2">
-              <Radio.Group
-                onChange={(e) => setColorOptoin(e.target.value)}
-                className="!flex !flex-col gap-2"
-                defaultValue={"new"}
-              >
-                <Radio value={"new"}>New Search Criteria</Radio>
-                {colorOption == "new" ? (
-                  <Form.Item>
-                    <Input />
-                  </Form.Item>
-                ) : null}
-                <Radio value={"list"}>
-                  Apply the member list search conditions as is:
-                </Radio>
-                {colorOption == "list" ? (
-                  <Form.Item>
-                    <Select />
-                  </Form.Item>
-                ) : null}
-              </Radio.Group>
-              <Form.Item label="Change Color">
-                <Select />
-              </Form.Item>
+            <Space direction="vertical" className="gap-2 text-end w-full">
+              <Form component={false}>
+                <Form.Item label={t("domain")}>
+                  <Select />
+                </Form.Item>
+                <Form.Item label={t("settlementMethod")}>
+                  <Select />
+                </Form.Item>
+                <Form.Item label={t("ID")}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label={t("password")}>
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item label={t("nickname")}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label={t("contact")}>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item label={t("holderName")}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label={t("bank")}>
+                  <Select />
+                </Form.Item>
+
+                <Form.Item label={t("accountNumber")}>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item label={t("secPassword")}>
+                  <Input.Password />
+                </Form.Item>
+
+                <Form.Item label={t("bettingHistoryReductionApplied")}>
+                  <Radio.Group
+                    optionType="button"
+                    buttonStyle="solid"
+                    options={[
+                      {
+                        label: t("live"),
+                        value: "live",
+                      },
+                      {
+                        label: t("slot"),
+                        value: "slot",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+
+                <Form.Item label={t("rollingConversionAutoApprove")}>
+                  <Switch />
+                </Form.Item>
+                <Form.Item label={t("virtualAccountAPI")}>
+                  <Switch />
+                </Form.Item>
+                <Form.Item label={t("allowCreationSubDealers")}>
+                  <Switch />
+                </Form.Item>
+                <Form.Item label={t("allowCreationLowerLevelDirectMembers")}>
+                  <Switch />
+                </Form.Item>
+                <Form.Item>
+                  <Button type="primary">{t("register")}</Button>
+                </Form.Item>
+              </Form>
             </Space>
           </Modal>
         </Card>

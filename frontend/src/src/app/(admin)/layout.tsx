@@ -5,6 +5,7 @@ import React from "react";
 import type { Metadata } from "next";
 import AdminRootLayout from "@/components/Admin/Layout";
 import "@/styles/globals.css";
+import 'quill/dist/quill.snow.css';
 import DeviceTracker from "@/components/Common/DeviceTracker";
 import { Content } from "antd/es/layout/layout";
 

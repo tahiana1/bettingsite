@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Layout,
@@ -17,6 +17,7 @@ import {
   Switch,
 } from "antd";
 
+import { useQuill } from "react-quilljs";
 import { Content } from "antd/es/layout/layout";
 
 import { useTranslations } from "next-intl";
@@ -78,6 +79,51 @@ const SiteSettingPage: React.FC = () => {
     },
   ];
   const [checked, setChecked] = useState<any[]>([]);
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    // "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
+
+  const { quill, quillRef } = useQuill({ modules, formats });
+  const onFinish = (v: any) => {
+    console.log({ v });
+  };
+  useEffect(() => {
+    if (quill) {
+      // quill.clipboard.dangerouslyPasteHTML("html");
+      // quill.on("text-change", (delta, oldDelta, source) => {
+      //   console.log("Text change!");
+      //   console.log(quill.getText()); // Get text only
+      //   console.log(quill.getContents()); // Get delta contents
+      //   console.log(quill.root.innerHTML); // Get innerHTML using quill
+      //   console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
+      // });
+    }
+  }, [quill]);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -85,9 +131,10 @@ const SiteSettingPage: React.FC = () => {
           <Row className="w-full gap-1 justify-between">
             <Col span={12}>
               <Card title={t("defaultSetting")} type="inner">
-                <Form layout="vertical">
+                <Form layout="vertical" onFinish={onFinish}>
                   <Form.Item>
                     <Radio.Group
+                      value={true}
                       options={[
                         {
                           label: t("underMaintenance"),
@@ -126,7 +173,8 @@ const SiteSettingPage: React.FC = () => {
                     <Input />
                   </Form.Item>
                   <Form.Item label={t("desc")}>
-                    <Input.TextArea />
+                    <div ref={quillRef}></div>
+                    {/* <Input.TextArea /> */}
                   </Form.Item>
                   <Form.Item label={t("headOffice")}>
                     <Select />
@@ -135,7 +183,9 @@ const SiteSettingPage: React.FC = () => {
                     <InputNumber className="w-full" min={0} defaultValue={5} />
                   </Form.Item>
                   <Form.Item>
-                    <Button type="primary">{t("submit")}</Button>
+                    <Button type="primary" htmlType="submit">
+                      {t("submit")}
+                    </Button>
                   </Form.Item>
                 </Form>
               </Card>

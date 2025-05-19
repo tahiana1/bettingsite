@@ -564,7 +564,6 @@ export default function AdminRootLayout({
     setDarkTheme(!isDarkTheme);
   };
   const onMenuClick = (e: MenuInfo) => {
-    console.log({ e });
     setSelectedkeys(e.keyPath);
     router.push("/" + e.key);
     // router.push("/" + e.keyPath.reverse().join("/"));
@@ -604,7 +603,6 @@ export default function AdminRootLayout({
         localStorage.setItem("token", result.token);
       })
       .catch((err) => {
-        console.log({ err }, ROUTES.admin.login);
         router.push(ROUTES.admin.login);
       });
     return () => {};
@@ -624,13 +622,11 @@ export default function AdminRootLayout({
     }
   }, [currentUser]);
   useEffect(() => {
-    console.log({ breadcrumbMenu });
     setSelectedkeys(breadcrumbMenu);
     const d = breadcrumbMenu
       ?.map((b) => findActiveMenuItem(sideBarItems, b))
       .filter(Boolean);
     setCurrentMenuItems(d);
-    console.log({ d });
   }, [breadcrumbMenu, locale]);
   return mounted ? (
     <ApolloProvider client={client}>
@@ -663,11 +659,10 @@ export default function AdminRootLayout({
                 breakpoint="md"
                 collapsedWidth="0"
                 collapsed={collapsed}
-                onBreakpoint={(broken) => {
-                  console.log(broken);
-                }}
-                onCollapse={(collapsed, type) => {
-                  console.log(collapsed, type);
+                // onBreakpoint={(broken) => {
+                //   console.log(broken);
+                // }}
+                onCollapse={(collapsed) => {
                   setCollapsed(collapsed);
                 }}
               >

@@ -7,7 +7,7 @@ export default getRequestConfig(async ({ locale }) => {
   // Provide a static locale, fetch a user setting,
   // read from `cookies()`, `headers()`, etc.
   const lang = locale ?? (await getUserLocale());
-  console.log(`${backendURL}/lang/${lang}.json`);
+  // console.log(`${backendURL}/lang/${lang}.json`);
   const res = await fetch(`${backendURL}/lang/${lang}.json`);
   const data = await res.json();
   return {
