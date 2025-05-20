@@ -20,19 +20,18 @@ import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { APPROVE_USER, BLOCK_USER, GET_DISTRIBUTORS } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
-import { RxLetterCaseToggle } from "react-icons/rx"; 
+import { RxLetterCaseToggle } from "react-icons/rx";
 import { buildTree, parseTableOptions } from "@/lib";
 import { USER_STATUS } from "@/constants";
 import { GiNightSleep } from "react-icons/gi";
- 
+
 const PartnerPage: React.FC = () => {
   const t = useTranslations();
-  const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
@@ -81,7 +80,7 @@ const PartnerPage: React.FC = () => {
 
   const onApproveUser = (user: User) => {
     approveUser({ variables: { id: user.id } })
-      .then((res) => { 
+      .then((res) => {
         if (res.data?.success) {
         }
         refetch();
@@ -378,7 +377,7 @@ const PartnerPage: React.FC = () => {
             op: "eq",
           },
         ],
-      }).then((res) => { 
+      }).then((res) => {
         setUsers([
           ...(users ?? []),
           ...(childrenData?.response?.users?.map((u: any) => {
@@ -397,7 +396,7 @@ const PartnerPage: React.FC = () => {
     setTotal(data?.response?.total);
   }, [data]);
 
-  useEffect(() => { 
+  useEffect(() => {
     setTreeUsers(buildTree(users ?? []));
     // setTotal(data?.response?.total);
   }, [users]);
