@@ -15,12 +15,13 @@ import {
   Form,
   Checkbox,
   Switch,
+  InputNumber,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
-import type { TableProps } from "antd";
+import type { RadioChangeEvent, TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { APPROVE_USER, BLOCK_USER, GET_DISTRIBUTORS } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
@@ -29,9 +30,37 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import { buildTree, parseTableOptions } from "@/lib";
 import { USER_STATUS } from "@/constants";
 import { GiNightSleep } from "react-icons/gi";
+import { GET_DOMAINS } from "@/actions/domain";
+import { FILTER_BANK } from "@/actions/bank";
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
 
 const PartnerPage: React.FC = () => {
   const t = useTranslations();
+  const f = useFormatter();
+  const [form] = Form.useForm();
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
@@ -55,13 +84,19 @@ const PartnerPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
   const [treeUsers, setTreeUsers] = useState<any[]>([]);
-
+  const [currentUser, setCurrentUser] = useState<User | null | undefined>(null);
   const { loading, data, refetch } = useQuery(GET_DISTRIBUTORS);
 
+  const { data: bankData } = useQuery(FILTER_BANK);
   const { data: childrenData, refetch: refetchChildren } =
     useQuery(GET_DISTRIBUTORS);
 
+  const { data: domainData } = useQuery(GET_DOMAINS);
+  const [domains, setDomains] = useState<any[]>([]);
+
   const [regModal, setRegModal] = useState<boolean>(false);
+  const [domainModal, setDomainModal] = useState<boolean>(false);
+  const [moneyModal, setMoneyModal] = useState<boolean>(false);
 
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
@@ -88,6 +123,93 @@ const PartnerPage: React.FC = () => {
       .catch((err) => {
         console.log({ err });
       });
+  };
+
+  const onDomainRegister = (record: User) => {
+    setCurrentUser(record);
+    setDomainModal(true);
+  };
+
+  const onUpdateDomain = (v: any) => {
+    console.log({ v });
+
+    setDomainModal(false);
+  };
+
+  const onRegisterUser = (v: any) => {
+    console.log({ v });
+    setRegModal(false);
+  };
+
+  const onPayment = (record: User) => {
+    setCurrentUser(record);
+    setMoneyModal(true);
+  };
+
+  const onAmountChange = (e: RadioChangeEvent) => {
+    if (e.target.value == "max") {
+      form.setFieldValue("amount", 232323);
+    } else {
+      form.setFieldValue("amount", parseInt(e.target.value));
+    }
+  };
+  const onChange: TableProps<User>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+  ) => {
+    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
+  };
+
+  const updateFilter = (field: string, v: string, op: string = "eq") => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+    filters = filters.filter((f) => f.field !== field);
+    if (v) {
+      filters = [
+        ...filters,
+        {
+          field: field,
+          value: v,
+          op: op,
+        },
+      ];
+    }
+    setTableOptions({ ...tableOptions, filters });
+  };
+
+  const onBlackMemoChange = (v: string) => {
+    updateFilter("black_memo", v, "eq");
+  };
+
+  const onMemberStatusChange = (v: string) => {
+    updateFilter("status", v, "eq");
+  };
+
+  const onLevelChange = (v: string = "") => {
+    updateFilter(`"Profile"."level"`, v, "eq");
+  };
+
+  const onExpand = (expanded: boolean, record: User) => {
+    if (expanded) {
+      refetchChildren({
+        filters: [
+          {
+            field: "parent_id",
+            value: record.id,
+            op: "eq",
+          },
+        ],
+      }).then(() => {
+        setUsers([
+          ...(users ?? []),
+          ...(childrenData?.response?.users?.map((u: any) => {
+            return { ...u, key: u.id };
+          }) ?? []),
+        ]);
+      });
+    }
   };
 
   const columns: TableProps<User>["columns"] = [
@@ -169,12 +291,13 @@ const PartnerPage: React.FC = () => {
       title: t("entry/exit"),
       dataIndex: "status",
       key: "status",
-      render: () => [
+      render: (_, record) => [
         <Button
           title={t("deposit/withdraw")}
           variant="outlined"
           color="blue"
           key={"deposit"}
+          onClick={() => onPayment(record)}
         >
           {t("deposit/withdraw")}
         </Button>,
@@ -231,12 +354,13 @@ const PartnerPage: React.FC = () => {
       title: t("membership"),
       dataIndex: "membership",
       key: "membership",
-      render: () => [
+      render: (_, record) => [
         <Button
           title={t("domainRegistration")}
           variant="outlined"
           color="blue"
           key={"domainRegistration"}
+          onClick={() => onDomainRegister(record)}
         >
           {t("domainRegistration")}
         </Button>,
@@ -324,68 +448,6 @@ const PartnerPage: React.FC = () => {
       ),
     },
   ];
-
-  const onChange: TableProps<User>["onChange"] = (
-    pagination,
-    filters,
-    sorter,
-    extra
-  ) => {
-    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
-  };
-
-  const updateFilter = (field: string, v: string, op: string = "eq") => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    filters = filters.filter((f) => f.field !== field);
-    if (v) {
-      filters = [
-        ...filters,
-        {
-          field: field,
-          value: v,
-          op: op,
-        },
-      ];
-    }
-    setTableOptions({ ...tableOptions, filters });
-  };
-
-  const onBlackMemoChange = (v: string) => {
-    updateFilter("black_memo", v, "eq");
-  };
-
-  const onMemberStatusChange = (v: string) => {
-    updateFilter("status", v, "eq");
-  };
-
-  const onLevelChange = (v: string = "") => {
-    updateFilter(`"Profile"."level"`, v, "eq");
-  };
-
-  const onChangeColors = async () => {
-    setRegModal(false);
-  };
-  const onExpand = (expanded: boolean, record: User) => {
-    if (expanded) {
-      refetchChildren({
-        filters: [
-          {
-            field: "parent_id",
-            value: record.id,
-            op: "eq",
-          },
-        ],
-      }).then(() => {
-        setUsers([
-          ...(users ?? []),
-          ...(childrenData?.response?.users?.map((u: any) => {
-            return { ...u, key: u.id };
-          }) ?? []),
-        ]);
-      });
-    }
-  };
   useEffect(() => {
     setUsers(
       data?.response?.users?.map((u: any) => {
@@ -401,8 +463,16 @@ const PartnerPage: React.FC = () => {
   }, [users]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
+    setDomains(
+      domainData?.response?.domains?.map((d: Domain) => ({
+        ...d,
+        key: d.id,
+        label: d.name,
+        value: d.id,
+      }))
+    );
+  }, [domainData]);
+
   return (
     <Layout>
       {contextHolder}
@@ -568,38 +638,88 @@ const PartnerPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
+
           <Modal
             title={t("register")}
             open={regModal}
             onCancel={() => setRegModal(false)}
-            onOk={onChangeColors}
+            width={800}
+            footer={null}
           >
-            <Space direction="vertical" className="gap-2 text-end w-full">
-              <Form component={false}>
-                <Form.Item label={t("domain")}>
-                  <Select />
+            <Space direction="vertical" className="gap-2 w-full">
+              <Form {...formItemLayout} onFinish={onRegisterUser}>
+                <Form.Item name="domainId" label={t("domain")}>
+                  <Select options={domains} />
                 </Form.Item>
-                <Form.Item label={t("settlementMethod")}>
-                  <Select />
+                <Form.Item name="settlementId" label={t("settlementMethod")}>
+                  <Select
+                    options={[
+                      {
+                        label: "(Be-Dang)*Rate%-Rolling-Rolling Conversion",
+                        value: 1,
+                      },
+                      {
+                        label: "(Be-Dang-Rolling-Rolling Conversion)*Rate%",
+                        value: 2,
+                      },
+                      {
+                        label:
+                          "[(input-output)-(current money previous money)]*rate%-rolling",
+                        value: 3,
+                      },
+                      {
+                        label:
+                          "[(deposit-withdrawal)-(current money-previous money)-rolling]*rate%",
+                        value: 4,
+                      },
+                      {
+                        label: "(input-output)*rate%",
+                        value: 5,
+                      },
+                      {
+                        label:
+                          "[(input-output)-(current money-previous money)]*rate%",
+                        value: 6,
+                      },
+                      {
+                        label: "(Be-dang-Total Rolling)*Rate%",
+                        value: 7,
+                      },
+                      {
+                        label: "(B-Dang-orignal Rollling)*Rate%",
+                        value: 8,
+                      },
+                      {
+                        label:
+                          "[(Be-dang)*Rate%-Rolling-RollingConversion]*0.9",
+                        value: 9,
+                      },
+                    ]}
+                  />
                 </Form.Item>
-                <Form.Item label={t("ID")}>
+                <Form.Item name="userId" label={t("userid")}>
                   <Input />
                 </Form.Item>
-                <Form.Item label={t("password")}>
+                <Form.Item name="password" label={t("password")}>
                   <Input.Password />
                 </Form.Item>
-                <Form.Item label={t("nickname")}>
+                <Form.Item name={"nickname"} label={t("nickname")}>
                   <Input />
                 </Form.Item>
-                <Form.Item label={t("contact")}>
+                <Form.Item name={"phone"} label={t("contact")}>
                   <Input />
                 </Form.Item>
 
-                <Form.Item label={t("holderName")}>
+                <Form.Item name={"holderName"} label={t("holderName")}>
                   <Input />
                 </Form.Item>
-                <Form.Item label={t("bank")}>
-                  <Select />
+                <Form.Item name={"bankId"} label={t("bank")}>
+                  <Select
+                    options={bankData?.response?.banks?.map((b: Bank) => ({
+                      label: b.name,
+                      value: b.id,
+                    }))}
+                  />
                 </Form.Item>
 
                 <Form.Item label={t("accountNumber")}>
@@ -639,8 +759,132 @@ const PartnerPage: React.FC = () => {
                 <Form.Item label={t("allowCreationLowerLevelDirectMembers")}>
                   <Switch />
                 </Form.Item>
+                <Form.Item {...tailFormItemLayout}>
+                  <Button type="primary" htmlType="submit">
+                    {t("register")}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Space>
+          </Modal>
+
+          <Modal
+            title={t("domain")}
+            open={domainModal}
+            onCancel={() => setDomainModal(false)}
+            footer={null}
+          >
+            <Space direction="vertical" className="gap-2 w-full">
+              <Form
+                initialValues={{
+                  userId: currentUser?.userid,
+                }}
+                onFinish={onUpdateDomain}
+              >
+                <Form.Item label={t("site")}>
+                  <Select
+                    options={[
+                      {
+                        label: "site2",
+                        value: "site2",
+                      },
+                    ]}
+                  />
+                </Form.Item>
+                <Form.Item name={"userId"} label={t("domain")}>
+                  <Input disabled />
+                </Form.Item>
+                <Form.Item name={"domainId"} label={t("domain")}>
+                  <Select mode="multiple" options={domains} />
+                </Form.Item>
                 <Form.Item>
-                  <Button type="primary">{t("register")}</Button>
+                  <Button type="primary" htmlType="submit">
+                    {t("register")}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Space>
+          </Modal>
+
+          <Modal
+            title={t("payment")}
+            open={moneyModal}
+            onCancel={() => setMoneyModal(false)}
+            footer={null}
+          >
+            <Space direction="vertical" className="gap-2 w-full">
+              <Form
+                initialValues={{
+                  userId: currentUser?.userid,
+                  balance: currentUser?.profile?.balance,
+                }}
+                form={form}
+                onFinish={() => {
+                  setMoneyModal(false);
+                }}
+              >
+                <Form.Item name={"balance"} label={t("balance")}>
+                  <Input disabled />
+                </Form.Item>
+                <Space>
+                  <Form.Item
+                    name={"amount"}
+                    label={t("amount")}
+                    className="!flex !w-full !p-0 !m-0"
+                  >
+                    <InputNumber min={0} />
+                  </Form.Item>
+                  <Button type="primary">{t("pay")}</Button>
+                  <Button color="danger" variant="outlined">
+                    {t("cancel")}
+                  </Button>
+                </Space>
+
+                <Form.Item>
+                  <Radio.Group
+                    buttonStyle="solid"
+                    className="w-full"
+                    onChange={onAmountChange}
+                  >
+                    <Space.Compact className="w-full flex flex-wrap gap-2">
+                      <Radio.Button value={1000}>
+                        {f.number(1000, { style: "currency", currency: "USD" })}
+                      </Radio.Button>
+                      <Radio.Button value={5000}>
+                        {f.number(5000, { style: "currency", currency: "USD" })}
+                      </Radio.Button>
+                      <Radio.Button value={10000}>
+                        {f.number(10000, {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </Radio.Button>
+                      <Radio.Button value={50000}>
+                        {f.number(50000, {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </Radio.Button>
+                      <Radio.Button value={100000}>
+                        {f.number(100000, {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </Radio.Button>
+                      <Radio.Button value={500000}>
+                        {f.number(500000, {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </Radio.Button>
+                      <Radio.Button value={"max"}>MAX</Radio.Button>
+                    </Space.Compact>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item>
+                  <Button type="default" htmlType="submit">
+                    {t("close")}
+                  </Button>
                 </Form.Item>
               </Form>
             </Space>

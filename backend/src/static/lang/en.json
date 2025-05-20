@@ -363,6 +363,9 @@
   "allowCreationLowerLevelDirectMembers": "Allow Creation Lower Level Direct Members",
   "settlementMethod": "Settlement Method",
   "dormancy": "Dormancy",
+  "close": "Close",
+  "pay": "Pay",
+  "payment": "Payment",
 
   "abroad": "Abroad",
   "domestic": "Domestic",
@@ -429,6 +432,7 @@
   "reset": "Reset",
   "disconnect": "Disconnect",
   "disconnectAll": "Disconnect All",
+  "cancel": "Cancel",
   "delete": "Delete",
   "deleteAll": "Delete All"
 }
