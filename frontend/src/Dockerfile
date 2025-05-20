@@ -3,13 +3,8 @@ FROM node:22-slim
 WORKDIR /app
 
 EXPOSE 3000
-COPY package.json yarn.lock ./
-RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    else echo "Lock file not found." && exit 1; \
-    fi
+COPY package.json package-lock.json ./
+RUN npm ci -f
 
-RUN yarn install --no-package-lock
 COPY . .
-CMD ["yarn", "dev"]
+CMD ["npm", "run", "dev"]

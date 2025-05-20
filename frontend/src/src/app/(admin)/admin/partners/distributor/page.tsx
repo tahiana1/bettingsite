@@ -16,6 +16,7 @@ import {
   Checkbox,
   Switch,
   InputNumber,
+  Tabs,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { RadioChangeEvent, TableProps } from "antd";
@@ -32,6 +33,7 @@ import { USER_STATUS } from "@/constants";
 import { GiNightSleep } from "react-icons/gi";
 import { GET_DOMAINS } from "@/actions/domain";
 import { FILTER_BANK } from "@/actions/bank";
+import BasicInformation from "@/components/Admin/Distributor/Basic";
 
 const formItemLayout = {
   labelCol: {
@@ -97,6 +99,7 @@ const PartnerPage: React.FC = () => {
   const [regModal, setRegModal] = useState<boolean>(false);
   const [domainModal, setDomainModal] = useState<boolean>(false);
   const [moneyModal, setMoneyModal] = useState<boolean>(false);
+  const [userModal, setUserModal] = useState<boolean>(false);
 
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
@@ -212,6 +215,12 @@ const PartnerPage: React.FC = () => {
     }
   };
 
+  const onViewCurrentMember = (u: User) => {
+    console.log({ u });
+    setCurrentUser(u);
+    setUserModal(true);
+  };
+
   const columns: TableProps<User>["columns"] = [
     {
       title: "ID",
@@ -224,26 +233,15 @@ const PartnerPage: React.FC = () => {
         },
         multiple: 1,
       },
-      render: (text, record) => {
-        if (!record.status) {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Button type="link" size="small">
-                {text}
-              </Button>
-            </Popconfirm>
-          );
-        }
-        return text;
-      },
+      render: (text, record) => (
+        <Button
+          type="link"
+          size="small"
+          onClick={() => onViewCurrentMember(record)}
+        >
+          {text}
+        </Button>
+      ),
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -448,6 +446,186 @@ const PartnerPage: React.FC = () => {
       ),
     },
   ];
+
+  const tabItems = [
+    {
+      label: t("basic"),
+      key: "basic",
+      children: <BasicInformation user={currentUser!} />,
+    },
+    {
+      label: t("blackSearch"),
+      key: "blackSearch",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("bettingSettings"),
+      key: "bettingSettings",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("deposit/withdraw"),
+      key: "deposit/withdraw",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("noteList"),
+      key: "noteList",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("serviceCenter"),
+      key: "serviceCenter",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("accountInquirySetting"),
+      key: "accountInquirySetting",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("subscriptionSetting"),
+      key: "subscriptionSetting",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("directMemberList"),
+      key: "directMemberList",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("recommendedMembers"),
+      key: "recommendedMembers",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("subMembers"),
+      key: "subMembers",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("integratedMoneyDetail"),
+      key: "integratedMoneyDetail",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("pointDetail"),
+      key: "pointDetail",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("couponDetail"),
+      key: "couponDetail",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("losingHistory"),
+      key: "losingHistory",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("rollingHistory"),
+      key: "rollingHistory",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("bettingHistory"),
+      key: "bettingHistory",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("activityHistory"),
+      key: "activityHistory",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("informationChangeHistory"),
+      key: "informationChangeHistory",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+    {
+      label: t("generalStatistics"),
+      key: "generalStatistics",
+      children: (
+        <div>
+          <Input />
+        </div>
+      ),
+    },
+  ];
+
   useEffect(() => {
     setUsers(
       data?.response?.users?.map((u: any) => {
@@ -888,6 +1066,16 @@ const PartnerPage: React.FC = () => {
                 </Form.Item>
               </Form>
             </Space>
+          </Modal>
+
+          <Modal
+            title={t("user")}
+            open={userModal}
+            onCancel={() => setUserModal(false)}
+            footer={null}
+            width={"98%"}
+          >
+            <Tabs items={tabItems} />
           </Modal>
         </Card>
       </Content>

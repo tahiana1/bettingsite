@@ -14,7 +14,7 @@ type Domain struct {
 	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 
 	UserID uint `json:"userId"`
-	User   User `json:"owner" gorm:"constraint:OnUpdate:CASCADEOnDelete:SET NULL;"`
+	User   User `json:"owner" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 
 	AutoReg bool `json:"autoReg"`
 	Status  bool `json:"status"`
