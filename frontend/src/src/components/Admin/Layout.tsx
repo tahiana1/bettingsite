@@ -602,7 +602,7 @@ export default function AdminRootLayout({
         }
         localStorage.setItem("token", result.token);
       })
-      .catch((err) => {
+      .catch(() => {
         router.push(ROUTES.admin.login);
       });
     return () => {};

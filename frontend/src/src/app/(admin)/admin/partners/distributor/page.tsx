@@ -363,7 +363,6 @@ const PartnerPage: React.FC = () => {
     updateFilter(`"Profile"."level"`, v, "eq");
   };
 
-  const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
     setRegModal(false);
   };
@@ -377,7 +376,7 @@ const PartnerPage: React.FC = () => {
             op: "eq",
           },
         ],
-      }).then((res) => {
+      }).then(() => {
         setUsers([
           ...(users ?? []),
           ...(childrenData?.response?.users?.map((u: any) => {
