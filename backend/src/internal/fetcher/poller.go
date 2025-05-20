@@ -25,15 +25,16 @@ func StartPolling() {
 
 			var leagues []models.League
 			initializers.DB.Find(&leagues)
+			if len(leagues) > 0 {
+				n := rand.Intn(len(leagues)) // rand.Intn(5) returns 0–4, so add 1
+				fmt.Println("Random number between 1-5:", n)
 
-			n := rand.Intn(len(leagues)) // rand.Intn(5) returns 0–4, so add 1
-			fmt.Println("Random number between 1-5:", n)
-
-			data, _ := json.Marshal(leagues[n])
-			// data := MatchOdds{MatchID: "match123", Odds: 2.35}
-			// msg, _ := json.Marshal(data)
-			log.Println("Fetched odds:", len(data))
-			kafka.PublishMessage(data)
+				data, _ := json.Marshal(leagues[n])
+				// data := MatchOdds{MatchID: "match123", Odds: 2.35}
+				// msg, _ := json.Marshal(data)
+				log.Println("Fetched odds:", len(data))
+				kafka.PublishMessage(data)
+			}
 		}
 	}()
 }
