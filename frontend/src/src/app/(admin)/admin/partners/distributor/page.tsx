@@ -449,7 +449,7 @@ const PartnerPage: React.FC = () => {
 
   const tabItems = [
     {
-      label: t("basic"),
+      label: t("basicInformation"),
       key: "basic",
       children: <BasicInformation user={currentUser!} />,
     },
