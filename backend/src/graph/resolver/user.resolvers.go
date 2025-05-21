@@ -46,6 +46,15 @@ func (r *mutationResolver) DeleteProfile(ctx context.Context, id uint) (bool, er
 	return true, nil
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (bool, error) {
+	ldr := loaders.For(ctx)
+	if err := ldr.UserReader.CreateUser(ctx, input); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // ApproveUser is the resolver for the approveUser field.
 func (r *mutationResolver) ApproveUser(ctx context.Context, id uint) (bool, error) {
 	ldr := loaders.For(ctx)

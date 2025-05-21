@@ -222,6 +222,11 @@ export const FILTER_USERS = gql`
   }
 `;
 
+export const CREATE_USER = gql`
+  mutation NewUser($input: NewUser!) {
+    success: createUser(input: $input)
+  }
+`;
 export const UPDATE_USER = gql`
   mutation UpdateUser($id: ID!, $input: UpdateUser!) {
     success: updateUser(id: $id, input: $input)

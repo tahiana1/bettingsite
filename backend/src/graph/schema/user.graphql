@@ -129,6 +129,33 @@ input UpdateUser {
   orderNum: Uint
 }
 
+input NewUser {
+  name: String
+  userid: String!
+  type: UserType!
+  role: String!
+  password: String!
+  usdtAddress: String
+  currentIP: String
+  IP: String
+  rootId: ID
+  parentId: ID
+  childrenCount: Uint
+  status: UserStatus!
+  blackMemo: Boolean
+  orderNum: Uint
+  os: String
+  device: String
+  fingerPrint: String
+
+  domainId: ID
+  bankId: ID
+  holderName: String
+  nickname: String
+  phone: String
+  settlementId: ID
+}
+
 type UserList {
   users: [User!]!
   total: Int!
@@ -164,6 +191,7 @@ extend type Query {
 extend type Mutation {
   updateProfile(id: ID!, input: UpdateProfile!): Profile! @auth
   deleteProfile(id: ID!): Boolean! @auth
+  createUser(input: NewUser): Boolean! @hasRole(role: A)
   approveUser(id: ID!): Boolean! @hasRole(role: A)
   blockUser(id: ID!): Boolean! @hasRole(role: A)
   updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: A)

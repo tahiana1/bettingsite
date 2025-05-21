@@ -189,6 +189,72 @@ func (ur *userReader) ConnectedUsers(ctx context.Context, filters []*model.Filte
 }
 
 // DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+func (pr *userReader) CreateUser(ctx context.Context, input *model.NewUser) error {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
+	me := models.User{
+		Userid: input.Userid,
+		Role:   input.Role,
+		Type:   input.Type.String(),
+		Status: input.Status.String(),
+	}
+
+	if err := initializers.DB.Model(&me).First(&me, "userid = ?", input.Userid).Error; err == nil {
+		if me.ID > 0 {
+			return fmt.Errorf("UserID is existing...")
+		}
+	}
+
+	if input.Name != nil {
+		me.Name = *input.Name
+	}
+	if input.UsdtAddress != nil {
+		me.USDTAddress = *input.UsdtAddress
+	}
+	if input.OrderNum != nil {
+		me.OrderNum = *input.OrderNum
+	}
+
+	if input.BlackMemo != nil {
+		me.BlackMemo = *input.BlackMemo
+	}
+
+	tx := initializers.DB.Save(&me)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	myprofile := models.Profile{
+		UserID: me.ID,
+	}
+
+	if input.Nickname != nil {
+		myprofile.Nickname = *input.Nickname
+	}
+
+	if input.HolderName != nil {
+		myprofile.HolderName = *input.HolderName
+	}
+
+	if input.Phone != nil {
+		myprofile.Phone = *input.Phone
+	}
+
+	if input.BankID != nil {
+		myprofile.BankID = *input.BankID
+	}
+
+	tx1 := initializers.DB.Save(&myprofile)
+	if tx1.Error != nil {
+		return tx1.Error
+	}
+	return nil
+}
+
+// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
 func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model.UpdateUser) error {
 	defer func() {
 		if r := recover(); r != nil {

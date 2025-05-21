@@ -245,6 +245,32 @@ type NewTransactionInput struct {
 	UsdtDesc      *string  `json:"usdtDesc,omitempty"`
 }
 
+type NewUser struct {
+	Name          *string    `json:"name,omitempty"`
+	Userid        string     `json:"userid"`
+	Type          UserType   `json:"type"`
+	Role          string     `json:"role"`
+	Password      string     `json:"password"`
+	UsdtAddress   *string    `json:"usdtAddress,omitempty"`
+	CurrentIP     *string    `json:"currentIP,omitempty"`
+	IP            *string    `json:"IP,omitempty"`
+	RootID        *uint      `json:"rootId,omitempty"`
+	ParentID      *uint      `json:"parentId,omitempty"`
+	ChildrenCount *uint      `json:"childrenCount,omitempty"`
+	Status        UserStatus `json:"status"`
+	BlackMemo     *bool      `json:"blackMemo,omitempty"`
+	OrderNum      *uint      `json:"orderNum,omitempty"`
+	Os            *string    `json:"os,omitempty"`
+	Device        *string    `json:"device,omitempty"`
+	FingerPrint   *string    `json:"fingerPrint,omitempty"`
+	DomainID      *uint      `json:"domainId,omitempty"`
+	BankID        *uint      `json:"bankId,omitempty"`
+	HolderName    *string    `json:"holderName,omitempty"`
+	Nickname      *string    `json:"nickname,omitempty"`
+	Phone         *string    `json:"phone,omitempty"`
+	SettlementID  *uint      `json:"settlementId,omitempty"`
+}
+
 type NotificationList struct {
 	Notifications []*models.Notification `json:"notifications"`
 	Total         int32                  `json:"total"`

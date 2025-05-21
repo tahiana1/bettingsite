@@ -24,7 +24,12 @@ import type { RadioChangeEvent, TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
-import { APPROVE_USER, BLOCK_USER, GET_DISTRIBUTORS } from "@/actions/user";
+import {
+  APPROVE_USER,
+  BLOCK_USER,
+  CREATE_USER,
+  GET_DISTRIBUTORS,
+} from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
@@ -101,6 +106,7 @@ const PartnerPage: React.FC = () => {
   const [moneyModal, setMoneyModal] = useState<boolean>(false);
   const [userModal, setUserModal] = useState<boolean>(false);
 
+  const [createUser] = useMutation(CREATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
 
@@ -141,6 +147,13 @@ const PartnerPage: React.FC = () => {
 
   const onRegisterUser = (v: any) => {
     console.log({ v });
+    createUser({
+      variables: {
+        input: { ...v, role: "P", type: "G", status: "P" },
+      },
+    }).then((result) => {
+      console.log({ result });
+    });
     setRegModal(false);
   };
 
@@ -874,8 +887,11 @@ const PartnerPage: React.FC = () => {
                       },
                     ]}
                   />
+                </Form.Item>{" "}
+                <Form.Item name="name" label={t("name")}>
+                  <Input />
                 </Form.Item>
-                <Form.Item name="userId" label={t("userid")}>
+                <Form.Item name="userid" label={t("userid")}>
                   <Input />
                 </Form.Item>
                 <Form.Item name="password" label={t("password")}>
@@ -887,7 +903,6 @@ const PartnerPage: React.FC = () => {
                 <Form.Item name={"phone"} label={t("contact")}>
                   <Input />
                 </Form.Item>
-
                 <Form.Item name={"holderName"} label={t("holderName")}>
                   <Input />
                 </Form.Item>
@@ -899,15 +914,12 @@ const PartnerPage: React.FC = () => {
                     }))}
                   />
                 </Form.Item>
-
                 <Form.Item label={t("accountNumber")}>
                   <Input />
                 </Form.Item>
-
                 <Form.Item label={t("secPassword")}>
                   <Input.Password />
                 </Form.Item>
-
                 <Form.Item label={t("bettingHistoryReductionApplied")}>
                   <Radio.Group
                     optionType="button"
@@ -924,7 +936,6 @@ const PartnerPage: React.FC = () => {
                     ]}
                   />
                 </Form.Item>
-
                 <Form.Item label={t("rollingConversionAutoApprove")}>
                   <Switch />
                 </Form.Item>

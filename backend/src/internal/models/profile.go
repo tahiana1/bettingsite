@@ -11,9 +11,13 @@ type Profile struct {
 
 	UserID uint `json:"userId"`
 
-	Name          string `json:"name"`
-	Nickname      string `json:"nickname" gorm:"unique;not null"`
-	BankName      string `json:"bankName"`
+	Name     string `json:"name"`
+	Nickname string `json:"nickname" gorm:"unique;not null"`
+
+	BankName string `json:"bankName"`
+	BankID   uint   `json:"bankId"`
+	Bank     *Bank  `json:"bank" gorm:"foreignKey:BankID"`
+
 	HolderName    string `json:"holderName"`
 	AccountNumber string `json:"accountNumber" gorm:"size:50"`
 
