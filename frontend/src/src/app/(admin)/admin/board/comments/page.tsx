@@ -15,6 +15,7 @@ import {
   Form,
   InputNumber,
   notification,
+  Select,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -61,7 +62,25 @@ const AnnouncementPage: React.FC = () => {
     setOpen(true);
   };
 
-  const onStatusChange = (ann: Noti, checked: boolean) => {
+  const onLevelChange = (announcement: Announcement, value: number) => {
+    updateAnnouncement({
+      variables: { 
+        id: announcement.id, 
+        input: { 
+          orderNum: value
+        } 
+      },
+    }).then(() => {
+      refetch(tableOptions);
+    }).catch((err) => {
+      console.error('Error updating announcement level:', err);
+      notiAPI.error({
+        message: 'Failed to update announcement level',
+      });
+    });
+  };
+
+  const onStatusChange = (ann: Announcement, checked: boolean) => {
     updateAnnouncement({
       variables: {
         id: ann.id,
@@ -74,14 +93,11 @@ const AnnouncementPage: React.FC = () => {
     });
   };
 
-  const onCreate = (ann: Noti) => {
+  const onCreate = (ann: Announcement) => {
     console.log("Received values of form: ", ann);
     const newNoti = {
       title: ann.title,
-      orderNum: ann.orderNum,
       description: ann.description,
-      showFrom: ann.duration ? ann.duration[0] : undefined,
-      showTo: ann.duration ? ann.duration[1] : undefined,
       status: ann.status,
     };
     createAnnouncement({ variables: { input: newNoti } })
@@ -99,24 +115,24 @@ const AnnouncementPage: React.FC = () => {
       });
   };
 
-  const onUpdate = (noti: Noti) => {
-    const update = {
-      title: noti.title,
-      description: noti.description,
-      showFrom: noti.duration ? noti.duration[0] : undefined,
-      showTo: noti.duration ? noti.duration[1] : undefined,
-      orderNum: noti.orderNum,
-      status: noti.status,
-    };
-    updateAnnouncement({
-      variables: {
-        id: currentAnnouncement!.id,
-        input: update,
-      },
-    }).then(() => {
-      setEditOpen(false);
-      refetch(tableOptions);
-    });
+  const onUpdate = (noti: Announcement) => {
+    // const update = {
+    //   title: noti.title,
+    //   description: noti.description,
+    //   showFrom: noti.duration ? noti.duration[0] : undefined,
+    //   showTo: noti.duration ? noti.duration[1] : undefined,
+    //   orderNum: noti.orderNum,
+    //   status: noti.status,
+    // };
+    // updateAnnouncement({
+    //   variables: {
+    //     id: currentAnnouncement!.id,
+    //     input: update,
+    //   },
+    // }).then(() => {
+    //   setEditOpen(false);
+    //   refetch(tableOptions);
+    // });
   };
 
   const onEdit = (announce: Announcement) => {
@@ -135,7 +151,7 @@ const AnnouncementPage: React.FC = () => {
     setOpen(false);
   };
 
-  const onDeleteNoti = (noti: Noti) => {
+  const onDeleteNoti = (noti: Announcement) => {
     deleteNoti({ variables: { id: noti.id } })
       .then((res) => {
         if (res.data?.success) {
@@ -173,25 +189,18 @@ const AnnouncementPage: React.FC = () => {
     },
     {
       title: t("desc"),
-      dataIndex: "description",
+      dataIndex: "description", 
       key: "description",
+      width: 1000,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
         </FilterDropdown>
       ),
-    },
-    {
-      title: t("showFrom"),
-      dataIndex: "showFrom",
-      key: "showFrom",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
-    },
-    {
-      title: t("showTo"),
-      dataIndex: "showTo",
-      key: "showTo",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => {
+        if (!text) return '-';
+        return text.length > 250 ? `${text.slice(0, 250)}...` : text;
+      }
     },
     {
       title: t("status"),
@@ -209,8 +218,22 @@ const AnnouncementPage: React.FC = () => {
     },
     {
       title: t("orderNum"),
-      dataIndex: "orderNum",
+      dataIndex: "orderNum", 
       key: "orderNum",
+      render: (text, record) => {
+        const options = Array.from({length: announcements.length}, (_, i) => ({
+          value: i + 1,
+          label: i + 1
+        }));
+        return (
+          <Select
+            value={text}
+            style={{ width: 100 }}
+            options={options}
+            onChange={(value) => onLevelChange(record, value)}
+          />
+        );
+      }
     },
     {
       title: t("action"),
@@ -218,13 +241,7 @@ const AnnouncementPage: React.FC = () => {
       fixed: "right",
       render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
-          <Button
-            title={t("edit")}
-            variant="outlined"
-            color="green"
-            icon={<BiEdit />}
-            onClick={() => onEdit(record)}
-          />
+          
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={() => onDeleteNoti(record)}
@@ -261,7 +278,7 @@ const AnnouncementPage: React.FC = () => {
       {context}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/announcements")}
+          title={t("admin/menu/comments")}
           classNames={{
             body: "!p-0",
           }}
@@ -320,14 +337,8 @@ const AnnouncementPage: React.FC = () => {
               <Form.Item name="description" label={t("desc")}>
                 <Input.TextArea />
               </Form.Item>
-              <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
-              </Form.Item>
               <Form.Item name="status" label={t("status")}>
                 <Switch />
-              </Form.Item>
-              <Form.Item name="orderNum" label={t("orderNum")}>
-                <InputNumber />
               </Form.Item>
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>

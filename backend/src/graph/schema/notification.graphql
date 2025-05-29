@@ -5,6 +5,14 @@ type Notification {
   status: Boolean!
   orderNum: Uint
   showFrom: Time!
+  mainImage: String!
+  imageUpload: String!
+  noticeType: String!
+  registerDate: Time!
+  level: Uint
+  domainId: Uint
+  domain: Domain
+  views: Uint
   showTo: Time!
   createdAt: Time!
   updatedAt: Time!
@@ -18,15 +26,17 @@ input UpdateNotificationInput {
   orderNum: Uint
   showFrom: Time
   showTo: Time
+  level: Uint
 }
 
 input NewNotificationInput {
   title: String!
   description: String!
-  status: Boolean
-  orderNum: Uint
-  showFrom: Time!
-  showTo: Time!
+  mainImage: String!
+  imageUpload: String!
+  noticeType: String!
+  registerDate: Time!
+  views: Uint
 }
 
 type NotificationList {

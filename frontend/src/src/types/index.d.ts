@@ -53,12 +53,24 @@ interface Noti {
   key: string;
   id: number;
   title: string;
+  views: number;
+  noticeType: string;
   description: string;
-  showFrom: string | Date | dayjs.Dayjs;
-  showTo: string | Date | dayjs.Dayjs; // ISO string format
-  duration?: (string | Date | dayjs.Dayjs)[];
-  orderNum: number; // ISO string format
+  domain: Domain;
   status: boolean;
+  duration?: (string | Date | dayjs.Dayjs)[];
+  showFrom?: string | Date | dayjs.Dayjs;
+  showTo?: string | Date | dayjs.Dayjs;
+  orderNum?: number;
+  level?: number;
+  registerDate: string;
+  mainImage: string;
+  imageUpload: any;
+  'main-image'?: string;
+  'register-date'?: any;
+  user?: {
+    userid: string;
+  };
 }
 
 interface Domain {
@@ -89,6 +101,41 @@ interface Event {
   domainId: number;
   user: User;
   domain: Domain;
+}
+
+interface Bulletin {
+  key: string;
+  id: number;
+  title: string;
+  description: string;
+  views: number;
+  category: string;
+  nickname: string;
+  recommend: number;
+  notrecommend: number;
+  level: number;
+  memberId: number;
+  top: boolean;
+  alllas: boolean;
+  check: boolean;
+  domainId: number;
+  domain: Domain;
+  userId: number;
+  user: User;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
+}
+
+interface Comment {
+  key: string;
+  id: number;
+  title: string;
+  description: string;
+  orderNum: number; // ISO string format
+  status: boolean;
+  userId: number;
+  user: User;
 }
 
 interface Announcement {

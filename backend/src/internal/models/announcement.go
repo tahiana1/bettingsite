@@ -18,9 +18,6 @@ type Announcement struct {
 
 	Status bool `json:"status"`
 
-	ShowFrom time.Time `json:"showFrom"`
-	ShowTo   time.Time `json:"showTo"`
-
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`

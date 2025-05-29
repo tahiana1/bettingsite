@@ -15,10 +15,19 @@ export const FILTER_NOTI = gql`
         id
         title
         description
-        showTo
-        showFrom
         orderNum
         status
+        level
+        domainId
+        domain {
+          id
+          name
+        }
+        mainImage
+        imageUpload
+        noticeType
+        registerDate
+        views
         createdAt
         updatedAt
         deletedAt
@@ -34,9 +43,11 @@ export const CREATE_NOTI = gql`
       id
       title
       description
-      showFrom
-      showTo
-      orderNum
+      mainImage
+      imageUpload
+      noticeType
+      registerDate
+      views
     }
   }
 `;
@@ -46,11 +57,14 @@ export const UPDATE_NOTI = gql`
     response: updateNotification(id: $id, input: $input) {
       id
       title
-      showFrom
-      showTo
-      orderNum
       description
-      status
+      mainImage
+      imageUpload
+      noticeType
+      registerDate
+      level
+      orderNum
+      views
       updatedAt
       createdAt
       deletedAt

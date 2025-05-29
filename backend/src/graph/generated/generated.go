@@ -43,8 +43,10 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Announcement() AnnouncementResolver
 	Log() LogResolver
 	Mutation() MutationResolver
+	Notification() NotificationResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 	User() UserResolver
@@ -149,13 +151,17 @@ type ComplexityRoot struct {
 	}
 
 	Event struct {
+		Category    func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
+		CreatedDate func(childComplexity int) int
 		DeletedAt   func(childComplexity int) int
 		Description func(childComplexity int) int
 		Domain      func(childComplexity int) int
 		DomainID    func(childComplexity int) int
 		ID          func(childComplexity int) int
+		ImageUpload func(childComplexity int) int
 		Level       func(childComplexity int) int
+		MainImage   func(childComplexity int) int
 		OrderNum    func(childComplexity int) int
 		ShowFrom    func(childComplexity int) int
 		ShowTo      func(childComplexity int) int
@@ -165,6 +171,7 @@ type ComplexityRoot struct {
 		UpdatedAt   func(childComplexity int) int
 		User        func(childComplexity int) int
 		UserID      func(childComplexity int) int
+		Views       func(childComplexity int) int
 	}
 
 	EventList struct {
@@ -294,16 +301,24 @@ type ComplexityRoot struct {
 	}
 
 	Notification struct {
-		CreatedAt   func(childComplexity int) int
-		DeletedAt   func(childComplexity int) int
-		Description func(childComplexity int) int
-		ID          func(childComplexity int) int
-		OrderNum    func(childComplexity int) int
-		ShowFrom    func(childComplexity int) int
-		ShowTo      func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Title       func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		DeletedAt    func(childComplexity int) int
+		Description  func(childComplexity int) int
+		Domain       func(childComplexity int) int
+		DomainID     func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImageUpload  func(childComplexity int) int
+		Level        func(childComplexity int) int
+		MainImage    func(childComplexity int) int
+		NoticeType   func(childComplexity int) int
+		OrderNum     func(childComplexity int) int
+		RegisterDate func(childComplexity int) int
+		ShowFrom     func(childComplexity int) int
+		ShowTo       func(childComplexity int) int
+		Status       func(childComplexity int) int
+		Title        func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		Views        func(childComplexity int) int
 	}
 
 	NotificationList struct {
@@ -508,6 +523,10 @@ type ComplexityRoot struct {
 	}
 }
 
+type AnnouncementResolver interface {
+	ShowFrom(ctx context.Context, obj *models.Announcement) (*time.Time, error)
+	ShowTo(ctx context.Context, obj *models.Announcement) (*time.Time, error)
+}
 type LogResolver interface {
 	DeletedAt(ctx context.Context, obj *models.Log) (*gorm.DeletedAt, error)
 }
@@ -563,6 +582,11 @@ type MutationResolver interface {
 	ApproveUser(ctx context.Context, id uint) (bool, error)
 	BlockUser(ctx context.Context, id uint) (bool, error)
 	UpdateUser(ctx context.Context, id uint, input model.UpdateUser) (bool, error)
+}
+type NotificationResolver interface {
+	ShowFrom(ctx context.Context, obj *models.Notification) (*time.Time, error)
+
+	ShowTo(ctx context.Context, obj *models.Notification) (*time.Time, error)
 }
 type QueryResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
@@ -1099,12 +1123,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DomainList.Total(childComplexity), true
 
+	case "Event.category":
+		if e.complexity.Event.Category == nil {
+			break
+		}
+
+		return e.complexity.Event.Category(childComplexity), true
+
 	case "Event.createdAt":
 		if e.complexity.Event.CreatedAt == nil {
 			break
 		}
 
 		return e.complexity.Event.CreatedAt(childComplexity), true
+
+	case "Event.createdDate":
+		if e.complexity.Event.CreatedDate == nil {
+			break
+		}
+
+		return e.complexity.Event.CreatedDate(childComplexity), true
 
 	case "Event.deletedAt":
 		if e.complexity.Event.DeletedAt == nil {
@@ -1141,12 +1179,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Event.ID(childComplexity), true
 
+	case "Event.imageUpload":
+		if e.complexity.Event.ImageUpload == nil {
+			break
+		}
+
+		return e.complexity.Event.ImageUpload(childComplexity), true
+
 	case "Event.level":
 		if e.complexity.Event.Level == nil {
 			break
 		}
 
 		return e.complexity.Event.Level(childComplexity), true
+
+	case "Event.mainImage":
+		if e.complexity.Event.MainImage == nil {
+			break
+		}
+
+		return e.complexity.Event.MainImage(childComplexity), true
 
 	case "Event.orderNum":
 		if e.complexity.Event.OrderNum == nil {
@@ -1210,6 +1262,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Event.UserID(childComplexity), true
+
+	case "Event.views":
+		if e.complexity.Event.Views == nil {
+			break
+		}
+
+		return e.complexity.Event.Views(childComplexity), true
 
 	case "EventList.events":
 		if e.complexity.EventList.Events == nil {
@@ -2196,6 +2255,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Notification.Description(childComplexity), true
 
+	case "Notification.domain":
+		if e.complexity.Notification.Domain == nil {
+			break
+		}
+
+		return e.complexity.Notification.Domain(childComplexity), true
+
+	case "Notification.domainId":
+		if e.complexity.Notification.DomainID == nil {
+			break
+		}
+
+		return e.complexity.Notification.DomainID(childComplexity), true
+
 	case "Notification.id":
 		if e.complexity.Notification.ID == nil {
 			break
@@ -2203,12 +2276,47 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Notification.ID(childComplexity), true
 
+	case "Notification.imageUpload":
+		if e.complexity.Notification.ImageUpload == nil {
+			break
+		}
+
+		return e.complexity.Notification.ImageUpload(childComplexity), true
+
+	case "Notification.level":
+		if e.complexity.Notification.Level == nil {
+			break
+		}
+
+		return e.complexity.Notification.Level(childComplexity), true
+
+	case "Notification.mainImage":
+		if e.complexity.Notification.MainImage == nil {
+			break
+		}
+
+		return e.complexity.Notification.MainImage(childComplexity), true
+
+	case "Notification.noticeType":
+		if e.complexity.Notification.NoticeType == nil {
+			break
+		}
+
+		return e.complexity.Notification.NoticeType(childComplexity), true
+
 	case "Notification.orderNum":
 		if e.complexity.Notification.OrderNum == nil {
 			break
 		}
 
 		return e.complexity.Notification.OrderNum(childComplexity), true
+
+	case "Notification.registerDate":
+		if e.complexity.Notification.RegisterDate == nil {
+			break
+		}
+
+		return e.complexity.Notification.RegisterDate(childComplexity), true
 
 	case "Notification.showFrom":
 		if e.complexity.Notification.ShowFrom == nil {
@@ -2244,6 +2352,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Notification.UpdatedAt(childComplexity), true
+
+	case "Notification.views":
+		if e.complexity.Notification.Views == nil {
+			break
+		}
+
+		return e.complexity.Notification.Views(childComplexity), true
 
 	case "NotificationList.notifications":
 		if e.complexity.NotificationList.Notifications == nil {
@@ -3872,7 +3987,12 @@ extend type Mutation {
   domain: Domain
   showFrom: Time
   showTo: Time
+  category: Uint
+  views: Uint
+  mainImage: String
+  imageUpload: String
   level: Uint
+  createdDate: Time!
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -3892,14 +4012,15 @@ input UpdateEventInput {
 
 input NewEventInput {
   title: String!
-  type: String!
-  description: String!
-  status: Boolean
-  orderNum: Uint
-  domainId: Uint
-  level: Uint
+  author: String!
+  category: Uint
+  views: Uint
+  createdDate: Time
   showFrom: Time
   showTo: Time
+  description: String!
+  mainImage: String
+  imageUpload: String
 }
 
 type EventList {
@@ -4174,6 +4295,14 @@ extend type Mutation {
   status: Boolean!
   orderNum: Uint
   showFrom: Time!
+  mainImage: String!
+  imageUpload: String!
+  noticeType: String!
+  registerDate: Time!
+  level: Uint
+  domainId: Uint
+  domain: Domain
+  views: Uint
   showTo: Time!
   createdAt: Time!
   updatedAt: Time!
@@ -4187,15 +4316,17 @@ input UpdateNotificationInput {
   orderNum: Uint
   showFrom: Time
   showTo: Time
+  level: Uint
 }
 
 input NewNotificationInput {
   title: String!
   description: String!
-  status: Boolean
-  orderNum: Uint
-  showFrom: Time!
-  showTo: Time!
+  mainImage: String!
+  imageUpload: String!
+  noticeType: String!
+  registerDate: Time!
+  views: Uint
 }
 
 type NotificationList {
@@ -8443,7 +8574,7 @@ func (ec *executionContext) _Announcement_showFrom(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ShowFrom, nil
+		return ec.resolvers.Announcement().ShowFrom(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8452,17 +8583,17 @@ func (ec *executionContext) _Announcement_showFrom(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Announcement_showFrom(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Announcement",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -8484,7 +8615,7 @@ func (ec *executionContext) _Announcement_showTo(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ShowTo, nil
+		return ec.resolvers.Announcement().ShowTo(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -8493,17 +8624,17 @@ func (ec *executionContext) _Announcement_showTo(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalOTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Announcement_showTo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Announcement",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -11017,6 +11148,170 @@ func (ec *executionContext) fieldContext_Event_showTo(_ context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Event_category(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_category(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Category, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uint)
+	fc.Result = res
+	return ec.marshalOUint2ᚖuint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_category(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Event_views(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_views(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Views, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uint)
+	fc.Result = res
+	return ec.marshalOUint2ᚖuint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_views(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Event_mainImage(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_mainImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MainImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_mainImage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Event_imageUpload(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_imageUpload(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImageUpload, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_imageUpload(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Event_level(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Event_level(ctx, field)
 	if err != nil {
@@ -11053,6 +11348,50 @@ func (ec *executionContext) fieldContext_Event_level(_ context.Context, field gr
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Event_createdDate(ctx context.Context, field graphql.CollectedField, obj *models.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_createdDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_createdDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11250,8 +11589,18 @@ func (ec *executionContext) fieldContext_EventList_events(_ context.Context, fie
 				return ec.fieldContext_Event_showFrom(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Event_showTo(ctx, field)
+			case "category":
+				return ec.fieldContext_Event_category(ctx, field)
+			case "views":
+				return ec.fieldContext_Event_views(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Event_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Event_imageUpload(ctx, field)
 			case "level":
 				return ec.fieldContext_Event_level(ctx, field)
+			case "createdDate":
+				return ec.fieldContext_Event_createdDate(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Event_createdAt(ctx, field)
 			case "updatedAt":
@@ -15028,8 +15377,18 @@ func (ec *executionContext) fieldContext_Mutation_createEvent(ctx context.Contex
 				return ec.fieldContext_Event_showFrom(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Event_showTo(ctx, field)
+			case "category":
+				return ec.fieldContext_Event_category(ctx, field)
+			case "views":
+				return ec.fieldContext_Event_views(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Event_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Event_imageUpload(ctx, field)
 			case "level":
 				return ec.fieldContext_Event_level(ctx, field)
+			case "createdDate":
+				return ec.fieldContext_Event_createdDate(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Event_createdAt(ctx, field)
 			case "updatedAt":
@@ -15144,8 +15503,18 @@ func (ec *executionContext) fieldContext_Mutation_updateEvent(ctx context.Contex
 				return ec.fieldContext_Event_showFrom(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Event_showTo(ctx, field)
+			case "category":
+				return ec.fieldContext_Event_category(ctx, field)
+			case "views":
+				return ec.fieldContext_Event_views(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Event_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Event_imageUpload(ctx, field)
 			case "level":
 				return ec.fieldContext_Event_level(ctx, field)
+			case "createdDate":
+				return ec.fieldContext_Event_createdDate(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Event_createdAt(ctx, field)
 			case "updatedAt":
@@ -16136,6 +16505,22 @@ func (ec *executionContext) fieldContext_Mutation_createNotification(ctx context
 				return ec.fieldContext_Notification_orderNum(ctx, field)
 			case "showFrom":
 				return ec.fieldContext_Notification_showFrom(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Notification_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Notification_imageUpload(ctx, field)
+			case "noticeType":
+				return ec.fieldContext_Notification_noticeType(ctx, field)
+			case "registerDate":
+				return ec.fieldContext_Notification_registerDate(ctx, field)
+			case "level":
+				return ec.fieldContext_Notification_level(ctx, field)
+			case "domainId":
+				return ec.fieldContext_Notification_domainId(ctx, field)
+			case "domain":
+				return ec.fieldContext_Notification_domain(ctx, field)
+			case "views":
+				return ec.fieldContext_Notification_views(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Notification_showTo(ctx, field)
 			case "createdAt":
@@ -16240,6 +16625,22 @@ func (ec *executionContext) fieldContext_Mutation_updateNotification(ctx context
 				return ec.fieldContext_Notification_orderNum(ctx, field)
 			case "showFrom":
 				return ec.fieldContext_Notification_showFrom(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Notification_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Notification_imageUpload(ctx, field)
+			case "noticeType":
+				return ec.fieldContext_Notification_noticeType(ctx, field)
+			case "registerDate":
+				return ec.fieldContext_Notification_registerDate(ctx, field)
+			case "level":
+				return ec.fieldContext_Notification_level(ctx, field)
+			case "domainId":
+				return ec.fieldContext_Notification_domainId(ctx, field)
+			case "domain":
+				return ec.fieldContext_Notification_domain(ctx, field)
+			case "views":
+				return ec.fieldContext_Notification_views(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Notification_showTo(ctx, field)
 			case "createdAt":
@@ -18866,7 +19267,183 @@ func (ec *executionContext) _Notification_showFrom(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ShowFrom, nil
+		return ec.resolvers.Notification().ShowFrom(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_showFrom(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_mainImage(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_mainImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MainImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_mainImage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_imageUpload(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_imageUpload(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImageUpload, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_imageUpload(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_noticeType(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_noticeType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NoticeType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_noticeType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_registerDate(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_registerDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RegisterDate, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18883,7 +19460,7 @@ func (ec *executionContext) _Notification_showFrom(ctx context.Context, field gr
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Notification_showFrom(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Notification_registerDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
@@ -18891,6 +19468,222 @@ func (ec *executionContext) fieldContext_Notification_showFrom(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_level(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_level(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Level, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_level(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_domainId(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_domainId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DomainID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*uint)
+	fc.Result = res
+	return ec.marshalOUint2ᚖuint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_domainId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_domain(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_domain(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Domain, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*models.Domain)
+	fc.Result = res
+	return ec.marshalODomain2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋinternalᚋmodelsᚐDomain(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_domain(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Domain_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Domain_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Domain_description(ctx, field)
+			case "status":
+				return ec.fieldContext_Domain_status(ctx, field)
+			case "autoReg":
+				return ec.fieldContext_Domain_autoReg(ctx, field)
+			case "useTelegram":
+				return ec.fieldContext_Domain_useTelegram(ctx, field)
+			case "telegram":
+				return ec.fieldContext_Domain_telegram(ctx, field)
+			case "telegramLink":
+				return ec.fieldContext_Domain_telegramLink(ctx, field)
+			case "useKakaoTalk":
+				return ec.fieldContext_Domain_useKakaoTalk(ctx, field)
+			case "kakaoTalk":
+				return ec.fieldContext_Domain_kakaoTalk(ctx, field)
+			case "kakaoTalkLink":
+				return ec.fieldContext_Domain_kakaoTalkLink(ctx, field)
+			case "useServiceCenter":
+				return ec.fieldContext_Domain_useServiceCenter(ctx, field)
+			case "serviceCenter":
+				return ec.fieldContext_Domain_serviceCenter(ctx, field)
+			case "serviceCenterLink":
+				return ec.fieldContext_Domain_serviceCenterLink(ctx, field)
+			case "useLiveDomain":
+				return ec.fieldContext_Domain_useLiveDomain(ctx, field)
+			case "liveDomain":
+				return ec.fieldContext_Domain_liveDomain(ctx, field)
+			case "liveDomainLink":
+				return ec.fieldContext_Domain_liveDomainLink(ctx, field)
+			case "memberLevel":
+				return ec.fieldContext_Domain_memberLevel(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_Domain_distributorLevel(ctx, field)
+			case "orderNum":
+				return ec.fieldContext_Domain_orderNum(ctx, field)
+			case "userId":
+				return ec.fieldContext_Domain_userId(ctx, field)
+			case "user":
+				return ec.fieldContext_Domain_user(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Domain_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Domain_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_Domain_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Domain", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_views(ctx context.Context, field graphql.CollectedField, obj *models.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_views(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Views, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_views(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
 		},
 	}
 	return fc, nil
@@ -18910,7 +19703,7 @@ func (ec *executionContext) _Notification_showTo(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ShowTo, nil
+		return ec.resolvers.Notification().ShowTo(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -18922,17 +19715,17 @@ func (ec *executionContext) _Notification_showTo(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(time.Time)
+	res := resTmp.(*time.Time)
 	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+	return ec.marshalNTime2ᚖtimeᚐTime(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Notification_showTo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Notification",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
 		},
@@ -19120,6 +19913,22 @@ func (ec *executionContext) fieldContext_NotificationList_notifications(_ contex
 				return ec.fieldContext_Notification_orderNum(ctx, field)
 			case "showFrom":
 				return ec.fieldContext_Notification_showFrom(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Notification_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Notification_imageUpload(ctx, field)
+			case "noticeType":
+				return ec.fieldContext_Notification_noticeType(ctx, field)
+			case "registerDate":
+				return ec.fieldContext_Notification_registerDate(ctx, field)
+			case "level":
+				return ec.fieldContext_Notification_level(ctx, field)
+			case "domainId":
+				return ec.fieldContext_Notification_domainId(ctx, field)
+			case "domain":
+				return ec.fieldContext_Notification_domain(ctx, field)
+			case "views":
+				return ec.fieldContext_Notification_views(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Notification_showTo(ctx, field)
 			case "createdAt":
@@ -21674,8 +22483,18 @@ func (ec *executionContext) fieldContext_Query_topEvents(_ context.Context, fiel
 				return ec.fieldContext_Event_showFrom(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Event_showTo(ctx, field)
+			case "category":
+				return ec.fieldContext_Event_category(ctx, field)
+			case "views":
+				return ec.fieldContext_Event_views(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Event_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Event_imageUpload(ctx, field)
 			case "level":
 				return ec.fieldContext_Event_level(ctx, field)
+			case "createdDate":
+				return ec.fieldContext_Event_createdDate(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Event_createdAt(ctx, field)
 			case "updatedAt":
@@ -21749,8 +22568,18 @@ func (ec *executionContext) fieldContext_Query_events(_ context.Context, field g
 				return ec.fieldContext_Event_showFrom(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Event_showTo(ctx, field)
+			case "category":
+				return ec.fieldContext_Event_category(ctx, field)
+			case "views":
+				return ec.fieldContext_Event_views(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Event_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Event_imageUpload(ctx, field)
 			case "level":
 				return ec.fieldContext_Event_level(ctx, field)
+			case "createdDate":
+				return ec.fieldContext_Event_createdDate(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Event_createdAt(ctx, field)
 			case "updatedAt":
@@ -22311,6 +23140,22 @@ func (ec *executionContext) fieldContext_Query_notifications(_ context.Context, 
 				return ec.fieldContext_Notification_orderNum(ctx, field)
 			case "showFrom":
 				return ec.fieldContext_Notification_showFrom(ctx, field)
+			case "mainImage":
+				return ec.fieldContext_Notification_mainImage(ctx, field)
+			case "imageUpload":
+				return ec.fieldContext_Notification_imageUpload(ctx, field)
+			case "noticeType":
+				return ec.fieldContext_Notification_noticeType(ctx, field)
+			case "registerDate":
+				return ec.fieldContext_Notification_registerDate(ctx, field)
+			case "level":
+				return ec.fieldContext_Notification_level(ctx, field)
+			case "domainId":
+				return ec.fieldContext_Notification_domainId(ctx, field)
+			case "domain":
+				return ec.fieldContext_Notification_domain(ctx, field)
+			case "views":
+				return ec.fieldContext_Notification_views(ctx, field)
 			case "showTo":
 				return ec.fieldContext_Notification_showTo(ctx, field)
 			case "createdAt":
@@ -30210,7 +31055,7 @@ func (ec *executionContext) unmarshalInputNewEventInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "type", "description", "status", "orderNum", "domainId", "level", "showFrom", "showTo"}
+	fieldsInOrder := [...]string{"title", "author", "category", "views", "createdDate", "showFrom", "showTo", "description", "mainImage", "imageUpload"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30224,48 +31069,34 @@ func (ec *executionContext) unmarshalInputNewEventInput(ctx context.Context, obj
 				return it, err
 			}
 			it.Title = data
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+		case "author":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("author"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Type = data
-		case "description":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Description = data
-		case "status":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Status = data
-		case "orderNum":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
+			it.Author = data
+		case "category":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
 			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.OrderNum = data
-		case "domainId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domainId"))
+			it.Category = data
+		case "views":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("views"))
 			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.DomainID = data
-		case "level":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("level"))
-			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			it.Views = data
+		case "createdDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Level = data
+			it.CreatedDate = data
 		case "showFrom":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("showFrom"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -30280,6 +31111,27 @@ func (ec *executionContext) unmarshalInputNewEventInput(ctx context.Context, obj
 				return it, err
 			}
 			it.ShowTo = data
+		case "description":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Description = data
+		case "mainImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mainImage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MainImage = data
+		case "imageUpload":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUpload"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ImageUpload = data
 		}
 	}
 
@@ -30514,7 +31366,7 @@ func (ec *executionContext) unmarshalInputNewNotificationInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo"}
+	fieldsInOrder := [...]string{"title", "description", "mainImage", "imageUpload", "noticeType", "registerDate", "views"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30535,34 +31387,41 @@ func (ec *executionContext) unmarshalInputNewNotificationInput(ctx context.Conte
 				return it, err
 			}
 			it.Description = data
-		case "status":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+		case "mainImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mainImage"))
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Status = data
-		case "orderNum":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderNum"))
+			it.MainImage = data
+		case "imageUpload":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUpload"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ImageUpload = data
+		case "noticeType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noticeType"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NoticeType = data
+		case "registerDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("registerDate"))
+			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RegisterDate = data
+		case "views":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("views"))
 			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.OrderNum = data
-		case "showFrom":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("showFrom"))
-			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ShowFrom = data
-		case "showTo":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("showTo"))
-			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ShowTo = data
+			it.Views = data
 		}
 	}
 
@@ -31950,7 +32809,7 @@ func (ec *executionContext) unmarshalInputUpdateNotificationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo"}
+	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo", "level"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31999,6 +32858,13 @@ func (ec *executionContext) unmarshalInputUpdateNotificationInput(ctx context.Co
 				return it, err
 			}
 			it.ShowTo = data
+		case "level":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("level"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Level = data
 		}
 	}
 
@@ -32748,48 +33614,110 @@ func (ec *executionContext) _Announcement(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._Announcement_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "title":
 			out.Values[i] = ec._Announcement_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "description":
 			out.Values[i] = ec._Announcement_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "status":
 			out.Values[i] = ec._Announcement_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "orderNum":
 			out.Values[i] = ec._Announcement_orderNum(ctx, field, obj)
 		case "user":
 			out.Values[i] = ec._Announcement_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userId":
 			out.Values[i] = ec._Announcement_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "showFrom":
-			out.Values[i] = ec._Announcement_showFrom(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Announcement_showFrom(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "showTo":
-			out.Values[i] = ec._Announcement_showTo(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Announcement_showTo(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._Announcement_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Announcement_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Announcement_deletedAt(ctx, field, obj)
@@ -33178,8 +34106,21 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Event_showFrom(ctx, field, obj)
 		case "showTo":
 			out.Values[i] = ec._Event_showTo(ctx, field, obj)
+		case "category":
+			out.Values[i] = ec._Event_category(ctx, field, obj)
+		case "views":
+			out.Values[i] = ec._Event_views(ctx, field, obj)
+		case "mainImage":
+			out.Values[i] = ec._Event_mainImage(ctx, field, obj)
+		case "imageUpload":
+			out.Values[i] = ec._Event_imageUpload(ctx, field, obj)
 		case "level":
 			out.Values[i] = ec._Event_level(ctx, field, obj)
+		case "createdDate":
+			out.Values[i] = ec._Event_createdDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createdAt":
 			out.Values[i] = ec._Event_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -34098,44 +35039,134 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 		case "id":
 			out.Values[i] = ec._Notification_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "title":
 			out.Values[i] = ec._Notification_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "description":
 			out.Values[i] = ec._Notification_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "status":
 			out.Values[i] = ec._Notification_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "orderNum":
 			out.Values[i] = ec._Notification_orderNum(ctx, field, obj)
 		case "showFrom":
-			out.Values[i] = ec._Notification_showFrom(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Notification_showFrom(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "mainImage":
+			out.Values[i] = ec._Notification_mainImage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "imageUpload":
+			out.Values[i] = ec._Notification_imageUpload(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "noticeType":
+			out.Values[i] = ec._Notification_noticeType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "registerDate":
+			out.Values[i] = ec._Notification_registerDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "level":
+			out.Values[i] = ec._Notification_level(ctx, field, obj)
+		case "domainId":
+			out.Values[i] = ec._Notification_domainId(ctx, field, obj)
+		case "domain":
+			out.Values[i] = ec._Notification_domain(ctx, field, obj)
+		case "views":
+			out.Values[i] = ec._Notification_views(ctx, field, obj)
 		case "showTo":
-			out.Values[i] = ec._Notification_showTo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Notification_showTo(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._Notification_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Notification_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Notification_deletedAt(ctx, field, obj)

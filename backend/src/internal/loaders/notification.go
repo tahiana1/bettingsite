@@ -123,16 +123,15 @@ func (nr *notificationReader) CreateNotification(ctx context.Context, updates mo
 	}()
 
 	notification := models.Notification{
-		Title:       updates.Title,
-		Description: updates.Description,
-		ShowFrom:    updates.ShowFrom,
-		ShowTo:      updates.ShowTo,
-		Status:      true,
+		Title:        updates.Title,
+		Description:  updates.Description,
+		MainImage:    updates.MainImage,
+		ImageUpload:  updates.ImageUpload,
+		NoticeType:   updates.NoticeType,
+		RegisterDate: updates.RegisterDate,
+		Views:        *updates.Views,
 	}
 
-	if updates.Status != nil {
-		notification.Status = *updates.Status
-	}
 	fmt.Println(updates)
 
 	if err := nr.db.Save(&notification).Error; err != nil {
@@ -165,20 +164,14 @@ func (nr *notificationReader) UpdateNotification(ctx context.Context, nID uint, 
 		notification.Description = *updates.Description
 	}
 
-	if updates.ShowFrom != nil {
-		notification.ShowFrom = *updates.ShowFrom
-	}
-
-	if updates.ShowTo != nil {
-		notification.ShowTo = *updates.ShowTo
-	}
-
 	if updates.Status != nil {
 		notification.Status = *updates.Status
 	}
+
 	if updates.OrderNum != nil {
 		notification.OrderNum = *updates.OrderNum
 	}
+
 	nr.db.Save(notification)
 
 	return &notification, nil

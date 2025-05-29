@@ -21,7 +21,6 @@ import {
 import { GET_DOMAINS } from "@/actions/domain";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
-import type { UploadProps } from 'antd';
 import { Content } from "antd/es/layout/layout";
 import { uploadFile } from '@/lib/supabase/storage';
 import { useFormatter, useTranslations } from "next-intl";
@@ -36,21 +35,20 @@ import { message } from 'antd';
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
-  CREATE_NOTI,
-  FILTER_NOTI,
-  UPDATE_NOTI,
-  DELETE_NOTI,
-} from "@/actions/notification";
+  CREATE_BULLETIN,
+  GET_BULLETINS,
+  UPDATE_BULLETIN,
+  DELETE_BULLETIN,
+} from "@/actions/bulletin";
 import { title } from "process";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
-const NotiPage: React.FC = () => {
+const BulletinPage: React.FC = () => {
   const [form] = Form.useForm();
   const t = useTranslations();
-  const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
   const {
     loading: loadingDomain,
@@ -59,21 +57,21 @@ const NotiPage: React.FC = () => {
   } = useQuery(GET_DOMAINS);
 
   const [total, setTotal] = useState<number>(0);
-  const [notis, setNotis] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_NOTI);
+  const {loading, data, refetch } = useQuery(GET_BULLETINS);
   const [domains, setDomains] = useState<any[]>([]);
-  const [notiAPI, context] = notification.useNotification();
+  const [bulletinAPI, context] = notification.useNotification();
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [updateNoti, { loading: loadingUpdate }] = useMutation(UPDATE_NOTI);
-  const [createNoti, { loading: loadingCreate }] = useMutation(CREATE_NOTI);
-  const [deleteNoti, { loading: loadingDelete }] = useMutation(DELETE_NOTI);
+  const [bulletins, setBulletins] = useState<any[]>([]);
+  const [updateBulletin, { loading: loadingUpdate }] = useMutation(UPDATE_BULLETIN);
+  const [createBulletin, { loading: loadingCreate }] = useMutation(CREATE_BULLETIN);
+  const [deleteBulletin, { loading: loadingDelete }] = useMutation(DELETE_BULLETIN);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
-  const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
+  const [currentBulletin, setCurrentBulletin] = useState<Bulletin | null>(null);
 
-  const onLevelChange = (evt: Noti, value: number) => {
-    updateNoti({
+  const onLevelChange = (evt: Bulletin, value: number) => {
+    updateBulletin({
       variables: { 
         id: evt.id, 
         input: { 
@@ -84,7 +82,7 @@ const NotiPage: React.FC = () => {
       refetch(tableOptions);
     }).catch((err) => {
       console.error('Error updating notification order:', err);
-      notiAPI.error({
+      bulletinAPI.error({
         message: 'Failed to update notification order',
       });
     });
@@ -117,6 +115,24 @@ const NotiPage: React.FC = () => {
     ],
   };
   
+  const levels = [
+    { value: '1', label: t("level1") },
+    { value: '2', label: t("level2") },
+    { value: '3', label: t("level3") },
+    { value: '4', label: t("level4") },
+    { value: '5', label: t("level5") },
+    { value: '6', label: t("level6") },
+    { value: '7', label: t("level7") },
+    { value: '8', label: t("level8") },
+    { value: '9', label: t("level9") },
+    { value: '10', label: t("level10") },
+    { value: '11', label: t("level11") },
+    { value: '12', label: t("level12") },
+    { value: '12', label: t("vip1") },
+    { value: '13', label: t("vip2") },
+    { value: '14', label: t("premium") },
+  ];
+
   const formats = [
     "header",
     "bold",
@@ -129,6 +145,10 @@ const NotiPage: React.FC = () => {
     "indent",
     "link",
     "image",
+  ];
+
+  const eventCategories = [
+    { value: '1', label: t("test") },
   ];
   const { quill, quillRef } = useQuill({ modules, formats });
   const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
@@ -163,29 +183,8 @@ const NotiPage: React.FC = () => {
     }
   }, [quillOther]);
 
-  const props: UploadProps = {
-    name: 'file',
-    customRequest: async ({ file, onSuccess, onError }) => {
-      try {
-        const result = await uploadFile(file as File, 'images/notifications/');
-        onSuccess?.(result);
-        setUploadedImageUrl(result);
-      } catch (error) {
-        onError?.(error as Error);
-      }
-    },
-    onChange(info) {
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-        form.setFieldValue('image-upload', info.file.response.url);
-      } else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
 
-
-  const onDomainChange = (evt: Noti, value: number[]) => {
+  const onDomainChange = (evt: Bulletin, value: number[]) => {
     console.log('value', value);
     setTableOptions({
       ...tableOptions,
@@ -212,12 +211,12 @@ const NotiPage: React.FC = () => {
     // });
   };
 
-  const onStatusChange = (noti: Noti, checked: boolean) => {
-    updateNoti({
+  const onStatusChange = (bulletin: Bulletin, checked: boolean) => {
+    updateBulletin({
       variables: {
-        id: noti.id,
+        id: bulletin.id,
         input: {
-          status: checked,
+          top: checked,
         },
       },
     }).then((result) => {
@@ -225,45 +224,45 @@ const NotiPage: React.FC = () => {
     });
   };
 
-  const onCreate = (noti: Noti) => {
-    console.log("Received values of form: ", noti);
-    const newNoti = {
-      title: noti.title,
-      description: noti.description,
-      mainImage: noti['main-image'],
-      imageUpload: uploadedImageUrl,
-      noticeType: noti.noticeType,
-      registerDate: noti['register-date'] ? dayjs(noti['register-date']).toISOString() : dayjs().toISOString(),
-      views: noti.views,
+  const onCreate = (bulletin: Bulletin) => {
+    console.log("Received values of form: ", bulletin);
+    const newBulletin = {
+      title: bulletin.title,
+      description: bulletin.description,
+      views: bulletin.views,
     };
-    console.log(newNoti, 'newNoti')
-    createNoti({ variables: { input: newNoti } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch();
-        setOpen(false);
-      })
-      .catch((err) => {
-        console.log({ err });
-        notiAPI.error({
-          message: err.message,
-        });
-      });
+    console.log(newBulletin, 'newBulletin')
+    // createBulletin({ variables: { input: newNoti } })
+    //   .then((res) => {
+    //     if (res.data?.success) {
+    //     }
+    //     refetch();
+    //     setOpen(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log({ err });
+    //     bulletinAPI.error({
+    //       message: err.message,
+    //     });
+    //   });
   };
 
-  const onUpdate = (noti: Noti) => {
+  const onUpdate = (bulletin: Bulletin) => {
     const update = {
-      title: noti.title,
-      description: noti.description,
-      mainImage: noti.mainImage,
-      imageUpload: uploadedImageUrl,
-      orderNum: noti.orderNum,
-      level: noti.level,
+      title: bulletin.title,
+      description: bulletin.description,
+      category: bulletin.category,
+      nickname: bulletin.nickname,
+      recommend: bulletin.recommend,
+      notrecommend: bulletin.notrecommend,
+      level: bulletin.level,
+      alllas: bulletin.alllas,
+      memberId: bulletin.memberId,
+      top: bulletin.top,
     };
-    updateNoti({
+    updateBulletin({
       variables: {
-        id: currentNoti!.id,
+        id: currentBulletin!.id,
         input: update,
       },
     }).then(() => {
@@ -272,14 +271,8 @@ const NotiPage: React.FC = () => {
     });
   };
 
-  const onEdit = (noti: Noti) => {
-    console.log("Received values of form: ", noti);
-    setCurrentNoti(noti);
-    setEditOpen(true);
-  };
-
   const onCancelEdit = () => {
-    setCurrentNoti(null);
+    setCurrentBulletin(null);
     setEditOpen(false);
   };
 
@@ -287,8 +280,8 @@ const NotiPage: React.FC = () => {
     setOpen(false);
   };
 
-  const onDeleteNoti = (noti: Noti) => {
-    deleteNoti({ variables: { id: noti.id } })
+  const onDeleteBulletin = (bulletin: Bulletin) => {
+    deleteBulletin({ variables: { id: bulletin.id } })
       .then((res) => {
         if (res.data?.success) {
         }
@@ -299,7 +292,7 @@ const NotiPage: React.FC = () => {
       });
   };
 
-  const onChange: TableProps<Noti>["onChange"] = (
+  const onChange: TableProps<Bulletin>["onChange"] = (
     pagination,
     filters,
     sorter,
@@ -307,7 +300,7 @@ const NotiPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
-  const columns: TableProps<Noti>["columns"] = [
+  const columns: TableProps<Bulletin>["columns"] = [
     {
       title: "ID",
       dataIndex: "id",
@@ -331,13 +324,6 @@ const NotiPage: React.FC = () => {
       render: (text, record) => (
         <div className="flex items-center gap-2">
           <div>{text}</div>
-          {record?.imageUpload && (
-            <img 
-              src={record.imageUpload} 
-              alt={record.title}
-              className="max-h-[50px]"
-            />
-          )}
         </div>
       ),
       filterDropdown: (props) => (
@@ -357,9 +343,9 @@ const NotiPage: React.FC = () => {
       ),
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("top"),
+      dataIndex: "top",
+      key: "top",
       render: (text, record) => {
         return (
           <Switch
@@ -371,57 +357,6 @@ const NotiPage: React.FC = () => {
       },
     },
     {
-      title: t("register-date"),
-      dataIndex: "registerDate",
-      key: "registerDate",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
-    },
-    {
-      title: t("notice-type"),
-      dataIndex: "noticeType",
-      key: "noticeType",
-      render: (text) => (text),
-    },
-    {
-      title: t("orderNum"),
-      dataIndex: "orderNum", 
-      key: "orderNum",
-      render: (text, record) => {
-        const options = Array.from({length: notis.length}, (_, i) => ({
-          value: i + 1,
-          label: i + 1
-        }));
-        return (
-          <Select
-            value={text}
-            style={{ width: 100 }}
-            options={options}
-            onChange={(value) => onLevelChange(record, value)}
-          />
-        );
-      }
-    },
-    {
-      title: t("domain"),
-      dataIndex: "domain",
-      key: "domain",
-      render: (text, record) => {
-        const selectedDomains = domains.filter(d => d.label === record.domain?.name);
-        return (
-          <Select
-            mode="multiple"
-            value={tableOptions?.filter?.filter((f: any) => f.field === '"domains"."name"')?.value }
-            style={{ width: 200 }}
-            options={[
-              { value: 0, label: t("entire") },
-              ...domains
-            ]}
-            onChange={(value) => onDomainChange(record, value)}
-          />
-        );
-      },
-    },
-    {
       title: t("action"),
       key: "action",
       fixed: "right",
@@ -429,7 +364,7 @@ const NotiPage: React.FC = () => {
         <Space.Compact size="small" className="gap-2">
           <Popconfirm
             title={t("confirmSure")}
-            onConfirm={() => onDeleteNoti(record)}
+            onConfirm={() => onDeleteBulletin(record)}
             description={t("deleteMessage")}
           >
             <Button
@@ -445,8 +380,8 @@ const NotiPage: React.FC = () => {
     },
   ];
   useEffect(() => {
-    setNotis(
-      data?.response?.notifications?.map((u: any) => {
+    setBulletins(
+      data?.response?.bulletins?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -463,7 +398,7 @@ const NotiPage: React.FC = () => {
       {context}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/notifications")}
+          title={t("admin/menu/bulletins")}
           classNames={{
             body: "!p-0",
           }}
@@ -481,10 +416,10 @@ const NotiPage: React.FC = () => {
           {loading ? (
             ""
           ) : (
-            <Table<Noti>
+            <Table<Bulletin>
               columns={columns}
               loading={loading}
-              dataSource={notis ?? []}
+              dataSource={bulletins ?? []}
               className="w-full"
               size="small"
               scroll={{ x: "max-content" }}
@@ -517,70 +452,54 @@ const NotiPage: React.FC = () => {
               clearOnDestroy
               onFinish={onCreate}
             >
-              <Form.Item 
-                  name="author" 
-                  label={t("author")}
-                  initialValue="admin"
-                >
-                  <Input value='admin' readOnly disabled /> 
-              </Form.Item>
-              <Form.Item 
-                  name="views" 
-                  label={t("views")}
-                  rules={[{ required: true, message: 'Please input the views!' }]}
-              >
-                <InputNumber min={0} />
-              </Form.Item>
-              <Form.Item
-                  name="noticeType"
-                  label={t("notice-type")}
-                  rules={[{ required: true, message: 'Please select a notice type!' }]}
-                >
-                  <Select
-                    options={
-                      [
-                        { value: 'notice', label: t("notice-type") }, 
-                        { value: 'rules', label: t("gameRules") }
-                      ]
-                    }
-                  />
-              </Form.Item>
-              <Form.Item 
-                name="register-date" 
-                label={t("register-date")}
-                rules={[{ required: true, message: 'Please select a date!' }]}
-              >
-                <DatePicker />
-              </Form.Item>
-              <Form.Item 
-                name="title" 
-                label={t("title")}
-                rules={[{ required: true, message: 'Please input the title!' }]}
-              >
-                 <Input />
-              </Form.Item>
-              <Form.Item 
-                name="image-upload" 
-                className="text-center"
-                rules={[{ required: true, message: 'Please upload an image!' }]}
-              >
-                <Upload {...props} fileList={[]}>
-                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                </Upload>
-              </Form.Item>
+              <div className="flex gap-2 w-full flex-row">
+                <Form.Item name="domainId" label={t("domain")} className="w-full">
+                  <Select options={domains} />
+                </Form.Item>
+                <Form.Item name="views" label={t("views")} className="w-full">
+                  <InputNumber min={0} />
+                </Form.Item>
+              </div>
+              <div className="w-full">
+                <div className="w-full">{t("author")}</div>
+                <div className="flex gap-2 w-full flex-row">
+                  <Form.Item name="memberId"  className="w-full">
+                    <Input placeholder={t("memberId")} />
+                  </Form.Item>
+                  <Form.Item name="nickname" className="w-full">
+                    <Input placeholder={t("nickname")} />
+                  </Form.Item>
+                  <Form.Item name="level"  className="w-full">
+                    <Select options={levels} />
+                  </Form.Item>
+                </div>
+              </div>
+              <div className="flex gap-2 w-full flex-row">
+                <Form.Item name="recommend" label={t("recommend")}>
+                  <InputNumber min={0} />
+                </Form.Item>
+                <Form.Item name="notrecommend" label={t("notrecommend")}>
+                  <InputNumber min={0} />
+                </Form.Item>
+                <Form.Item name="top" label={t("topfixed")}>
+                  <Switch />
+                </Form.Item>
+              </div>
+              <div className="flex gap-2 w-full flex-row">
+                <Form.Item name='title' label={t("title")}>
+                  <Input placeholder={t("title")} />
+                </Form.Item>
+                <Form.Item name='eventCategory' label={t("eventCategory")}>
+                  <Select options={eventCategories} />
+                </Form.Item>
+              </div>
+              
               <Form.Item 
                 name="description" 
                 label={t("desc")}
                 rules={[{ required: true, message: 'Please input the description!' }]}
               >
                 <div ref={quillRef}></div>
-              </Form.Item>
-              <Form.Item 
-                name="main-image" 
-                label={t("main-image")}
-                rules={[{ required: true, message: 'Please input the main image!' }]}
-              >
-                <div ref={quillRefOther}></div>
               </Form.Item>
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>
@@ -600,7 +519,7 @@ const NotiPage: React.FC = () => {
             <Form
               name="editForm"
               layout="vertical"
-              initialValues={currentNoti ?? {}}
+              initialValues={currentBulletin ?? {}}
               onFinish={onUpdate}
             >
               <Form.Item name="title" label={t("title")}>
@@ -631,4 +550,4 @@ const NotiPage: React.FC = () => {
   );
 };
 
-export default NotiPage;
+export default BulletinPage;

@@ -158,14 +158,6 @@ func (er *announcementReader) CreateAnnouncement(ctx context.Context, updates mo
 		Status:      true,
 	}
 
-	if updates.ShowFrom != nil {
-		announcement.ShowFrom = *updates.ShowFrom
-	}
-
-	if updates.ShowTo != nil {
-		announcement.ShowTo = *updates.ShowTo
-	}
-
 	if updates.Status != nil {
 		announcement.Status = *updates.Status
 	}
@@ -208,14 +200,6 @@ func (er *announcementReader) UpdateAnnouncement(ctx context.Context, nID uint, 
 
 	if updates.Status != nil {
 		announcement.Status = *updates.Status
-	}
-
-	if updates.ShowFrom != nil {
-		announcement.ShowFrom = *updates.ShowFrom
-	}
-
-	if updates.ShowTo != nil {
-		announcement.ShowTo = *updates.ShowTo
 	}
 
 	if updates.OrderNum != nil {

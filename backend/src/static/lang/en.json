@@ -120,6 +120,8 @@
   "admin/menu/notifications": "Notifications",
   "admin/menu/announcements": "Announcements",
   "admin/menu/events": "Events",
+  "admin/menu/comments": "Comments",
+  "admin/menu/bulletin": "Free Bulletin Board",
   "admin/menu/customSupport": "Custom Support",
   "admin/menu/customServiceCenter": "Service Center",
   "admin/menu/serviceCenterSample": "Sample Answers",
@@ -506,5 +508,44 @@
   "disconnectAll": "Disconnect All",
   "cancel": "Cancel",
   "delete": "Delete",
-  "deleteAll": "Delete All"
+  "deleteAll": "Delete All",
+
+  "event-period": "Event Period",
+  "views": "Views",
+  "event-category": "Event Category",
+  "register-date": "Register Date",
+  "main-image": "Main Image",
+  "entire": "Entire",
+  "selectDomain": "Select Domain",
+  "category": "Category",
+  "notice-type": "Notice",
+  "gameRules": "Game Rules",
+  "selectType": "Select Type",
+
+  "newPost" : "New Post",
+
+  "memberId": "Member ID",
+
+  "level1": "Level 1",
+  "level2": "Level 2",
+  "level3": "Level 3",
+  "level4": "Level 4",
+  "level5": "Level 5",
+  "level6": "Level 6",
+  "level7": "Level 7",
+  "level8": "Level 8",
+  "level9": "Level 9",
+  "level10": "Level 10",
+  "level11": "Level 11",
+  "level12": "Level 12",
+  "vip1": "VIP 1",
+  "vip2": "VIP 2",
+  "premium": "Premium",
+
+  "recommend": "Recommend",
+  "notrecommend": "Not Recommend",
+
+  "topfixed": "Top Fixed",
+
+  "eventCategory": "Event Category"
 }

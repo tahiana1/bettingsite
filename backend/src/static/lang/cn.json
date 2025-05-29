@@ -110,6 +110,8 @@
   "admin/menu/notifications": "通知",
   "admin/menu/announcements": "公告",
   "admin/menu/events": "活动",
+  "admin/menu/comments": "评论",
+  "admin/menu/bulletin": "免费公告栏",
   "admin/menu/customSupport": "定制支持",
   "admin/menu/customServiceCenter": "服务中心",
   "admin/menu/serviceCenterSample": "示例答案",
@@ -493,5 +495,45 @@
   "disconnect": "断开连接",
   "disconnectAll": "全部断开连接",
   "delete": "删除",
-  "deleteAll": "全部删除"
+  "deleteAll": "全部删除",
+
+
+  "event-period": "活动期间",
+  "views": "浏览量",
+  "event-category": "活动类别",
+  "register-date": "注册日期",
+  "main-image": "主图片",
+  "selectDomain": "选择域名",
+  "entire": "全部",
+  "category": "类别",
+
+  "notice-type": "通知类型",
+  "gameRules": "游戏规则",
+  "selectType": "选择类型",
+  
+  "newPost" : "新帖子",
+
+  "memberId": "会员ID",
+  "level1": "等级1",
+  "level2": "等级2",
+  "level3": "等级3",
+  "level4": "等级4",
+  "level5": "等级5",
+  "level6": "等级6",
+  "level7": "等级7",
+  "level8": "等级8",
+  "level9": "等级9",
+  "level10": "等级10",
+  "level11": "等级11",
+  "level12": "等级12",
+  "vip1": "VIP1",
+  "vip2": "VIP2",
+  "premium": "高级",
+
+  "recommend": "推荐",
+  "notrecommend": "不推荐",
+
+  "topfixed": "置顶",
+
+  "eventCategory": "活动类别"
 }

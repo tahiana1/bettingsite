@@ -6,11 +6,24 @@ package resolver
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
+
+// ShowFrom is the resolver for the showFrom field.
+func (r *announcementResolver) ShowFrom(ctx context.Context, obj *models.Announcement) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: ShowFrom - showFrom"))
+}
+
+// ShowTo is the resolver for the showTo field.
+func (r *announcementResolver) ShowTo(ctx context.Context, obj *models.Announcement) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: ShowTo - showTo"))
+}
 
 // CreateAnnouncement is the resolver for the createAnnouncement field.
 func (r *mutationResolver) CreateAnnouncement(ctx context.Context, input model.NewAnnouncementInput) (*models.Announcement, error) {
@@ -41,3 +54,8 @@ func (r *queryResolver) GetAnnouncements(ctx context.Context, filters []*model.F
 	ldr := loaders.For(ctx)
 	return ldr.AnnouncementReader.GetAnnouncements(ctx, filters, orders, pagination)
 }
+
+// Announcement returns generated.AnnouncementResolver implementation.
+func (r *Resolver) Announcement() generated.AnnouncementResolver { return &announcementResolver{r} }
+
+type announcementResolver struct{ *Resolver }

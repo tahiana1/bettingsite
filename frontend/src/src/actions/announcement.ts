@@ -6,8 +6,6 @@ export const GET_LATEST_ANNOUNCEMENTS = gql`
       id
       title
       description
-      showTo
-      showFrom
       orderNum
       status
       createdAt
@@ -31,8 +29,6 @@ export const GET_ANNOUNCEMENTS = gql`
         id
         title
         description
-        showTo
-        showFrom
         orderNum
         status
         createdAt
@@ -50,9 +46,6 @@ export const CREATE_ANNOUNCEMENT = gql`
       id
       title
       description
-      showFrom
-      showTo
-      orderNum
     }
   }
 `;
@@ -62,8 +55,6 @@ export const UPDATE_ANNOUNCEMENT = gql`
     response: updateAnnouncement(id: $id, input: $input) {
       id
       title
-      showFrom
-      showTo
       orderNum
       description
       status

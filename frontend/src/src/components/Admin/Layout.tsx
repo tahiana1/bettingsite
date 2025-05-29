@@ -484,16 +484,20 @@ export default function AdminRootLayout({
       icon: <MdAnnouncement />,
       children: [
         {
-          key: "admin/board/announcements",
-          label: t("admin/menu/announcements"),
-        },
-        {
           key: "admin/board/notifications",
           label: t("admin/menu/notifications"),
         },
         {
           key: "admin/board/events",
           label: t("admin/menu/events"),
+        },
+        {
+          key: "admin/board/bulletin",
+          label: t("admin/menu/bulletin"),
+        },
+        {
+          key: "admin/board/comments",
+          label: t("admin/menu/comments"),
         },
       ],
     },

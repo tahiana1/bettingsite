@@ -16,11 +16,14 @@ import {
   InputNumber,
   notification,
   Select,
+  Upload,
+  Checkbox,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
+import { useQuill } from "react-quilljs";
 
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
@@ -37,17 +40,51 @@ import {
   UPDATE_EVENT,
 } from "@/actions/event";
 import { GET_DOMAINS } from "@/actions/domain";
+import type { UploadProps } from 'antd';
+import { message } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { uploadFile } from '@/lib/supabase/storage';
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
+interface Event {
+  id?: string;
+  title: string;
+  author: string;
+  views: number;
+  type: string;
+  description: string;
+  showFrom?: string;
+  showTo?: string;
+  domainId: number;
+  status: boolean;
+  mainImage?: string;
+  imageUpload?: any;
+  'event-category'?: string;
+  'register-date'?: any;
+  'main-image'?: string;
+  'image-upload'?: any;
+  'event-period'?: [any, any];
+  user?: {
+    userid: string;
+  };
+  domain?: {
+    name: string;
+  };
+  duration?: [any, any];
+  orderNum?: number;
+  level?: number;
+}
+
+
 
 const EventPage: React.FC = () => {
+  const [form] = Form.useForm();
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
   const [evtAPI, context] = notification.useNotification();
-
   const [total, setTotal] = useState<number>(0);
   const [evts, setEvents] = useState<any[]>([]);
   const [domains, setDomains] = useState<any[]>([]);
@@ -65,8 +102,106 @@ const EventPage: React.FC = () => {
   const [deleteEvent, { loading: loadingDelete }] = useMutation(DELETE_EVENT);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+
+  const onLevelChange = (evt: Event, value: number) => {
+    updateEvent({
+      variables: { 
+        id: evt.id, 
+        input: { 
+          orderNum: value // Use the level value as orderNum to maintain sorting
+        } 
+      },
+    }).then(() => {
+      // Refresh the table with updated sorting
+      refetch(tableOptions);
+    }).catch((err) => {
+      console.error('Error updating event level:', err);
+      evtAPI.error({
+        message: 'Failed to update event level',
+      });
+    });
+  };
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const props: UploadProps = {
+    name: 'file',
+    customRequest: async ({ file, onSuccess, onError }) => {
+      try {
+        const result = await uploadFile(file as File, 'images/events/');
+        onSuccess?.(result);
+        setUploadedImageUrl(result);
+      } catch (error) {
+        onError?.(error as Error);
+      }
+    },
+    onChange(info) {
+      if (info.file.status === 'done') {
+        message.success(`${info.file.name} file uploaded successfully`);
+        form.setFieldValue('image-upload', info.file.response.url);
+      } else if (info.file.status === 'error') {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    // "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
+  const { quill, quillRef } = useQuill({ modules, formats });
+  const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
+  
+
+  const handleQuillChange = (editor: any, fieldName: string) => {
+    if (editor) {
+      const content = editor.root.innerHTML;
+      form.setFieldValue(fieldName, content);
+    }
+  };
+
+  useEffect(() => {
+    if (quill) {
+      const handleTextChange = () => handleQuillChange(quill, 'description');
+      quill.on('text-change', handleTextChange);
+      return () => {
+        quill.off('text-change', handleTextChange);
+      };
+    }
+  }, [quill]);
+
+  useEffect(() => {
+    if (quillOther) {
+      const handleTextChange = () => handleQuillChange(quillOther, 'main-image');
+      quillOther.on('text-change', handleTextChange);
+      return () => {
+        quillOther.off('text-change', handleTextChange);
+      };
+    }
+  }, [quillOther]);
 
   const showModal = () => {
     setOpen(true);
@@ -88,27 +223,34 @@ const EventPage: React.FC = () => {
   const onCreate = (evt: Event) => {
     const newEvent = {
       title: evt.title,
-      type: evt.type,
+      author: evt.author || 'admin',
       description: evt.description,
-      orderNum: evt.orderNum,
-      showFrom: evt.duration ? evt.duration[0] : undefined,
-      showTo: evt.duration ? evt.duration[1] : undefined,
-      domainId: evt.domainId,
-      level: evt.level,
-      status: evt.status,
+      showFrom: evt['event-period'] ? dayjs(evt['event-period'][0]).toISOString() : undefined,
+      showTo: evt['event-period'] ? dayjs(evt['event-period'][1]).toISOString() : undefined,
+      category: evt['event-category'] ? parseInt(evt['event-category']) : undefined,
+      views: evt.views ? parseInt(evt.views.toString()) : 0,
+      mainImage: evt['main-image'],
+      imageUpload: uploadedImageUrl,
+      createdDate: evt['register-date'] ? dayjs(evt['register-date']).toISOString() : dayjs().toISOString(),
     };
-
+    
+    console.log('Creating new event with data:', newEvent);
+    
     createEvent({ variables: { input: newEvent } })
       .then((res) => {
-        if (res.data?.success) {
+        if (res.data?.response) {
+          evtAPI.success({
+            message: 'Event created successfully',
+          });
+          refetch();
+          setOpen(false);
+          form.resetFields();
         }
-        refetch();
-        setOpen(false);
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error creating event:', err);
         evtAPI.error({
-          message: err.message,
+          message: err.message || 'Failed to create event',
         });
       });
   };
@@ -153,14 +295,31 @@ const EventPage: React.FC = () => {
   };
 
   const onDeleteEvent = (evt: Event) => {
+    if (!evt.id) {
+      evtAPI.error({
+        message: 'Cannot delete event: No event ID provided',
+      });
+      return;
+    }
+
     deleteEvent({ variables: { id: evt.id } })
       .then((res) => {
-        if (res.data?.success) {
+        if (res.data?.response) {
+          evtAPI.success({
+            message: 'Event deleted successfully',
+          });
+          refetch(tableOptions);
+        } else {  
+          evtAPI.error({
+            message: 'Failed to delete event',
+          });
         }
-        refetch(tableOptions);
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error deleting event:', err);
+        evtAPI.error({
+          message: err.message || 'Failed to delete event',
+        });
       });
   };
 
@@ -173,18 +332,31 @@ const EventPage: React.FC = () => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
 
-  const onSearchDomain = (value: string) => {
-    if (value) {
-      refetchDomain({
-        filters: [
-          {
-            field: '"domains"."name"',
-            value: value,
-            op: "like",
-          },
-        ],
-      });
-    }
+  const onDomainChange = (evt: Event, value: number[]) => {
+    console.log('value', value);
+    setTableOptions({
+      ...tableOptions,
+      filter: [
+        ...(tableOptions?.filter?.filter((f: any) => f.field !== '"domains"."name"') ?? []),
+        ...(value.length > 0
+          ? [
+              {
+                field: '"domains"."name"',
+                value: value.map(v => v === 0 ? "entire" : domains.find(d => d.value === v)?.label).filter(Boolean),
+                op: "in",
+              },
+            ]
+          : []),
+      ],
+    });
+    // updateEvent({
+    //   variables: {
+    //     id: evt.id,
+    //     input: {
+    //       domainId: value.map((v: number) => v),
+    //     },
+    //   },
+    // });
   };
 
   const columns: TableProps<Event>["columns"] = [
@@ -197,7 +369,7 @@ const EventPage: React.FC = () => {
       title: t("author"),
       dataIndex: '"User"."userid"',
       key: '"User"."userid"',
-      render: (text, record) => record?.user.userid,
+      render: (text, record) => record?.user?.userid ?? '-',
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -208,6 +380,18 @@ const EventPage: React.FC = () => {
       title: t("title"),
       dataIndex: "title",
       key: "title",
+      render: (text, record) => (
+        <div className="flex items-center gap-2">
+          <div>{text}</div>
+          {record?.imageUpload && (
+            <img 
+              src={record.imageUpload} 
+              alt={record.title}
+              className="max-h-[50px]"
+            />
+          )}
+        </div>
+      ),
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -215,9 +399,9 @@ const EventPage: React.FC = () => {
       ),
     },
     {
-      title: t("desc"),
-      dataIndex: "description",
-      key: "description",
+      title: t("views"),
+      dataIndex: "views",
+      key: "views",
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -261,41 +445,62 @@ const EventPage: React.FC = () => {
       key: "orderNum",
     },
     {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
+      title: t("register-date"),
+      dataIndex: "createdDate",
+      key: "createdDate",
       render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
     },
     {
-      title: t("updatedAt"),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      title: t("category"),
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: t("orderNum"),
+      dataIndex: "orderNum", 
+      key: "orderNum",
+      render: (text, record) => {
+        const options = Array.from({length: evts.length}, (_, i) => ({
+          value: i + 1,
+          label: i + 1
+        }));
+        return (
+          <Select
+            value={text}
+            style={{ width: 100 }}
+            options={options}
+            onChange={(value) => onLevelChange(record, value)}
+          />
+        );
+      }
     },
     {
       title: t("domain"),
       dataIndex: "domain",
       key: "domain",
-      render: (text, record) => record?.domain?.name,
+      render: (text, record) => {
+        const selectedDomains = domains.filter(d => d.label === record.domain?.name);
+        return (
+          <Select
+            mode="multiple"
+            value={tableOptions?.filter?.filter((f: any) => f.field === '"domains"."name"')?.value }
+            style={{ width: 200 }}
+            options={[
+              { value: 0, label: t("entire") },
+              ...domains
+            ]}
+            onChange={(value) => onDomainChange(record, value)}
+          />
+        );
+      },
     },
-    {
-      title: t("level"),
-      dataIndex: "level",
-      key: "level",
-    },
+    
     {
       title: t("action"),
       key: "action",
       fixed: "right",
       render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
-          <Button
-            title={t("edit")}
-            variant="outlined"
-            color="green"
-            icon={<BiEdit />}
-            onClick={() => onEdit(record)}
-          />
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={() => onDeleteEvent(record)}
@@ -389,125 +594,94 @@ const EventPage: React.FC = () => {
             title={t("new")}
             footer={false}
             onCancel={onCancelNew}
+            width={700}
           >
             <Form
+              form={form}
               labelCol={{ span: 6 }}
               wrapperCol={{ span: 16 }}
               name="newForm"
               clearOnDestroy
-              onFinish={onCreate}
+              onFinish={(values) => {
+                console.log('Form submitted values:', values);
+                onCreate(values);
+              }}
             >
-              <Form.Item name="title" label={t("title")}>
-                <Input />
+              <Form.Item 
+                  name="author" 
+                  label={t("author")}
+                  initialValue="admin"
+                  rules={[{ required: true, message: 'Please input the author!' }]}
+                >
+                  <Input value='admin' readOnly disabled /> 
               </Form.Item>
-              <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
+              <Form.Item 
+                  name="views" 
+                  label={t("views")}
+                  rules={[{ required: true, message: 'Please input the views!' }]}
+                >
+                <InputNumber min={0} />
               </Form.Item>
-              <Form.Item name="duration" label={t("duration")}>
+              <Form.Item name="event-period" label={t("event-period")} rules={[{ required: true, message: 'Please select a date!' }]}>
                 <DatePicker.RangePicker />
               </Form.Item>
-              <Form.Item name="status" label={t("status")}>
-                <Switch />
+              <Form.Item 
+                name="event-category" 
+                label={t("event-category")}
+                rules={[{ required: true, message: 'Please select a category!' }]}
+              >
+                  <Select
+                    showSearch
+                    style={{ width: 200 }}
+                    placeholder="Search Category"
+                    optionFilterProp="label"
+                    // onSearch={(value) => onSearchDomain([value])}
+                    loading={loadingDomain}
+                    options={[
+                      {
+                        label: "test",
+                        value: 1,
+                      },
+                    ]}
+                  />
               </Form.Item>
-              <Form.Item name="type" label={t("type")}>
-                <Select
-                  showSearch
-                  style={{ width: 200 }}
-                  placeholder="Search Domain"
-                  optionFilterProp="label"
-                  onSearch={onSearchDomain}
-                  loading={loadingDomain}
-                  options={[
-                    {
-                      label: "-",
-                      value: "",
-                    },
-                  ]}
-                />
+              
+              <Form.Item 
+                name="register-date" 
+                label={t("register-date")}
+                rules={[{ required: true, message: 'Please select a date!' }]}
+              >
+                  <DatePicker />
+                </Form.Item>
+              <Form.Item 
+                name="title" 
+                label={t("title")}
+                rules={[{ required: true, message: 'Please input the title!' }]}
+              >
+                 <Input />
               </Form.Item>
-              <Form.Item name="domain" label={t("domain")}>
-                <Select
-                  showSearch
-                  style={{ width: 200 }}
-                  placeholder="Search Domain"
-                  optionFilterProp="label"
-                  onSearch={onSearchDomain}
-                  loading={loadingDomain}
-                  options={[...domains]}
-                />
+              <Form.Item 
+                name="image-upload" 
+                className="text-center"
+                rules={[{ required: true, message: 'Please upload an image!' }]}
+              >
+              <Upload {...props} fileList={[]}>
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
               </Form.Item>
-              <Form.Item name="level" label={t("level")}>
-                <InputNumber min={0} />
+              <Form.Item 
+                name="description" 
+                label={t("desc")}
+                rules={[{ required: true, message: 'Please input the description!' }]}
+              >
+                <div ref={quillRef}></div>
               </Form.Item>
-              <Form.Item name="orderNum" label={t("orderNum")}>
-                <InputNumber min={0} />
-              </Form.Item>
-              <Form.Item>
-                <Button htmlType="submit" loading={loadingCreate}>
-                  {t("submit")}
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-
-          <Modal
-            title={t("edit")}
-            open={editOpen}
-            footer={false}
-            onCancel={onCancelEdit}
-            destroyOnClose
-          >
-            <Form
-              name="editForm"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 16 }}
-              initialValues={currentEvent ?? {}}
-              onFinish={onUpdate}
-            >
-              <Form.Item name="title" label={t("title")}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
-              </Form.Item>
-              <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
-              </Form.Item>
-              <Form.Item name="status" label={t("status")}>
-                <Switch />
-              </Form.Item>
-              <Form.Item name="type" label={t("type")}>
-                <Select
-                  showSearch
-                  style={{ width: 200 }}
-                  placeholder="Search Category"
-                  optionFilterProp="label"
-                  onSearch={onSearchDomain}
-                  loading={loadingDomain}
-                  options={[
-                    {
-                      label: "-",
-                      value: "",
-                    },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item name="domainId" label={t("domain")}>
-                <Select
-                  showSearch
-                  style={{ width: 200 }}
-                  placeholder="Search Domain"
-                  optionFilterProp="label"
-                  onSearch={onSearchDomain}
-                  loading={loadingDomain}
-                  options={[...domains]}
-                />
-              </Form.Item>
-              <Form.Item name="level" label={t("level")}>
-                <InputNumber min={0} />
-              </Form.Item>
-              <Form.Item name="orderNum" label={t("orderNum")}>
-                <InputNumber min={0} />
+              <Form.Item 
+                name="main-image" 
+                label={t("main-image")}
+                rules={[{ required: true, message: 'Please input the main image!' }]}
+              >
+                <div ref={quillRefOther}></div>
               </Form.Item>
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>

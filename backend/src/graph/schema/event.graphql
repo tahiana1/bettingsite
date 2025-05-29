@@ -11,7 +11,12 @@ type Event {
   domain: Domain
   showFrom: Time
   showTo: Time
+  category: Uint
+  views: Uint
+  mainImage: String
+  imageUpload: String
   level: Uint
+  createdDate: Time!
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -31,14 +36,15 @@ input UpdateEventInput {
 
 input NewEventInput {
   title: String!
-  type: String!
-  description: String!
-  status: Boolean
-  orderNum: Uint
-  domainId: Uint
-  level: Uint
+  author: String!
+  category: Uint
+  views: Uint
+  createdDate: Time
   showFrom: Time
   showTo: Time
+  description: String!
+  mainImage: String
+  imageUpload: String
 }
 
 type EventList {

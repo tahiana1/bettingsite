@@ -118,14 +118,15 @@ type NewDomainInput struct {
 
 type NewEventInput struct {
 	Title       string     `json:"title"`
-	Type        string     `json:"type"`
-	Description string     `json:"description"`
-	Status      *bool      `json:"status,omitempty"`
-	OrderNum    *uint      `json:"orderNum,omitempty"`
-	DomainID    *uint      `json:"domainId,omitempty"`
-	Level       *uint      `json:"level,omitempty"`
+	Author      string     `json:"author"`
+	Category    *uint      `json:"category,omitempty"`
+	Views       *uint      `json:"views,omitempty"`
+	CreatedDate *time.Time `json:"createdDate,omitempty"`
 	ShowFrom    *time.Time `json:"showFrom,omitempty"`
 	ShowTo      *time.Time `json:"showTo,omitempty"`
+	Description string     `json:"description"`
+	MainImage   *string    `json:"mainImage,omitempty"`
+	ImageUpload *string    `json:"imageUpload,omitempty"`
 }
 
 type NewInboxInput struct {
@@ -161,12 +162,13 @@ type NewMenuInput struct {
 }
 
 type NewNotificationInput struct {
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Status      *bool     `json:"status,omitempty"`
-	OrderNum    *uint     `json:"orderNum,omitempty"`
-	ShowFrom    time.Time `json:"showFrom"`
-	ShowTo      time.Time `json:"showTo"`
+	Title        string    `json:"title"`
+	Description  string    `json:"description"`
+	MainImage    string    `json:"mainImage"`
+	ImageUpload  string    `json:"imageUpload"`
+	NoticeType   string    `json:"noticeType"`
+	RegisterDate time.Time `json:"registerDate"`
+	Views        *uint     `json:"views,omitempty"`
 }
 
 type NewProfile struct {
@@ -432,6 +434,7 @@ type UpdateNotificationInput struct {
 	OrderNum    *uint      `json:"orderNum,omitempty"`
 	ShowFrom    *time.Time `json:"showFrom,omitempty"`
 	ShowTo      *time.Time `json:"showTo,omitempty"`
+	Level       *uint      `json:"level,omitempty"`
 }
 
 type UpdateProfile struct {

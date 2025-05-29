@@ -160,16 +160,16 @@ func (er *eventReader) CreateEvent(ctx context.Context, updates model.NewEventIn
 		Title:       updates.Title,
 		Description: updates.Description,
 		UserID:      authUser.ID,
-		Type:        updates.Type,
-		Status:      true,
+		Views:       updates.Views,
+		CreatedDate: updates.CreatedDate,
+		ShowFrom:    *updates.ShowFrom,
+		ShowTo:      *updates.ShowTo,
+		MainImage:   updates.MainImage,
+		ImageUpload: updates.ImageUpload,
 	}
 
-	if updates.DomainID != nil {
-		event.DomainID = updates.DomainID
-	}
-
-	if updates.Type != "" {
-		event.Type = updates.Type
+	if updates.Category != nil {
+		event.Category = updates.Category
 	}
 
 	if updates.ShowFrom != nil {
@@ -180,16 +180,28 @@ func (er *eventReader) CreateEvent(ctx context.Context, updates model.NewEventIn
 		event.ShowTo = *updates.ShowTo
 	}
 
-	if updates.Level != nil {
-		event.Level = *updates.Level
+	if updates.ImageUpload != nil {
+		event.ImageUpload = updates.ImageUpload
 	}
 
-	if updates.Status != nil {
-		event.Status = *updates.Status
+	if updates.MainImage != nil {
+		event.MainImage = updates.MainImage
 	}
 
-	if updates.OrderNum != nil {
-		event.OrderNum = *updates.OrderNum
+	if updates.CreatedDate != nil {
+		event.CreatedDate = updates.CreatedDate
+	}
+
+	if updates.Views != nil {
+		event.Views = updates.Views
+	}
+
+	if updates.ImageUpload != nil {
+		event.ImageUpload = updates.ImageUpload
+	}
+
+	if updates.Title != "" {
+		event.Title = updates.Title
 	}
 
 	if err := er.db.Save(&event).Error; err != nil {

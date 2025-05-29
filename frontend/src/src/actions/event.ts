@@ -48,18 +48,18 @@ export const FILTER_EVENT = gql`
         status
         showFrom
         showTo
+        imageUpload
+        category
         type
+        views
         domainId
-        domain {
-          id
-          name
-        }
-        userId
+        userId  
         user {
           id
           name
           userid
         }
+        createdDate
         level
         createdAt
         updatedAt
@@ -75,15 +75,14 @@ export const CREATE_EVENT = gql`
     response: createEvent(input: $input) {
       id
       title
-      description
-      domain {
-        id
-        name
-      }
-      # userId
+      category
+      views
+      createdDate
       showFrom
       showTo
-      orderNum
+      description
+      mainImage
+      imageUpload
     }
   }
 `;

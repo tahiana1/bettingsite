@@ -7,7 +7,9 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/hotbrainy/go-betting/backend/graph/generated"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
 	"github.com/hotbrainy/go-betting/backend/internal/loaders"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
@@ -34,6 +36,16 @@ func (r *mutationResolver) DeleteNotification(ctx context.Context, id uint) (boo
 	return true, nil
 }
 
+// ShowFrom is the resolver for the showFrom field.
+func (r *notificationResolver) ShowFrom(ctx context.Context, obj *models.Notification) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: ShowFrom - showFrom"))
+}
+
+// ShowTo is the resolver for the showTo field.
+func (r *notificationResolver) ShowTo(ctx context.Context, obj *models.Notification) (*time.Time, error) {
+	panic(fmt.Errorf("not implemented: ShowTo - showTo"))
+}
+
 // Notifications is the resolver for the notifications field.
 func (r *queryResolver) Notifications(ctx context.Context) ([]*models.Notification, error) {
 	panic(fmt.Errorf("not implemented: Notifications - notifications"))
@@ -44,3 +56,8 @@ func (r *queryResolver) GetNotifications(ctx context.Context, filters []*model.F
 	ldr := loaders.For(ctx)
 	return ldr.NotificationReader.GetNotifications(ctx, filters, orders, pagination)
 }
+
+// Notification returns generated.NotificationResolver implementation.
+func (r *Resolver) Notification() generated.NotificationResolver { return &notificationResolver{r} }
+
+type notificationResolver struct{ *Resolver }
