@@ -18,7 +18,7 @@ type TransactionMessage struct {
 }
 
 var firstNames = []string{"John", "Jane", "Mike", "Sarah", "David", "Lisa", "Tom", "Emma", "Alex", "Sophia", "Harry", "Jack", "Oliver", "Charlie", "Jacob", "George", "Oscar", "Thomas", "James", "William"}
-var lastNames = []string{"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"}
+var lastNames = []string{"Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Jackson", "White", "Harris", "Martin"}
 
 func generateFakeTransaction() TransactionMessage {
 	rand.Seed(time.Now().UnixNano())
@@ -54,7 +54,7 @@ func BroadcastTransaction(transaction *models.Transaction) {
 }
 
 func StartFakeTransactionGenerator() {
-	ticker := time.NewTicker(3 * time.Second)
+	ticker := time.NewTicker(500 * time.Millisecond)
 	go func() {
 		for range ticker.C {
 			message := generateFakeTransaction()

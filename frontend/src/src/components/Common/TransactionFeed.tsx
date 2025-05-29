@@ -62,9 +62,9 @@ const TransactionFeed: React.FC = () => {
               <span className={`mr-2 ${item.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>
                 {item.type === 'deposit' ? '↑' : '↓'}
               </span>
-              <span className="font-medium">{item.username}</span>
-              <span className="mx-2">{item.type === 'deposit' ? 'Deposit' : 'Withdraw'}</span>
-              <span className="font-bold">{item.amount.toLocaleString()}</span>
+              <span className={`font-medium ${item.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>{item.username}</span>
+              <span className={`mx-2 ${item.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>{item.type === 'deposit' ? 'Deposit' : 'Withdraw'}</span>
+              <span className={`font-bold ${item.type === 'deposit' ? 'text-green-500' : 'text-red-500'}`}>{item.amount.toLocaleString()}</span>
               <span className="ml-2 text-gray-400">{item.timestamp}</span>
             </List.Item>
           )}
