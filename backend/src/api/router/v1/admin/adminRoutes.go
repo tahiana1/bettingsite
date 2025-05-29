@@ -57,13 +57,13 @@ func GetAdminRoute(r *gin.RouterGroup) {
 	}
 
 	// Comment routes
-	commentRouter := r.Group("/posts/:id/comment")
-	{
-		commentRouter.POST("/store", controllers.CommentOnPost)
-		commentRouter.GET("/:comment_id/edit", controllers.EditComment)
-		commentRouter.PUT("/:comment_id/update", controllers.UpdateComment)
-		commentRouter.DELETE("/:comment_id/delete", controllers.DeleteComment)
-	}
+	// commentRouter := r.Group("/posts/:id/comment")
+	// {
+	// 	commentRouter.POST("/store", controllers.CommentOnPost)
+	// 	commentRouter.GET("/:comment_id/edit", controllers.EditComment)
+	// 	commentRouter.PUT("/:comment_id/update", controllers.UpdateComment)
+	// 	commentRouter.DELETE("/:comment_id/delete", controllers.DeleteComment)
+	// }
 
 	// Sport routes
 	sportRouter := r.Group("/sports")

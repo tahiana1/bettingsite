@@ -40,37 +40,21 @@ func Upgrade(c *gin.Context) {
 		return
 	}
 	defer conn.Close()
-	channel := "info"
+
+	// Subscribe to transaction channel
+	channel := "transactions"
 	rdb := redis.Client
 	pubsub := rdb.Subscribe(c, channel)
-
 	defer pubsub.Close()
 
 	ch := pubsub.Channel()
 
 	go func() {
 		for msg := range ch {
-			fmt.Println((msg.Payload))
 			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
 				log.Println(err)
 				return
 			}
-
-			for _, client := range clients {
-				if err := client.Conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
-					log.Println(err)
-					return
-				}
-			}
-			// leaguesBytes, err := json.Marshal(leagues)
-			// if err != nil {
-			// 	log.Println(err)
-			// 	return
-			// }
-			// if err := conn.WriteMessage(websocket.TextMessage, leaguesBytes); err != nil {
-			// 	log.Println(err)
-			// 	return
-			// }
 		}
 	}()
 
@@ -82,20 +66,14 @@ func Upgrade(c *gin.Context) {
 		}
 
 		var msgData Message
-
 		err = json.Unmarshal(msg, &msgData)
 		if err != nil {
 			log.Println(err)
-			// break
+			continue
 		}
 		fmt.Println(msgData)
 		rdb.Publish(c, channel, msg)
 	}
-
-	// for {
-	// 	conn.WriteMessage(websocket.TextMessage, []byte(time.Now().String()))
-	// 	time.Sleep(1 * time.Second)
-	// }
 }
 
 func Info(c *gin.Context) {

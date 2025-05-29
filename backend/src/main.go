@@ -13,6 +13,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/fetcher"
 	"github.com/hotbrainy/go-betting/backend/internal/kafka"
 	"github.com/hotbrainy/go-betting/backend/internal/redis"
+	"github.com/hotbrainy/go-betting/backend/internal/services"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -36,6 +37,9 @@ func main() {
 	port := os.Getenv("PORT")
 
 	h2s := &http2.Server{}
+
+	// Start fake transaction generator
+	services.StartFakeTransactionGenerator()
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:" + port,

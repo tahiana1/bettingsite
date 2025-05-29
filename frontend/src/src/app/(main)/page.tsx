@@ -37,6 +37,7 @@ import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
 import { GET_LATEST_ANNOUNCEMENTS } from "@/actions/announcement";
 import { GET_TOP_EVENT } from "@/actions/event";
+import TransactionFeed from '@/components/Common/TransactionFeed';
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
@@ -198,26 +199,7 @@ const Index: React.FC = () => {
               }}
               title={t("Real-time deposit/withdraw status")}
             >
-              <List size="small" className="!w-full">
-                <List.Item className="w-full">
-                  1. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-                <List.Item>
-                  2. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-                <List.Item>
-                  3. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-                <List.Item>
-                  4. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-                <List.Item>
-                  5. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-                <List.Item>
-                  6. Deposit 235234 {f.dateTime(new Date())}
-                </List.Item>
-              </List>
+              <TransactionFeed />
             </Card>
             <Card
               title={t("events")}
