@@ -20,8 +20,9 @@ func GetNotifications(c *gin.Context) {
 	fmt.Println(today)
 	err := initializers.DB.
 		Model(&models.Notification{}).
-		Where("show_from < ?", today).
-		Where("show_to > ?", today).
+		// Where("show_from < ?", today).
+		// Where("show_to > ?", today).
+		Where("notifications.status = ?", true).
 		Find(&notifications).Error
 
 	if err != nil {

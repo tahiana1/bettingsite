@@ -214,7 +214,7 @@ const Index: React.FC = () => {
                 dataSource={eventData?.response ?? []}
                 renderItem={(e: Event) => (
                   <List.Item>
-                    {e.title} - {e.description}
+                    {e.title} - {t(e.status ? "active" : "inactive")} - {e.showFrom} - {e.showTo}
                   </List.Item>
                 )}
               />

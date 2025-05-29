@@ -92,6 +92,7 @@ func (er *eventReader) GetTopEvents(ctx context.Context) ([]*models.Event, error
 
 	db.Where("show_from < ?", time.Now().Format(time.RFC3339))
 	db.Where("show_to > ?", time.Now().Format(time.RFC3339))
+	db.Where("events.status = ?", true)
 
 	db.Limit(5).Offset(0)
 	db = db.Order("created_at desc, updated_at desc,  order_num asc")
