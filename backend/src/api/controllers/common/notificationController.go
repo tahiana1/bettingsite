@@ -22,7 +22,7 @@ func GetNotifications(c *gin.Context) {
 		Model(&models.Notification{}).
 		// Where("show_from < ?", today).
 		// Where("show_to > ?", today).
-		Where("notifications.status = ?", true).
+		Where("status = ?", true).
 		Find(&notifications).Error
 
 	if err != nil {

@@ -86,6 +86,7 @@ const DepositRequest: React.FC = () => {
             <Space.Compact className="!w-full gap-2">
               <InputNumber
                 value={amount}
+                
                 onChange={(e) => setAmount(e!)}
                 className="!w-full !flex-2"
               />

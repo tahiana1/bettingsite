@@ -11,9 +11,7 @@ type Notification struct {
 	Title       string `json:"title" gorm:"size:100;unique" validate:"required,min=2"`
 	Description string `json:"description" gorm:"size:1200"`
 	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
-
-	ShowFrom time.Time `json:"showFrom"`
-	ShowTo   time.Time `json:"showTo"`
+	Status      bool   `json:"status" gorm:"default:true"`
 
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`

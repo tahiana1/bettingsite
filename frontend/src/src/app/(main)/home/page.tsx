@@ -9,6 +9,7 @@ import FixtureCard from "@/components/Home/FixtureCard";
 import { useAtom } from "jotai";
 import { currentLeagueState } from "@/state/state";
 import HomeHeader from "@/components/Home/Header";
+import BettingSidebar from "@/components/Home/BettingSidebar";
 
 const { Header } = Layout;
 
@@ -29,6 +30,7 @@ const Index: React.FC = () => {
       >
         <HomeHeader />
       </Header>
+
       <Content className="p-4 overflow-y-auto h-[calc(100vh-124px)]">
         <Space direction="vertical" className="w-full">
           <List

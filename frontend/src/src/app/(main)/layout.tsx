@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import { useAtom } from "jotai";
 
 import EventSidebar from "@/components/Home/EventSidebar";
 import ProfileCard from "@/components/Profile/ProfileCard";
+import BettingSidebar from "@/components/Home/BettingSidebar";
 
 // import type { Metadata } from "next";
 import { Splitter } from "antd";
@@ -11,6 +13,7 @@ import Layout from "@/components/Layout";
 import "@/styles/globals.css";
 import DeviceTracker from "@/components/Common/DeviceTracker";
 import ContactCard from "@/components/Common/Contact";
+import { showBettingCartState } from "@/state/state";
 /* 
 export const metadata: Metadata = {
   title: "Betting",
@@ -22,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [showBettingCart] = useAtom(showBettingCartState);
+
   return (
     <Layout>
       <DeviceTracker />
@@ -50,13 +55,10 @@ export default function RootLayout({
               style={{
                 scrollbarWidth: "inherit",
               }}
-              // defaultSize="20%"
-              // max="40%"
               className="w-1/4 h-[calc(100vh-40px)] hidden md:block"
-              // collapsible
             >
               <ProfileCard />
-
+              {showBettingCart && <BettingSidebar />}
               <ContactCard />
             </div>
           </div>

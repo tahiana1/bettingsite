@@ -31,6 +31,8 @@ export const rateState = atom<any[]>([]);
 export const breadcrumbState = atom<string[]>([]);
 export const betAmount = atom<number>(0);
 
+export const showBettingCartState = atom<boolean>(false);
+
 export const expectedWinningAmount = atom<Promise<number>>(async (get) => {
   const rates = get(rateState);
   const bAmount = get(betAmount);

@@ -35,7 +35,7 @@ import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
 import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
-import { GET_LATEST_ANNOUNCEMENTS } from "@/actions/announcement";
+import { FILTER_NOTI } from "@/actions/notification";
 import { GET_TOP_EVENT } from "@/actions/event";
 import TransactionFeed from '@/components/Common/TransactionFeed';
 
@@ -52,7 +52,7 @@ const Index: React.FC = () => {
   const f = useFormatter();
   const tk = dayjs().format("YYYYMMDD");
 
-  const { data, loading } = useQuery(GET_LATEST_ANNOUNCEMENTS);
+  const { data, loading } = useQuery(FILTER_NOTI);
   const { data: eventData, } = useQuery(GET_TOP_EVENT);
 
   const [notiApi, contextHolder] = notification.useNotification();
@@ -71,7 +71,7 @@ const Index: React.FC = () => {
       if ((noti[dayjs().format("YYYYMMDD")] ?? []).indexOf(n.id) == -1) {
         notiApi.info({
           message: n.title,
-          description: n.description,
+          // description: n.description,
           placement: "topLeft",
           actions: [
             <Checkbox onChange={() => onChange(n)} key={n.id}>
@@ -89,7 +89,7 @@ const Index: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      data.announcements?.map((a: Announcement) => a);
+      data.response?.notifications?.map((a: Notification) => a);
     }
   }, [data]);
 
@@ -186,9 +186,9 @@ const Index: React.FC = () => {
               <List
                 size="small"
                 className="w-full"
-                dataSource={data?.announcements ?? []}
-                renderItem={(i: Announcement) => (
-                  <List.Item>{i.description}</List.Item>
+                dataSource={data?.response?.notifications ?? []}
+                renderItem={(i: Notification) => (
+                  <List.Item>{i.title} - {dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss")}</List.Item>
                 )}
               />
             </Card>
