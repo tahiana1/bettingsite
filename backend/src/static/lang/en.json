@@ -508,6 +508,7 @@
   "disconnect": "Disconnect",
   "disconnectAll": "Disconnect All",
   "cancel": "Cancel",
+  "waiting": "Waiting",
   "delete": "Delete",
   "deleteAll": "Delete All",
 
@@ -548,5 +549,26 @@
 
   "topfixed": "Top Fixed",
 
-  "eventCategory": "Event Category"
+  "eventCategory": "Event Category",
+
+  "number": "Number",
+  "depositAmount" : "Deposit Amount",
+  "applicationDate" : "Application Date",
+  "situation" : "Situation",
+
+  "rechargeBonusError" : "Please select a recharge bonus",
+  "depositAmountError" : "Please enter a deposit amount",
+  "depositSuccess" : "Deposit request sent successfully",
+  "depositFailed" : "Deposit request failed",
+
+
+  "bankName" : "Bank Name",
+  "accountName" : "Account Name",
+  "depositorName" : "Depositor Name",
+  "alliance" : "Alliance",
+  "explanation" : "Explanation",
+  "withdrawAmountError" : "Please enter a withdraw amount",
+  "minimumWithdrawError" : "Please enter a minimum withdraw amount",
+  "withdrawSuccess" : "Withdraw request sent successfully",
+  "withdrawFailed" : "Withdraw request failed"
 }

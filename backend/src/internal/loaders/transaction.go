@@ -87,7 +87,8 @@ func (br *transactionReader) GetTransactions(ctx context.Context, filters []*mod
 		return db.Preload("Profile").Preload("Root").Preload("Parent")
 	}).
 		Joins("JOIN profiles ON transactions.user_id = profiles.user_id").
-		Joins("JOIN users on transactions.user_id = users.id")
+		Joins("JOIN users on transactions.user_id = users.id").
+		Order("transactions.created_at DESC")
 
 	// Filtering
 
@@ -203,6 +204,51 @@ func (pr *transactionReader) ApproveTransaction(ctx context.Context, id uint) (b
 		return false, err
 	}
 	tr.Status = "A"
+
+	tx := initializers.DB.Save(&tr)
+
+	if tx.Error != nil {
+		return false, tx.Error
+	}
+
+	// Get the user's profile to update balance
+	profile := models.Profile{}
+	if err := initializers.DB.Where("user_id = ?", tr.UserID).First(&profile).Error; err != nil {
+		return false, err
+	}
+
+	// Update balance based on transaction type
+	if tr.Type == "deposit" {
+		profile.Balance += tr.Amount
+	} else if tr.Type == "withdrawal" {
+		if profile.Balance < tr.Amount {
+			return false, fmt.Errorf("insufficient balance")
+		}
+		profile.Balance -= tr.Amount
+	}
+
+	// Save updated profile with bank ID to satisfy foreign key constraint
+	if err := initializers.DB.Model(&profile).Updates(map[string]interface{}{
+		"balance": profile.Balance,
+	}).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (pr *transactionReader) WaitingTransaction(ctx context.Context, id uint) (bool, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+
+	tr := models.Transaction{}
+
+	if err := initializers.DB.Model(&tr).First(&tr, "id = ?", id).Error; err != nil {
+		return false, err
+	}
+	tr.Status = "W"
 
 	tx := initializers.DB.Save(&tr)
 

@@ -79,5 +79,6 @@ extend type Mutation {
   deleteTransaction(id: ID!): Boolean! @hasRole(role: A)
   approveTransaction(id: ID!): Boolean! @hasRole(role: A)
   blockTransaction(id: ID!): Boolean! @hasRole(role: A)
+  waitingTransaction(id: ID!): Boolean! @hasRole(role: A)
   cancelTransaction(id: ID!): Boolean! @hasRole(role: A)
 }

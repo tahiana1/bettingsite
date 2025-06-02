@@ -17,7 +17,7 @@ export const GET_TRANSACTIONS = gql`
       status
       shortcut
       usdtDesc
-
+      explation
       transactionAt
       approvedAt
 
@@ -84,7 +84,6 @@ export const FILTER_TRANSACTIONS = gql`
         userId
         type
         amount
-
         balanceBefore
         balanceAfter
 
@@ -94,7 +93,6 @@ export const FILTER_TRANSACTIONS = gql`
         status
         shortcut
         usdtDesc
-
         transactionAt
         approvedAt
 
@@ -223,5 +221,18 @@ export const APPROVE_TRANSACTION = gql`
 export const BLOCK_TRANSACTION = gql`
   mutation BlockTransaction($id: ID!) {
     success: blockTransaction(id: $id)
+  }
+`;
+
+
+export const CANCEL_TRANSACTION = gql`
+  mutation CancelTransaction($id: ID!) {
+    success: cancelTransaction(id: $id)
+  }
+`;
+
+export const WAITING_TRANSACTION = gql`
+  mutation WaitingTransaction($id: ID!) {
+    success: waitingTransaction(id: $id)
   }
 `;

@@ -28,6 +28,8 @@ import {
   APPROVE_TRANSACTION,
   BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
+  CANCEL_TRANSACTION,
+  WAITING_TRANSACTION,
 } from "@/actions/transaction";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
@@ -50,7 +52,15 @@ const GeneralDWPage: React.FC = () => {
 
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
   const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
+  const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
+  const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch(tableOptions ?? undefined);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
   const onBlockTransaction = (transaction: Transaction) => {
     blockTransaction({ variables: { id: transaction.id } })
       .then((res) => {
@@ -66,10 +76,28 @@ const GeneralDWPage: React.FC = () => {
   const onApproveTransaction = (transaction: Transaction) => {
     approveTransaction({ variables: { id: transaction.id } })
       .then((res) => {
-        console.log({ res });
-        if (res.data?.success) {
-        }
-        refetch();
+        refetch(tableOptions);
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  };
+
+  const onWaitingTransaction = (transaction: Transaction) => {
+    waitingTransaction({ variables: { id: transaction.id } })
+      .then((res) => {
+        refetch(tableOptions);
+      })
+      .catch((err) => {
+        console.log({ err });
+      });
+  };
+
+
+  const onCancelTransaction = (transaction: Transaction) => {
+    cancelTransaction({ variables: { id: transaction.id } })
+      .then((res) => {
+        refetch(tableOptions);
       })
       .catch((err) => {
         console.log({ err });
@@ -94,25 +122,12 @@ const GeneralDWPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
-      fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("number"),
+      dataIndex: "id", 
+      key: "id",
+      render: (text, record, index) => index + 1
     },
-    {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
-    },
+    
     {
       title: t("root_dist"),
       dataIndex: "root.transactionid",
@@ -130,21 +145,23 @@ const GeneralDWPage: React.FC = () => {
       },
     },
     {
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
+      fixed: "left",
+      render: (_, record) => {
+        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
+        return <div className="flex items-center">
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+        </div>
+      },
+    },
+    {
       title: t("nickname"),
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("holderName"),
-      dataIndex: "profile.holderName",
-      key: '"Profile"."holder_name"',
-      render: (_, record) => record.user?.profile?.holderName,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -163,34 +180,28 @@ const GeneralDWPage: React.FC = () => {
       ),
     },
     {
-      title: t("birthday"),
-      dataIndex: "profile.birthday",
-      key: "birthday",
-      render: (_, record) =>
-        isValidDate(record.user?.profile?.birthday)
-          ? f.dateTime(new Date(record.user?.profile?.birthday))
-          : null,
+      title: t("bankName"),
+      dataIndex: "profile.bankname",
+      key: "bankname",
+      render: (_, record) => record.user?.profile?.bankName,
     },
     {
-      title: t("level"),
-      dataIndex: "profile.level",
-      key: "level",
-      render: (_, record) => record.user?.profile?.level,
+      title: t("accountName"),
+      dataIndex: "profile.accountNumber",
+      key: "accountNumber",
+      render: (_, record) => record.user?.profile?.accountNumber,
     },
     {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
+      title: t("depositorName"),
+      dataIndex: "profile.depositorName",
+      key: "depositorName",
+      render: (_, record) => record.user?.profile?.holderName,
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-    },
-    {
-      title: t("amount"),
-      dataIndex: "amount",
-      key: "amount",
+      title: t("alliance"),
+      dataIndex: "profile.alliance",
+      key: "alliance",
+      render: (_, record) => <p>-</p>,
     },
     {
       title: t("balanceBefore"),
@@ -198,14 +209,26 @@ const GeneralDWPage: React.FC = () => {
       key: "balanceBefore",
     },
     {
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
     },
+   
     {
       title: t("pointBefore"),
       dataIndex: "pointBefore",
       key: "pointBefore",
+    },
+    {
+      title: t("point"),
+      dataIndex: "point",
+      key: "point",
+      render: (_, record) => 0,
     },
     {
       title: t("pointAfter"),
@@ -220,7 +243,14 @@ const GeneralDWPage: React.FC = () => {
     {
       title: t("shortcut"),
       dataIndex: "shortcut",
+      width: 100,
       key: "shortcut",
+      render: (_, record) => (
+        <div className="flex flex-column gap-1">
+          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Money</p>
+          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Bet</p>
+        </div>
+      ),
     },
     {
       title: t("transactionAt"),
@@ -241,45 +271,62 @@ const GeneralDWPage: React.FC = () => {
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
     },
     {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => {
+        return <>
+          {record.status == "pending" && <Button
+            title={t("pending")}
+            variant="outlined"
+            onClick={() => onApproveTransaction(record)}
+            color="blue"
+          >
+            {t("pending")}
+          </Button>}
+          {record.status == "A" ? <button className="text-xs bg-[#1677ff] text-white px-2 py-1 rounded">{t("approve")}</button> : null}
+          {record.status == "B" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Blocked</button> : null}
+          {record.status == "C" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Canceled</button> : null}
+          {record.status == "W" ? <button className="text-xs bg-[orange] text-white px-2 py-1 rounded">Waiting</button> : null}
+        </>
+      }
+    },
+    {
       title: t("action"),
       key: "action",
       fixed: "right",
       render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockTransaction(record)
-                : () => onApproveTransaction(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
-          >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
+        <Space.Compact size="small" className="gap-1">
+          {(record.status == "pending" || record.status == "W") && <>
+            <Button
                 title={t("approve")}
                 variant="outlined"
+                onClick={() => onApproveTransaction(record)}
                 color="blue"
-                icon={<BsCardChecklist />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
+              >
+                {t("approve")}
+              </Button>
+                <Button
+                title={t("cancel")}
+                variant="outlined"
+                onClick={() => onCancelTransaction(record)}
+                color="red"
+              >
+                {t("cancel")}
+              </Button>
+              {
+                record.status != "W" && (
+                  <Button
+                    title={t("waiting")}
+                    variant="outlined"
+                    onClick={() => onWaitingTransaction(record)}
+                    color="orange"
+                  >
+                    {t("waiting")}
+                  </Button>
+                )
+              }
+            </>}
         </Space.Compact>
       ),
     },

@@ -9,6 +9,7 @@ import (
 	adminRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/admin"
 	commonRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/common"
 	partnerRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/partner"
+	transactionRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/transaction"
 	userRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/user"
 )
 
@@ -80,4 +81,5 @@ func GetV1Route(r *gin.RouterGroup) {
 		commentRouter.DELETE("/:comment_id/delete", controllers.DeleteComment)
 	}
 
+	transactionRouter.GetTransactionRoute(r.Group("/transactions"))
 }

@@ -248,6 +248,7 @@ interface Transaction {
   balanceAfter: number;
   pointBefore: number;
   pointAfter: number;
+  explation: string;
   status: string;
   shortcut: string;
   usdtDesc: string;

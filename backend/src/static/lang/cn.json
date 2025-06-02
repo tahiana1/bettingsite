@@ -493,6 +493,7 @@
   "submit": "提交",
   "reset": "重置",
   "cancel": "取消",
+  "waiting": "等待",
   "disconnect": "断开连接",
   "disconnectAll": "全部断开连接",
   "delete": "删除",
@@ -536,5 +537,25 @@
 
   "topfixed": "置顶",
 
-  "eventCategory": "活动类别"
+  "eventCategory": "活动类别",
+
+  "number": "编号",
+  "depositAmount" : "存款金额",
+  "applicationDate" : "申请日期",
+  "situation" : "情况",
+
+  "rechargeBonusError" : "请选择充值红利",
+  "depositAmountError" : "请输入存款金额",
+  "depositSuccess" : "存款请求发送成功",
+  "depositFailed" : "存款请求发送失败",
+
+  "bankName" : "银行名称",
+  "accountName" : "账户名称",
+  "depositorName" : "存款人姓名",
+  "alliance" : "联盟",
+  "explanation" : "说明",
+  "withdrawAmountError" : "请输入提款金额",
+  "minimumWithdrawError" : "请输入最低提款金额",
+  "withdrawSuccess" : "提款请求发送成功",
+  "withdrawFailed" : "提款请求发送失败"
 }

@@ -17,9 +17,9 @@ type Transaction struct {
 
 	BalanceBefore float64 `json:"balanceBefore"` // User's balance before the transaction
 	BalanceAfter  float64 `json:"balanceAfter"`  // User's balance after the transaction
-
-	PointBefore float64 `json:"pointBefore"` // User's point before the transaction
-	PointAfter  float64 `json:"pointAfter"`  // User's point after the transaction
+	Explation     string  `json:"explation"`     // User's explation
+	PointBefore   float64 `json:"pointBefore"`   // User's point before the transaction
+	PointAfter    float64 `json:"pointAfter"`    // User's point after the transaction
 
 	Status   string `json:"status" gorm:"size:20"`    // e.g., "pending", "completed", "failed"
 	Shortcut string `json:"shortcut" gorm:"size:20"`  // e.g., "pending", "completed", "failed"
