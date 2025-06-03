@@ -15,32 +15,26 @@ import {
   Form,
   InputNumber,
   notification,
-  Upload,
   Select,
 } from "antd";
 import { GET_DOMAINS } from "@/actions/domain";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { uploadFile } from '@/lib/supabase/storage';
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { BiTrash } from "react-icons/bi";
 import { useQuill } from "react-quilljs";
 import { PiPlus } from "react-icons/pi";
-import { UploadOutlined } from "@ant-design/icons";
-import { message } from 'antd';
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
-  CREATE_BULLETIN,
+  // CREATE_BULLETIN,
   GET_BULLETINS,
   UPDATE_BULLETIN,
   DELETE_BULLETIN,
 } from "@/actions/bulletin";
-import { title } from "process";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -53,41 +47,40 @@ const BulletinPage: React.FC = () => {
   const {
     loading: loadingDomain,
     data: domainData,
-    refetch: refetchDomain,
+    // refetch: refetchDomain, // Removed since it's unused
   } = useQuery(GET_DOMAINS);
 
   const [total, setTotal] = useState<number>(0);
   const {loading, data, refetch } = useQuery(GET_BULLETINS);
   const [domains, setDomains] = useState<any[]>([]);
   const [bulletinAPI, context] = notification.useNotification();
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [bulletins, setBulletins] = useState<any[]>([]);
   const [updateBulletin, { loading: loadingUpdate }] = useMutation(UPDATE_BULLETIN);
-  const [createBulletin, { loading: loadingCreate }] = useMutation(CREATE_BULLETIN);
+  // const [createBulletin, { loading: loadingCreate }] = useMutation(CREATE_BULLETIN);
   const [deleteBulletin, { loading: loadingDelete }] = useMutation(DELETE_BULLETIN);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
   const [currentBulletin, setCurrentBulletin] = useState<Bulletin | null>(null);
 
-  const onLevelChange = (evt: Bulletin, value: number) => {
-    updateBulletin({
-      variables: { 
-        id: evt.id, 
-        input: { 
-          orderNum: value
-        } 
-      },
-    }).then(() => {
-      refetch(tableOptions);
-    }).catch((err) => {
-      console.error('Error updating notification order:', err);
-      bulletinAPI.error({
-        message: 'Failed to update notification order',
-      });
-    });
-  };
-
+  // const onLevelChange = (evt: Bulletin, value: number) => {
+  //   updateBulletin({
+  //     variables: { 
+  //       id: evt.id, 
+  //       input: { 
+  //         orderNum: value
+  //       } 
+  //     },
+  //   }).then(() => {
+  //     refetch(tableOptions);
+  //   }).catch((err) => {
+  //     console.error('Error updating notification order:', err);
+  //     bulletinAPI.error({
+  //       message: 'Failed to update notification order',
+  //     });
+  //   });
+  // };
+  console.log(bulletinAPI, 'bulletinAPI');
   useEffect(() => {
     if (domainData) {
       setDomains([
@@ -151,7 +144,7 @@ const BulletinPage: React.FC = () => {
     { value: '1', label: t("test") },
   ];
   const { quill, quillRef } = useQuill({ modules, formats });
-  const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
+  // const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
 
   const showModal = () => {
     setOpen(true);
@@ -173,43 +166,32 @@ const BulletinPage: React.FC = () => {
     }
   }, [quill]);
 
-  useEffect(() => {
-    if (quillOther) {
-      const handleTextChange = () => handleQuillChange(quillOther, 'main-image');
-      quillOther.on('text-change', handleTextChange);
-      return () => {
-        quillOther.off('text-change', handleTextChange);
-      };
-    }
-  }, [quillOther]);
-
-
-  const onDomainChange = (evt: Bulletin, value: number[]) => {
-    console.log('value', value);
-    setTableOptions({
-      ...tableOptions,
-      filter: [
-        ...(tableOptions?.filter?.filter((f: any) => f.field !== '"domains"."name"') ?? []),
-        ...(value.length > 0
-          ? [
-              {
-                field: '"domains"."name"',
-                value: value.map(v => v === 0 ? "entire" : domains.find(d => d.value === v)?.label).filter(Boolean),
-                op: "in",
-              },
-            ]
-          : []),
-      ],
-    });
-    // updateEvent({
-    //   variables: {
-    //     id: evt.id,
-    //     input: {
-    //       domainId: value.map((v: number) => v),
-    //     },
-    //   },
-    // });
-  };
+  // const onDomainChange = (evt: Bulletin, value: number[]) => {
+  //   console.log('value', value);
+  //   setTableOptions({
+  //     ...tableOptions,
+  //     filter: [
+  //       ...(tableOptions?.filter?.filter((f: any) => f.field !== '"domains"."name"') ?? []),
+  //       ...(value.length > 0
+  //         ? [
+  //             {
+  //               field: '"domains"."name"',
+  //               value: value.map(v => v === 0 ? "entire" : domains.find(d => d.value === v)?.label).filter(Boolean),
+  //               op: "in",
+  //             },
+  //           ]
+  //         : []),
+  //     ],
+  //   });
+  //   // updateEvent({
+  //   //   variables: {
+  //   //     id: evt.id,
+  //   //     input: {
+  //   //       domainId: value.map((v: number) => v),
+  //   //     },
+  //   //   },
+  //   // });
+  // };
 
   const onStatusChange = (bulletin: Bulletin, checked: boolean) => {
     updateBulletin({
@@ -310,7 +292,7 @@ const BulletinPage: React.FC = () => {
       title: t("author"),
       dataIndex: "user.userid",
       key: "user.userid",
-      render: (text, record) => record?.user?.userid ?? '-',
+      render: (_, record) => record?.user?.userid ?? '-',
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />
@@ -346,13 +328,13 @@ const BulletinPage: React.FC = () => {
       title: t("top"),
       dataIndex: "top",
       key: "top",
-      render: (text, record) => {
+      render: (text: boolean, record: Bulletin) => {
         return (
           <Switch
             size="small"
             checked={text}
             onChange={(checked) => onStatusChange(record, checked)}
-          ></Switch>
+          />
         );
       },
     },
@@ -502,7 +484,7 @@ const BulletinPage: React.FC = () => {
                 <div ref={quillRef}></div>
               </Form.Item>
               <Form.Item>
-                <Button htmlType="submit" loading={loadingCreate}>
+                <Button htmlType="submit" loading={loadingUpdate}>
                   {t("submit")}
                 </Button>
               </Form.Item>

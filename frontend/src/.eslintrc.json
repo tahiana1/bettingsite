@@ -5,5 +5,11 @@
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off"
+  },
+  "ignorePatterns": ["**/*"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }

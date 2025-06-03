@@ -11,11 +11,8 @@ import {
   Space,
   Table,
   Layout,
-  Input,
-  Switch,
   Popconfirm,
   message,
-  DatePicker,
   Tag,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
@@ -25,16 +22,13 @@ import { betAmount, userState } from "@/state/state";
 import { BiTrash } from "react-icons/bi";
 import { SiDepositphotos } from "react-icons/si";
 import type { TableProps } from "antd";
-import { parseTableOptions } from "@/lib";
 import { FilterDropdown } from "@refinedev/antd";
-import { useMutation } from "@apollo/client";
 
 import api from "@/api";
 
 const DepositRequest: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
   const [profile] = useAtom<any>(userState);
   const [rechargeBonus, setRechargeBonus] = useState<string>("");
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -122,7 +116,7 @@ const DepositRequest: React.FC = () => {
       title: t("number"),
       dataIndex: "id", 
       key: "id",
-      render: (text, record, index) => index + 1
+      render: (_, __, index) => index + 1
     },
     {
       title: t("depositAmount"),

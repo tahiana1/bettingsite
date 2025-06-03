@@ -7,11 +7,9 @@ import {
   InputNumber,
   List,
   Radio,
-  Select,
-  Space,
+  Space,  
   Table,
   Layout,
-  Input,
   Popconfirm,
   message,
   Tag,
@@ -34,6 +32,21 @@ const WithdrawRequest: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
+
+  const handleDelete = (id: number) => {
+    api("transactions/delete", {
+      method: "DELETE",
+      params: {
+        id
+      }
+    }).then(() => {
+      message.success(t("deleteSuccess"));
+      setTimeoutState(!timeoutState);
+    }).catch(() => {
+      message.error(t("deleteFailed"));
+    });
+  };
+
   useEffect(() => {
     const userid = String(profile.id);
     api("transactions/get", { 
@@ -121,7 +134,7 @@ const WithdrawRequest: React.FC = () => {
       title: t("situation"),
       dataIndex: "status",
       key: "status",
-      render: (_, record) => (
+      render: (status, record) => (
         <Tag color={record.status === "A" ? "green" : "red"}>
           {record.status === "pending" && "Pending"}
           {record.status === "A" && "Approved"}
@@ -140,6 +153,7 @@ const WithdrawRequest: React.FC = () => {
           <Popconfirm
             title={t("confirmSure")}
             description={t("deleteMessage")}
+            onConfirm={() => handleDelete(record.id)}
           >
             <Button
               title={t("delete")}

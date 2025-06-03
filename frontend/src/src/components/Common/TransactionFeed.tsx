@@ -12,7 +12,7 @@ interface Transaction {
 const TransactionFeed: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [ws, setWs] = useState<WebSocket | null>(null);
-
+  console.log(ws, 'ws');
   useEffect(() => {
     const socket = new WebSocket(wsURL);
     

@@ -42,6 +42,7 @@ export const uploadFile = async (file: File, path: string): Promise<string> => {
     if (error) {
       throw error;
     }
+    console.log(data);
 
     // Get the public URL
     const { data: { publicUrl } } = supabase.storage

@@ -41,7 +41,6 @@ import {
   UPDATE_NOTI,
   DELETE_NOTI,
 } from "@/actions/notification";
-import { title } from "process";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -55,7 +54,7 @@ const NotiPage: React.FC = () => {
   const {
     loading: loadingDomain,
     data: domainData,
-    refetch: refetchDomain,
+    // refetch: refetchDomain,
   } = useQuery(GET_DOMAINS);
 
   const [total, setTotal] = useState<number>(0);
@@ -68,11 +67,9 @@ const NotiPage: React.FC = () => {
   const [createNoti, { loading: loadingCreate }] = useMutation(CREATE_NOTI);
   const [deleteNoti, { loading: loadingDelete }] = useMutation(DELETE_NOTI);
   const [open, setOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-
-  const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
 
   const onLevelChange = (evt: Noti, value: number) => {
+    console.log(loadingUpdate, 'loadingUpdate');
     updateNoti({
       variables: { 
         id: evt.id, 
@@ -252,36 +249,16 @@ const NotiPage: React.FC = () => {
       });
   };
 
-  const onUpdate = (noti: Noti) => {
-    const update = {
-      title: noti.title,
-      description: noti.description,
-      mainImage: noti.mainImage,
-      imageUpload: uploadedImageUrl,
-      orderNum: noti.orderNum,
-      level: noti.level,
-    };
-    updateNoti({
-      variables: {
-        id: currentNoti!.id,
-        input: update,
-      },
-    }).then(() => {
-      setEditOpen(false);
-      refetch(tableOptions);
-    });
-  };
+  // const onEdit = (noti: Noti) => {
+  //   console.log("Received values of form: ", noti);
+  //   setCurrentNoti(noti);
+  //   setEditOpen(true);
+  // };
 
-  const onEdit = (noti: Noti) => {
-    console.log("Received values of form: ", noti);
-    setCurrentNoti(noti);
-    setEditOpen(true);
-  };
-
-  const onCancelEdit = () => {
-    setCurrentNoti(null);
-    setEditOpen(false);
-  };
+  // const onCancelEdit = () => {
+  //   setCurrentNoti(null);
+  //   setEditOpen(false);
+  // };
 
   const onCancelNew = () => {
     setOpen(false);
@@ -584,42 +561,6 @@ const NotiPage: React.FC = () => {
               </Form.Item>
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>
-                  {t("submit")}
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-
-          <Modal
-            title={t("edit")}
-            open={editOpen}
-            footer={false}
-            onCancel={onCancelEdit}
-            destroyOnHidden
-          >
-            <Form
-              name="editForm"
-              layout="vertical"
-              initialValues={currentNoti ?? {}}
-              onFinish={onUpdate}
-            >
-              <Form.Item name="title" label={t("title")}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
-              </Form.Item>
-              <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
-              </Form.Item>
-              <Form.Item name="status" label={t("status")}>
-                <Switch />
-              </Form.Item>
-              <Form.Item name="orderNum" label={t("orderNum")}>
-                <InputNumber />
-              </Form.Item>
-              <Form.Item>
-                <Button htmlType="submit" loading={loadingUpdate}>
                   {t("submit")}
                 </Button>
               </Form.Item>

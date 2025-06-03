@@ -274,3 +274,26 @@ interface Qna {
   updatedAt: Date | string;
   deletedAt: Date | string;
 }
+
+interface Notification {
+  key?: string;
+  id: number;
+  title: string;
+  description: string;
+  orderNum: number;
+  status: boolean;
+  level: number;
+  domainId: number;
+  domain: {
+    id: number;
+    name: string;
+  };
+  mainImage: string;
+  imageUpload: any;
+  noticeType: string;
+  registerDate: string;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}

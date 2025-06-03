@@ -23,7 +23,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   APPROVE_TRANSACTION,
-  BLOCK_TRANSACTION,
+  // BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
   CANCEL_TRANSACTION,
   WAITING_TRANSACTION,
@@ -55,7 +55,7 @@ const MemberTransferPage: React.FC = () => {
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
 
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
+  // const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
@@ -65,17 +65,17 @@ const MemberTransferPage: React.FC = () => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-  const onBlockTransaction = (transaction: Transaction) => {
-    blockTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
+  // const onBlockTransaction = (transaction: Transaction) => {
+  //   blockTransaction({ variables: { id: transaction.id } })
+  //     .then((res) => {
+  //       if (res.data?.success) {
+  //       }
+  //       refetch(tableOptions);
+  //     })
+  //     .catch((err) => {
+  //       console.log({ err });
+  //     });
+  // };
 
   const onApproveTransaction = (transaction: Transaction) => {
     approveTransaction({ variables: { id: transaction.id } })
@@ -143,7 +143,7 @@ const MemberTransferPage: React.FC = () => {
       title: t("number"),
       dataIndex: "id", 
       key: "id",
-      render: (text, record, index) => index + 1
+      render: (_, __, index) => index + 1
     },
     {
       title: t("root_dist"),
@@ -243,7 +243,7 @@ const MemberTransferPage: React.FC = () => {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, record) => 0,
+      render: () => 0,
     },
     {
       title: t("pointAfter"),

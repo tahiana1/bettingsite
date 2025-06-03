@@ -9,11 +9,9 @@ import {
   Button,
   Popconfirm,
   Input,
-  DatePicker,
   Switch,
   Modal,
   Form,
-  InputNumber,
   notification,
   Select,
 } from "antd";
@@ -22,12 +20,11 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
-import { BiEdit, BiTrash } from "react-icons/bi";
+import { BiTrash } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
  
-import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
   CREATE_ANNOUNCEMENT,
@@ -38,7 +35,6 @@ import {
 
 const AnnouncementPage: React.FC = () => {
   const t = useTranslations();
-  const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [total, setTotal] = useState<number>(0);
@@ -54,15 +50,13 @@ const AnnouncementPage: React.FC = () => {
   const [deleteNoti, { loading: loadingDelete }] =
     useMutation(DELETE_ANNOUNCEMENT);
   const [open, setOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-
-  const [currentAnnouncement, setCurrentAnnouncement] = useState<Announcement | null>(null);
 
   const showModal = () => {
     setOpen(true);
   };
 
   const onLevelChange = (announcement: Announcement, value: number) => {
+    console.log(loadingUpdate, 'loadingUpdate');
     updateAnnouncement({
       variables: { 
         id: announcement.id, 
@@ -113,38 +107,6 @@ const AnnouncementPage: React.FC = () => {
           message: err.message,
         });
       });
-  };
-
-  const onUpdate = (noti: Announcement) => {
-    // const update = {
-    //   title: noti.title,
-    //   description: noti.description,
-    //   showFrom: noti.duration ? noti.duration[0] : undefined,
-    //   showTo: noti.duration ? noti.duration[1] : undefined,
-    //   orderNum: noti.orderNum,
-    //   status: noti.status,
-    // };
-    // updateAnnouncement({
-    //   variables: {
-    //     id: currentAnnouncement!.id,
-    //     input: update,
-    //   },
-    // }).then(() => {
-    //   setEditOpen(false);
-    //   refetch(tableOptions);
-    // });
-  };
-
-  const onEdit = (announce: Announcement) => {
-    console.log("Received values of form: ", announce);
-    announce.duration = [dayjs(announce.showFrom), dayjs(announce.showTo)];
-    setCurrentAnnouncement(announce);
-    setEditOpen(true);
-  };
-
-  const onCancelEdit = () => {
-    setCurrentAnnouncement(null);
-    setEditOpen(false);
   };
 
   const onCancelNew = () => {
@@ -342,42 +304,6 @@ const AnnouncementPage: React.FC = () => {
               </Form.Item>
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>
-                  {t("submit")}
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-
-          <Modal
-            title={t("edit")}
-            open={editOpen}
-            footer={false}
-            onCancel={onCancelEdit}
-            destroyOnClose
-          >
-            <Form
-              name="editForm"
-              layout="vertical"
-              initialValues={currentAnnouncement ?? {}}
-              onFinish={onUpdate}
-            >
-              <Form.Item name="title" label={t("title")}>
-                <Input />
-              </Form.Item>
-              <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
-              </Form.Item>
-              <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
-              </Form.Item>
-              <Form.Item name="status" label={t("status")}>
-                <Switch />
-              </Form.Item>
-              <Form.Item name="orderNum" label={t("orderNum")}>
-                <InputNumber />
-              </Form.Item>
-              <Form.Item>
-                <Button htmlType="submit" loading={loadingUpdate}>
                   {t("submit")}
                 </Button>
               </Form.Item>

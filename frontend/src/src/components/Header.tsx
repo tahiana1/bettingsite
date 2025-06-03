@@ -108,9 +108,11 @@ const Head = () => {
     if (data) {
       setMenu(
         data.response.map((m: Menu) => ({
-          ...m,
+          key: m.key,
           label: t(m.label.toLowerCase()),
           icon: <span className={"icon-" + m.icon}></span>,
+          path: m.path,
+          children: m.children
         })) ?? []
       );
     }

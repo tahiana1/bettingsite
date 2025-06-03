@@ -7,7 +7,6 @@ import {
   Card,
   Table,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
@@ -26,16 +25,14 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   APPROVE_TRANSACTION,
-  BLOCK_TRANSACTION,
+  // BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
   CANCEL_TRANSACTION,
   WAITING_TRANSACTION,
 } from "@/actions/transaction";
-import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
-import { BsCardChecklist } from "react-icons/bs";
 
 const GeneralDWPage: React.FC = () => {
   const t = useTranslations();
@@ -51,7 +48,7 @@ const GeneralDWPage: React.FC = () => {
   const [colorModal, setColorModal] = useState<boolean>(false);
 
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
+  // const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
@@ -61,35 +58,39 @@ const GeneralDWPage: React.FC = () => {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-  const onBlockTransaction = (transaction: Transaction) => {
-    blockTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
+  // const onBlockTransaction = (transaction: Transaction) => {
+  //   blockTransaction({ variables: { id: transaction.id } })
+  //     .then((res) => {
+  //       if (res.data?.success) {
+  //       }
+  //       refetch(tableOptions);
+  //     })
+  //     .catch((err) => {
+  //       console.log({ err });
+  //     });
+  // };
 
   const onApproveTransaction = (transaction: Transaction) => {
     approveTransaction({ variables: { id: transaction.id } })
       .then((res) => {
-        refetch(tableOptions);
+        if (res.data?.success) {
+          refetch(tableOptions);  
+        }
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error approving transaction:', err);
       });
   };
 
   const onWaitingTransaction = (transaction: Transaction) => {
     waitingTransaction({ variables: { id: transaction.id } })
       .then((res) => {
-        refetch(tableOptions);
+        if (res.data?.success) {
+          refetch(tableOptions);
+        }
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error waiting transaction:', err);
       });
   };
 
@@ -97,10 +98,12 @@ const GeneralDWPage: React.FC = () => {
   const onCancelTransaction = (transaction: Transaction) => {
     cancelTransaction({ variables: { id: transaction.id } })
       .then((res) => {
-        refetch(tableOptions);
+        if (res.data?.success) {
+          refetch(tableOptions);
+        }
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error canceling transaction:', err);
       });
   };
   const onTransactionTypeChange = (v: string = "") => {
@@ -125,7 +128,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("number"),
       dataIndex: "id", 
       key: "id",
-      render: (text, record, index) => index + 1
+      render: (_, __, index) => index + 1
     },
     
     {
@@ -228,7 +231,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, record) => 0,
+      render: () => 0,
     },
     {
       title: t("pointAfter"),

@@ -29,7 +29,7 @@ import gtype5 from "@/assets/img/slide/gtype5.png";
 import gtype6 from "@/assets/img/slide/gtype6.png";
 
 import Image from "next/image";
-import { useFormatter, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useAtom } from "jotai";
 import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
@@ -49,7 +49,6 @@ const contentStyle: React.CSSProperties = {
 
 const Index: React.FC = () => {
   const t = useTranslations();
-  const f = useFormatter();
   const tk = dayjs().format("YYYYMMDD");
 
   const { data, loading } = useQuery(FILTER_NOTI);
@@ -71,7 +70,7 @@ const Index: React.FC = () => {
       if ((noti[dayjs().format("YYYYMMDD")] ?? []).indexOf(n.id) == -1) {
         notiApi.info({
           message: n.title,
-          // description: n.description,
+          description: <div dangerouslySetInnerHTML={{ __html: n.description }} />,
           placement: "topLeft",
           actions: [
             <Checkbox onChange={() => onChange(n)} key={n.id}>
@@ -187,8 +186,8 @@ const Index: React.FC = () => {
                 size="small"
                 className="w-full"
                 dataSource={data?.response?.notifications ?? []}
-                renderItem={(i: Notification) => (
-                  <List.Item>{i.title} - {dayjs(i.createdAt).format("YYYY-MM-DD HH:mm:ss")}</List.Item>
+                renderItem={({ title, createdAt }: Notification) => (
+                  <List.Item>{title} - {dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss")}</List.Item>
                 )}
               />
             </Card>
@@ -212,9 +211,9 @@ const Index: React.FC = () => {
                 size="small"
                 className="w-full"
                 dataSource={eventData?.response ?? []}
-                renderItem={(e: Event) => (
+                renderItem={({ title, status, showFrom, showTo }: Event) => (
                   <List.Item>
-                    {e.title} - {t(e.status ? "active" : "inactive")} - {e.showFrom} - {e.showTo}
+                    {title} - {t(status ? "active" : "inactive")} - {showFrom} - {showTo}
                   </List.Item>
                 )}
               />

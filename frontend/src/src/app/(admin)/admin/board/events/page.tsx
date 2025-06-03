@@ -17,7 +17,6 @@ import {
   notification,
   Select,
   Upload,
-  Checkbox,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -27,7 +26,7 @@ import { useQuill } from "react-quilljs";
 
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
-import { BiEdit, BiTrash } from "react-icons/bi";
+import { BiTrash } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
@@ -93,7 +92,7 @@ const EventPage: React.FC = () => {
   const {
     loading: loadingDomain,
     data: domainData,
-    refetch: refetchDomain,
+    // refetch: refetchDomain,
   } = useQuery(GET_DOMAINS);
 
   const [updateEvent /* { loading: loadingUpdate } */] =
@@ -101,9 +100,7 @@ const EventPage: React.FC = () => {
   const [createEvent, { loading: loadingCreate }] = useMutation(CREATE_EVENT);
   const [deleteEvent, { loading: loadingDelete }] = useMutation(DELETE_EVENT);
   const [open, setOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
 
   const onLevelChange = (evt: Event, value: number) => {
     updateEvent({
@@ -253,41 +250,6 @@ const EventPage: React.FC = () => {
           message: err.message || 'Failed to create event',
         });
       });
-  };
-
-  const onUpdate = (evt: Event) => {
-    const update = {
-      title: evt.title,
-      description: evt.description,
-      showFrom: evt.duration ? evt.duration[0] : undefined,
-      showTo: evt.duration ? evt.duration[1] : undefined,
-      orderNum: evt.orderNum,
-      level: evt.level,
-      type: evt.type,
-      domainId: evt.domainId,
-      status: evt.status,
-    };
-    updateEvent({
-      variables: {
-        id: currentEvent!.id,
-        input: update,
-      },
-    }).then(() => {
-      setEditOpen(false);
-      refetch(tableOptions);
-    });
-  };
-
-  const onEdit = (evt: Event) => {
-    console.log("Received values of form: ", evt);
-    evt.duration = [dayjs(evt.showFrom), dayjs(evt.showTo)];
-    setCurrentEvent(evt);
-    setEditOpen(true);
-  };
-
-  const onCancelEdit = () => {
-    setCurrentEvent(null);
-    setEditOpen(false);
   };
 
   const onCancelNew = () => {
@@ -479,7 +441,6 @@ const EventPage: React.FC = () => {
       dataIndex: "domain",
       key: "domain",
       render: (text, record) => {
-        const selectedDomains = domains.filter(d => d.label === record.domain?.name);
         return (
           <Select
             mode="multiple"

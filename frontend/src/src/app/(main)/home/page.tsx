@@ -9,7 +9,7 @@ import FixtureCard from "@/components/Home/FixtureCard";
 import { useAtom } from "jotai";
 import { currentLeagueState } from "@/state/state";
 import HomeHeader from "@/components/Home/Header";
-import BettingSidebar from "@/components/Home/BettingSidebar";
+// import BettingSidebar from "@/components/Home/BettingSidebar";
 
 const { Header } = Layout;
 
