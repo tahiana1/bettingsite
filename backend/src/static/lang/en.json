@@ -570,5 +570,7 @@
   "withdrawAmountError" : "Please enter a withdraw amount",
   "minimumWithdrawError" : "Please enter a minimum withdraw amount",
   "withdrawSuccess" : "Withdraw request sent successfully",
-  "withdrawFailed" : "Withdraw request failed"
+  "withdrawFailed" : "Withdraw request failed",
+
+  "withdrawAmount" : "Withdraw Amount"
 }

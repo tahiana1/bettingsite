@@ -557,5 +557,7 @@
   "withdrawAmountError" : "请输入提款金额",
   "minimumWithdrawError" : "请输入最低提款金额",
   "withdrawSuccess" : "提款请求发送成功",
-  "withdrawFailed" : "提款请求发送失败"
+  "withdrawFailed" : "提款请求发送失败",
+
+  "withdrawAmount" : "提款金额"
 }

@@ -218,6 +218,7 @@ const NotiPage: React.FC = () => {
         },
       },
     }).then((result) => {
+      refetch(tableOptions);
       console.log({ result });
     });
   };
