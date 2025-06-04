@@ -559,5 +559,14 @@
   "withdrawSuccess" : "提款请求发送成功",
   "withdrawFailed" : "提款请求发送失败",
 
-  "withdrawAmount" : "提款金额"
+  "withdrawAmount" : "提款金额",
+
+  "waitForMemberApproval" : "等待会员批准",
+
+  "depositRequest" : "存款请求",
+  "withdrawRequest" : "提款请求",
+  "inquiryRequest" : "1:1 查询",
+  "rollingConversion" : "滚动转换",
+  "partnerWithdraw" : "合作伙伴提款",
+  "partnerDeposit" : "合作伙伴存款"
 }

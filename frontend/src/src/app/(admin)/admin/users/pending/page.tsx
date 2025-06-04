@@ -37,6 +37,11 @@ import { USER_STATUS } from "@/constants";
 // type UserIndex = keyof User;
 
 const PendingUserPage: React.FC = () => {
+  const [pathname, setPathname] = useState<string>('');
+  useEffect(() => {
+    setPathname(window.location.pathname);
+  }, []);
+
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
@@ -416,7 +421,7 @@ const PendingUserPage: React.FC = () => {
   }, [tableOptions]);
   return (
     <Layout>
-      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+      <Content className={`overflow-auto ${pathname.includes('/admin/popup') ? 'h-[calc(100vh)]' : 'h-[calc(100vh-100px)]'} dark:bg-black`}>
         <Card
           title={t("pendingUsers")}
           classNames={{

@@ -77,6 +77,11 @@ export default function AdminRootLayout({
   const locale = useLocale();
 
   const [currentUser, setUser] = useAtom<any>(userState);
+  const [pathname, setPathname] = useState<string>('');
+
+  useEffect(() => {
+    setPathname(window.location.pathname);
+  }, []);
 
   const data = [
     {
@@ -652,7 +657,12 @@ export default function AdminRootLayout({
         }}
       >
         {contextHolder}
-        <LayoutContext.Provider
+
+        {
+          pathname.includes('/admin/popup') ? (
+            <>{children}</>
+          ) : (
+            <LayoutContext.Provider
           value={{ isDarkTheme, collapsed, setCollapsed }}
         >
           <Layout>
@@ -717,28 +727,28 @@ export default function AdminRootLayout({
                       className="gap-0.5 text-center"
                     >
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">{t("membership")}:0</Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank')}>{t("membership")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank')}>
                           {t("membership")} {t("deposit")}:0
                         </Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank')}>
                           {t("membership")} {t("withdraw")}:0
                         </Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank')}>
                           {t("membership")} {t("inquiry")}:0
                         </Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank')}>
                           {t("rollingTransition")}:0
                         </Tag>
-                        <Tag className="!me-0.5">{t("nonMember")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag>
                       </Space.Compact>
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">{t("totalDeposit")}:0</Tag>
-                        <Tag className="!me-0.5">{t("totalWithdraw")}: 0</Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank')}>{t("totalDeposit")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank')}>{t("totalWithdraw")}: 0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank')}>
                           {t("distributor")} {t("inquiry")} :0
                         </Tag>
-                        <Tag className="!me-0.5">{t("totalSettlement")} :0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank')}>{t("totalSettlement")} :0</Tag>
                       </Space.Compact>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
@@ -831,6 +841,9 @@ export default function AdminRootLayout({
             </Layout>
           </Layout>
         </LayoutContext.Provider>
+          )
+        }
+        
       </ConfigProvider>
     </ApolloProvider>
   ) : (
