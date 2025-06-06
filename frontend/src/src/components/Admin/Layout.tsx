@@ -413,13 +413,17 @@ export default function AdminRootLayout({
       ],
     },
     {
-      key: "admin/game/sport",
+      key: "admin/game/sports",
       label: t("admin/menu/sports"),
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/sport/setting",
-          label: t("admin/menu/sports"),
+          key: "admin/game/sports/settings",
+          label: t("admin/menu/sportsSettings"),
+        },
+        {
+          key: "admin/game/sports/basic",
+          label: t("admin/menu/sportsBasic"),
         },
       ],
     },

@@ -9,9 +9,10 @@ import (
 type League struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 
-	Code string `gorm:"size:20" json:"code"`
-	Name string `gorm:"size:100" json:"name"`
-	Logo string `gorm:"size:200" json:"logo"`
+	Code   string `gorm:"size:20" json:"code"`
+	Name   string `gorm:"size:100" json:"name"`
+	EnName string `gorm:"size:100" json:"enName"`
+	Logo   string `gorm:"size:200" json:"logo"`
 
 	// Foreign Keys
 	NationID uint   `json:"nationId"`
