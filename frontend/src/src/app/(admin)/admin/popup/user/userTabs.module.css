@@ -1,0 +1,26 @@
+.customTabs .ant-tabs-nav .ant-tabs-tab {
+  border: 1px solid #d9d9d9;
+  border-radius: 8px 8px 0 0;
+  margin-right: 8px;
+  padding: 8px 20px;
+  background: #f5f5f5;
+  transition: background 0.2s, color 0.2s;
+}
+
+.customTabs .ant-tabs-nav .ant-tabs-tab-active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.customTabs .ant-tabs-nav .ant-tabs-tab {
+  color: #000;
+}
+
+.customTabs .ant-tabs-nav .ant-tabs-tab-active .text-black {
+  color: #fff !important;
+}
+
+.customTabs .ant-tabs-nav .ant-tabs-tab .text-black {
+  color: #000 !important;
+} 

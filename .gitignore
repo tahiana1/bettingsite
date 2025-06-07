@@ -4,3 +4,4 @@ get_helm.sh
 redis-data/
 frontend/src/.env
 frontend/src/.env
+postgres-data.bak

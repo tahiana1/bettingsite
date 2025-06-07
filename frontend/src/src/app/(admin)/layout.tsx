@@ -1,13 +1,10 @@
-// "use client";
-
 import React from "react";
-
 import type { Metadata } from "next";
 import AdminRootLayout from "@/components/Admin/Layout";
 import "@/styles/globals.css";
 import 'quill/dist/quill.snow.css';
 import DeviceTracker from "@/components/Common/DeviceTracker";
-import { Content } from "antd/es/layout/layout";
+import AdminContent from "@/app/(admin)/AdminContent";
 
 export const metadata: Metadata = {
   title: "Betting Admin",
@@ -22,9 +19,9 @@ export default function RootLayout({
   return (
     <AdminRootLayout>
       <DeviceTracker />
-      <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+      <AdminContent>
         {children}
-      </Content>
+      </AdminContent>
     </AdminRootLayout>
   );
 }
