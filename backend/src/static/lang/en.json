@@ -586,5 +586,26 @@
   "inquiryRequest" : "1:1 Inquiry",
   "rollingConversion" : "Rolling Conversion",
   "partnerWithdraw" : "Partner Withdraw",
-  "partnerDeposit" : "Partner Deposit"
+  "partnerDeposit" : "Partner Deposit",
+
+  "sportsCategorySettings": "Sports category settings(by design)",
+  "sportsGameSettings": "Sports game settings(Full)",
+  "sportsBettingLimits": "Sports Betting Limits(All)",
+  "sports": "Sports",
+  "listCountries": "List of countries",
+  "listLeague": "League List",
+  "listTeams": "Team List",
+
+  "sportsGameName": "Sports game name",
+  "presentOrNot": "Present or Not",
+  "whetherToCheck": "Whether to Check",
+  "InstantMsg": "Inspection Message",
+  "order": "Order",
+
+  "loginYn": "Login/Logout (Data Display)",
+  "useInquiry": "Use inquiry when betting",
+  "matchesNum": "Number of matches to display on one page",
+  "startSetTime": "The game starts within the set time when you log out",
+  "matchScheduleYn": "Match schedule display",
+  "image": "Image"
 }
