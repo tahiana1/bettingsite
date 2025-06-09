@@ -24,6 +24,7 @@ import Logo from "@/assets/img/logo.png";
 import Image from "next/image";
 import { GET_USER_MENU } from "@/actions/menu";
 import Sidebar from "./Sidebar";
+import Link from "next/link";
 
 const { Header } = Layout;
 
@@ -120,7 +121,7 @@ const Head = () => {
   return (
     <>
       <Header
-        className="w-full !flex !h-10 items-center !leading-10 gap-1 overflow-y-hidden overflow-x-auto !fixed md:!sticky justify-between"
+        className="w-full !flex !h-13 items-center !leading-10 gap-1 overflow-y-hidden overflow-x-auto !fixed md:!sticky justify-between"
         style={{
           background: isDarkTheme ? "" : token.colorBgContainer,
           position: "sticky",
@@ -131,7 +132,10 @@ const Head = () => {
           alignItems: "center",
         }}
       >
-        <Image src={Logo} width={120} height={40} alt="Toto Admin" />
+        <Link href="/">
+          <Image src={Logo} width={130} height={40} alt="Toto Admin"  className=" cursor-pointer"/>
+        </Link>
+        
         <Menu
           className="!hidden md:!flex !w-[calc(100vw-230px)]"
           theme={isDarkTheme ? "dark" : "light"}

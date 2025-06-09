@@ -586,5 +586,10 @@
   "inquiryRequest" : "1:1 Inquiry",
   "rollingConversion" : "Rolling Conversion",
   "partnerWithdraw" : "Partner Withdraw",
-  "partnerDeposit" : "Partner Deposit"
+  "partnerDeposit" : "Partner Deposit",
+
+  "betting/placingBet" : "Placing Bet",
+  "betting/bettingAmountError" : "Please enter a betting amount",
+  "betting/betFailed" : "Bet failed",
+  "betting/betPlacedSuccessfully" : "Bet placed successfully"
 }

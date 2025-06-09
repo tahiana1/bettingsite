@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, List, Modal, Space } from "antd";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -15,7 +15,13 @@ const ProfileCard: React.FC = () => {
   const [profile, setProfile] = useAtom<any>(userState);
   const t = useTranslations();
   const f = useFormatter();
-
+  useEffect(() => {
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
   const config = {
     title: "Would you like to logout?",
   };
@@ -38,7 +44,7 @@ const ProfileCard: React.FC = () => {
     {
       key: "1",
       label: "profile/balance",
-      value: f.number(profile.balance ?? 0, {
+      value: f.number(profile?.balance ?? 0, {
         style: "currency",
         currency: "USD",
       }),
@@ -51,7 +57,7 @@ const ProfileCard: React.FC = () => {
     {
       key: "2",
       label: "profile/xp",
-      value: profile.balance ?? 0,
+      value: profile?.xp ?? 0,
       action: (
         <Link href={ROUTES.point}>
           <Button type="link">Point Conversion</Button>
@@ -61,7 +67,7 @@ const ProfileCard: React.FC = () => {
     {
       key: "3",
       label: "profile/comp",
-      value: profile.balance ?? 0,
+      value: profile?.comp ?? 0,
       action: (
         <Link href={ROUTES.point}>
           <Button type="link">Comp Conversion</Button>

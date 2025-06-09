@@ -568,5 +568,9 @@
   "inquiryRequest" : "1:1 查询",
   "rollingConversion" : "滚动转换",
   "partnerWithdraw" : "合作伙伴提款",
-  "partnerDeposit" : "合作伙伴存款"
+  "partnerDeposit" : "合作伙伴存款",
+  "betting/placingBet" : "下注中",
+  "betting/bettingAmountError" : "请输入投注金额",
+  "betting/betFailed" : "投注失败",
+  "betting/betPlacedSuccessfully" : "投注成功"
 }

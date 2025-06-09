@@ -9,7 +9,7 @@ import FixtureCard from "@/components/Home/FixtureCard";
 import { useAtom } from "jotai";
 import { currentLeagueState } from "@/state/state";
 import HomeHeader from "@/components/Home/Header";
-// import BettingSidebar from "@/components/Home/BettingSidebar";
+import BettingSidebar from "@/components/Home/BettingSidebar";
 
 const { Header } = Layout;
 
@@ -53,8 +53,9 @@ const Index: React.FC = () => {
                         height={16}
                         className="w-4 h-4"
                       />
-                      {currentLeague?.nation.name} &gt;&gt;{" "}
-                      {currentLeague?.name}
+                      <span className="text-sm text-[#71cb4a]">{currentLeague?.nation.name}</span> 
+                      <span className="text-sm text-[red]">&gt;&gt;{" "}</span>
+                      <span className="text-sm text-[#71cb4a]">{currentLeague?.name}</span>
                     </div>
                   }
                 />

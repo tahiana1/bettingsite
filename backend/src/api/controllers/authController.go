@@ -214,6 +214,8 @@ func Me(c *gin.Context) {
 	}
 
 	if user != nil {
+		// Load profile data
+		initializers.DB.Model(user).Preload("Profile").Find(user, "userid = ?", user.Userid)
 
 		// Generate a JWT token
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

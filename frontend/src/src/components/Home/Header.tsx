@@ -22,8 +22,8 @@ const HomeHeader: React.FC = () => (
       options={[
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <MdSports className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <MdSports className="w-8 h-8 m-auto" />
               <div>All</div>
             </div>
           ),
@@ -31,8 +31,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <FaFootball className="w-8 h-8" />
+            <div className="flex flex-col text-center p-3 mt-[5px] justify-center items-center max-w-18 break-normal whitespace-normal">
+              <FaFootball className="w-8 h-8 m-auto" />
               <div>Soccer</div>
             </div>
           ),
@@ -40,8 +40,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <FaBasketball className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <FaBasketball className="w-8 h-8 m-auto" />
               <div>Basketball</div>
             </div>
           ),
@@ -49,8 +49,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <FaVolleyball className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <FaVolleyball className="w-8 h-8 m-auto" />
               <div>Volleyball</div>
             </div>
           ),
@@ -58,8 +58,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <FaGolfBallTee className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <FaGolfBallTee className="w-8 h-8 m-auto" />
               <div>Golf</div>
             </div>
           ),
@@ -67,8 +67,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <BiJoystick className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <BiJoystick className="w-8 h-8 m-auto" />
               <div>eSports</div>
             </div>
           ),
@@ -76,8 +76,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <GiAmericanFootballBall className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <GiAmericanFootballBall className="w-8 h-8 m-auto" />
               American Football
             </div>
           ),
@@ -85,8 +85,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <BiTennisBall className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <BiTennisBall className="w-8 h-8 m-auto" />
               <div>Tennis</div>
             </div>
           ),
@@ -94,8 +94,8 @@ const HomeHeader: React.FC = () => (
         },
         {
           label: (
-            <div className="flex flex-col justify-center items-center max-w-18 break-normal whitespace-normal">
-              <SiLivewire className="w-8 h-8" />
+            <div className="flex flex-col justify-center p-3 mt-[5px] items-center max-w-18 break-normal whitespace-normal">
+              <SiLivewire className="w-8 h-8 m-auto" />
               <div>BJ Live</div>
             </div>
           ),

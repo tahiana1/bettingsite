@@ -7,6 +7,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/api/controllers"
 	"github.com/hotbrainy/go-betting/backend/api/middleware"
 	adminRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/admin"
+	bettingRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/betting"
 	commonRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/common"
 	partnerRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/partner"
 	transactionRouter "github.com/hotbrainy/go-betting/backend/api/router/v1/transaction"
@@ -82,4 +83,6 @@ func GetV1Route(r *gin.RouterGroup) {
 	}
 
 	transactionRouter.GetTransactionRoute(r.Group("/transactions"))
+
+	bettingRouter.GetBettingRoute(r.Group("/bets"))
 }

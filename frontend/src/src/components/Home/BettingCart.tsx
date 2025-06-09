@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Button,
@@ -13,7 +13,8 @@ import type { RadioChangeEvent } from "antd";
 import { CiShoppingCart } from "react-icons/ci";
 import { useTranslations, useFormatter } from "next-intl";
 import { useAtom } from "jotai";
-import { expectedWinningAmount, betAmount, rateState } from "@/state/state";
+import { expectedWinningAmount, betAmount, rateState, userState } from "@/state/state";
+import api from "@/api";
 
 const BettingCart: React.FC = () => {
   const t = useTranslations();
@@ -43,11 +44,54 @@ const BettingCart: React.FC = () => {
   const [amount, setAmount] = useAtom<number>(betAmount);
   const [expectedAmount] = useAtom<Promise<number>>(expectedWinningAmount);
   const [currentRates, setCurrentRates] = useAtom<any[]>(rateState);
+  const [user] = useAtom<any>(userState);
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState<null | { type: "success" | "error"; message: string }>(null);
   const onAmountChange = (e: RadioChangeEvent) => {
     if (e.target.value == "max") {
       setAmount(234353);
     } else {
       setAmount(parseInt(e.target.value));
+    }
+  };
+
+  const placeBet = async () => {
+    setLoading(true);
+    setFeedback(null);
+
+    if (amount === 0) {
+      setFeedback({ type: "error", message: t("betting/bettingAmountError") });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const betsData = currentRates.map(cr => ({
+        user_id: user?.userId,
+        fixture_id: cr.fixtureId || cr.fixture_id || cr.fixture?.id,
+        market_id: cr.market?.id,
+        odds: cr.selection == cr.homePickName ? cr.homeRate : 
+              cr.selection == cr.awayPickName ? cr.awayRate : 
+              cr.selection == cr.drawPickName ? cr.drawRate : null,
+        stake: amount,
+        selection: cr.selection
+      }));
+      console.log(betsData, "betsData");
+      const response = await api("bets/create", {
+        method: "POST",
+        data: betsData
+      });
+
+      if (response.status) {
+        setFeedback({ type: "success", message: t("betting/betPlacedSuccessfully") });
+      } else {
+        setFeedback({ type: "error", message: t("betting/betFailed") });
+      }
+
+    } catch (error: any) {
+      setFeedback({ type: "error", message: error.message || t("betting/betFailed") });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,8 +113,8 @@ const BettingCart: React.FC = () => {
       className="w-full"
       actions={[
         <Space key={"action"} direction="vertical" className="w-full">
-          <Button key={"place"} className="w-full" color="red" variant="solid">
-            {t("betting/placeBet")}
+          <Button key={"place"} className="w-full" color="red" variant="solid" onClick={placeBet} disabled={loading}>
+            {loading ? t("betting/placingBet") : t("betting/placeBet")}
           </Button>
           <Space.Compact className="w-full flex gap-2">
             <Button className="w-full" variant="solid" color="blue">
@@ -146,7 +190,7 @@ const BettingCart: React.FC = () => {
               {f.number(expectedAmount, {
                 currencyDisplay: "narrowSymbol",
                 style: "currency",
-                currency: "EUR",
+                currency: "USD",
               })}
             </div>
           </List.Item>
@@ -199,6 +243,14 @@ const BettingCart: React.FC = () => {
           </Radio.Group>
         </Form.Item>
       </Form>
+      {feedback && (
+        <Alert
+          type={feedback.type}
+          message={feedback.message}
+          showIcon
+          className="mb-2"
+        />
+      )}
     </Card>
   );
 };

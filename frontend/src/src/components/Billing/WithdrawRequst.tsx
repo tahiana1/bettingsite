@@ -48,7 +48,7 @@ const WithdrawRequest: React.FC = () => {
   };
 
   useEffect(() => {
-    const userid = String(profile.id);
+    const userid = String(profile.userId);
     api("transactions/get", { 
       method: "GET",
       params: {
@@ -76,7 +76,7 @@ const WithdrawRequest: React.FC = () => {
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.id,
+        userId: profile.userId,
         amount: amount,
         type: "withdrawal",
         explation: "Withdrawal request"

@@ -35,7 +35,7 @@ const DepositRequest: React.FC = () => {
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
   useEffect(() => {
-    const userid = String(profile.id);
+    const userid = String(profile.userId);
     api("transactions/get", { 
       method: "GET",
       params: {
@@ -62,7 +62,7 @@ const DepositRequest: React.FC = () => {
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.id,
+        userId: profile.userId,
         amount: amount,
         type: "deposit",
         explation: rechargeBonus
