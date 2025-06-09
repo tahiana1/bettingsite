@@ -422,9 +422,37 @@ export default function AdminRootLayout({
           label: t("admin/menu/sportsSettings"),
         },
         {
+          key: "admin/game/sports/betting",
+          label: t("admin/menu/sportsBettingInformation"),
+        },
+        {
           key: "admin/game/sports/basic",
           label: t("admin/menu/sportsBasic"),
         },
+        {
+          key: "admin/game/sports/countryOrder",
+          label: t("admin/menu/sportsCountryOrder"),
+        },
+        {
+          key: "admin/game/sports/mainEvent",
+          label: t("admin/menu/mainEventSettings"),
+        },
+        {
+          key: "admin/game/sports/market",
+          label: t("admin/menu/marketSettings"),
+        },
+        {
+          key: "admin/game/sports/recalibrationBetting",
+          label: t("admin/menu/recalibrationBetting"),
+        },
+        {
+          key: "admin/game/sports/recalibrationMarket",
+          label: t("admin/menu/recalibrationMarket"),
+        },
+        {
+          key: "admin/game/sports/matchManagementChangeHistory",
+          label: t("admin/menu/matchManagementHistory"),
+        }
       ],
     },
     {

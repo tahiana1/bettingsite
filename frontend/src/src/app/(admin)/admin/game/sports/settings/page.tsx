@@ -61,6 +61,7 @@ interface RealtimeAPIDataType {
 
 interface BettingLimitsDataType {
   name: string;
+  
   // whetherToUse: Boolean;
   // gameURL: string;
   // resultURL: string;
@@ -179,7 +180,6 @@ const SportsSettings: React.FC = () => {
       dataIndex: "instantMsg",
       fixed: "right",
       render: (msg, record) => {
-        console.log("ddd", msg)
         return(
         <Space.Compact>
           <Input defaultValue={msg} />

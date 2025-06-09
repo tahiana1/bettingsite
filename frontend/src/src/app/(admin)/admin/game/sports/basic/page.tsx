@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { 
   Layout, 
@@ -245,8 +245,8 @@ const SportsBasicInformation: React.FC = () => {
   const t = useTranslations();
 
   const [nations, setNations] = useState<any[]>([]);
+  const { loading: nationLoading, data: nationData, refetch: refetchNation } = useQuery(FILTER_NATION);
   const [updateNation] = useMutation(UPDATE_NATION);
-  // const { nationsLoading, nationData, refetch } = useQuery();
 
   const nationColumns: TableProps<NationDataType>["columns"] = [
     {
@@ -269,12 +269,12 @@ const SportsBasicInformation: React.FC = () => {
       dataIndex: "use",
       key: "use",
       render: (val, record) => {
-        console.log("test", val)
+        console.log(record,"test", val)
         return (
           <Switch
             size="small"
             checked={val}
-            // onChange={(checked) => onStatusChange(record, checked)}
+            onChange={(checked) => onStatusChange(record, checked)}
           ></Switch>
         );
       },
@@ -456,7 +456,6 @@ const SportsBasicInformation: React.FC = () => {
     },
   ];
 
-
   const teamColumns: TableProps<TeamDataType>["columns"] = [
     {
       title: "Code",
@@ -529,6 +528,29 @@ const SportsBasicInformation: React.FC = () => {
       ),
     },
   ];
+
+  useEffect(() => {
+    setNations(
+      nationData?.response?.nations?.map((u: any) => {
+        return { ...u, key: u.id };
+      }) ?? []
+    );
+    // setTotal(data?.response?.total);
+  }, [nationData]);
+
+  const onStatusChange = (record: NationDataType, checked: boolean) => {
+    updateNation({
+      variables: {
+        // id: ann.id,
+        // input: {
+        //   status: checked,
+        // },
+      },
+    }).then((result) => {
+      refetchNation();
+      console.log({ result });
+    });
+  };
 
   return (
     <Layout>
