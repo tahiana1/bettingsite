@@ -42,102 +42,581 @@ const DistributorStatisticsDetailPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
+      title: t("distributor"),
       dataIndex: "userid",
       key: "userid",
       fixed: "left",
       render: (_, record) => {
         return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      }
     },
     {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
+      title: t("deposit/withdraw"),
+      children: [
+        {
+          title: t("membershipDeposit"),
+          align: "center",
+          children: [
+            {
+              title: t("membershipWithdraw"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("depositOfTheTotalAmount"),
+          align: "center",
+          children: [
+            {
+              title: t("totalWithdraw"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+      ],
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: '"User"."userid"',
-      render(_, record) {
-        return record.user?.userid;
-      },
+      title: t("afflllatedMember"),
+      children: [
+        {
+          title: t("numberOfMembers"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("moneyInHand"),
+          align: "center",
+          children: [
+            {
+              title: t("rollingholdings"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("liveRolling"),
+          align: "center",
+          children: [
+            {
+              title: t("slotRolling"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("miniDanpolRolling"),
+          align: "center",
+          children: [
+            {
+              title: t("minCombinationRolling"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDanpololRolling"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDupolRolling"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports3PoleRolling"),
+          align: "center",
+          children: [
+            {
+              title: t("sports4PoleRolling"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports5PoleRolling"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDapololling"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("virtualGameRolling"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("lotusRolling"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("mgmRolling"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("touchRolling"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("holdemRolling"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+      ],
     },
     {
-      title: t("nickname"),
-      dataIndex: "profile.nickname",
-      key: '"Profile"."nickname"',
-      render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("holderName"),
-      dataIndex: "holderName",
-      key: '"Profile"."holderName"',
-      render: (_, record) => record.user?.profile?.holderName,
+      title: t("betting/winning"),
+      children: [
+        {
+          title: t("liveBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("liveWinning"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("slotBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("slotJackpot"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("miniDanpolBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("miniDanpolwinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("miniCombinationBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("miniCombinationWinnings"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDanpolBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDanpolWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDupolBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDupolWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports3poleBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sports3poleWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports4poleBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sports4poleWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports5poleBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sports5poleWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDapolBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDapolWinner"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("virtualGameBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("virtualGameWinnings"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("lotusBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("lotusLottery"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("mgmBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("mgmWinning"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("touchBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("touchWinning"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("holdemBetting"),
+          align: "center",
+          children: [
+            {
+              title: t("holdemWinning"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+      ],
     },
     {
       title: t("rolling"),
       children: [
         {
-          title: t("amount"),
+          title: t("ratePercentage"),
+          align: "center",
+          children: [
+            {
+              title: t("rollingtransition"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("live"),
+          align: "center",
+          children: [
+            {
+              title: t("slot"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("miniDanpol"),
+          align: "center",
+          children: [
+            {
+              title: t("minicombination"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDanpol"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDupol"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports3Pole"),
+          align: "center",
+          children: [
+            {
+              title: t("sports4Pole"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports5Pole"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDapol"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("virtualGame"),
           dataIndex: "amount",
+          align: "center",
           key: "amount",
         },
         {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
+          title: t("lotus"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
         },
         {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
+          title: t("mgm"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
         },
+        {
+          title: t("touch"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("holdem"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("cutReduce"),
+          align: "center",
+          dataIndex: "amount",
+          key: "amount",
+        },
+       
       ],
     },
     {
-      title: t("balance"),
+      title: t("losing"),
       children: [
         {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
+          title: t("ratePercentage"),
+          align: "center",
+          children: [
+            {
+              title: t("loadingSettlement"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
         },
         {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
+          title: t("live"),
+          align: "center",
+          children: [
+            {
+              title: t("slot"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
         },
+        {
+          title: t("miniDanpol"),
+          align: "center",
+          children: [
+            {
+              title: t("minicombination"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sportsDanpol"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDupol"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports3Pole"),
+          align: "center",
+          children: [
+            {
+              title: t("sports4Pole"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("sports5Pole"),
+          align: "center",
+          children: [
+            {
+              title: t("sportsDapol"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        },
+        {
+          title: t("virtualGame"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("lotus"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("mgm"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("touch"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        {
+          title: t("holdem"),
+          dataIndex: "amount",
+          align: "center",
+          key: "amount",
+        },
+        
       ],
     },
     {
-      title: t("transactionAt"),
-      dataIndex: "transactionAt",
-      key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("partnership"),
+      children: [
+        {
+          title: t("rolling"),
+          align: "center",
+          children: [
+            {
+              title: t("moneyInHand"),
+              dataIndex: "amount",
+              align: "center",
+              key: "amount",
+            },
+          ],
+        }
+      ],
     },
-    {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-    },
+   
   ];
 
   const onChange: TableProps<Transaction>["onChange"] = (
@@ -262,6 +741,7 @@ const DistributorStatisticsDetailPage: React.FC = () => {
             dataSource={transactions ?? []}
             className="w-full"
             size="small"
+            bordered
             scroll={{ x: "max-content" }}
             onChange={onChange}
             pagination={{

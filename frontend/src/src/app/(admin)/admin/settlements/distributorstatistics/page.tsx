@@ -42,51 +42,46 @@ const DistributorStatisticsPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: t("userid"),
+      title: t("rootDistributor"),
       dataIndex: "user.id",
+      fixed: "left",
       key: "id",
       render: (_, record) => record.user?.id,
     },
     {
-      title: t("root_dist"),
+      title: t("numberOfMembers"),
       dataIndex: "user.root.userid",
       key: "root.userid",
       render: (_, record) => record.user?.root?.userid,
     },  
     {
-      title: t("member_count"),
+      title: t("domain"),
       dataIndex: "profile.comp",
       key: "member_count",
       render: (_, record) => record.user?.profile?.comp,
     },
     {
-      title: t("site"),
+      title: t("situation"),
       dataIndex: "site",
       key: "site",
       render: (text) => text ?? "site",
     },
     {
-      title: t("status"),
+      title: t("depositor"),
       dataIndex: "status",
       key: "status",
     },
     {
-      title: t("depositorName"),
+      title: t("allas"),
       dataIndex: "user.profile.holderName",
       key: "holderName",
       render: (_, record) => record.user?.profile?.holderName,
     },
     {
-      title: t("nickname"),
+      title: t("amountHeld"),
       dataIndex: "user.profile.nickname",
       key: "nickname",
       render: (_, record) => record.user?.profile?.nickname,
-    },
-    {
-      title: t("amountHeld"),
-      dataIndex: "user.profile.balance",
-      key: "balance",
-      render: (_, record) => record.user?.profile?.balance,
     },
     {
       title: t("point"),
@@ -145,7 +140,7 @@ const DistributorStatisticsPage: React.FC = () => {
       render: () => "-", // TODO: Implement logic if available
     },
     {
-      title: t("rolling"),
+      title: t("rollingGold"),
       dataIndex: "rolling",
       key: "rolling",
       render: () => "-", // TODO: Implement logic if available
@@ -163,7 +158,7 @@ const DistributorStatisticsPage: React.FC = () => {
       render: () => "-", // TODO: Implement logic if available
     },
     {
-      title: t("losing"),
+      title: t("losingMoney"),
       dataIndex: "losing",
       key: "losing",
       render: () => "-", // TODO: Implement logic if available
@@ -189,13 +184,18 @@ const DistributorStatisticsPage: React.FC = () => {
     {
       title: t("viewDetails"),
       key: "viewDetails",
-      render: (_, record) => <Button size="small">{t("viewDetails")}</Button>,
+      render: (_, record) => <div>
+        <Button size="small" className="bg-blue-500 text-white">{t("rolling")}</Button>
+        <Button size="small" className="bg-red-500 text-white">{t("losing")}</Button>
+      </div>,
     },
     {
       title: t("losingSettlement"),
       dataIndex: "losingSettlement",
       key: "losingSettlement",
-      render: () => "-",
+      render: () => <div>
+        <Button size="small" className="bg-blue-300 text-white">{t("losing settlement")}</Button>
+      </div>,
     },
   ];
 
