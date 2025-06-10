@@ -25,6 +25,7 @@ import type { TableProps } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 
 import api from "@/api";
+import dayjs from "dayjs";
 
 const DepositRequest: React.FC = () => {
   const t = useTranslations();
@@ -132,6 +133,9 @@ const DepositRequest: React.FC = () => {
       title: t("applicationDate"),
       dataIndex: "transactionAt", 
       key: "transactionAt",
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
     },
     {
       title: t("situation"),

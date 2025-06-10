@@ -268,6 +268,81 @@ func GetMyProfile(c *gin.Context) {
 
 }
 
+func GetInfo(c *gin.Context) {
+	today := time.Now().Truncate(24 * time.Hour)
+	now := time.Now()
+
+	// 1. Today's deposit amount (approved only)
+	var depositToday float64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND status = ? AND DATE(transaction_at) = ?", "deposit", "A", today.Format("2006-01-02")).
+		Select("COALESCE(SUM(amount),0)").
+		Scan(&depositToday)
+
+	// 2. Today's withdraw amount (approved only)
+	var withdrawToday float64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND status = ? AND DATE(transaction_at) = ?", "withdrawal", "A", today.Format("2006-01-02")).
+		Select("COALESCE(SUM(amount),0)").
+		Scan(&withdrawToday)
+
+	// 3. Total balance and points of all users
+	var totalBalance float64
+	var totalPoints int64
+	initializers.DB.Model(&models.Profile{}).Select("COALESCE(SUM(balance),0)").Scan(&totalBalance)
+	initializers.DB.Model(&models.Profile{}).Select("COALESCE(SUM(point),0)").Scan(&totalPoints)
+
+	// 4. Count today's winners on bet (status = 'won' and settled today)
+	var todayWinners int64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(settled_at) = ?", "won", today.Format("2006-01-02")).
+		Count(&todayWinners)
+
+	// 5. bettingToday: Total stake of all bets placed today, grouped by placed_at (so simultaneous bets are counted as one)
+	var bettingToday float64
+	initializers.DB.
+		Table("(SELECT placed_at, MAX(stake) as stake FROM bets WHERE DATE(placed_at) = ? GROUP BY placed_at) as grouped_bets", today.Format("2006-01-02")).
+		Select("COALESCE(SUM(stake),0)").
+		Scan(&bettingToday)
+
+	// 6. totalLoss: Total stake of lost bets settled today
+	var totalLoss float64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(settled_at) = ?", "lost", today.Format("2006-01-02")).
+		Select("COALESCE(SUM(stake),0)").
+		Scan(&totalLoss)
+
+	// 7. totalSalesLossToday: Alias for totalLoss
+	totalSalesLossToday := totalLoss
+
+	// 8. todaysDistributionRolling: Total stake of all bets placed today (or use a specific transaction type if you have one)
+	todaysDistributionRolling := bettingToday
+
+	// 9. sportsPendingBetting: Count of bets with status 'pending' placed today
+	var sportsPendingBetting int64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(placed_at) = ?", "pending", today.Format("2006-01-02")).
+		Count(&sportsPendingBetting)
+
+	// 10. sportsRebateBetting: Placeholder (set to 0 or implement if you have logic)
+	sportsRebateBetting := 0
+
+	c.JSON(http.StatusOK, gin.H{
+		"depositToday":              depositToday,
+		"withdrawToday":             withdrawToday,
+		"totalBalance":              totalBalance,
+		"totalPoints":               totalPoints,
+		"todayWinners":              todayWinners,
+		"bettingToday":              bettingToday,
+		"totalLoss":                 totalLoss,
+		"totalSalesLossToday":       totalSalesLossToday,
+		"todaysDistributionRolling": todaysDistributionRolling,
+		"sportsPendingBetting":      sportsPendingBetting,
+		"sportsRebateBetting":       sportsRebateBetting,
+		"now":                       now,
+	})
+}
+
 func UpdateMe(c *gin.Context) {
 
 	// Create a post

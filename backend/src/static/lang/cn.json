@@ -572,5 +572,20 @@
   "betting/placingBet" : "下注中",
   "betting/bettingAmountError" : "请输入投注金额",
   "betting/betFailed" : "投注失败",
-  "betting/betPlacedSuccessfully" : "投注成功"
+  "betting/betPlacedSuccessfully" : "投注成功",
+
+  "settlementAmount" : "结算金额",
+  "datePeriod" : "日期范围",
+  "processingStatus" : "处理状态",
+  "viewDetails" : "查看详情",
+  "losingSettlement" : "亏损结算",
+  "rollingSettlement" : "滚动结算",
+  "bettingSettlement" : "投注结算",
+  "depositSettlement" : "存款结算",
+  "withdrawSettlement" : "提款结算",
+  "settlementDate" : "结算日期",
+  "amountHeld" : "金额持有",
+  "winner" : "赢家",
+  "bedang" : "贝当",
+  "explation" : "说明"
 }

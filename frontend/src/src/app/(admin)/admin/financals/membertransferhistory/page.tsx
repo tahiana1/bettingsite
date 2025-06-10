@@ -10,7 +10,6 @@ import {
   Input,
   DatePicker,
   Radio,
-  Select,
   Divider,
   Descriptions,
   Alert,
@@ -20,16 +19,12 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
-  APPROVE_TRANSACTION,
-  // BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
-  CANCEL_TRANSACTION,
-  WAITING_TRANSACTION,
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
 const MemberTransferPage: React.FC = () => {
@@ -49,101 +44,24 @@ const MemberTransferPage: React.FC = () => {
       },
     ],
   });
-  const [range, setRange] = useState<any[]>([]);
+
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
 
-  const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  // const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
-  const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
-  const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch(tableOptions ?? undefined);
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
-  // const onBlockTransaction = (transaction: Transaction) => {
-  //   blockTransaction({ variables: { id: transaction.id } })
-  //     .then((res) => {
-  //       if (res.data?.success) {
-  //       }
-  //       refetch(tableOptions);
-  //     })
-  //     .catch((err) => {
-  //       console.log({ err });
-  //     });
-  // };
-
-  const onApproveTransaction = (transaction: Transaction) => {
-    approveTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onWaitingTransaction = (transaction: Transaction) => {
-    waitingTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onCancelTransaction = (transaction: Transaction) => {
-    cancelTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onTransactionTypeChange = (v: string = "") => {
-    updateFilter("transactions.type", v, "eq");
-  };
-
-  const onMemberTypeChange = (v: string) => {
-    updateFilter("type", v, "eq");
-  };
-
-  const onUSDTStatusChange = (v: string) => {
-    if (v == "true") {
-      updateFilter("usdt_desc", v, "is_not_null");
-    } else if (v == "false") {
-      updateFilter("usdt_desc", v, "is_null");
-    } else {
-      updateFilter("usdt_desc", v, "eq");
-    }
-  };
-
-  const labelRenderer = (props: any) =>
-    props.value.toString() == "100"
-      ? "Premium"
-      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-        props.value;
-
-  const levelOption = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-  ].map((i) => ({
-    value: i,
-    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-  }));
-
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: t("number"),
-      dataIndex: "id", 
-      key: "id",
-      render: (_, __, index) => index + 1
+      title: "ID",
+      dataIndex: "userid",
+      key: "userid",
+      render: (_, record) => {
+        return record.user.id;
+      },
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input className="w-full" />
+        </FilterDropdown>
+      ),
     },
     {
       title: t("root_dist"),
@@ -162,10 +80,9 @@ const MemberTransferPage: React.FC = () => {
       },
     },
     {
-      title: "Level",
-      dataIndex: "level",
-      key: "level",
-      fixed: "left",
+      title: t("userid"),
+      dataIndex: "userid",
+      key: "userid",
       render: (_, record) => {
         return <div className="flex items-center">
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
@@ -185,39 +102,9 @@ const MemberTransferPage: React.FC = () => {
       ),
     },
     {
-      title: t("phone"),
-      dataIndex: "profile.phone",
-      key: '"Profile"."phone"',
-      render: (_, record) => record.user?.profile?.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("bankName"),
-      dataIndex: "profile.bankname",
-      key: "bankname",
-      render: (_, record) => record.user?.profile?.bankName,
-    },
-    {
-      title: t("accountName"),
-      dataIndex: "profile.accountNumber",
-      key: "accountNumber",
-      render: (_, record) => record.user?.profile?.accountNumber,
-    },
-    {
-      title: t("depositorName"),
-      dataIndex: "profile.depositorName",
-      key: "depositorName",
-      render: (_, record) => record.user?.profile?.holderName,
-    },
-    {
-      title: t("alliance"),
-      dataIndex: "profile.alliance",
-      key: "alliance",
-      render: (_, record) => <p>-</p>,
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
     },
     {
       title: t("balanceBefore"),
@@ -225,126 +112,44 @@ const MemberTransferPage: React.FC = () => {
       key: "balanceBefore",
     },
     {
-      title: t("amount"),
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
     },
     {
-      title: t("pointBefore"),
-      dataIndex: "pointBefore",
-      key: "pointBefore",
-    },
-    {
-      title: t("point"),
-      dataIndex: "point",
-      key: "point",
-      render: () => 0,
-    },
-    {
-      title: t("pointAfter"),
-      dataIndex: "pointAfter",
-      key: "pointAfter",
-    },
-    {
-      title: t("usdtDesc"),
-      dataIndex: "usdtDesc",
-      key: "usdtDesc",
-    },
-    {
-      title: t("shortcut"),
-      dataIndex: "shortcut",
-      width: 100,
-      key: "shortcut",
-      render: (_, record) => (
-        <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Money</p>
-          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Bet</p>
-        </div>
-      ),
+      title: t("explation"),
+      dataIndex: "explation",
+      key: "explation",
+      render: (_, record) => {
+        return (
+          <div>
+            {record.type === "deposit" && (
+              <span>Deposit</span>
+            )}
+            {record.type === "withdrawal" && (
+              <span>Withdrawal</span>
+            )}
+            {record.type === "transfer" && (
+              <span>Transfer</span>
+            )}
+            {record.type === "bettingSettlement" && (
+              <span>Betting Settlement</span>
+            )}
+            {record.type === "betting/placingBet" && (
+              <span>Betting Placement</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("approvedAt"),
-      dataIndex: "profile.approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
       render: (_, record) => {
-        return <>
-          {record.status == "pending" && <Button
-            title={t("pending")}
-            variant="outlined"
-            onClick={() => onApproveTransaction(record)}
-            color="blue"
-          >
-            {t("pending")}
-          </Button>}
-          {record.status == "A" ? <button className="text-xs bg-[#1677ff] text-white px-2 py-1 rounded">{t("approve")}</button> : null}
-          {record.status == "B" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Blocked</button> : null}
-          {record.status == "C" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Canceled</button> : null}
-          {record.status == "W" ? <button className="text-xs bg-[orange] text-white px-2 py-1 rounded">Waiting</button> : null}
-        </>
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
       }
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-1">
-          {(record.status == "pending" || record.status == "W") && <>
-            <Button
-                title={t("approve")}
-                variant="outlined"
-                onClick={() => onApproveTransaction(record)}
-                color="blue"
-              >
-                {t("approve")}
-              </Button>
-                <Button
-                title={t("cancel")}
-                variant="outlined"
-                onClick={() => onCancelTransaction(record)}
-                color="red"
-              >
-                {t("cancel")}
-              </Button>
-              {
-                record.status != "W" && (
-                  <Button
-                    title={t("waiting")}
-                    variant="outlined"
-                    onClick={() => onWaitingTransaction(record)}
-                    color="orange"
-                  >
-                    {t("waiting")}
-                  </Button>
-                )
-              }
-            </>}
-        </Space.Compact>
-      ),
-    },
+    }
   ];
 
   const onChange: TableProps<Transaction>["onChange"] = (
@@ -373,15 +178,10 @@ const MemberTransferPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
 
-  const onLevelChange = (v: string = "") => {
-    updateFilter(`profiles.level`, v, "eq");
-  };
-
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
   ) => {
-    setRange(dateStrings);
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
     const f = filters.filter((f) => f.field !== "transactions.created_at");
@@ -400,6 +200,7 @@ const MemberTransferPage: React.FC = () => {
         },
       ];
     }
+    console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
   };
 
@@ -419,7 +220,7 @@ const MemberTransferPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/membertransferhistory")}
+          title={t("admin/menu/totaltransferhistory")}
           classNames={{
             body: "!p-0",
           }}
@@ -448,12 +249,40 @@ const MemberTransferPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: t("deposit"),
-                    value: "D",
+                    label: t("all"),
+                    value: "",
                   },
                   {
-                    label: t("withdraw"),
-                    value: "W",
+                    label: t("depositApproval"),
+                    value: "DA",
+                  },
+                  {
+                    label: t("canceledDeposit"),
+                    value: "CD",
+                  },
+                  {
+                    label: t("deletedDeposit"),
+                    value: "DD",
+                  },
+                  {
+                    label: t("withdrawApproval"),
+                    value: "WA",
+                  },
+                  {
+                    label: t("canceledWithdraw"),
+                    value: "CW",
+                  },
+                  {
+                    label: t("deletedWithdraw"),
+                    value: "DW",
+                  },
+                  {
+                    label: t("pointConversion"),
+                    value: "PC",
+                  },
+                  {
+                    label: t("rollingTransition"),
+                    value: "RT",
                   },
                   {
                     label: t("adminPay"),
@@ -464,84 +293,28 @@ const MemberTransferPage: React.FC = () => {
                     value: "AR",
                   },
                   {
-                    label: t("totalRecovery"),
-                    value: "TR",
+                    label: t("gameRecharge"),
+                    value: "GR",
                   },
                   {
-                    label: t("subPay"),
-                    value: "SP",
+                    label: t("gameExchange"),
+                    value: "GE",
                   },
                   {
-                    label: t("lowerRecover"),
-                    value: "LR",
+                    label: t("wholeSalePayment"),
+                    value: "WSP",
                   },
                   {
-                    label: t("recharge"),
-                    value: "R",
+                    label: t("totalMoneyRecovery"),
+                    value: "TMR",
                   },
                   {
-                    label: t("exchange"),
-                    value: "E",
-                  },
-                  {
-                    label: t("canceled"),
-                    value: "C",
-                  },
-                  {
-                    label: t("deleted"),
-                    value: "DL",
+                    label: t("settlementExchange"),
+                    value: "SAE",
                   },
                 ]}
                 defaultValue={""}
-                onChange={(e) => onTransactionTypeChange(e.target.value)}
-              />
-
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("firstDepositUponSignup"),
-                    value: "D",
-                  },
-                  {
-                    label: t("firstChargeEveryday"),
-                    value: "C",
-                  },
-                  {
-                    label: t("redeposit"),
-                    value: "R",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onMemberTypeChange(e.target.value)}
-              />
-
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: "USDT O",
-                    value: "true",
-                  },
-                  {
-                    label: "USDT X",
-                    value: "false",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onUSDTStatusChange(e.target.value)}
+                onChange={(e) => updateFilter("transactions.type", e.target.value)}
               />
             </Space>
             <Space className="!w-full justify-between">
@@ -561,22 +334,6 @@ const MemberTransferPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
-                />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
                 />
               </Space>
               <Space.Compact className="gap-1">
@@ -604,7 +361,7 @@ const MemberTransferPage: React.FC = () => {
                 {
                   key: "3",
                   label: t("period"),
-                  children: range[0] ? range[0] + " ~ " + range[1] : "",
+                  children: "0",
                 },
                 {
                   key: "4",

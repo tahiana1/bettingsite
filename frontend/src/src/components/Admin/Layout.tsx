@@ -78,70 +78,85 @@ export default function AdminRootLayout({
 
   const [currentUser, setUser] = useAtom<any>(userState);
   const [pathname, setPathname] = useState<string>('');
+  const [info, setInfo] = useState<any>({});
 
   useEffect(() => {
     setPathname(window.location.pathname);
+    fetchInfo();
   }, []);
+
+  const fetchInfo = () => {
+    api("user/getInfo", {
+      method: "GET",
+    }).then((res) => {
+      if (res) {
+        setInfo(res);
+        setTimeout(() => {
+          fetchInfo();
+        }, 15000);
+      }
+    });
+  };
 
   const data = [
     {
       label: t("honorLink"),
-      value: 2321,
+      value: 0,
       color: "cyan",
     },
     {
       label: t("depositToday"),
-      value: 0,
+      value: info.depositToday,
       color: "lightgreen",
     },
     {
       label: t("withdrawlToday"),
-      value: 0,
+      value: info.withdrawToday,
       color: "tomato",
     },
     {
       label: t("bettingToday"),
-      value: 23210,
+      value: info.bettingToday,
       color: "lightgreen",
     },
     {
       label: t("todaysWinner"),
-      value: 23212,
+      value: info.todayWinners,
       color: "yellow",
     },
     {
       label: t("userAmount"),
-      value: 2321234,
+      value: info.totalBalance,
       color: "tomato",
     },
     {
       label: t("userPoints"),
-      value: 2322321,
+      value: info.totalPoints,
       color: "lightgreen",
     },
     {
       label: t("totalAmountOfDistributionReserves"),
-      value: 94232321,
+      value: 0,
       color: "yellow",
     },
     {
       label: t("totalPoints"),
-      value: 832321,
+      value: info.totalPoints,
       color: "yellow",
     },
     {
       label: t("totalLoss"),
-      value: 4222321,
+      value: info.totalLoss,
       color: "yellow",
     },
     {
       label: t("rollingTheTotal"),
-      value: 200232321,
+      value: 0,
       color: "yellow",
     },
     {
       label: t("totalSalesLossToday"),
-      value: 0,
+      value: info.totalSalesLossToday,
       color: "tomato",
     },
     {
@@ -151,13 +166,13 @@ export default function AdminRootLayout({
     },
     {
       label: t("sportsPendingBetting"),
-      value: 0,
+      value: info.sportsPendingBetting,
       color: "lightgreen",
     },
 
     {
       label: t("sportsRebateBetting"),
-      value: 0,
+      value: info.sportsRebateBetting,
       color: "lightgreen",
     },
   ];

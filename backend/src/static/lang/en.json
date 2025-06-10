@@ -591,5 +591,20 @@
   "betting/placingBet" : "Placing Bet",
   "betting/bettingAmountError" : "Please enter a betting amount",
   "betting/betFailed" : "Bet failed",
-  "betting/betPlacedSuccessfully" : "Bet placed successfully"
+  "betting/betPlacedSuccessfully" : "Bet placed successfully",
+
+  "settlementAmount" : "Settlement Amount",
+  "datePeriod" : "Date Period",
+  "processingStatus" : "Processing Status",
+  "viewDetails" : "View Details",
+  "losingSettlement" : "Losing Settlement",
+  "rollingSettlement" : "Rolling Settlement",
+  "bettingSettlement" : "Betting Settlement",
+  "depositSettlement" : "Deposit Settlement",
+  "withdrawSettlement" : "Withdraw Settlement",
+  "settlementDate" : "Settlement Date",
+  "amountHeld" : "Amount Held",
+  "winner" : "Winner",
+  "bedang" : "Bedang",
+  "explation" : "Explation"
 }

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -135,6 +136,24 @@ func CreateBetting(c *gin.Context) {
 		return
 	}
 
+	// Create transaction record for the bet placement
+	transaction := models.Transaction{
+		UserID:        betsInput[0].UserID,
+		Type:          "betting/placingBet",
+		Amount:        totalStake,
+		BalanceBefore: profile.Balance + totalStake,
+		BalanceAfter:  profile.Balance,
+		Status:        "A",
+		Explation:     "betting/placingBet",
+		TransactionAt: time.Now(),
+	}
+
+	if err := tx.Create(&transaction).Error; err != nil {
+		tx.Rollback()
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
 	var profile1 models.Profile
 	if err := initializers.DB.Where("user_id = ?", betsInput[0].UserID).First(&profile1).Error; err != nil {
 		format_errors.InternalServerError(c, err)
@@ -145,6 +164,24 @@ func CreateBetting(c *gin.Context) {
 	if err := tx.Model(&profile1).Updates(map[string]interface{}{
 		"balance": profile1.Balance,
 	}).Error; err != nil {
+		tx.Rollback()
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Create transaction record for the bet settlement
+	transaction1 := models.Transaction{
+		UserID:        betsInput[0].UserID,
+		Type:          "bettingSettlement",
+		Amount:        potentialPayout,
+		BalanceBefore: profile.Balance,
+		BalanceAfter:  profile1.Balance,
+		Status:        "A",
+		Explation:     "bettingSettlement",
+		TransactionAt: time.Now(),
+	}
+
+	if err := tx.Create(&transaction1).Error; err != nil {
 		tx.Rollback()
 		format_errors.InternalServerError(c, err)
 		return
