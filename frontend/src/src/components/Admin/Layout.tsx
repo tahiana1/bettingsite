@@ -437,9 +437,65 @@ export default function AdminRootLayout({
           label: t("admin/menu/sportsSettings"),
         },
         {
+          key: "admin/game/sports/betting",
+          label: t("admin/menu/sportsBettingInformation"),
+        },
+        {
           key: "admin/game/sports/basic",
           label: t("admin/menu/sportsBasic"),
         },
+        {
+          key: "admin/game/sports/countryOrder",
+          label: t("admin/menu/sportsCountryOrder"),
+        },
+        {
+          key: "admin/game/sports/mainEvent",
+          label: t("admin/menu/mainEventSettings"),
+        },
+        {
+          key: "admin/game/sports/market",
+          label: t("admin/menu/marketSettings"),
+        },
+        {
+          key: "admin/game/sports/marketCombinedBetting",
+          label: t("admin/menu/marketCombinedBetting"),
+        },
+        {
+          key: "admin/game/sports/matchManagementAuto",
+          label: t("admin/menu/matchManagementAuto"),
+        },
+        {
+          key: "admin/game/sports/matchManagementLive",
+          label: t("admin/menu/matchManagementLive"),
+        },
+        {
+          key: "admin/game/sports/matchManagementManual",
+          label: t("admin/menu/matchManagementManual"),
+        },
+        {
+          key: "admin/game/sports/matchEndsAuto",
+          label: t("admin/menu/matchEndsAuto"),
+        },
+        {
+          key: "admin/game/sports/matchEndsLive",
+          label: t("admin/menu/matchEndsLive"),
+        },
+        {
+          key: "admin/game/sports/matchEndsManual",
+          label: t("admin/menu/matchEndsManual"),
+        },
+        {
+          key: "admin/game/sports/recalibrationBetting",
+          label: t("admin/menu/recalibrationBetting"),
+        },
+        {
+          key: "admin/game/sports/recalibrationMarket",
+          label: t("admin/menu/recalibrationMarket"),
+        },
+        {
+          key: "admin/game/sports/matchManagementChangeHistory",
+          label: t("admin/menu/matchManagementHistory"),
+        }
       ],
     },
     {
