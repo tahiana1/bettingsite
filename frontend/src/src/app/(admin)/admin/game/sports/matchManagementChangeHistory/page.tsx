@@ -129,7 +129,7 @@ const MatchManagementChangeHistory: React.FC = () => {
               <DatePicker.RangePicker />
               <Input
                 size="small"
-                placeholder={t("martchNumber")}
+                placeholder={t("matchNumber")}
               />
               <Input.Search
               size="small"
