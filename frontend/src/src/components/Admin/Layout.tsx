@@ -492,7 +492,7 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/bettingstatus/setting",
+          key: "admin/game/bettingstatus/sports",
           label: t("admin/menu/bettingStatus"),
         },
       ],
@@ -515,10 +515,10 @@ export default function AdminRootLayout({
           key: "admin/board/events",
           label: t("admin/menu/events"),
         },
-        {
-          key: "admin/board/bulletin",
-          label: t("admin/menu/bulletin"),
-        },
+        // {
+        //   key: "admin/board/bulletin",
+        //   label: t("admin/menu/bulletin"),
+        // },
         {
           key: "admin/board/comments",
           label: t("admin/menu/comments"),
@@ -746,28 +746,28 @@ export default function AdminRootLayout({
                       className="gap-0.5 text-center"
                     >
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank')}>{t("membership")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membership")} {t("deposit")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membership")} {t("withdraw")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membership")} {t("inquiry")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("rollingTransition")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag>
+                        {/* <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag> */}
                       </Space.Compact>
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank')}>{t("totalDeposit")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank')}>{t("totalWithdraw")}: 0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("distributor")} {t("inquiry")} :0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank')}>{t("totalSettlement")} :0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
                       </Space.Compact>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
@@ -784,7 +784,7 @@ export default function AdminRootLayout({
                         <Tag className="!me-0.5">
                           {t("notificationMGM")}:0/0
                         </Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("notificationSportsLive")}:0
                         </Tag>
                         <Tag className="!me-0.5">{t("sportRebateList")}:0</Tag>
@@ -793,7 +793,7 @@ export default function AdminRootLayout({
                         <Tag className="!me-0.5">
                           {t("notificationSlot")}:0/0
                         </Tag>
-                        <Tag className="!me-0.5">
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("notificationSport")}:0/0
                         </Tag>
                         <Tag className="!me-0.5">

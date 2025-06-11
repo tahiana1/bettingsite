@@ -662,5 +662,15 @@
   "partnership" : "合作伙伴",
   "rootDistributor" : "根分销商",
   "depositor" : "存款人",
-  "allas" : "全部"
+  "allas" : "全部",
+  "sportsBetAlert" : "体育投注预警",
+  "topDistributor" : "顶级分销商",
+  "gameName" : "游戏名称",
+  "prizeAmount" : "奖金额",
+  "bettingAmount" : "投注金额",
+  "notificationMinimumBet" : "通知最低投注",
+  "notifiationMinimumWinner" : "通知最低赢家",
+  "bettingTime" : "投注时间",
+  "bettingType" : "投注类型",
+  "admin/menu/sportsBetAlert" : "体育投注预警"
 }
