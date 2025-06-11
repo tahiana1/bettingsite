@@ -23,6 +23,7 @@ import { BiTrash } from "react-icons/bi";
 import type { TableProps } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import api from "@/api";
+import dayjs from "dayjs";
 
 const WithdrawRequest: React.FC = () => {
   const t = useTranslations();
@@ -34,21 +35,11 @@ const WithdrawRequest: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
 
   const handleDelete = (id: number) => {
-    api("transactions/delete", {
-      method: "DELETE",
-      params: {
-        id
-      }
-    }).then(() => {
-      message.success(t("deleteSuccess"));
-      setTimeoutState(!timeoutState);
-    }).catch(() => {
-      message.error(t("deleteFailed"));
-    });
+    console.log('delete function not implemented');
   };
 
   useEffect(() => {
-    const userid = String(profile.id);
+    const userid = String(profile.userId);
     api("transactions/get", { 
       method: "GET",
       params: {
@@ -76,7 +67,7 @@ const WithdrawRequest: React.FC = () => {
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.id,
+        userId: profile.userId,
         amount: amount,
         type: "withdrawal",
         explation: "Withdrawal request"
@@ -129,6 +120,9 @@ const WithdrawRequest: React.FC = () => {
       title: t("applicationDate"),
       dataIndex: "transactionAt", 
       key: "transactionAt",
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
     },
     {
       title: t("situation"),

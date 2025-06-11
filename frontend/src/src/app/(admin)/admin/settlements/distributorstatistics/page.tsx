@@ -42,101 +42,160 @@ const DistributorStatisticsPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
+      title: t("rootDistributor"),
+      dataIndex: "user.id",
       fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      key: "id",
+      render: (_, record) => record.user?.id,
     },
     {
-      title: t("site"),
+      title: t("numberOfMembers"),
+      dataIndex: "user.root.userid",
+      key: "root.userid",
+      render: (_, record) => record.user?.root?.userid,
+    },  
+    {
+      title: t("domain"),
+      dataIndex: "profile.comp",
+      key: "member_count",
+      render: (_, record) => record.user?.profile?.comp,
+    },
+    {
+      title: t("situation"),
       dataIndex: "site",
       key: "site",
       render: (text) => text ?? "site",
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: '"User"."userid"',
-      render(_, record) {
-        return record.user?.userid;
-      },
+      title: t("depositor"),
+      dataIndex: "status",
+      key: "status",
     },
     {
-      title: t("nickname"),
-      dataIndex: "profile.nickname",
-      key: '"Profile"."nickname"',
-      render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("holderName"),
-      dataIndex: "holderName",
-      key: '"Profile"."holderName"',
+      title: t("allas"),
+      dataIndex: "user.profile.holderName",
+      key: "holderName",
       render: (_, record) => record.user?.profile?.holderName,
     },
     {
-      title: t("rolling"),
-      children: [
-        {
-          title: t("amount"),
-          dataIndex: "amount",
-          key: "amount",
-        },
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
+      title: t("amountHeld"),
+      dataIndex: "user.profile.nickname",
+      key: "nickname",
+      render: (_, record) => record.user?.profile?.nickname,
+    },
+    {
+      title: t("point"),
+      dataIndex: "user.profile.point",
+      key: "point",
+      render: (_, record) => record.user?.profile?.point,
+    },
+    {
+      title: t("deposit"),
+      dataIndex: "deposit",
+      key: "deposit",
+      render: () => "-",
+    },
+    {
+      title: t("withdraw"),
+      dataIndex: "withdraw",
+      key: "withdraw",
+      render: () => "-",
+    },
+    {
+      title: t("entry/exit"),
+      key: "entry_exit",
+      render: (_, record) => [
+        <Button key="deposit" size="small">{t("deposit/withdraw")}</Button>,
+        <Button key="point" size="small">{t("points") + "+"}</Button>,
       ],
     },
     {
-      title: t("balance"),
-      children: [
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("bet"),
+      dataIndex: "bet",
+      key: "bet",
+      render: () => "-",
     },
     {
-      title: t("transactionAt"),
+      title: t("winner"),
+      dataIndex: "winner",
+      key: "winner",
+      render: () => "-",
+    },
+    {
+      title: t("bedang"),
+      dataIndex: "bedang",
+      key: "bedang",
+      render: () => "-",
+    },
+    {
+      title: t("settlementType"),
+      dataIndex: "user.profile.comp",
+      key: "settlementType",
+      render: (_, record) => record.user?.profile?.comp,
+    },
+    {
+      title: t("rollingRate"),
+      dataIndex: "rollingRate",
+      key: "rollingRate",
+      render: () => "-", // TODO: Implement logic if available
+    },
+    {
+      title: t("rollingGold"),
+      dataIndex: "rolling",
+      key: "rolling",
+      render: () => "-", // TODO: Implement logic if available
+    },
+    {
+      title: t("rollingTransition"),
+      dataIndex: "rollingTransition",
+      key: "rollingTransition",
+      render: () => "-", // TODO: Implement logic if available
+    },
+    {
+      title: t("losingRate"),
+      dataIndex: "losingRate",
+      key: "losingRate",
+      render: () => "-", // TODO: Implement logic if available
+    },
+    {
+      title: t("losingMoney"),
+      dataIndex: "losing",
+      key: "losing",
+      render: () => "-", // TODO: Implement logic if available
+    },
+    {
+      title: t("settlementAmount"),
+      dataIndex: "settlementAmount",
+      key: "settlementAmount",
+      render: () => "-",
+    },
+    {
+      title: t("datePeriod"),
       dataIndex: "transactionAt",
       key: "transactionAt",
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
     },
     {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("processingStatus"),
+      dataIndex: "status",
+      key: "processingStatus",
+      render: (_, record) => record.status,
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("viewDetails"),
+      key: "viewDetails",
+      render: (_, record) => <div>
+        <Button size="small" className="bg-blue-500 text-white">{t("rolling")}</Button>
+        <Button size="small" className="bg-red-500 text-white">{t("losing")}</Button>
+      </div>,
+    },
+    {
+      title: t("losingSettlement"),
+      dataIndex: "losingSettlement",
+      key: "losingSettlement",
+      render: () => <div>
+        <Button size="small" className="bg-blue-300 text-white">{t("losing settlement")}</Button>
+      </div>,
     },
   ];
 

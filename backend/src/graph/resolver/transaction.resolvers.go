@@ -36,15 +36,16 @@ func (r *mutationResolver) ApproveTransaction(ctx context.Context, id uint) (boo
 	return ldr.TransactionReader.ApproveTransaction(ctx, id)
 }
 
-func (r *mutationResolver) WaitingTransaction(ctx context.Context, id uint) (bool, error) {
-	ldr := loaders.For(ctx)
-	return ldr.TransactionReader.WaitingTransaction(ctx, id)
-}
-
 // BlockTransaction is the resolver for the blockTransaction field.
 func (r *mutationResolver) BlockTransaction(ctx context.Context, id uint) (bool, error) {
 	ldr := loaders.For(ctx)
 	return ldr.TransactionReader.BlockTransaction(ctx, id)
+}
+
+// WaitingTransaction is the resolver for the waitingTransaction field.
+func (r *mutationResolver) WaitingTransaction(ctx context.Context, id uint) (bool, error) {
+	ldr := loaders.For(ctx)
+	return ldr.TransactionReader.WaitingTransaction(ctx, id)
 }
 
 // CancelTransaction is the resolver for the cancelTransaction field.

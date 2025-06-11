@@ -4,18 +4,16 @@ import React from "react";
 import { Space } from "antd";
 
 import { useAtom } from "jotai";
-import { userState } from "@/state/state";
-import ProfileCard from "@/components/Profile/ProfileCard";
+import { userState, rateState } from "@/state/state";
 import BettingCart from "@/components/Home/BettingCart"; 
 
 const BettingSidebar: React.FC = () => {
   const [user] = useAtom<any>(userState);
+  const [currentRates] = useAtom<any[]>(rateState);
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
-      <ProfileCard />
-
-      {user?.id ? <BettingCart /> : null}
+      {user?.id && currentRates.length > 0 ? <BettingCart /> : null}
     </Space>
   );
 };

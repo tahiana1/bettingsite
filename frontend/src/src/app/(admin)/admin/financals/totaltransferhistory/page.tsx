@@ -7,11 +7,9 @@ import {
   Card,
   Table,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
-  Select,
   Divider,
   Descriptions,
   Alert,
@@ -21,17 +19,13 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
-  APPROVE_TRANSACTION,
-  BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
 } from "@/actions/transaction";
-import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
-import { BsCardChecklist } from "react-icons/bs";
 
 const TotalTransferPage: React.FC = () => {
   const t = useTranslations();
@@ -39,8 +33,8 @@ const TotalTransferPage: React.FC = () => {
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
-        field: "transactions.type",
-        value: "T",
+        field: "users.role",
+        value: "A",
         op: "eq",
       },
     ],
@@ -50,56 +44,11 @@ const TotalTransferPage: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
 
-  const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
-
-  const onBlockTransaction = (transaction: Transaction) => {
-    blockTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onApproveTransaction = (transaction: Transaction) => {
-    approveTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        console.log({ res });
-        if (res.data?.success) {
-        }
-        refetch();
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-  const onTransactionTypeChange = (v: string = "") => {
-    updateFilter("transactions.type", v, "eq");
-  };
-
-  const labelRenderer = (props: any) =>
-    props.value.toString() == "100"
-      ? "Premium"
-      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-        props.value;
-
-  const levelOption = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-  ].map((i) => ({
-    value: i,
-    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-  }));
-
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
       dataIndex: "userid",
       key: "userid",
-      fixed: "left",
       render: (_, record) => {
         return record.user.id;
       },
@@ -108,12 +57,6 @@ const TotalTransferPage: React.FC = () => {
           <Input className="w-full" />
         </FilterDropdown>
       ),
-    },
-    {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
     },
     {
       title: t("root_dist"),
@@ -132,6 +75,17 @@ const TotalTransferPage: React.FC = () => {
       },
     },
     {
+      title: t("userid"),
+      dataIndex: "userid",
+      key: "userid",
+      render: (_, record) => {
+        return <div className="flex items-center">
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+        </div>
+      },
+    },
+    {
       title: t("nickname"),
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
@@ -141,11 +95,6 @@ const TotalTransferPage: React.FC = () => {
           <Input className="w-full" />
         </FilterDropdown>
       ),
-    },
-    {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
     },
     {
       title: t("amount"),
@@ -163,59 +112,39 @@ const TotalTransferPage: React.FC = () => {
       key: "balanceAfter",
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("explation"),
+      dataIndex: "explation",
+      key: "explation",
+      render: (_, record) => {
+        return (
+          <div>
+            {record.type === "deposit" && (
+              <span>Deposit</span>
+            )}
+            {record.type === "withdrawal" && (
+              <span>Withdrawal</span>
+            )}
+            {record.type === "transfer" && (
+              <span>Transfer</span>
+            )}
+            {record.type === "bettingSettlement" && (
+              <span>Betting Settlement</span>
+            )}
+            {record.type === "betting/placingBet" && (
+              <span>Betting Placement</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockTransaction(record)
-                : () => onApproveTransaction(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
-          >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<BsCardChecklist />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
-        </Space.Compact>
-      ),
-    },
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
+    }
   ];
 
   const onChange: TableProps<Transaction>["onChange"] = (
@@ -242,10 +171,6 @@ const TotalTransferPage: React.FC = () => {
       ];
     }
     setTableOptions({ ...tableOptions, filters });
-  };
-
-  const onLevelChange = (v: string = "") => {
-    updateFilter(`profiles.level`, v, "eq");
   };
 
   const onRangerChange = (
@@ -384,7 +309,7 @@ const TotalTransferPage: React.FC = () => {
                   },
                 ]}
                 defaultValue={""}
-                onChange={(e) => onTransactionTypeChange(e.target.value)}
+                onChange={(e) => updateFilter("transactions.type", e.target.value)}
               />
             </Space>
             <Space className="!w-full justify-between">
@@ -404,22 +329,6 @@ const TotalTransferPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
-                />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
                 />
               </Space>
               <Space.Compact className="gap-1">

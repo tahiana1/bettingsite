@@ -25,6 +25,7 @@ import type { TableProps } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 
 import api from "@/api";
+import dayjs from "dayjs";
 
 const DepositRequest: React.FC = () => {
   const t = useTranslations();
@@ -35,7 +36,7 @@ const DepositRequest: React.FC = () => {
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
   useEffect(() => {
-    const userid = String(profile.id);
+    const userid = String(profile.userId);
     api("transactions/get", { 
       method: "GET",
       params: {
@@ -62,7 +63,7 @@ const DepositRequest: React.FC = () => {
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.id,
+        userId: profile.userId,
         amount: amount,
         type: "deposit",
         explation: rechargeBonus
@@ -132,6 +133,9 @@ const DepositRequest: React.FC = () => {
       title: t("applicationDate"),
       dataIndex: "transactionAt", 
       key: "transactionAt",
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
     },
     {
       title: t("situation"),

@@ -12,6 +12,7 @@ func GetUserRoute(r *gin.RouterGroup) {
 	r.GET("/me", controllers.Me)
 	r.GET("/myprofile", controllers.GetMyProfile)
 	r.POST("/me", controllers.UpdateMe)
+	r.GET("/getInfo", controllers.GetInfo)
 	// Category routes
 	catRouter := r.Group("/categories")
 	{

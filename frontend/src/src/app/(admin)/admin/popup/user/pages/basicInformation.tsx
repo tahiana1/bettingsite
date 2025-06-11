@@ -338,14 +338,14 @@ const UserBasicInformation: React.FC = () => {
       <div className="bg-white p-4">
         <div className="flex flex-column gap-4">
           <div className="flex flex-col gap-2 text-sm font-bold">Deposit</div>
-          <div className="flex flex-col gap-2 text-sm font-bold text-[green]">
+          <div className="flex flex-col gap-2 text-sm font-bold text-[#71cb4a]">
             506,000
           </div>
           <div className="flex flex-col gap-2 text-sm justify-center items-center font-bold">
             -
           </div>
           <div className="flex flex-col gap-2 text-sm font-bold">Withdrawal</div>
-          <div className="flex flex-col gap-2 text-sm font-bold text-[green]">
+          <div className="flex flex-col gap-2 text-sm font-bold text-[#71cb4a]">
             0
           </div>
           <div className="flex flex-col gap-2 text-sm font-bold">=</div>

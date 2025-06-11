@@ -7,13 +7,9 @@ import {
   Card,
   Table,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
-  Select,
-  Modal,
-  Form,
   Divider,
   Descriptions,
   Alert,
@@ -23,80 +19,29 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import {
-  APPROVE_TRANSACTION,
-  BLOCK_TRANSACTION,
-  FILTER_TRANSACTIONS, 
+  FILTER_TRANSACTIONS,
 } from "@/actions/transaction";
-import { BiBlock, BiTrash } from "react-icons/bi";
-import { RxLetterCaseToggle } from "react-icons/rx"; 
-import { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib"; 
-import { BsCardChecklist } from "react-icons/bs";
- 
+import { RxLetterCaseToggle } from "react-icons/rx";
+import dayjs, { Dayjs } from "dayjs";
+import { isValidDate, parseTableOptions } from "@/lib";
 
 const IntegratedTransferPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
+  const [tableOptions, setTableOptions] = useState<any>({
+  });
 
-  const [modal, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS); 
-  const [colorModal, setColorModal] = useState<boolean>(false);
- 
-  const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
-
-  const onBlockTransaction = (transaction: Transaction) => {
-    blockTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onApproveTransaction = (transaction: Transaction) => {
-    approveTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        console.log({ res });
-        if (res.data?.success) {
-        }
-        refetch();
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-  const onTransactionTypeChange = (v: string = "") => {
-    updateFilter("type", v, "eq");
-  };
-
-  const labelRenderer = (props: any) =>
-    props.value.toString() == "100"
-      ? "Premium"
-      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-        props.value;
-
-  const levelOption = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-  ].map((i) => ({
-    value: i,
-    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-  }));
+  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
 
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
       dataIndex: "userid",
       key: "userid",
-      fixed: "left",
       render: (_, record) => {
         return record.user.id;
       },
@@ -105,12 +50,6 @@ const IntegratedTransferPage: React.FC = () => {
           <Input className="w-full" />
         </FilterDropdown>
       ),
-    },
-    {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
     },
     {
       title: t("root_dist"),
@@ -129,6 +68,17 @@ const IntegratedTransferPage: React.FC = () => {
       },
     },
     {
+      title: t("userid"),
+      dataIndex: "userid",
+      key: "userid",
+      render: (_, record) => {
+        return <div className="flex items-center">
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+        </div>
+      },
+    },
+    {
       title: t("nickname"),
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
@@ -138,53 +88,6 @@ const IntegratedTransferPage: React.FC = () => {
           <Input className="w-full" />
         </FilterDropdown>
       ),
-    },
-    {
-      title: t("holderName"),
-      dataIndex: "profile.holderName",
-      key: '"Profile"."holder_name"',
-      render: (_, record) => record.user?.profile?.holderName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("phone"),
-      dataIndex: "profile.phone",
-      key: '"Profile"."phone"',
-      render: (_, record) => record.user?.profile?.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("birthday"),
-      dataIndex: "profile.birthday",
-      key: "birthday",
-      render: (_, record) =>
-        isValidDate(record.user?.profile?.birthday)
-          ? f.dateTime(new Date(record.user?.profile?.birthday))
-          : null,
-    },
-    {
-      title: t("level"),
-      dataIndex: "profile.level",
-      key: "level",
-      render: (_, record) => record.user?.profile?.level,
-    },
-    {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
     },
     {
       title: t("amount"),
@@ -202,86 +105,39 @@ const IntegratedTransferPage: React.FC = () => {
       key: "balanceAfter",
     },
     {
-      title: t("pointBefore"),
-      dataIndex: "pointBefore",
-      key: "pointBefore",
-    },
-    {
-      title: t("pointAfter"),
-      dataIndex: "pointAfter",
-      key: "pointAfter",
-    },
-    {
-      title: t("usdtDesc"),
-      dataIndex: "usdtDesc",
-      key: "usdtDesc",
-    },
-    {
-      title: t("shortcut"),
-      dataIndex: "shortcut",
-      key: "shortcut",
+      title: t("explation"),
+      dataIndex: "explation",
+      key: "explation",
+      render: (_, record) => {
+        return (
+          <div>
+            {record.type === "deposit" && (
+              <span>Deposit</span>
+            )}
+            {record.type === "withdrawal" && (
+              <span>Withdrawal</span>
+            )}
+            {record.type === "transfer" && (
+              <span>Transfer</span>
+            )}
+            {record.type === "bettingSettlement" && (
+              <span>Betting Settlement</span>
+            )}
+            {record.type === "betting/placingBet" && (
+              <span>Betting Placement</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("approvedAt"),
-      dataIndex: "profile.approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockTransaction(record)
-                : () => onApproveTransaction(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
-          >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<BsCardChecklist />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
-        </Space.Compact>
-      ),
-    },
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
+    }
   ];
 
   const onChange: TableProps<Transaction>["onChange"] = (
@@ -310,34 +166,6 @@ const IntegratedTransferPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
 
-  const onUSDTStatusChange = (v: string) => {
-    if (v == "true") {
-      updateFilter("usdt_desc", v, "is_not_null");
-    } else if (v == "false") {
-      updateFilter("usdt_desc", v, "is_null");
-    } else {
-      updateFilter("usdt_desc", v, "eq");
-    }
-  };
-
-  const onMemberTypeChange = (v: string) => {
-    updateFilter("type", v, "eq");
-  };
-
-  const onLevelChange = (v: string = "") => {
-    updateFilter(`profiles.level`, v, "eq");
-  };
-
-  const onResetCoupon = async () => {
-    const confirmed = await modal.confirm({
-      title: "Do you want to reset the number of coupons for all members to 0?",
-    });
-    console.log("Confirmed: ", confirmed);
-  };
-  const [colorOption, setColorOptoin] = useState<any>("new");
-  const onChangeColors = async () => {
-    setColorModal(false);
-  };
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
@@ -378,10 +206,9 @@ const IntegratedTransferPage: React.FC = () => {
   }, [tableOptions]);
   return (
     <Layout>
-      {contextHolder}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/integratedtransferhistory")}
+          title={t("admin/menu/totaltransferhistory")}
           classNames={{
             body: "!p-0",
           }}
@@ -410,12 +237,40 @@ const IntegratedTransferPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: t("deposit"),
-                    value: "D",
+                    label: t("all"),
+                    value: "",
                   },
                   {
-                    label: t("withdraw"),
-                    value: "W",
+                    label: t("depositApproval"),
+                    value: "DA",
+                  },
+                  {
+                    label: t("canceledDeposit"),
+                    value: "CD",
+                  },
+                  {
+                    label: t("deletedDeposit"),
+                    value: "DD",
+                  },
+                  {
+                    label: t("withdrawApproval"),
+                    value: "WA",
+                  },
+                  {
+                    label: t("canceledWithdraw"),
+                    value: "CW",
+                  },
+                  {
+                    label: t("deletedWithdraw"),
+                    value: "DW",
+                  },
+                  {
+                    label: t("pointConversion"),
+                    value: "PC",
+                  },
+                  {
+                    label: t("rollingTransition"),
+                    value: "RT",
                   },
                   {
                     label: t("adminPay"),
@@ -426,84 +281,28 @@ const IntegratedTransferPage: React.FC = () => {
                     value: "AR",
                   },
                   {
-                    label: t("totalRecovery"),
-                    value: "TR",
+                    label: t("gameRecharge"),
+                    value: "GR",
                   },
                   {
-                    label: t("subPay"),
-                    value: "SP",
+                    label: t("gameExchange"),
+                    value: "GE",
                   },
                   {
-                    label: t("lowerRecover"),
-                    value: "LR",
+                    label: t("wholeSalePayment"),
+                    value: "WSP",
                   },
                   {
-                    label: t("recharge"),
-                    value: "R",
+                    label: t("totalMoneyRecovery"),
+                    value: "TMR",
                   },
                   {
-                    label: t("exchange"),
-                    value: "E",
-                  },
-                  {
-                    label: t("canceled"),
-                    value: "C",
-                  },
-                  {
-                    label: t("deleted"),
-                    value: "DL",
+                    label: t("settlementExchange"),
+                    value: "SAE",
                   },
                 ]}
                 defaultValue={""}
-                onChange={(e) => onTransactionTypeChange(e.target.value)}
-              />
-
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("firstDepositUponSignup"),
-                    value: "D",
-                  },
-                  {
-                    label: t("firstChargeEveryday"),
-                    value: "C",
-                  },
-                  {
-                    label: t("redeposit"),
-                    value: "R",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onMemberTypeChange(e.target.value)}
-              />
-
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: "USDT O",
-                    value: "true",
-                  },
-                  {
-                    label: "USDT X",
-                    value: "false",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onUSDTStatusChange(e.target.value)}
+                onChange={(e) => updateFilter("transactions.type", e.target.value)}
               />
             </Space>
             <Space className="!w-full justify-between">
@@ -524,25 +323,9 @@ const IntegratedTransferPage: React.FC = () => {
                   }
                   enterButton={t("search")}
                 />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
-                />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={onResetCoupon}>
+                <Button size="small" type="primary">
                   {t("download")}
                 </Button>
               </Space.Compact>
@@ -626,37 +409,6 @@ const IntegratedTransferPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
-          <Modal
-            open={colorModal}
-            onCancel={() => setColorModal(false)}
-            onOk={onChangeColors}
-          >
-            <Space direction="vertical" className="gap-2">
-              <Radio.Group
-                onChange={(e) => setColorOptoin(e.target.value)}
-                className="!flex !flex-col gap-2"
-                defaultValue={"new"}
-              >
-                <Radio value={"new"}>New Search Criteria</Radio>
-                {colorOption == "new" ? (
-                  <Form.Item>
-                    <Input />
-                  </Form.Item>
-                ) : null}
-                <Radio value={"list"}>
-                  Apply the member list search conditions as is:
-                </Radio>
-                {colorOption == "list" ? (
-                  <Form.Item>
-                    <Select />
-                  </Form.Item>
-                ) : null}
-              </Radio.Group>
-              <Form.Item label="Change Color">
-                <Select />
-              </Form.Item>
-            </Space>
-          </Modal>
         </Card>
       </Content>
     </Layout>
