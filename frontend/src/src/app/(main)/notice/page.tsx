@@ -1,13 +1,11 @@
 "use client"
 
-import { Button, Card, Form, Input, Layout, Space, Switch, Table } from "antd";
+import { Button, Card, Form, Input, Layout, Select, Space, Switch, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuill } from "react-quilljs";
 import { Content } from "antd/es/layout/layout";
 import 'quill/dist/quill.snow.css';
-import type { TableProps } from "antd";
-import { BiTrash } from "react-icons/bi";
 import { FILTER_QNAS } from "@/actions/qna";
 import { useQuery } from "@apollo/client";
 import "./index.css";
@@ -27,7 +25,7 @@ interface QnaItem {
     };
 }
 
-const Qna = () => {
+const Notice = () => {
     const [form] = Form.useForm();
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);
@@ -59,45 +57,6 @@ const Qna = () => {
         ],
       };
 
-      const columns: TableProps<QnaItem>["columns"] = [
-        {
-          title: t("number"),
-          dataIndex: "id",
-          key: "id",
-          fixed: "left",
-        },
-        {
-          title: t("title"),
-          dataIndex: "title",
-          key: "title",
-        },
-        {
-          title: t("situation"),
-          dataIndex: "status",
-          key: "status",
-        },
-        {
-          title: t("applicationDate"),
-          dataIndex: "createdAt",
-          key: "createdAt",
-        },
-        {
-          title: t("action"),
-          key: "action",
-          fixed: "right",
-          render: (_, record) => (
-            <Space.Compact size="small" className="gap-2">
-              <Button
-                title={t("delete")}
-                variant="outlined"
-                color="danger"
-                icon={<BiTrash />}
-                onClick={() => handleDelete(record.id)}
-              />
-            </Space.Compact>
-          ),
-        },
-      ];
     const formats = [
         "bold",
         "italic",
@@ -183,7 +142,7 @@ const Qna = () => {
         <Layout>
             <Content id="qna-content" className="p-3">
                 <Card
-                    title={t("contactUs")}
+                    title={t("noticePage")}
                     >
                         <Form
                             name="newForm"
@@ -195,6 +154,13 @@ const Qna = () => {
                         <Form.Item name="title" label={t("title")}
                         rules={[{ required: true, message: t("required") }]}>
                             <Input />
+                        </Form.Item>
+                        <Form.Item 
+                            name="type" 
+                            label={t("type")}
+                            rules={[{ required: true, message: t("required") }]}
+                        >
+                           <Select options={[]} />
                         </Form.Item>
                         <Form.Item 
                             name="description" 
@@ -210,18 +176,9 @@ const Qna = () => {
                         </Form.Item>
                     </Form>
                 </Card>
-                <Table<QnaItem>
-                    columns={columns}
-                    loading={loading}
-                    dataSource={qnas}
-                    className="w-full pt-3"
-                    size="small"
-                    scroll={{ x: "max-content" }}
-                    rowKey="id"
-                />
             </Content>
         </Layout>
     )
 }
 
-export default Qna;
+export default Notice;

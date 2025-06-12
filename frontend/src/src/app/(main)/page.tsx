@@ -9,6 +9,7 @@ import {
   List,
   Space,
   notification,
+  Modal,
 } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -50,6 +51,10 @@ const contentStyle: React.CSSProperties = {
 const Index: React.FC = () => {
   const t = useTranslations();
   const tk = dayjs().format("YYYYMMDD");
+  const [selectedNotification, setSelectedNotification] = React.useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
+  const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
 
   const { data, loading } = useQuery(FILTER_NOTI);
   const { data: eventData, } = useQuery(GET_TOP_EVENT);
@@ -60,14 +65,22 @@ const Index: React.FC = () => {
   const [notifications, setNotififications] = useAtom<any[]>(notificationState);
 
   const onChange = (n: any) => {
+    const now = Date.now();
     const nn = noti[tk] ?? [];
-    nn.push(n.id);
+    // Store the notification ID and timestamp when it was hidden
+    nn.push({ id: n.id, hiddenAt: now });
     setNoti({ ...noti, [tk]: nn });
   };
 
   useEffect(() => {
     notifications.map((n) => {
-      if ((noti[dayjs().format("YYYYMMDD")] ?? []).indexOf(n.id) == -1) {
+      const hiddenNotifications = noti[dayjs().format("YYYYMMDD")] ?? [];
+      const isHidden = hiddenNotifications.some((hidden: any) => {
+        // Check if notification is hidden and if 24 hours haven't passed
+        return hidden.id === n.id && (Date.now() - hidden.hiddenAt) < 24 * 60 * 60 * 1000;
+      });
+
+      if (!isHidden) {
         notiApi.info({
           message: n.title,
           description: <div dangerouslySetInnerHTML={{ __html: n.description }} />,
@@ -81,9 +94,6 @@ const Index: React.FC = () => {
         });
       }
     });
-    // return () => {
-    // setNotififications([]);
-    // };
   }, [notifications]);
 
   useEffect(() => {
@@ -100,6 +110,27 @@ const Index: React.FC = () => {
       setNotififications([]);
     };
   }, []);
+
+  const handleNotificationClick = (notification: any) => {
+    setSelectedNotification(notification);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedNotification(null);
+  };
+
+  const handleEventClick = (event: any) => {
+    setSelectedEvent(event);
+    setIsEventModalOpen(true);
+  };
+
+  const handleEventModalClose = () => {
+    setIsEventModalOpen(false);
+    setSelectedEvent(null);
+  };
+
   return (
     <Layout>
       {contextHolder}
@@ -108,7 +139,7 @@ const Index: React.FC = () => {
         type="info"
         message={
           <Marquee pauseOnHover gradient={false}>
-            New events! New events!New events!New events!New events!New events!
+            {notifications?.[0]?.title} <span className="text-red-500 ml-5">{t("home/niceHello")}</span>
           </Marquee>
         }
       />
@@ -186,11 +217,29 @@ const Index: React.FC = () => {
                 size="small"
                 className="w-full"
                 dataSource={data?.response?.notifications ?? []}
-                renderItem={({ title, createdAt }: Notification) => (
-                  <List.Item>{title} - {dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss")}</List.Item>
+                renderItem={({ title, createdAt, description }: Notification) => (
+                  <List.Item 
+                    onClick={() => handleNotificationClick({ title, createdAt, description })}
+                    className="cursor-pointer"
+                  >
+                    {title} - {dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss")}
+                  </List.Item>
                 )}
               />
             </Card>
+            <Modal
+              title={selectedNotification?.title}
+              open={isModalOpen}
+              onCancel={handleModalClose}
+              footer={null}
+            >
+              <div className="mt-4">
+                <p className="text-gray-600 mb-2">
+                  {dayjs(selectedNotification?.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+                </p>
+                <div dangerouslySetInnerHTML={{ __html: selectedNotification?.description }} />
+              </div>
+            </Modal>
             <Card
               className="w-full !p-0"
               classNames={{
@@ -211,13 +260,39 @@ const Index: React.FC = () => {
                 size="small"
                 className="w-full"
                 dataSource={eventData?.response ?? []}
-                renderItem={({ title, status, showFrom, showTo }: Event) => (
-                  <List.Item>
+                renderItem={({ title, status, showFrom, showTo, description }: Event) => (
+                  <List.Item 
+                    onClick={() => handleEventClick({ title, status, showFrom, showTo, description })}
+                    className="cursor-pointer"
+                  >
                     {title} - {t(status ? "active" : "inactive")} - {showFrom} - {showTo}
                   </List.Item>
                 )}
               />
             </Card>
+            <Modal
+              title={selectedEvent?.title}
+              open={isEventModalOpen}
+              onCancel={handleEventModalClose}
+              footer={null}
+            >
+              <div className="mt-4">
+                <p className="text-gray-600 mb-2">
+                  {t("Status")}: {t(selectedEvent?.status ? "active" : "inactive")}
+                </p>
+                <p className="text-gray-600 mb-2">
+                  {t("Show From")}: {selectedEvent?.showFrom}
+                </p>
+                <p className="text-gray-600 mb-2">
+                  {t("Show To")}: {selectedEvent?.showTo}
+                </p>
+                {selectedEvent?.description && (
+                  <div className="mt-4">
+                    <div dangerouslySetInnerHTML={{ __html: selectedEvent?.description }} />
+                  </div>
+                )}
+              </div>
+            </Modal>
           </Space.Compact>
         </Space.Compact>
       </Content>

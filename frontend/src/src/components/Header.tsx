@@ -132,8 +132,8 @@ const Head = () => {
           alignItems: "center",
         }}
       >
-        <Link href="/">
-          <Image src={Logo} width={130} height={40} alt="Toto Admin"  className=" cursor-pointer"/>
+        <Link href="/" className="min-w-[123px]">
+          <Image src={Logo} width={123} height={45} alt="Toto Admin"  className=" cursor-pointer"/>
         </Link>
         
         <Menu

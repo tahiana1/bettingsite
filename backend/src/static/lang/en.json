@@ -416,7 +416,7 @@
   "attendance": "Attendance",
   "roulette": "Roulette",
   "children": "Children",
-  "qna": "QnA",
+  "qna": "Customer Service Center",
 
   "announcements": "Announcements",
   "events": "Events",
@@ -813,7 +813,7 @@
   "marketChangeHistory": "Market change history",
   "user/home/search/placeholder" : "Please enter the team name or league name",
 
-  "user/menu/betlog" : "Betting History",
+  "home/majorEventnu/betlog" : "Betting History",
   "realTime" : "Real Time",
   "minigame" : "Mini Game",
   "touchGame" : "Touch Game",
@@ -827,5 +827,10 @@
   "deleteAllHistory" : "Delete All History",
   "contactInquiry" : "Contact Inquiry",
   "writingInquiry" : "Writing Inquiry",
-  "deleteHistory": "Delete History"
+  "deleteHistory": "Delete History",
+  "contactUs": "Contact Us",
+  "required": "Required",
+  "noticePage": "Notice Period",
+  "bettingAcceptanceTime": "Betting Acceptance Time",
+  "home/niceHello" : "Have a nice today!"
 }

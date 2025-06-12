@@ -32,7 +32,7 @@ export default function api(url: string, config?: AxiosRequestConfig) {
       return res.data;
     })
     .catch((err: AxiosError) => {
-      message.error(err.message);
+      // message.error(err.message);
       throw err;
     });
 }

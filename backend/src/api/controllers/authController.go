@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ import (
 	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // Signup function is used to create a user or signup a user
@@ -26,7 +28,7 @@ func SignUp(c *gin.Context) {
 		HolderName    string    `json:"holderName"`
 		Userid        string    `json:"userid" binding:"required,min=6"`
 		Password      string    `json:"password" binding:"required,min=6"`
-		SecPassword   string    `json:"securityPassword" binding:"required,min=6"`
+		SecPassword   string    `json:"securityPassword" binding:"required,min=3"`
 		USDTAddress   string    `json:"usdtAddress"`
 		AccountNumber string    `json:"accountNumber"`
 		Bank          string    `json:"bank"`
@@ -77,13 +79,42 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	// Return the user
-	//user.Password = ""
+	// Find the bank by name if provided
+	var bankID uint
+	if userInput.Bank != "" {
+		// Normalize the bank name: trim and lowercase
+		normalizedBankName := strings.TrimSpace(strings.ToLower(userInput.Bank))
+		var bank models.Bank
+		err := initializers.DB.Where("LOWER(name) = ?", normalizedBankName).First(&bank).Error
+		if err != nil {
+			// If not found, create a new bank with status=false
+			if err.Error() == "record not found" || err == gorm.ErrRecordNotFound {
+				bank = models.Bank{
+					Name:     normalizedBankName,
+					Status:   false,
+					OrderNum: 1,
+				}
+				if err := initializers.DB.Create(&bank).Error; err != nil {
+					format_errors.BadRequestError(c, fmt.Errorf("Failed to create new bank: %v", err))
+					return
+				}
+				bankID = bank.ID
+			} else {
+				format_errors.BadRequestError(c, fmt.Errorf("Invalid bank name provided"))
+				return
+			}
+		} else {
+			bankID = bank.ID
+		}
+	}
+
+	// Create the profile
 	profile := &models.Profile{
 		UserID:        user.ID,
 		Name:          userInput.Name,
 		Nickname:      userInput.Name,
 		BankName:      userInput.Bank,
+		BankID:        bankID,
 		HolderName:    userInput.HolderName,
 		AccountNumber: userInput.AccountNumber,
 		Birthday:      userInput.Birthday,

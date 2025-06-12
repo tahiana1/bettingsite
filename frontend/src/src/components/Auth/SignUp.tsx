@@ -14,11 +14,12 @@ import {
 } from "antd";
 import { useTranslations } from "next-intl";
 import api from "@/api";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const t = useTranslations();
   const [form] = Form.useForm();
-
+  const router = useRouter();
   const [notiApi, contextHolder] = notification.useNotification();
 
   const onFinish = (values: any) => {
@@ -46,6 +47,8 @@ const SignUp = () => {
           ),
           placement: "topRight",
         });
+        // localStorage.setItem("token", result.token);
+        router.push("/");
       })
       .catch((err) => {
         console.log(err);

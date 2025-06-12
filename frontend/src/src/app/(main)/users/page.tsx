@@ -3,6 +3,8 @@ import { GET_USERS } from "@/actions/user";
 import client from "@/api/apollo-client-ws";
 import { gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
+import Image from "next/image";
+import LoadingGIF from '@/assets/img/loading.gif'
 
 export default function UsersPage() {
   const { loading, error, data } = useQuery(GET_USERS);
@@ -21,7 +23,7 @@ export default function UsersPage() {
         },
       });
   }, []);
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Image src={LoadingGIF} alt="loading" width={100} height={100} />;
   if (error) return <p>Error: {error.message}</p>;
 
   return (

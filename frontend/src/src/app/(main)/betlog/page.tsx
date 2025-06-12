@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import html2canvas from 'html2canvas-pro';
+import { useRouter } from 'next/navigation';
 
 import {
   Layout,
@@ -47,6 +48,7 @@ const BettingLog: React.FC = () => {
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
   const [user] = useAtom<any>(userState);
+  const router = useRouter();
   
   useEffect(() => {
     const fetchBets = async () => {
@@ -190,6 +192,40 @@ const BettingLog: React.FC = () => {
     refetch(tableOptions ?? undefined);
   }, [tableOptions]);
 
+
+  const handleCaptureNoticeImage = async (betGroupId: string) => {
+    const element = document.getElementById(`bet-group-${betGroupId}`);
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: "#000",
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true
+      });
+      
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create a File object from the blob
+          const file = new File([blob], `betting-log-${betGroupId}.png`, { type: 'image/png' });
+          
+          // Store the file in localStorage
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            localStorage.setItem('capturedBetImage', reader.result as string);
+            // Navigate to QnA page
+            router.push('/notice');
+          };
+          reader.readAsDataURL(file);
+        }
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error capturing image:', error);
+    }
+  };
+
   const handleCaptureImage = async (betGroupId: string) => {
     const element = document.getElementById(`bet-group-${betGroupId}`);
     if (!element) return;
@@ -205,15 +241,17 @@ const BettingLog: React.FC = () => {
       // Convert canvas to blob
       canvas.toBlob((blob) => {
         if (blob) {
-          // Create download link
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `betting-log-${betGroupId}.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
+          // Create a File object from the blob
+          const file = new File([blob], `betting-log-${betGroupId}.png`, { type: 'image/png' });
+          
+          // Store the file in localStorage
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            localStorage.setItem('capturedBetImage', reader.result as string);
+            // Navigate to QnA page
+            router.push('/qna');
+          };
+          reader.readAsDataURL(file);
         }
       }, 'image/png');
     } catch (error) {
@@ -254,15 +292,71 @@ const BettingLog: React.FC = () => {
       // Convert canvas to blob
       canvas.toBlob((blob) => {
         if (blob) {
-          // Create download link
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `betting-log-selected.png`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
+          // Create a File object from the blob
+          const file = new File([blob], `betting-log-${new Date().getTime()}.png`, { type: 'image/png' });
+          
+          // Store the file in localStorage
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            localStorage.setItem('capturedBetImage', reader.result as string);
+            // Navigate to QnA page
+            router.push('/qna');
+          };
+          reader.readAsDataURL(file);
+        }
+      }, 'image/png');
+
+      // Clean up the temporary container
+      document.body.removeChild(container);
+    } catch (error) {
+      console.error('Error capturing image:', error);
+    }
+  };
+
+  const handleCaptureAllNoticeImage = async () => {
+    if (selectedBetGroups.length === 0) return;
+
+    try {
+      // Create a container to hold all selected bet groups
+      const container = document.createElement('div');
+      container.style.backgroundColor = '#000';
+      container.style.padding = '20px';
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.gap = '20px';
+      document.body.appendChild(container);
+
+      // Clone all selected bet groups into the container
+      for (const betGroupId of selectedBetGroups) {
+        const element = document.getElementById(`bet-group-${betGroupId}`);
+        if (element) {
+          const clone = element.cloneNode(true) as HTMLElement;
+          container.appendChild(clone);
+        }
+      }
+
+      // Capture the entire container
+      const canvas = await html2canvas(container, {
+        backgroundColor: "#000",
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true
+      });
+      
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create a File object from the blob
+          const file = new File([blob], `betting-log-${new Date().getTime()}.png`, { type: 'image/png' });
+          
+          // Store the file in localStorage
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            localStorage.setItem('capturedBetImage', reader.result as string);
+            // Navigate to QnA page
+            router.push('/notice');
+          };
+          reader.readAsDataURL(file);
         }
       }, 'image/png');
 
@@ -351,7 +445,10 @@ const BettingLog: React.FC = () => {
             <button onClick={() => handleCaptureAllImage()} className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer ">
               {t("contactInquiry")}
             </button>
-            <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+            <button 
+              className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+              onClick={() => handleCaptureAllNoticeImage()}
+            >
               {t("writingInquiry")}
             </button>
           </div>
@@ -360,7 +457,7 @@ const BettingLog: React.FC = () => {
               return (
                 <div key={betGroup.placedAt} className="" >
                   <div id={`bet-group-${betGroup.placedAt}`} >
-                     <Table<Transaction>
+                    <Table<Transaction>
                       columns={columns}
                       loading={loading}
                       dataSource={betGroup.bets}
@@ -382,7 +479,7 @@ const BettingLog: React.FC = () => {
                           }
                         }}
                       />
-                      <p className="text-sm">Betting acceptance time: 2025</p>
+                      <p className="text-sm">{t("bettingAcceptanceTime")} {dayjs(betGroup.placedAt).format("YYYY-MM-DD HH:mm:ss")}</p>
                     </div>
                   </div>
                   <div className="flex justify-end gap-1 mb-6">
@@ -396,7 +493,10 @@ const BettingLog: React.FC = () => {
                     >
                       {t("contactInquiry")}
                     </button>
-                    <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+                    <button 
+                      className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+                      onClick={() => handleCaptureNoticeImage(betGroup.placedAt)}
+                    >
                       {t("writingInquiry")}
                     </button>
                   </div>

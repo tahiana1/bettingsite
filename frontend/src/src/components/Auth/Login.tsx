@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ROUTES } from "@/routes";
 import api from "@/api";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 const UserSchema = z.object({
   userid: z.string().optional(),
   password: z.string().optional(),
@@ -16,7 +17,7 @@ type User = z.infer<typeof UserSchema>;
 const Login: React.FC = () => {
 
   const t = useTranslations();
-
+  const router = useRouter();
   const [, setUser] = useAtom<any>(userState);
 
   const { register } = useForm<User>();
@@ -28,6 +29,7 @@ const Login: React.FC = () => {
       .then((result) => {
         setUser(result.data);
         localStorage.setItem("token", result.token);
+        router.push("/");
       })
       .catch((err) => {
         console.log({err})
