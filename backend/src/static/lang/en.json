@@ -818,5 +818,14 @@
   "minigame" : "Mini Game",
   "touchGame" : "Touch Game",
   "lotusGame" : "Lotus Game",
-  "mgmGames" : "MGM Games"
+  "mgmGames" : "MGM Games",
+  "periodScore" : "Period Score",
+  "matchScore" : "Match Score",
+  "allocation" : "Allocation",
+  "radish" : "Radish",
+  "radishGame" : "Radish Game",
+  "deleteAllHistory" : "Delete All History",
+  "contactInquiry" : "Contact Inquiry",
+  "writingInquiry" : "Writing Inquiry",
+  "deleteHistory": "Delete History"
 }

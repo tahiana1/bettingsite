@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"strconv"
+	"sort"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,31 +14,82 @@ import (
 )
 
 func GetBetting(c *gin.Context) {
-	id, _ := strconv.ParseUint(c.Query("userid"), 10, 64)
-	typeString := c.Query("type")
-	transactions := []models.Transaction{}
-	err := initializers.DB.
-		Model(&models.Transaction{}).
-		Where("user_id = ?", id).
-		Where("type = ?", typeString).
-		Order("id DESC").
-		Find(&transactions).Error
+	var input struct {
+		UserID uint `json:"user_id" binding:"required,min=1"`
+	}
 
-	if err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"validations": validations.FormatValidationErrors(errs),
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Set default pagination values if not provided
+
+	// Build query
+	query := initializers.DB.Model(&models.Bet{}).
+		Preload("Fixture").
+		Preload("Fixture.HomeTeam").
+		Preload("Fixture.AwayTeam").
+		Preload("Fixture.League").
+		Preload("Market").
+		Where("user_id = ?", input.UserID)
+
+	// Get total count for pagination
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
 		format_errors.InternalServerError(c, err)
 		return
 	}
 
-	var profile models.Profile
-	err = initializers.DB.
-		Model(&models.Profile{}).
-		Where("user_id = ?", id).
-		First(&profile).Error
+	// Get paginated bets
+	var bets []models.Bet
+	if err := query.
+		Order("placed_at DESC").
+		Find(&bets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Group bets by placed_at time
+	betGroups := make(map[time.Time][]models.Bet)
+	for _, bet := range bets {
+		// Round to nearest second to group bets placed within the same second
+		placedAt := bet.PlacedAt.Truncate(time.Second)
+		betGroups[placedAt] = append(betGroups[placedAt], bet)
+	}
+
+	// Convert map to array of groups
+	type BetGroup struct {
+		PlacedAt time.Time    `json:"placedAt"`
+		Bets     []models.Bet `json:"bets"`
+	}
+
+	var groupedBets []BetGroup
+	for placedAt, groupBets := range betGroups {
+		groupedBets = append(groupedBets, BetGroup{
+			PlacedAt: placedAt,
+			Bets:     groupBets,
+		})
+	}
+
+	// Sort groups by placed_at time (most recent first)
+	sort.Slice(groupedBets, func(i, j int) bool {
+		return groupedBets[i].PlacedAt.After(groupedBets[j].PlacedAt)
+	})
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Transaction created successfully",
-		"data":    transactions,
-		"balance": profile.Balance,
+		"message": "Bets retrieved successfully",
+		"data":    groupedBets,
+		"status":  true,
 	})
 }
 

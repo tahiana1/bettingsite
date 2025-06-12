@@ -9,7 +9,7 @@ import (
 func GetBettingRoute(r *gin.RouterGroup) {
 	r.Use(middleware.RequireAuth)
 	{
-		r.GET("/", controllers.GetBetting)
+		r.POST("/get-betting", controllers.GetBetting)
 		r.POST("/create", controllers.CreateBetting)
 	}
 }

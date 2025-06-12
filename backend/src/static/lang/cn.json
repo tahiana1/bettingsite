@@ -681,5 +681,15 @@
   "touchGame" : "触摸游戏",
   "lotusGame" : "莲花游戏",
   "mgmGames" : "MGM游戏",
-  "minigame" : "小游戏"  
+  "minigame" : "小游戏",
+  "periodScore" : "期数",
+  "matchScore" : "比赛得分",
+  "allocation" : "分配",
+  "radish" : "萝卜",
+  "radishGame" : "萝卜游戏",
+
+  "deleteAllHistory" : "删除所有历史",
+  "contactInquiry" : "联系查询",
+  "writingInquiry" : "写查询",
+  "deleteHistory" : "删除历史"
 }

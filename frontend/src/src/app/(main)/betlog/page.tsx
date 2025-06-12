@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import html2canvas from 'html2canvas-pro';
 
 import {
   Layout,
@@ -14,6 +16,7 @@ import {
   Modal,
   Form,
   Descriptions,
+  Checkbox,
 } from "antd";
 import type { TableProps } from "antd";
 
@@ -23,29 +26,49 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   FILTER_TRANSACTIONS,
 } from "@/actions/transaction";
-import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
+import api from "@/api";
+import { useAtom } from "jotai";
+import { userState } from "@/state/state";
 
 const BettingLog: React.FC = () => {
+  const [profile] = useAtom<any>(userState);
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
+  const [selectedBetGroup, setSelectedBetGroup] = useState<string | null>(null);
+  const [selectedBetGroups, setSelectedBetGroups] = useState<string[]>([]);
 
   const [modal, contextHolder] = Modal.useModal();
   const [range, setRange] = useState<any[]>([]);
 
   const [total, setTotal] = useState<number>(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [bets, setBets] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
-
+  const [user] = useAtom<any>(userState);
+  
   useEffect(() => {
-    const interval = setInterval(() => {
-      refetch(tableOptions ?? undefined);
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
+    const fetchBets = async () => {
+      console.log(user, "user.userId");
+      const userid = Number(user.userId);
+      const response = await api("bets/get-betting", {
+        method: "POST",
+        data: {
+          user_id: 10,
+        }
+      });
 
+      if (response.status) {
+        setBets(response.data); 
+      } else {
+        setBets([]);
+      }
+    };
+
+    fetchBets();
+  }, []);
+  
   const onTransactionTypeChange = (v: string = "") => {
     updateFilter("transactions.type", v, "eq");
   };
@@ -53,62 +76,82 @@ const BettingLog: React.FC = () => {
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: t("gameTime"),
-      dataIndex: "gameTime", 
-      key: "gameTime",
-      render: (_, __, index) => index + 1
+      dataIndex: "placedAt",
+      key: "placedAt",
+      render: (value) => dayjs(value).format("YYYY-MM-DD HH:mm:ss"),
     },
     {
       title: t("leagueName"),
-      dataIndex: "leagueName",
-      key: "leagueName",
-      render: (_, record) => <p>-</p>,
+      dataIndex: "Fixture",
+      key: "Fixture",
+      render: (value) => value?.league?.name || "-",
     },
     {
       title: t("homeTeam"),
-      dataIndex: "homeTeam",
-      key: "homeTeam",
+      dataIndex: "Fixture",
+      onCell: (record: any) => ({
+        className: record.selection == "Under" || record.selection == "1" ? "bg-yellow-900" : ""
+      }),
+      key: "Fixture",
+      render: (value) => value?.homeTeam?.name || "-",
     },
     {
       title: t("radish"),
       dataIndex: "radish",
+      className: "text-center",
       key: "radish",
+      render: (value) => value?.name || "VS",
     },
     {
       title: t("awayTeam"),
-      dataIndex: "awayTeam",
-      key: "awayTeam",
+      dataIndex: "Fixture",
+      key: "Fixture",
+      onCell: (record: any) => ({
+        className: record.selection == "Over" || record.selection == "2" ? "bg-yellow-900" : ""
+      }),
+      render: (value) => value?.awayTeam?.name || "-",
     },
-   
     {
       title: t("type"),
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "Market",
+      key: "Market",
+      className: "text-center",
+      render: (value) => value?.name || "-",
     },
     {
       title: t("result"),
-      dataIndex: "result",
-      key: "result",
-      render: () => 0,
+      dataIndex: "selection",
+      key: "selection",
+      className: "text-center",
+      render: (value) => "Home Win",
     },
     {
       title: t("periodScore"),
-      dataIndex: "periodScore",
-      key: "periodScore",
+      dataIndex: "Fixture",
+      key: "Fixture",
+      render: (value) => (
+        <p>{value.awayScore} : {value.homeScore}</p>
+      ),
     },
     {
       title: t("matchScore"),
-      dataIndex: "matchScore",
-      key: "matchScore",
+      dataIndex: "Fixture",
+      key: "Fixture",
+      render: (value) => (
+        <p>{value.awayScore} : {value.homeScore}</p>
+      ),
     },
     {
       title: t("allocation"),
-      dataIndex: "allocation",
-      key: "allocation"
+      dataIndex: "odds",
+      key: "odds",
+      render: (value) => <>{value} <span>times</span></> || "-",
     },
     {
       title: t("situation"),
-      dataIndex: "situation",
-      key: "situation",
+      dataIndex: "settledAt",
+      key: "settledAt",
+      render: (value) => <p className="text-green-500">Winner</p>,
     }
   ];
 
@@ -144,17 +187,91 @@ const BettingLog: React.FC = () => {
   };
 
   useEffect(() => {
-    setTransactions(
-      data?.response?.transactions?.map((u: any) => {
-        return { ...u, key: u.id };
-      }) ?? []
-    );
-    setTotal(data?.response?.total);
-  }, [data]);
-
-  useEffect(() => {
     refetch(tableOptions ?? undefined);
   }, [tableOptions]);
+
+  const handleCaptureImage = async (betGroupId: string) => {
+    const element = document.getElementById(`bet-group-${betGroupId}`);
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: "#000",
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true
+      });
+      
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create download link
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `betting-log-${betGroupId}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error capturing image:', error);
+    }
+  };
+
+  const handleCaptureAllImage = async () => {
+    if (selectedBetGroups.length === 0) return;
+
+    try {
+      // Create a container to hold all selected bet groups
+      const container = document.createElement('div');
+      container.style.backgroundColor = '#000';
+      container.style.padding = '20px';
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.gap = '20px';
+      document.body.appendChild(container);
+
+      // Clone all selected bet groups into the container
+      for (const betGroupId of selectedBetGroups) {
+        const element = document.getElementById(`bet-group-${betGroupId}`);
+        if (element) {
+          const clone = element.cloneNode(true) as HTMLElement;
+          container.appendChild(clone);
+        }
+      }
+
+      // Capture the entire container
+      const canvas = await html2canvas(container, {
+        backgroundColor: "#000",
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true
+      });
+      
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create download link
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `betting-log-selected.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }
+      }, 'image/png');
+
+      // Clean up the temporary container
+      document.body.removeChild(container);
+    } catch (error) {
+      console.error('Error capturing image:', error);
+    }
+  };
 
   return (
     <Layout className="p-3">
@@ -162,84 +279,133 @@ const BettingLog: React.FC = () => {
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
           title={t("user/menu/betlog")}
-          className="!p-0 flex align-end"
         >
-          <Space className="p-2 !w-full" direction="vertical">
+          <Space className="mb-5" direction="vertical">
             <Space wrap>
               <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
+                style={{ gap: '5px', display: 'flex', alignItems: 'center' }}
                 options={[
                   {
                     label: t("overseasType"),
                     value: "D",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("domesticType"),
                     value: "W",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("inPlay"),
                     value: "AP",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("realTime"),
                     value: "AR",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("special"),
                     value: "TR",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("minigame"),
                     value: "SP",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("virtualGame"),
                     value: "LR",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("touchGame"),
                     value: "R",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("lotusGame"),
                     value: "E",
+                    className: "w-24 flex text-center py-1"
                   },
                   {
                     label: t("mgmGames"),
                     value: "C",
-                  },
+                    className: "w-24 flex text-center py-1"
+                  }
                 ]}
                 defaultValue={""}
                 onChange={(e) => onTransactionTypeChange(e.target.value)}
               />
             </Space>
           </Space>
+          <div className="flex justify-end gap-1 mb-4">
+            <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+              {t("deleteAllHistory")}
+            </button>
+            <button onClick={() => handleCaptureAllImage()} className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer ">
+              {t("contactInquiry")}
+            </button>
+            <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+              {t("writingInquiry")}
+            </button>
+          </div>
+          {
+            bets.map((betGroup) => {
+              return (
+                <div key={betGroup.placedAt} className="" >
+                  <div id={`bet-group-${betGroup.placedAt}`} >
+                     <Table<Transaction>
+                      columns={columns}
+                      loading={loading}
+                      dataSource={betGroup.bets}
+                      className="w-full text-center"
+                      style={{borderTop: "1px solid rgba(255,255,255,0.2)", borderLeft: "1px solid rgba(255,255,255,0.2)", borderRight: "1px solid rgba(255,255,255,0.2)"}}
+                      size="small"
+                      scroll={{ x: "max-content" }}
+                      onChange={onChange}
+                      pagination={false}
+                    />
+                    <div className="flex items-center gap-2 mb-3 w-full py-1 px-1" style={{border: '1px solid rgba(255,255,255,0.2)'}}>
+                      <Checkbox 
+                        checked={selectedBetGroups.includes(betGroup.placedAt)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedBetGroups([...selectedBetGroups, betGroup.placedAt]);
+                          } else {
+                            setSelectedBetGroups(selectedBetGroups.filter(id => id !== betGroup.placedAt));
+                          }
+                        }}
+                      />
+                      <p className="text-sm">Betting acceptance time: 2025</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-1 mb-6">
+                    <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+                      {t("deleteHistory")}
+                    </button>
+                    <button 
+                      className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+                      onClick={() => handleCaptureImage(betGroup.placedAt)}
+                      // disabled={selectedBetGroup !== betGroup.placedAt}
+                    >
+                      {t("contactInquiry")}
+                    </button>
+                    <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+                      {t("writingInquiry")}
+                    </button>
+                  </div>
+                </div>
+              )
+            })
+          } 
 
-          <Table<Transaction>
-            columns={columns}
-            loading={loading}
-            dataSource={transactions ?? []}
-            className="w-full"
-            size="small"
-            scroll={{ x: "max-content" }}
-            onChange={onChange}
-            pagination={{
-              showTotal(total, range) {
-                return t("paginationLabel", {
-                  from: range[0],
-                  to: range[1],
-                  total,
-                });
-              },
-              total: total,
-              showSizeChanger: true,
-              defaultPageSize: 25,
-              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
-            }}
-          />
+          
           <Modal
             open={colorModal}
             onCancel={() => setColorModal(false)}
