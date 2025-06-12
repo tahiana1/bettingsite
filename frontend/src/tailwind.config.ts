@@ -9,7 +9,7 @@ const config: Config = {
     },
     extend: {
       fontSize: {
-        base: ["11px", { lineHeight: "1.5" }],
+        base: ["16px", { lineHeight: "1.5" }],
       },
       colors: {
         background: "var(--background)",

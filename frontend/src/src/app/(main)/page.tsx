@@ -41,7 +41,7 @@ import TransactionFeed from '@/components/Common/TransactionFeed';
 
 const contentStyle: React.CSSProperties = {
   margin: 0,
-  height: "260px",
+  height: "300px",
   color: "#fff",
   textAlign: "center",
   background: "#364d79",
@@ -119,7 +119,7 @@ const Index: React.FC = () => {
               // className="w-full"
               style={contentStyle}
               alt=""
-              src={stream1}
+              src={stream2}
             />
           </div>
           <div>
@@ -127,7 +127,7 @@ const Index: React.FC = () => {
               // className="w-full"
               style={contentStyle}
               alt=""
-              src={stream2}
+              src={stream1}
             />
           </div>
           <div>

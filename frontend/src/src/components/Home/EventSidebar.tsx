@@ -69,7 +69,7 @@ const EventSidebar: React.FC = () => {
     <>
       <div className="w-full px-2 pt-2">
         <Input.Search
-          placeholder="input search text"
+          placeholder={t("user/home/search/placeholder")}
           allowClear
           onSearch={onSearch}
         />

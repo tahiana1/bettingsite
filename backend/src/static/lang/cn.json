@@ -672,5 +672,9 @@
   "notifiationMinimumWinner" : "通知最低赢家",
   "bettingTime" : "投注时间",
   "bettingType" : "投注类型",
-  "admin/menu/sportsBetAlert" : "体育投注预警"
+  "admin/menu/sportsBetAlert" : "体育投注预警",
+
+  "user/home/search/placeholder" : "请输入球队名称或联赛名称",
+
+  "user/menu/betlog" : "投注日志"
 }

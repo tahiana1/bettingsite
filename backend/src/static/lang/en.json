@@ -810,5 +810,8 @@
   "gameID": "Game ID",
   "registrationDate": "Registration Date",
   "gameChangeDetails": "Game change details",
-  "marketChangeHistory": "Market change history"
+  "marketChangeHistory": "Market change history",
+  "user/home/search/placeholder" : "Please enter the team name or league name",
+
+  "user/menu/betlog" : "Betting History"
 }
