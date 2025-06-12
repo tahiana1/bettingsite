@@ -356,7 +356,7 @@ const BettingLog: React.FC = () => {
             </button>
           </div>
           {
-            bets.map((betGroup) => {
+            bets?.map((betGroup) => {
               return (
                 <div key={betGroup.placedAt} className="" >
                   <div id={`bet-group-${betGroup.placedAt}`} >
