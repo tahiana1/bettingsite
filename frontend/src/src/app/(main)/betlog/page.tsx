@@ -162,9 +162,7 @@ const BettingLog: React.FC = () => {
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
           title={t("user/menu/betlog")}
-          classNames={{
-            body: "!p-0",
-          }}
+          className="!p-0 flex align-end"
         >
           <Space className="p-2 !w-full" direction="vertical">
             <Space wrap>
@@ -174,48 +172,44 @@ const BettingLog: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: t("deposit"),
+                    label: t("overseasType"),
                     value: "D",
                   },
                   {
-                    label: t("withdraw"),
+                    label: t("domesticType"),
                     value: "W",
                   },
                   {
-                    label: t("adminPay"),
+                    label: t("inPlay"),
                     value: "AP",
                   },
                   {
-                    label: t("adminRecovery"),
+                    label: t("realTime"),
                     value: "AR",
                   },
                   {
-                    label: t("totalRecovery"),
+                    label: t("special"),
                     value: "TR",
                   },
                   {
-                    label: t("subPay"),
+                    label: t("minigame"),
                     value: "SP",
                   },
                   {
-                    label: t("lowerRecover"),
+                    label: t("virtualGame"),
                     value: "LR",
                   },
                   {
-                    label: t("recharge"),
+                    label: t("touchGame"),
                     value: "R",
                   },
                   {
-                    label: t("exchange"),
+                    label: t("lotusGame"),
                     value: "E",
                   },
                   {
-                    label: t("canceled"),
+                    label: t("mgmGames"),
                     value: "C",
-                  },
-                  {
-                    label: t("deleted"),
-                    value: "DL",
                   },
                 ]}
                 defaultValue={""}

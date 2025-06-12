@@ -676,5 +676,10 @@
 
   "user/home/search/placeholder" : "请输入球队名称或联赛名称",
 
-  "user/menu/betlog" : "投注日志"
+  "user/menu/betlog" : "投注日志",
+  "realTime" : "实时",
+  "touchGame" : "触摸游戏",
+  "lotusGame" : "莲花游戏",
+  "mgmGames" : "MGM游戏",
+  "minigame" : "小游戏"  
 }

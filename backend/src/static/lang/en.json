@@ -813,5 +813,10 @@
   "marketChangeHistory": "Market change history",
   "user/home/search/placeholder" : "Please enter the team name or league name",
 
-  "user/menu/betlog" : "Betting History"
+  "user/menu/betlog" : "Betting History",
+  "realTime" : "Real Time",
+  "minigame" : "Mini Game",
+  "touchGame" : "Touch Game",
+  "lotusGame" : "Lotus Game",
+  "mgmGames" : "MGM Games"
 }
