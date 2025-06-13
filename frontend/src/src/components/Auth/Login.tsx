@@ -46,7 +46,6 @@ const Login: React.FC = () => {
             placement: "topRight",
           });
         }
-       
       });
   };
 
