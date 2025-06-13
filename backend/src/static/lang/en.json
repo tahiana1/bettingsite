@@ -832,5 +832,6 @@
   "required": "Required",
   "noticePage": "Notice Period",
   "bettingAcceptanceTime": "Betting Acceptance Time",
-  "home/niceHello" : "Have a nice today!"
+  "home/niceHello" : "Have a nice today!",
+  "auth/noallow" : "You need to get the allow from the admin."
 }

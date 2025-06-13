@@ -33,11 +33,20 @@ const Login: React.FC = () => {
       })
       .catch((err) => {
         console.log({err})
-        notiApi.error({
-          message: "Error",
-          description: `Some error occurred! ${err}`,
-          placement: "topRight",
-        });
+        if (err.status == "403") {
+          notiApi.error({
+            message: t("auth/noallow"),
+            description: t("auth/noallow"),
+            placement: "topRight",
+          });
+        } else {
+          notiApi.error({
+            message: "Error",
+            description: `Some error occurred! ${err}`,
+            placement: "topRight",
+          });
+        }
+       
       });
   };
 
