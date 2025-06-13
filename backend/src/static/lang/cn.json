@@ -832,5 +832,6 @@
   "noticePage": "公告期",
   "bettingAcceptanceTime": "投注接受时间",
   "home/niceHello" : "祝您今天愉快！",
-  "auth/noallow" : "您需要从管理员那里获得允许。"
+  "auth/noallow" : "您需要从管理员那里获得允许。",
+  "Show To": "显示到"
 }
