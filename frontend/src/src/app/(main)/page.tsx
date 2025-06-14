@@ -36,7 +36,6 @@ import { notificationState, notiState } from "@/state/state";
 import api from "@/api";
 import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
-import { FILTER_NOTI } from "@/actions/notification";
 import { GET_TOP_EVENT } from "@/actions/event";
 import TransactionFeed from '@/components/Common/TransactionFeed';
 
@@ -56,8 +55,7 @@ const Index: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
   const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
 
-  const { data, loading } = useQuery(FILTER_NOTI);
-  const { data: eventData, } = useQuery(GET_TOP_EVENT);
+  const { data: eventData } = useQuery(GET_TOP_EVENT);
 
   const [notiApi, contextHolder] = notification.useNotification();
 
@@ -95,12 +93,6 @@ const Index: React.FC = () => {
       }
     });
   }, [notifications]);
-
-  useEffect(() => {
-    if (data) {
-      data.response?.notifications?.map((a: Notification) => a);
-    }
-  }, [data]);
 
   useEffect(() => {
     api("common/notifications").then((result) => {
@@ -207,7 +199,6 @@ const Index: React.FC = () => {
           <Space.Compact className="w-full gap-2 flex flex-col md:flex-row">
             <Card
               title={t("announcements")}
-              loading={loading}
               className="w-full"
               classNames={{
                 body: "!p-0",
@@ -216,13 +207,13 @@ const Index: React.FC = () => {
               <List
                 size="small"
                 className="w-full"
-                dataSource={data?.response?.notifications ?? []}
-                renderItem={({ title, createdAt, description }: Notification) => (
+                dataSource={eventData?.response ?? []}
+                renderItem={({ title, status, showFrom, showTo, description }: Event) => (
                   <List.Item 
-                    onClick={() => handleNotificationClick({ title, createdAt, description })}
+                    onClick={() => handleEventClick({ title, status, showFrom, showTo, description })}
                     className="cursor-pointer"
                   >
-                    {title} - {dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss")}
+                    {title} - {t(status ? "active" : "inactive")} - {showFrom} - {showTo}
                   </List.Item>
                 )}
               />

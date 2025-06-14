@@ -56,7 +56,7 @@ import Logo from "@/assets/img/logo.png";
 
 const { Header, Sider } = Layout;
 
-export default function AdminRootLayout({
+export default function PartnerRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -209,414 +209,149 @@ export default function AdminRootLayout({
     },
     {
       key: "manage",
-      label: t("admin/menu/administrations"),
+      label: t("partner/menu/manage"),
       type: "group",
     },
     {
-      key: "admin/settlements",
-      label: t("admin/menu/settlements"),
+      key: "partner/accountManagement",
+      label: t("partner/menu/myAccountManagement"),
       icon: <CalculatorOutlined />,
       children: [
         {
-          key: "admin/settlements/rollingconversionhistory",
-          label: t(`admin/menu/settlements/rollingconversionhistory`),
+          key: "partner/accountManagement/myDepositWidthdrawal",
+          label: t(`partner/menu/myDepositWidthdrawal`),
         },
         {
-          key: "admin/settlements/fullpointshistory",
-          label: t(`admin/menu/settlements/fullpointshistory`),
+          key: "partner/accountManagement/rollingTransaction",
+          label: t(`partner/menu/rollingTransaction`),
         },
         {
-          key: "admin/settlements/fullcoupondetail",
-          label: t(`admin/menu/settlements/fullcoupondetail`),
+          key: "partner/accountManagement/pointConversion",
+          label: t(`partner/menu/pointConversion`),
         },
         {
-          key: "admin/settlements/rollingaccumulationhistory",
-          label: t(`admin/menu/settlements/rollingaccumulationhistory`),
+          key: "partner/accountManagement/settlementDetails",
+          label: t(`partner/menu/settlementDetails`),
         },
         {
-          key: "admin/settlements/losingaccumulationhistory",
-          label: t(`admin/menu/settlements/losingaccumulationhistory`),
+          key: "partner/accountManagement/moneyHistory",
+          label: t(`partner/menu/moneyHistory`),
         },
         {
-          key: "admin/settlements/losingdetail",
-          label: t(`admin/menu/settlements/losingdetail`),
+          key: "partner/accountManagement/pointDetails",
+          label: t(`partner/menu/pointDetails`),
         },
         {
-          key: "admin/settlements/distributorstatistics",
-          label: t(`admin/menu/settlements/distributorStatistics`),
-        },
-        {
-          key: "admin/settlements/distributorstatisticsdetail",
-          label: t(`admin/menu/settlements/distributorStatisticsDetail`),
-        },
+          key: "partner/accountManagement/rollingHistory",
+          label: t(`partner/menu/rollingHistory`),
+        }
       ],
     },
     {
-      key: "admin/financals",
-      label: t("admin/menu/financals"),
-      icon: <BiDiamond />,
-      children: [
-        {
-          key: "admin/financals/general",
-          label: t("admin/menu/generaldwdetail"),
-        },
-        {
-          key: "admin/financals/memberdwhistory",
-          label: t("admin/menu/memberdwhistory"),
-        },
-        {
-          key: "admin/financals/totaltransferhistory",
-          label: t("admin/menu/totaltransferhistory"),
-        },
-        {
-          key: "admin/financals/membertransferhistory",
-          label: t("admin/menu/membertransferhistory"),
-        },
-        {
-          key: "admin/financals/integratedtransferhistory",
-          label: t("admin/menu/integratedtransferhistory"),
-        },
-      ],
-    },
-    {
-      key: "admin/partners",
-      label: t("admin/menu/partners"),
+      key: "partner/sub-management",
+      label: t("partner/menu/sub-management"),
       icon: <SiDistrokid />,
       children: [
         {
-          key: "admin/partners/distributor",
-          label: t("admin/menu/partners"),
+          key: "partner/sub-management/sub-member-list",
+          label: t("partner/menu/sub-member-list"),
         },
         {
-          key: "admin/partners/status",
-          label: t("admin/menu/partnerStatus"),
-        },
-        {
-          key: "admin/partners/domain",
-          label: t("admin/menu/partnerDomain"),
+          key: "partner/sub-management/sub-distributor",
+          label: t("partner/menu/sub-distributor"),
         },
       ],
     },
     {
-      key: "admin/users",
-      label: t("admin/menu/users"),
+      key: "partner/member-management",
+      label: t("partner/menu/member-management"),
       icon: <FaUsersGear />,
       children: [
         {
-          key: "admin/users/main",
-          label: t("admin/menu/users"),
+          key: "partner/member-management/directMemberList",
+          label: t("partner/menu/directMemberList"),
         },
         {
-          key: "admin/users/pending",
-          label: t(`admin/menu/pendings`),
+          key: "partner/member-management/directMemberDepositWithdrawal",
+          label: t(`partner/menu/directMemberDepositWithdrawal`),
         },
         {
-          key: "admin/users/blocked",
-          label: t(`admin/menu/blocked`),
+          key: "partner/member-management/entireMemberDepositWithdrawal",
+          label: t(`partner/menu/entireMemberDepositWithdrawal`),
         },
         {
-          key: "admin/users/status",
-          label: t(`admin/menu/userStatus`),
+          key: "partner/member-management/directMemberPointsDetails",
+          label: t(`partner/menu/directMemberPointsDetails`),
         },
         {
-          key: "admin/users/smslog",
-          label: t(`admin/menu/smslogs`),
+          key: "partner/member-management/integratedMoneyTransferHistory",
+          label: t(`partner/menu/integratedMoneyTransferHistory`),
         },
         {
-          key: "admin/users/activity",
-          label: t(`admin/menu/activity`),
-        },
-      ],
-    },
-    {
-      key: "admin/admin",
-      label: t("admin/menu/admin"),
-      icon: <GrUserAdmin />,
-      children: [
-        {
-          key: "admin/admin/admin",
-          label: t("admin/menu/admin"),
+          key: "partner/member-management/connectedMember",
+          label: t(`partner/menu/connectedMember`),
         },
         {
-          key: "admin/admin/status",
-          label: t("admin/menu/adminStatus"),
-        },
-        {
-          key: "admin/admin/log",
-          label: t("admin/menu/adminLog"),
-        },
-      ],
-    },
-    {
-      key: "admin/settings",
-      label: t("admin/menu/settings"),
-      icon: <SettingOutlined />,
-      children: [
-        {
-          key: "admin/settings/site",
-          label: t("admin/menu/siteSetting"),
-        },
-        {
-          key: "admin/settings/global",
-          label: t("admin/menu/globalSetting"),
-        },
-        {
-          key: "admin/settings/design",
-          label: t("admin/menu/designSetting"),
-        },
-        {
-          key: "admin/settings/menu",
-          label: t("admin/menu/menuSetting"),
-        },
-        {
-          key: "admin/settings/domain",
-          label: t("admin/menu/domainSetting"),
-        },
-        {
-          key: "admin/settings/sms",
-          label: t("admin/menu/smsAPISetting"),
-        },
-        {
-          key: "admin/settings/alarm",
-          label: t("admin/menu/alarmSetting"),
-        },
-        {
-          key: "admin/settings/popup",
-          label: t("admin/menu/popupSetting"),
-        },
-        {
-          key: "admin/settings/bank",
-          label: t("admin/menu/bankSetting"),
+          key: "partner/member-management/waitingForMemberApproval",
+          label: t(`partner/menu/waitingForMemberApproval`),
         },
       ],
     },
     {
       key: "game",
-      label: t("admin/menu/game"),
+      label: t("partner/menu/game"),
       type: "group",
     },
     {
-      key: "admin/game/casino",
-      label: t("admin/menu/casino"),
+      key: "partner/game/bettingstatus",
+      label: t("partner/menu/bettingStatus"),
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/casino/setting",
-          label: t("admin/menu/sports"),
-        },
-      ],
-    },
-
-    {
-      key: "admin/game/api",
-      label: t("admin/menu/gameapi"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/api/setting",
-          label: t("admin/menu/gameapi"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/mini",
-      label: t("admin/menu/mini"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/mini/setting",
-          label: t("admin/menu/mini"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/sports",
-      label: t("admin/menu/sports"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/sports/settings",
-          label: t("admin/menu/sportsSettings"),
-        },
-        {
-          key: "admin/game/sports/betting",
-          label: t("admin/menu/sportsBettingInformation"),
-        },
-        {
-          key: "admin/game/sports/basic",
-          label: t("admin/menu/sportsBasic"),
-        },
-        {
-          key: "admin/game/sports/countryOrder",
-          label: t("admin/menu/sportsCountryOrder"),
-        },
-        {
-          key: "admin/game/sports/mainEvent",
-          label: t("admin/menu/mainEventSettings"),
-        },
-        {
-          key: "admin/game/sports/market",
-          label: t("admin/menu/marketSettings"),
-        },
-        {
-          key: "admin/game/sports/marketCombinedBetting",
-          label: t("admin/menu/marketCombinedBetting"),
-        },
-        {
-          key: "admin/game/sports/matchManagementAuto",
-          label: t("admin/menu/matchManagementAuto"),
-        },
-        {
-          key: "admin/game/sports/matchManagementLive",
-          label: t("admin/menu/matchManagementLive"),
-        },
-        {
-          key: "admin/game/sports/matchManagementManual",
-          label: t("admin/menu/matchManagementManual"),
-        },
-        {
-          key: "admin/game/sports/matchEndsAuto",
-          label: t("admin/menu/matchEndsAuto"),
-        },
-        {
-          key: "admin/game/sports/matchEndsLive",
-          label: t("admin/menu/matchEndsLive"),
-        },
-        {
-          key: "admin/game/sports/matchEndsManual",
-          label: t("admin/menu/matchEndsManual"),
-        },
-        {
-          key: "admin/game/sports/recalibrationBetting",
-          label: t("admin/menu/recalibrationBetting"),
-        },
-        {
-          key: "admin/game/sports/recalibrationMarket",
-          label: t("admin/menu/recalibrationMarket"),
-        },
-        {
-          key: "admin/game/sports/matchManagementChangeHistory",
-          label: t("admin/menu/matchManagementHistory"),
-        }
-      ],
-    },
-    {
-      key: "admin/game/virtual",
-      label: t("admin/menu/virtual"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/virtual/setting",
-          label: t("admin/menu/virtual"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/lotus",
-      label: t("admin/menu/lotus"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/lotus/setting",
-          label: t("admin/menu/lotus"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/mgm",
-      label: t("admin/menu/mgm"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/mgm/setting",
-          label: t("admin/menu/mgm"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/touch",
-      label: t("admin/menu/touch"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/touch/setting",
-          label: t("admin/menu/touch"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/bettingstatus",
-      label: t("admin/menu/bettingStatus"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/bettingstatus/sports",
-          label: t("admin/menu/bettingStatus"),
+          key: "partner/game/bettingstatus/sports",
+          label: t("partner/menu/bettingStatus"),
         },
       ],
     },
     {
       key: "board",
-      label: t("admin/menu/board"),
+      label: t("partner/menu/board"),
       type: "group",
     },
     {
-      key: "admin/board",
-      label: t("admin/menu/bulletins"),
-      icon: <MdAnnouncement />,
-      children: [
-        {
-          key: "admin/board/notifications",
-          label: t("admin/menu/notifications"),
-        },
-        {
-          key: "admin/board/events",
-          label: t("admin/menu/events"),
-        },
-        // {
-        //   key: "admin/board/bulletin",
-        //   label: t("admin/menu/bulletin"),
-        // },
-        {
-          key: "admin/board/comments",
-          label: t("admin/menu/comments"),
-        },
-      ],
-    },
-    {
-      key: "admin/support",
-      label: t("admin/menu/customSupport"),
+      key: "partner/support",
+      label: t("partner/menu/customSupport"),
       icon: <BiSupport />,
       children: [
         {
-          key: "admin/support/center",
-          label: t("admin/menu/customServiceCenter"),
+          key: "partner/support/center",
+          label: t("partner/menu/customServiceCenter"),
         },
         {
-          key: "admin/support/sample",
-          label: t("admin/menu/serviceCenterSample"),
-        },
-      ],
-    },
-    {
-      key: "admin/inbox",
-      label: t("admin/menu/inbox"),
-      icon: <InboxOutlined />,
-      children: [
-        {
-          key: "admin/inbox/custom",
-          label: t("admin/menu/inbox"),
+          key: "partner/support/sample",
+          label: t("partner/menu/serviceCenterSample"),
         },
       ],
     },
     {
-      key: "admin/statistical",
-      label: t("admin/menu/statistical"),
+      key: "partner/inbox",
+      label: t("partner/menu/inbox"),
       icon: <InboxOutlined />,
       children: [
         {
-          key: "admin/statistical/custom",
-          label: t("admin/menu/statistical"),
+          key: "partner/inbox/custom",
+          label: t("partner/menu/inbox"),
+        },
+      ],
+    },
+    {
+      key: "partner/statistical",
+      label: t("partner/menu/statistical"),
+      icon: <InboxOutlined />,
+      children: [
+        {
+          key: "partner/statistical/custom",
+          label: t("partner/menu/statistical"),
         },
       ],
     },
@@ -679,7 +414,7 @@ export default function AdminRootLayout({
           setPartner(false);
           setUser(result.data);
           // router.push(ROUTES.admin.home);
-        } else if (result.data.role === "P") {
+        } else if (result.data.role == "P") {
           setAdmin(false);
           setPartner(true);
           setUser(result.data);
@@ -709,7 +444,7 @@ export default function AdminRootLayout({
   useEffect(() => {
     if (currentUser?.role === "A") {
       setAdmin(true);
-      setPartner(false);  
+      setPartner(false);
     } else if (currentUser?.role === "P") {
       setAdmin(false);
       setPartner(true);
@@ -747,7 +482,7 @@ export default function AdminRootLayout({
         {contextHolder}
 
         {
-          pathname.includes('/admin/popup') ? (
+          pathname.includes('/partner/popup') ? (
             <>{children}</>
           ) : (
             <LayoutContext.Provider
@@ -755,7 +490,7 @@ export default function AdminRootLayout({
         >
           <Layout>
             <RouteTracker />
-            {isAdmin ? (
+            {isPartner ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
                 breakpoint="md"
@@ -796,7 +531,7 @@ export default function AdminRootLayout({
               </Sider>
             ) : null}
             <Layout className="min-h-screen">
-              {isAdmin ? (
+              {isPartner ? (
                 <Header
                   className="w-full !px-2 flex !h-10 items-center !leading-10"
                   style={{ background: isDarkTheme ? "" : colorBgContainer }}
@@ -905,7 +640,7 @@ export default function AdminRootLayout({
                   </Flex>
                 </Header>
               ) : null}
-              {isAdmin ? (
+              {isPartner ? (
                 <Breadcrumb
                   className="!p-2 shadow"
                   items={[

@@ -45,7 +45,7 @@ const BettingLog: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [bets, setBets] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
+  // const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
   const [user] = useAtom<any>(userState);
   const router = useRouter();
@@ -188,9 +188,6 @@ const BettingLog: React.FC = () => {
     setColorModal(false);
   };
 
-  useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
 
 
   const handleCaptureNoticeImage = async (betGroupId: string) => {
@@ -459,7 +456,7 @@ const BettingLog: React.FC = () => {
                   <div id={`bet-group-${betGroup.placedAt}`} >
                     <Table<Transaction>
                       columns={columns}
-                      loading={loading}
+                      // loading={loading}
                       dataSource={betGroup.bets}
                       className="w-full text-center"
                       style={{borderTop: "1px solid rgba(255,255,255,0.2)", borderLeft: "1px solid rgba(255,255,255,0.2)", borderRight: "1px solid rgba(255,255,255,0.2)"}}

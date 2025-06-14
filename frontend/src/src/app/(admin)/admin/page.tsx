@@ -13,255 +13,392 @@ import {
 import { useTranslations } from "next-intl";
 
 import { Column } from "@ant-design/charts";
+import api from "@/api";
 
 interface DataType {
-  key: string;
-  name: string;
-  age: number;
-  address: string;
-  tags: string[];
+  division: string,
+  numberOfDeposit: number,
+  numberOfWithdraw: number,
+  numberOfSettlement: number,
+  depositWithdraw : number,
+  numberOfBets: number,
+  numberOfWin: number,
+  bettingWinning: number,
+  numberOfMembers: number,
+  numberOfBettingUsers: number,
+  numberOfVisiters: number,
+}
+
+interface PaymentDataType {
+  number : number,
+  type : string,
+  name : string,
+  allas : string,
+  depositor: string,
+  beforeAmount : number,
+  processingAmount : number,
+  afterAmount : number,
+  applicationDate : Date,
+  processDate : Date,
+}
+
+interface DashboardResponse {
+  stats: {
+    depositAmount: number;
+    withdrawAmount: number;
+    memberDepositAmount: number;
+    memberWithdrawAmount: number;
+    totalDepositAmount: number;
+    totalWithdrawAmount: number;
+    totalSettlement: number;
+    bettingAmount: number;
+    prizeAmount: number;
+    bettingUsers: number;
+    registeredUsers: number;
+    numberOfVisiters: number;
+  };
+  divisionSummary: DataType[];
+  recentPayments: PaymentDataType[];
+  depositChart: {
+    name: string;
+    action: string;
+    pv: number;
+  }[];
+  bettingChart: {
+    name: string;
+    action: string;
+    pv: number;
+  }[];
 }
 
 const columns: TableProps<DataType>["columns"] = [
   {
+    title: "Division",
+    dataIndex: "division",
+    key: "division"
+  },
+  {
+    title: "Number of Deposit",
+    dataIndex: "numberOfDeposit",
+    key: "numberOfDeposit",
+  },
+  {
+    title: "Number of Withdraw",
+    dataIndex: "numberOfWithdraw",
+    key: "numberOfWithdraw",
+  },
+  {
+    title: "Number of Settlement",
+    dataIndex: "numberOfSettlement",
+    key: "numberOfSettlement",
+  },
+  {
+    title: "Deposit/Withdraw",
+    dataIndex: "depositWithdraw",
+    key: "depositWithdraw",
+    render: (text: number) => {
+      return Number(text).toFixed(2)
+    }
+  },
+  {
+    title: "Number of Bets",
+    dataIndex: "numberOfBets",
+    key: "numberOfBets",
+  },
+  {
+    title: "Number of Win",
+    dataIndex: "numberOfWin",
+    key: "numberOfWin",
+  },
+  {
+    title: "Betting Winning",
+    dataIndex: "bettingWinning",
+    key: "bettingWinning",
+  },
+  {
+    title: "Number of Members",
+    dataIndex: "numberOfMembers",
+    key: "numberOfMembers",
+  },
+  {
+    title: "Number of Betting Users",
+    dataIndex: "numberOfBettingUsers",
+    key: "numberOfBettingUsers",
+  },
+  {
+    title: "Number of Visiters",
+    dataIndex: "numberOfVisiters",
+    key: "numberOfVisiters",
+  },
+];
+const paymentColumns: TableProps<PaymentDataType>["columns"] = [
+  {
+    title: "Number",
+    dataIndex: "number",
+    key: "number"
+  },
+  {
+    title: "Type",
+    dataIndex: "type",
+    key: "type"
+  },
+  {
     title: "Name",
     dataIndex: "name",
     key: "name",
-    render: (text) => <a>{text}</a>,
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
+    title: "Allas",
+    key: "allas",
+    dataIndex: "allas",
+    render: (text: string) => {
+      return "-"
+    }
   },
   {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
+    title: "Depositor",
+    key: "allas",
+    dataIndex: "allas",
   },
   {
-    title: "Tags",
-    key: "tags",
-    dataIndex: "tags",
-    render: (_, { tags }) => (
-      <>
-        {tags.map((tag) => {
-          let color = tag.length > 5 ? "geekblue" : "green";
-          if (tag === "loser") {
-            color = "volcano";
-          }
-          return (
-            <Tag color={color} key={tag}>
-              {tag.toUpperCase()}
-            </Tag>
-          );
-        })}
-      </>
-    ),
+    title: "Before Amount",
+    key: "beforeAmount",
+    dataIndex: "beforeAmount",
   },
   {
-    title: "Action",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a>Invite {record.name}</a>
-        <a>Delete</a>
-      </Space>
-    ),
-  },
-];
-
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
+    title: "Processing Amount",
+    key: "processingAmount",
+    dataIndex: "processingAmount",
   },
   {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
+    title: "After Amount",
+    key: "afterAmount",
+    dataIndex: "afterAmount",
   },
   {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sydney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
+    title: "Application Date",
+    key: "applicationDate",
+    dataIndex: "applicationDate",
   },
+  {
+    title: "Process Date",
+    key: "applicationDate",
+    dataIndex: "applicationDate",
+  }
 ];
 
 const Dashboard: React.FC = () => {
   const t = useTranslations();
   const [mount, setMount] = useState<boolean>(false);
-  const config1 = {
-    data: [
-      { name: "04/21", action: "Deposit", pv: 2030 },
-      { name: "04/21", action: "Withdraw", pv: 2500 },
-      { name: "04/22", action: "Deposit", pv: 2030 },
-      { name: "04/22", action: "Withdraw", pv: 2500 },
-      { name: "04/23", action: "Deposit", pv: 3030 },
-      { name: "04/23", action: "Withdraw", pv: 3500 },
-      { name: "Today", action: "Deposit", pv: 2300 },
-      { name: "Today", action: "Withdraw", pv: 2500 },
-    ],
-    group: true,
-    xField: "name",
-    yField: "pv",
-    colorField: "action",
-    label: {
-      text: (d: any) => d.pv,
-      textBaseline: "bottom",
-    },
-    height: 200,
-    style: {
-      inset: 5,
-      maxWidth: 30,
-    },
-    // conversionTag: {
-    //   size: 40,
-    //   spacing: 4,
-    //   text: {
-    //     formatter: (prev: number, next: number) =>
-    //       `${((next / prev) * 100).toFixed(1)}%`,
-    //   },
-    // },
-  };
-  const config2 = {
-    data: [
-      { name: "04/21", action: "Betting", pv: 2030 },
-      { name: "04/21", action: "Win", pv: 2500 },
-      { name: "04/22", action: "Betting", pv: 2030 },
-      { name: "04/22", action: "Win", pv: 2500 },
-      { name: "04/23", action: "Betting", pv: 3030 },
-      { name: "04/23", action: "Win", pv: 3500 },
-      { name: "Today", action: "Betting", pv: 2300 },
-      { name: "Today", action: "Win", pv: 2500 },
-    ],
-    group: true,
-    xField: "name",
-    yField: "pv",
-    colorField: "action",
-    label: {
-      text: (d: any) => d.pv,
-      textBaseline: "bottom",
-    },
-    height: 200,
-    style: {
-      inset: 5,
-      maxWidth: 30,
-    },
-    // conversionTag: {
-    //   size: 40,
-    //   spacing: 4,
-    //   text: {
-    //     formatter: (prev: number, next: number) =>
-    //       `${((next / prev) * 100).toFixed(1)}%`,
-    //   },
-    // },
-  };
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+
   useEffect(() => {
     setMount(true);
+    fetchInfo();
   }, []);
+
+  const fetchInfo = () => {
+    api("admin/dashboard/get-data", {
+      method: "GET",
+    }).then((res) => {
+      if (res) {
+        setDashboardData(res);
+        // Uncomment if you want to refresh data every 15 seconds
+        // setTimeout(() => {
+        //   fetchInfo();
+        // }, 15000);
+      }
+    });
+  };
+
+  const config1 = {
+    data: dashboardData?.depositChart || [],
+    group: true,
+    xField: "name",
+    yField: "pv",
+    colorField: "action",
+    label: {
+      text: (d: any) => d.pv,
+      textBaseline: "bottom",
+    },
+    height: 200,
+    style: {
+      inset: 5,
+      maxWidth: 30,
+    },
+  };
+
+  const config2 = {
+    data: dashboardData?.bettingChart || [],
+    group: true,
+    xField: "name",
+    yField: "pv",
+    colorField: "action",
+    label: {
+      text: (d: any) => d.pv,
+      textBaseline: "bottom",
+    },
+    height: 200,
+    style: {
+      inset: 5,
+      maxWidth: 30,
+    },
+  };
+
   return mount ? (
     <Layout>
       <Card title={t("admin/todayStatistics")} className="!mb-2">
         <Space wrap className="w-full justify-between">
           <Statistic
-            title="Withdraw"
-            value={1128}
+            title={t("depositAmount")}
+            value={dashboardData?.stats.depositAmount || 0}
             prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
           />
           <Statistic
-            title="User Deposit"
-            value={93}
+            title={t("withdrawAmount")}
+            value={dashboardData?.stats.withdrawAmount || 0}
             prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
           />
           <Statistic
-            title="User Withdraw"
-            value={1128}
+            title={t("memberDepositAmount")}
+            value={dashboardData?.stats.memberDepositAmount || 0}
             prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
+          />
+          <Statistic
+            title={t("memberWithdrawAmount")}
+            value={dashboardData?.stats.memberWithdrawAmount || 0}
+            prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
           />
           <Statistic
             prefix={<DollarCircleOutlined />}
-            title="Total Deposit"
-            value={93}
+            title={t("totalDepositAmount")}
+            value={dashboardData?.stats.totalDepositAmount || 0}
+            className="w-[200px]"
           />
           <Statistic
-            title="Total Withdraw"
-            value={1128}
+            title={t("totalWithdrawAmount")}
+            value={dashboardData?.stats.totalWithdrawAmount || 0}
             prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
           />
         </Space>
         <Divider />
         <Space wrap className="w-full justify-between">
           <Statistic
-            title="Betting"
-            value={1128}
+            title={t("totalSettlement")}
+            value={dashboardData?.stats.totalSettlement || 0}
             prefix={<DollarCircleOutlined />}
+            className="w-[200px]"
           />
           <Statistic
             prefix={<DollarCircleOutlined />}
-            title="Prize"
-            value={93}
+            title={t("bettingAmount")}
+            value={dashboardData?.stats.bettingAmount || 0}
+            className="w-[200px]"
           />
           <Statistic
             prefix={<UserOutlined />}
-            title="Betting Users"
-            value={93}
+            title={t("prizeAmount")}
+            value={dashboardData?.stats.prizeAmount || 0}
             suffix="/ 100"
+            className="w-[200px]"
           />
           <Statistic
-            title="Registered Users"
-            value={1128}
+            title={t("bettingUsers")}
+            value={dashboardData?.stats.bettingUsers || 0}
             prefix={<UserAddOutlined />}
+            className="w-[200px]"
           />
           <Statistic
-            title="Number of visiters"
-            value={1128}
+            title={t("registeredUsers")}
+            value={dashboardData?.stats.registeredUsers || 0}
             prefix={<UserSwitchOutlined />}
+            className="w-[200px]"
+          />
+          <Statistic
+            title={t("numberOfVisiters")}
+            value={dashboardData?.stats.numberOfVisiters || 0}
+            prefix={<UserSwitchOutlined />}
+            className="w-[200px]"
           />
         </Space>
       </Card>
-      <Space.Compact className="w-full gap-2">
+      <Space.Compact className="w-full gap-2 flex justify-between">
         <Space direction="vertical" className="w-full flex-1">
           <Card title={t("admin/todayDepositWithdraw")}>
             <Column {...config1} />
           </Card>
-          <Card title={t("admin/todayDepositWithdraw")}>
+          <Card title={t("admin/betWinning")}>
             <Column {...config2} />
           </Card>
         </Space>
         <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
-          <Space wrap align="start" className="w-full">
-            <Card title={t("admin/todayDepositWithdraw")}>
-              membership point
+          <Space wrap align="start" id="admin-dashboard-card" className="w-full flex flex-row justify-between" style={{flexWrap: "nowrap"}}>
+            <Card title={t("admin/membershipBalance")}>
+              <div className="flex justify-between flex-row gap-4">
+                <div>
+                  <p>{t("admin/membershipBalance")}</p>
+                  <p>{dashboardData?.stats.totalDepositAmount || 0}</p>
+                </div>
+                <div>
+                  <p>{t("admin/totalPoints")}</p>
+                  <p>{dashboardData?.stats.totalSettlement || 0}</p>
+                </div>
+              </div>
             </Card>
-            <Card title={t("admin/todayDepositWithdraw")}>total points</Card>
-            <Card title={t("admin/todayDepositWithdraw")}>
-              Rolling the total
+            <Card title={t("admin/totalAmountOfDistribution")}>
+              <p>{t("admin/totalPoints")}</p>
+              <p>{dashboardData?.stats.totalSettlement || 0}</p>
             </Card>
-            <Card title={t("admin/todayDepositWithdraw")}>Prize amount</Card>
+            <Card title={t("admin/totalLose")}>
+              <p>{t("admin/rollingTheTotal")}</p>
+              <p>{((dashboardData?.stats.bettingAmount || 0) - (dashboardData?.stats.prizeAmount || 0))}</p>
+            </Card>
+            <Card title={t("admin/bettingAmount")}>
+              <p>{t("admin/prizeAmount")}</p>
+              <p>{dashboardData?.stats.prizeAmount || 0}</p>
+            </Card>
+            <Card title={t("admin/sportsGameCompany")}>
+              <p>{t("admin/thisMonthIncoming")} : {dashboardData?.stats.totalDepositAmount || 0}</p>
+              <p>{t("admin/thisMonthDeduction")} : {dashboardData?.stats.totalWithdrawAmount || 0}</p>
+            </Card>
           </Space>
-          <Space.Compact className="w-full">
+          <Space.Compact className="w-full flex">
             <Card
-              title={t("Recent user deposits and withdrawals")}
+              title={t("admin/recentUserDepositsAndWithdrawals")}
               classNames={{
                 body: "!p-0",
               }}
+              style={{width: "100%"}}
             >
-              <Table<DataType>
-                columns={columns}
-                dataSource={data}
+              <Table<PaymentDataType>
+                key="recentPayments"
+                columns={paymentColumns}
+                dataSource={dashboardData?.recentPayments || []}
                 className="w-full"
               />
             </Card>
           </Space.Compact>
         </Space.Compact>
+      </Space.Compact>
+      <Space.Compact className="w-full flex mt-3">
+        <Card
+          title={t("admin/summary")}
+          classNames={{
+            body: "!p-0",
+          }}
+          style={{width: "100%"}}
+        >
+          <Table<DataType>
+            columns={columns}
+            dataSource={dashboardData?.divisionSummary || []}
+            className="w-full"
+          />
+        </Card>
       </Space.Compact>
     </Layout>
   ) : null;

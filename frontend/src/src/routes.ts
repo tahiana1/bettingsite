@@ -14,4 +14,7 @@ export const ROUTES = {
     home: "/admin",
     login: "/admin/auth/login",
   },
+  partner: {
+    home: "/partner"
+  },
 };

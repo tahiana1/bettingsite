@@ -79,6 +79,10 @@ func RequireAdminAuth(c *gin.Context) {
 			fmt.Println("✅ Admin Auth Passed!")
 			// Continue
 			c.Next()
+		} else if user.Role == "P" {
+			c.Set("authUser", user)
+			fmt.Println("✅ Partner Auth Passed!")
+			c.Next()
 		} else {
 			fmt.Println("❌ Admin Unauthorized")
 			format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))

@@ -91,4 +91,9 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		// leagueRouter.DELETE("/delete-permanent/:id", controllers.PermanentlyDeletePost)
 	}
 
+	dashboardRouter := r.Group("/dashboard")
+	{
+		dashboardRouter.GET("/get-data", controllers.GetDashboard)
+	}
+
 }

@@ -3,14 +3,27 @@ import { useState } from "react";
 
 import { rateState } from "@/state/state";
 import { useAtom } from "jotai";
-import { showBettingCartState } from "@/state/state";
+import { showBettingCartState, userState } from "@/state/state";
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/routes";
+import { useTranslations } from "next-intl";
 
 const FixtureCard: React.FC<{ data: any; title: any }> = ({ data, title }) => {
   const [show, setShow] = useState<boolean>(false);
   const [rates, setRates] = useAtom<any[]>(rateState);
   const [, setShowBettingCart] = useAtom(showBettingCartState);
+  const [user] = useAtom(userState);
+  const router = useRouter();
+  const t = useTranslations();
   const onBet = (v: any, rate: any) => {
+    // Check if user is logged in
+    if (!user?.userid) {
+      message.warning(t("partner/menu/pleaseLogin"));
+      router.push("/auth/signIn");
+      return;
+    }
+
     // Find the current selection for this market+
     const current = rates.find((r) => r.id == rate.id);
     if (current && String(current.selection) === String(v)) {

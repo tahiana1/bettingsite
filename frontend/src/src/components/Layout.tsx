@@ -13,6 +13,8 @@ import WebSocketTracker from "./Common/WebSocketTracker";
 import { currentTheme } from "@/state/state";
 import { useAtom } from "jotai";
 import Head from "./Header";
+import Loading from "@/assets/img/loading.gif";
+import Image from "next/image";
 
 export default function RootLayout({
   children,
@@ -58,5 +60,9 @@ export default function RootLayout({
         </LayoutContext.Provider>
       </ConfigProvider>
     </ApolloProvider>
-  ) : null;
+  ) : (
+    <div className="flex justify-center items-center h-screen">
+      <Image src={Loading} alt="Toto Admin" width={100} height={100} />
+    </div>
+  );
 }
