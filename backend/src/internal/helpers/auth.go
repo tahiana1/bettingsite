@@ -18,17 +18,19 @@ func GetAuthUser(ctx context.Context) (*models.User, error) {
 	return user, nil
 }
 
-// GetAuthUser returns the authenticated user details from the Gin context
+// GetAccessDomain returns the domain from the Gin context
 func GetAccessDomain(ctx context.Context) (*models.Domain, error) {
 	d, ok := ctx.Value("accessDomain").(string)
 	if !ok {
-		return nil, fmt.Errorf("unknown")
+		return nil, fmt.Errorf("domain not found in context")
 	}
-	dd := &models.Domain{}
-	if tx := initializers.DB.Model(&models.Domain{}).Where("name LIKE ?", d).Find(dd); tx.Error != nil {
-		return nil, tx.Error
+
+	var domain models.Domain
+	if err := initializers.DB.Where("name = ?", d).First(&domain).Error; err != nil {
+		return nil, fmt.Errorf("domain not found: %v", err)
 	}
-	return dd, nil
+
+	return &domain, nil
 }
 
 // GetAuthUser returns the authenticated user details from the Gin context

@@ -136,10 +136,11 @@ func (qr *qnaReader) CreateQna(ctx context.Context, updates model.NewQnaInput) (
 	}
 
 	qna := models.Qna{
-		UserID:   authUser.ID,
-		DomainID: d.ID,
-		Question: updates.Question,
-		Status:   "P",
+		UserID:        authUser.ID,
+		DomainID:      d.ID,
+		QuestionTitle: updates.QuestionTitle,
+		Question:      updates.Question,
+		Status:        "P",
 	}
 
 	if err := qr.db.Save(&qna).Error; err != nil {
@@ -168,8 +169,16 @@ func (qr *qnaReader) UpdateQna(ctx context.Context, nID uint, updates model.Upda
 		qna.Question = *updates.Question
 	}
 
+	if updates.QuestionTitle != nil {
+		qna.QuestionTitle = *updates.QuestionTitle
+	}
+
 	if updates.Answer != nil {
 		qna.Answer = *updates.Answer
+	}
+
+	if updates.AnswerTitle != nil {
+		qna.AnswerTitle = *updates.AnswerTitle
 	}
 
 	qr.db.Save(qna)

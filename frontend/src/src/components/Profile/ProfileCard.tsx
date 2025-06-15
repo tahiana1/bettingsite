@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, List, Modal, Space } from "antd";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -13,15 +13,29 @@ import api from "@/api";
 const ProfileCard: React.FC = () => {
   const [modal, contextHolder] = Modal.useModal();
   const [profile, setProfile] = useAtom<any>(userState);
+  const [unreadNotesCount, setUnreadNotesCount] = useState<number>(0);
   const t = useTranslations();
   const f = useFormatter();
   useEffect(() => {
     api("user/me").then((res) => {
       setProfile(res.data.profile);
+      fetchData(res.data.profile);
     }).catch((err) => {
       console.log(err);
     });
   }, []);
+  const fetchData = async (profile: any) => {
+    const response = await api("notes/get-unread-notes-count", {
+      method: "POST",
+      data: {
+        user_id: profile.userId,
+      }
+    });
+    setUnreadNotesCount(response?.count);
+    setTimeout(() => {
+      fetchData(profile);
+    }, 10000);
+  }
   const config = {
     title: "Would you like to logout?",
   };
@@ -111,7 +125,7 @@ const ProfileCard: React.FC = () => {
 
         <Space.Compact className="w-full p-0 flex gap-0.5 justify-between">
           <Button variant="outlined" color="green" className="w-full">
-            <Link href={ROUTES.inbox}>{t("profile/inbox")}</Link>
+            <Link href={ROUTES.inbox}>{t("profile/inbox")} {unreadNotesCount > 0 && <span className="text-red-500">{unreadNotesCount}</span>}</Link>
           </Button>
           <Button variant="outlined" color="green" className="w-full">
             <Link href={ROUTES.attends}>{t("profile/attends")}</Link>

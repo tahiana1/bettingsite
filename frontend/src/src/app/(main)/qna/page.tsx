@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Card, Form, Input, Layout, Space, Switch, Table } from "antd";
+import { Button, Card, Form, Input, Layout, Space, Switch, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuill } from "react-quilljs";
@@ -11,12 +11,14 @@ import { BiTrash } from "react-icons/bi";
 import { FILTER_QNAS } from "@/actions/qna";
 import { useQuery } from "@apollo/client";
 import "./index.css";
+import api from "@/api";
 
 interface QnaItem {
     id: string;
     title: string;
     description: string;
     createdAt: string;
+    status: string;
     user?: {
         root?: {
             userid: string;
@@ -31,19 +33,6 @@ const Qna = () => {
     const [form] = Form.useForm();
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);
-    // const { loading, data, refetch } = useQuery(FILTER_QNAS, {
-    //     variables: {
-    //         options: {
-    //             sort: {
-    //                 createdAt: -1,
-    //             },
-    //             filter: {
-    //                 type: "contact",
-    //                 userid: 10,
-    //             }
-    //         }
-    //     }
-    // });
     const [loadingCreate, setLoadingCreate] = useState(false);
     const modules = {
         toolbar: [
@@ -65,6 +54,7 @@ const Qna = () => {
           dataIndex: "id",
           key: "id",
           fixed: "left",
+          render: (_, __, index) => index + 1,
         },
         {
           title: t("title"),
@@ -75,6 +65,11 @@ const Qna = () => {
           title: t("situation"),
           dataIndex: "status",
           key: "status",
+          render: (_, record) => (
+            <Tag color={record.status === "pending" || record.status === "P" ? "blue" : "green"}>
+              {record.status === "pending" || record.status === "P" ? t("pending") : t("answered")}
+            </Tag>
+          ),
         },
         {
           title: t("applicationDate"),
@@ -132,11 +127,37 @@ const Qna = () => {
         }
     }, [quill]);
 
-    // useEffect(() => {
-    //     if (data?.filterQnas) {
-    //         setQnas(data.filterQnas);
-    //     }
-    // }, [data]);
+    useEffect(() => {
+        api("user/me").then((res) => {
+            const user = res.data.profile;
+            fetchQnas(user);
+        }).catch((err) => {
+            console.error('Error fetching user:', err);
+        });
+        // Fetch QnAs when component mounts
+        
+    }, []);
+
+    const fetchQnas = async (user: any) => {
+        api("qna/get-qna", {
+            method: 'POST',
+            data: {
+                user_id: user?.id
+            }
+        }).then((res) => {
+            if (res.status) {
+                setQnas(res.data.map((qna: any) => ({
+                    id: qna.id.toString(),
+                    title: qna.questionTitle,
+                    description: qna.question,
+                    createdAt: qna.createdAt,
+                    status: qna.status
+                })));
+            }
+        }).catch((err) => {
+            console.error('Error fetching QnAs:', err);
+        });
+    }
 
     const handleQuillChange = (editor: any, fieldName: string) => {
         if (editor) {
@@ -145,38 +166,57 @@ const Qna = () => {
         }
     };    
 
-    const handleDelete = (id: string) => {
-        setQnas(prevQnas => prevQnas.filter(qna => qna.id !== id));
+    const handleDelete = async (id: string) => {
+        try {
+            const response = await api("qna/delete", {
+                method: 'POST',
+                data: { id: Number(id) }
+            });
+            
+            if (response.status) {
+                setQnas(prevQnas => prevQnas.filter(qna => qna.id !== id));
+            }
+        } catch (error) {
+            console.error('Error deleting QnA:', error);
+        }
     };
           
     const onCreate = async (values: any) => {
-        // setLoadingCreate(true);
-        // try {
-        //     // Create a new QnA item
-        //     const newQna: QnaItem = {
-        //         id: Date.now().toString(), // Temporary ID
-        //         title: values.title,
-        //         description: values.description,
-        //         createdAt: new Date().toISOString(),
-        //         user: {
-        //             root: { userid: "10" },
-        //             parent: { userid: "10" }
-        //         }
-        //     };
-            
-        //     // Add to the list
-        //     setQnas(prevQnas => [newQna, ...prevQnas]);
-            
-        //     // Reset form
-        //     form.resetFields();
-        //     if (quill) {
-        //         quill.setText('');
-        //     }
-        // } catch (error) {
-        //     console.error('Error creating QnA:', error);
-        // } finally {
-        //     setLoadingCreate(false);
-        // }
+        setLoadingCreate(true);
+        try {
+            const response = await api("qna/create", {
+                method: 'POST',
+                data: {
+                    questionTitle: values.title,
+                    question: values.description,
+                    domainId: 2
+                }
+            });
+
+            if (response.status) {
+                window.location.reload();
+                // Add to the list
+                setQnas(prevQnas => [{
+                    id: response.data.id.toString(),
+                    title: response.data.questionTitle,
+                    description: response.data.question,
+                    createdAt: response.data.createdAt,
+                    status: response.data.status
+                }, ...prevQnas]);
+                
+                // Reset form
+                form.resetFields();
+                if (quill) {
+                    quill.setText('');
+                }
+            } else {
+                throw new Error(response.message || 'Failed to create QnA');
+            }
+        } catch (error) {
+            console.error('Error creating QnA:', error);
+        } finally {
+            setLoadingCreate(false);
+        }
     }
 
     return (
@@ -212,7 +252,6 @@ const Qna = () => {
                 </Card>
                 <Table<QnaItem>
                     columns={columns}
-                    // loading={loading}
                     dataSource={qnas}
                     className="w-full pt-3"
                     size="small"

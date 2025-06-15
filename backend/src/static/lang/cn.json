@@ -901,5 +901,10 @@
   "Status" : "状态",
   "Show From" : "显示从",
   "Description" : "描述",
-  "betting/placingBet" : "投注中"
+  "betting/placingBet" : "投注中",
+  "notePage" : "公告期",
+  "dateOfWriting" : "撰写日期",
+  "userId": "用户ID",
+  "answerContent": "答案内容",
+  "selectSample": "选择样本"
 }

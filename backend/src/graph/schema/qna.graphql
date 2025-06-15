@@ -10,10 +10,12 @@ type Qna {
 
   domainId: Uint
   domain: Domain
-
+  
   type: String
   question: String
+  questionTitle: String
   answer: String
+  answerTitle: String
 
   status: String
 
@@ -25,14 +27,17 @@ type Qna {
 
 input NewQnaInput {
   question: String!
+  questionTitle: String!
   type: String
   status: String
 }
 
 input UpdateQnaInput {
-  question: String
   type: String
+  question: String
+  questionTitle: String
   answer: String
+  answerTitle: String
   status: String
 }
 

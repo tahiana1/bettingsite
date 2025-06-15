@@ -177,12 +177,13 @@ const InboxPage: React.FC = () => {
   };
   const columns: TableProps<Inbox>["columns"] = [
     {
-      title: "ID",
+      title: t("number"),
       dataIndex: "id",
       key: "id",
+      render: (text, record, index) => index + 1,
     },
     {
-      title: t("UserID"),
+      title: t("userId"),
       dataIndex: '"User"."userid"',
       key: '"User"."userid"',
       render: (text, record) => record?.user?.userid,
@@ -211,7 +212,11 @@ const InboxPage: React.FC = () => {
       title: t("openedAt"),
       dataIndex: "openedAt",
       key: "openedAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (_, record: any) => {
+          const openedTime = new Date(record.openedAt).getTime();
+          const year2024 = new Date('2024-01-01').getTime();
+          return openedTime < year2024 ? 'Not Read' : 'Read';
+      },
     },
     {
       title: t("createdAt"),

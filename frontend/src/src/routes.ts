@@ -6,7 +6,7 @@ export const ROUTES = {
   deposit: "/billing/deposit",
   profile: "/profile",
   point: "/profile/point",
-  inbox: "/profile/inbox",
+  inbox: "/profile/note",
   attends: "/profile/attends",
   roulette: "/profile/roulette",
 

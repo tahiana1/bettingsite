@@ -85,4 +85,19 @@ func GetV1Route(r *gin.RouterGroup) {
 	transactionRouter.GetTransactionRoute(r.Group("/transactions"))
 
 	bettingRouter.GetBettingRoute(r.Group("/bets"))
+
+	noteRouter := r.Group("/notes")
+	{
+		noteRouter.POST("/get-notes", controllers.GetNotesByUserId)
+		noteRouter.POST("/update-read-status", controllers.UpdateNoteReadStatus)
+		noteRouter.POST("/get-unread-notes-count", controllers.GetUnreadNotesCount)
+		noteRouter.POST("/delete", controllers.SoftDeleteNote)
+	}
+
+	qnaRouter := r.Group("/qna")
+	{
+		qnaRouter.POST("/get-qna", controllers.GetQnaByUserId)
+		qnaRouter.POST("/create", controllers.CreateQna)
+		qnaRouter.POST("/delete", controllers.DeleteQna)
+	}
 }

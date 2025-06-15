@@ -33,7 +33,9 @@ export const FILTER_QNAS = gql`
           }
         }
         question
+        questionTitle
         answer
+        answerTitle
         status
         createdAt
         updatedAt
@@ -68,7 +70,9 @@ export const CREATE_QNA = gql`
         }
       }
       question
+      questionTitle
       answer
+      answerTitle
       status
       createdAt
       updatedAt
@@ -101,7 +105,9 @@ export const UPDATE_QNA = gql`
         }
       }
       question
+      questionTitle
       answer
+      answerTitle
       status
       createdAt
       updatedAt

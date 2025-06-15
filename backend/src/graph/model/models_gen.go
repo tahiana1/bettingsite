@@ -193,9 +193,10 @@ type NewProfile struct {
 }
 
 type NewQnaInput struct {
-	Question string  `json:"question"`
-	Type     *string `json:"type,omitempty"`
-	Status   *string `json:"status,omitempty"`
+	Question      string  `json:"question"`
+	QuestionTitle string  `json:"questionTitle"`
+	Type          *string `json:"type,omitempty"`
+	Status        *string `json:"status,omitempty"`
 }
 
 type NewSMSApiInput struct {
@@ -462,10 +463,12 @@ type UpdateProfile struct {
 }
 
 type UpdateQnaInput struct {
-	Question *string `json:"question,omitempty"`
-	Type     *string `json:"type,omitempty"`
-	Answer   *string `json:"answer,omitempty"`
-	Status   *string `json:"status,omitempty"`
+	Type          *string `json:"type,omitempty"`
+	Question      *string `json:"question,omitempty"`
+	QuestionTitle *string `json:"questionTitle,omitempty"`
+	Answer        *string `json:"answer,omitempty"`
+	AnswerTitle   *string `json:"answerTitle,omitempty"`
+	Status        *string `json:"status,omitempty"`
 }
 
 type UpdateSMSApiInput struct {

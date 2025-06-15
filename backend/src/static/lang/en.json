@@ -899,5 +899,10 @@
   "Status" : "Status",
   "Show From" : "Show From",
   "Description" : "Description",
-  "betting/placingBet" : "Placing Bet"
+  "betting/placingBet" : "Placing Bet",
+  "notePage" : "Note Page",
+  "dateOfWriting" : "Date of Writing",
+  "userId": "User ID",
+  "answerContent": "Answer Content",
+  "selectSample": "Select Sample"
 }

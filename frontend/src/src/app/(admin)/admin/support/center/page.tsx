@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Form } from "antd";
 
 import {
   Layout,
@@ -12,6 +13,8 @@ import {
   DatePicker,
   Radio,
   Select,
+  Tag,
+  Modal,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -25,15 +28,66 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
+import Quill from "quill";
+import { useQuill } from "react-quilljs";
 
 const SupportCenterPage: React.FC = () => {
+  const [form] = Form.useForm();
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [qnas, setQnas] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_QNAS);
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    // "bullet",
+    "indent",
+    "link",
+    "image",
+  ];
+
+  const { quill, quillRef } = useQuill({ modules, formats });
+  useEffect(() => {
+    if (quill) {
+      const handleTextChange = () => handleQuillChange(quill, 'answer');
+      quill.on('text-change', handleTextChange);
+      return () => {
+        quill.off('text-change', handleTextChange);
+      };
+    }
+  }, [quill]);
+
+  const handleQuillChange = (editor: any, fieldName: string) => {
+    if (editor) {
+      const content = editor.root.innerHTML;
+      form.setFieldValue(fieldName, content);
+    }
+  };
 
   const onQnaStatusChange = (v: string = "") => {
     updateFilter("status", v, "eq");
@@ -41,21 +95,16 @@ const SupportCenterPage: React.FC = () => {
   const onQnaTypeChange = (v: string = "") => {
     updateFilter("type", v, "eq");
   };
-
+  
   const columns: TableProps<Qna>["columns"] = [
     {
-      title: "ID",
+      title: t("number"),
       dataIndex: "userid",
       key: "userid",
       fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      render: (_, record, index) => {
+        return index + 1;
+      }
     },
     {
       title: t("site"),
@@ -70,6 +119,12 @@ const SupportCenterPage: React.FC = () => {
       render(_, record) {
         return record.user?.root?.userid;
       },
+    },
+    {
+      title: t("domain"),
+      dataIndex: "domain",
+      key: "domain",
+      render: (text) => text ?? "domain",
     },
     {
       title: t("top_dist"),
@@ -110,11 +165,25 @@ const SupportCenterPage: React.FC = () => {
       title: t("question"),
       dataIndex: "question",
       key: "question",
+      render: (text, record) => {
+        return text.length > 100 ? (
+          <div className="line-clamp-2 cursor-pointer" onClick={() => handleQuestionClick(record)}>
+            {text}
+          </div>
+        ) : (
+          <div className="cursor-pointer" onClick={() => handleQuestionClick(record)}>
+            {text}
+          </div>
+        );
+      }
     },
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      render: (text) => {
+        return text === "P" ? <Tag color="blue">{t("pending")}</Tag> : text === "A" ? <Tag color="green">{t("answered")}</Tag> : <Tag color="red">{t("checked")}</Tag>;
+      }
     },
     {
       title: t("repliedAt"),
@@ -139,7 +208,7 @@ const SupportCenterPage: React.FC = () => {
       key: "action",
       fixed: "right",
       render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
+        <Space.Compact size="small">
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={() => {}}
@@ -225,6 +294,23 @@ const SupportCenterPage: React.FC = () => {
     }
     console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
+  };
+
+  const handleQuestionClick = (record: any) => {
+    setSelectedQuestion(record);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedQuestion(null);
+    form.resetFields();
+  };
+
+  const handleReplySubmit = async (values: any) => {
+    // TODO: Implement reply submission
+    console.log('Reply submitted:', values);
+    handleModalClose();
   };
 
   useEffect(() => {
@@ -363,6 +449,48 @@ const SupportCenterPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
+
+          <Modal
+            title={t("question")}
+            open={modalOpen}
+            onCancel={handleModalClose}
+            footer={null}
+            width={800}
+          >
+            <div className="mb-6">
+              {selectedQuestion?.answer && (
+                <div className="mb-4">
+                  <div className="font-semibold mb-2">{t("answer")}:</div>
+                  <div className="bg-gray-50 p-4 rounded">{selectedQuestion?.answer}</div>
+                </div>
+              )}
+            </div>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleReplySubmit}
+            >
+              <Form.Item
+                name="answer"
+                label={t("selectSample")}
+                rules={[{ required: true, message: t("required") }]}
+              >
+                <Select options={[]} />
+              </Form.Item>
+              <Form.Item
+                name={t("answerContent")}
+                label={t("answer")}
+                rules={[{ required: true, message: t("required") }]}
+              >
+                <div ref={quillRef}></div>
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  {t("submit")}
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
         </Card>
       </Content>
     </Layout>

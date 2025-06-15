@@ -358,19 +358,21 @@ type ComplexityRoot struct {
 	}
 
 	Qna struct {
-		Answer    func(childComplexity int) int
-		CreatedAt func(childComplexity int) int
-		DeletedAt func(childComplexity int) int
-		Domain    func(childComplexity int) int
-		DomainID  func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Question  func(childComplexity int) int
-		RepliedAt func(childComplexity int) int
-		Status    func(childComplexity int) int
-		Type      func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		User      func(childComplexity int) int
-		UserID    func(childComplexity int) int
+		Answer        func(childComplexity int) int
+		AnswerTitle   func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		DeletedAt     func(childComplexity int) int
+		Domain        func(childComplexity int) int
+		DomainID      func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Question      func(childComplexity int) int
+		QuestionTitle func(childComplexity int) int
+		RepliedAt     func(childComplexity int) int
+		Status        func(childComplexity int) int
+		Type          func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+		User          func(childComplexity int) int
+		UserID        func(childComplexity int) int
 	}
 
 	QnaList struct {
@@ -2584,6 +2586,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Qna.Answer(childComplexity), true
 
+	case "Qna.answerTitle":
+		if e.complexity.Qna.AnswerTitle == nil {
+			break
+		}
+
+		return e.complexity.Qna.AnswerTitle(childComplexity), true
+
 	case "Qna.createdAt":
 		if e.complexity.Qna.CreatedAt == nil {
 			break
@@ -2625,6 +2634,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Qna.Question(childComplexity), true
+
+	case "Qna.questionTitle":
+		if e.complexity.Qna.QuestionTitle == nil {
+			break
+		}
+
+		return e.complexity.Qna.QuestionTitle(childComplexity), true
 
 	case "Qna.repliedAt":
 		if e.complexity.Qna.RepliedAt == nil {
@@ -4377,10 +4393,12 @@ type Qna {
 
   domainId: Uint
   domain: Domain
-
+  
   type: String
   question: String
+  questionTitle: String
   answer: String
+  answerTitle: String
 
   status: String
 
@@ -4392,14 +4410,17 @@ type Qna {
 
 input NewQnaInput {
   question: String!
+  questionTitle: String!
   type: String
   status: String
 }
 
 input UpdateQnaInput {
-  question: String
   type: String
+  question: String
+  questionTitle: String
   answer: String
+  answerTitle: String
   status: String
 }
 
@@ -16862,8 +16883,12 @@ func (ec *executionContext) fieldContext_Mutation_createQna(ctx context.Context,
 				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
+			case "questionTitle":
+				return ec.fieldContext_Qna_questionTitle(ctx, field)
 			case "answer":
 				return ec.fieldContext_Qna_answer(ctx, field)
+			case "answerTitle":
+				return ec.fieldContext_Qna_answerTitle(ctx, field)
 			case "status":
 				return ec.fieldContext_Qna_status(ctx, field)
 			case "repliedAt":
@@ -16967,8 +16992,12 @@ func (ec *executionContext) fieldContext_Mutation_updateQna(ctx context.Context,
 				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
+			case "questionTitle":
+				return ec.fieldContext_Qna_questionTitle(ctx, field)
 			case "answer":
 				return ec.fieldContext_Qna_answer(ctx, field)
+			case "answerTitle":
+				return ec.fieldContext_Qna_answerTitle(ctx, field)
 			case "status":
 				return ec.fieldContext_Qna_status(ctx, field)
 			case "repliedAt":
@@ -17077,8 +17106,12 @@ func (ec *executionContext) fieldContext_Mutation_replyQna(ctx context.Context, 
 				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
+			case "questionTitle":
+				return ec.fieldContext_Qna_questionTitle(ctx, field)
 			case "answer":
 				return ec.fieldContext_Qna_answer(ctx, field)
+			case "answerTitle":
+				return ec.fieldContext_Qna_answerTitle(ctx, field)
 			case "status":
 				return ec.fieldContext_Qna_status(ctx, field)
 			case "repliedAt":
@@ -21646,6 +21679,47 @@ func (ec *executionContext) fieldContext_Qna_question(_ context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Qna_questionTitle(ctx context.Context, field graphql.CollectedField, obj *models.Qna) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Qna_questionTitle(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.QuestionTitle, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Qna_questionTitle(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Qna",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Qna_answer(ctx context.Context, field graphql.CollectedField, obj *models.Qna) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Qna_answer(ctx, field)
 	if err != nil {
@@ -21675,6 +21749,47 @@ func (ec *executionContext) _Qna_answer(ctx context.Context, field graphql.Colle
 }
 
 func (ec *executionContext) fieldContext_Qna_answer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Qna",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Qna_answerTitle(ctx context.Context, field graphql.CollectedField, obj *models.Qna) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Qna_answerTitle(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AnswerTitle, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Qna_answerTitle(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Qna",
 		Field:      field,
@@ -21951,8 +22066,12 @@ func (ec *executionContext) fieldContext_QnaList_qnas(_ context.Context, field g
 				return ec.fieldContext_Qna_type(ctx, field)
 			case "question":
 				return ec.fieldContext_Qna_question(ctx, field)
+			case "questionTitle":
+				return ec.fieldContext_Qna_questionTitle(ctx, field)
 			case "answer":
 				return ec.fieldContext_Qna_answer(ctx, field)
+			case "answerTitle":
+				return ec.fieldContext_Qna_answerTitle(ctx, field)
 			case "status":
 				return ec.fieldContext_Qna_status(ctx, field)
 			case "repliedAt":
@@ -31701,7 +31820,7 @@ func (ec *executionContext) unmarshalInputNewQnaInput(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"question", "type", "status"}
+	fieldsInOrder := [...]string{"question", "questionTitle", "type", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31715,6 +31834,13 @@ func (ec *executionContext) unmarshalInputNewQnaInput(ctx context.Context, obj a
 				return it, err
 			}
 			it.Question = data
+		case "questionTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("questionTitle"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.QuestionTitle = data
 		case "type":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33165,20 +33291,13 @@ func (ec *executionContext) unmarshalInputUpdateQnaInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"question", "type", "answer", "status"}
+	fieldsInOrder := [...]string{"type", "question", "questionTitle", "answer", "answerTitle", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "question":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("question"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Question = data
 		case "type":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33186,6 +33305,20 @@ func (ec *executionContext) unmarshalInputUpdateQnaInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Type = data
+		case "question":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("question"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Question = data
+		case "questionTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("questionTitle"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.QuestionTitle = data
 		case "answer":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("answer"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -33193,6 +33326,13 @@ func (ec *executionContext) unmarshalInputUpdateQnaInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Answer = data
+		case "answerTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("answerTitle"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AnswerTitle = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -35519,8 +35659,12 @@ func (ec *executionContext) _Qna(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._Qna_type(ctx, field, obj)
 		case "question":
 			out.Values[i] = ec._Qna_question(ctx, field, obj)
+		case "questionTitle":
+			out.Values[i] = ec._Qna_questionTitle(ctx, field, obj)
 		case "answer":
 			out.Values[i] = ec._Qna_answer(ctx, field, obj)
+		case "answerTitle":
+			out.Values[i] = ec._Qna_answerTitle(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._Qna_status(ctx, field, obj)
 		case "repliedAt":

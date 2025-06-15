@@ -17,7 +17,7 @@ type Inbox struct {
 
 	Type string `json:"type" gorm:"size:200"`
 
-	Title       string `json:"name" gorm:"size:100;unique" validate:"required,min=2"`
+	Title       string `json:"name" gorm:"size:100" validate:"required,min=2"`
 	Description string `json:"description" gorm:"size:200"`
 	OrderNum    uint   `json:"orderNum" gorm:"default:1"`
 	Status      bool   `json:"status"`
