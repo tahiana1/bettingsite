@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import * as XLSX from 'xlsx';
 
 import {
   Layout,
@@ -199,6 +200,81 @@ const TotalTransferPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
 
+  const onSearch = (value: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+
+    // Remove any existing search filters
+    filters = filters.filter(
+      (f) =>
+        !f.field.startsWith("transactions.profile.nickname") &&
+        !f.field.startsWith("transactions.profile.holderName") &&
+        !f.field.startsWith("transactions.profile.phone")
+    );
+
+    if (value) {
+      // Add new search filters
+      filters = [
+        ...filters,
+        {
+          field: "transactions.profile.nickname",
+          value: value,
+          op: "like",
+        },
+        {
+          field: "transactions.profile.phone",
+          value: value,
+          op: "like",
+        },
+        {
+          field: "transactions.profile.holderName",
+          value: value,
+          op: "like",
+        }
+      ];
+    }
+
+    setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
+  };
+
+  const handleDownload = () => {
+    // Create worksheet from transactions data
+    const worksheet = XLSX.utils.json_to_sheet(
+      transactions.map((transaction) => ({
+        [t("number")]: transaction.id,
+        [t("root_dist")]: transaction.user?.root?.userid,
+        [t("top_dist")]: transaction.user?.parent?.userid,
+        [t("level")]: `${transaction.user?.profile?.level} ${transaction.user?.profile?.name}`,
+        [t("nickname")]: transaction.user?.profile?.nickname,
+        [t("phone")]: transaction.user?.profile?.phone,
+        [t("bankName")]: transaction.user?.profile?.bankName,
+        [t("accountName")]: transaction.user?.profile?.accountNumber,
+        [t("depositorName")]: transaction.user?.profile?.holderName,
+        [t("alliance")]: "-",
+        [t("balanceBefore")]: transaction.balanceBefore,
+        [t("amount")]: transaction.amount,
+        [t("balanceAfter")]: transaction.balanceAfter,
+        [t("pointBefore")]: transaction.pointBefore,
+        [t("point")]: 0,
+        [t("pointAfter")]: transaction.pointAfter,
+        [t("usdtDesc")]: transaction.usdtDesc,
+        [t("shortcut")]: transaction.shortcut,
+        [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
+        [t("approvedAt")]: transaction.approvedAt ? f.dateTime(new Date(transaction.approvedAt)) : "",
+        [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+        [t("status")]: transaction.status,
+      }))
+    );
+
+    // Create workbook and append worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, "transactions.xlsx");
+  };
+
   useEffect(() => {
     setTransactions(
       data?.response?.transactions?.map((u: any) => {
@@ -215,7 +291,7 @@ const TotalTransferPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/totaltransferhistory")}
+          title={t("admin/menu/totalTransferHistory")}
           classNames={{
             body: "!p-0",
           }}
@@ -329,10 +405,11 @@ const TotalTransferPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary">
+                <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
               </Space.Compact>

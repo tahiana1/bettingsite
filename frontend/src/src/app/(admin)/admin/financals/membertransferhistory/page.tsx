@@ -13,6 +13,9 @@ import {
   Divider,
   Descriptions,
   Alert,
+  Modal,
+  Form,
+  Select,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -48,6 +51,21 @@ const MemberTransferPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
+  const [colorModal, setColorModal] = useState<boolean>(false);
+  const [colorOption, setColorOptoin] = useState<any>("new");
+
+  const labelRenderer = (props: any) =>
+    props.value.toString() == "100"
+      ? "Premium"
+      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
+        props.value;
+
+  const levelOption = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
+  ].map((i) => ({
+    value: i,
+    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
+  }));
 
   const columns: TableProps<Transaction>["columns"] = [
     {
@@ -204,6 +222,52 @@ const MemberTransferPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
 
+  const onSearch = (value: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+
+    // Remove any existing search filters
+    filters = filters.filter(
+      (f) =>
+        !f.field.startsWith("transactions.profile.nickname") &&
+        !f.field.startsWith("transactions.profile.holderName") &&
+        !f.field.startsWith("transactions.profile.phone")
+    );
+
+    if (value) {
+      // Add new search filters
+      filters = [
+        ...filters,
+        {
+          field: "transactions.profile.nickname",
+          value: value,
+          op: "like",
+        },
+        {
+          field: "transactions.profile.phone",
+          value: value,
+          op: "like",
+        },
+        {
+          field: "transactions.profile.holderName",
+          value: value,
+          op: "like",
+        }
+      ];
+    }
+
+    setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
+  };
+
+  const onLevelChange = (v: string = "") => {
+    updateFilter(`profiles.level`, v, "eq");
+  };
+
+  const onChangeColors = async () => {
+    setColorModal(false);
+  };
+
   useEffect(() => {
     setTransactions(
       data?.response?.transactions?.map((u: any) => {
@@ -220,7 +284,7 @@ const MemberTransferPage: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/menu/totaltransferhistory")}
+          title={t("admin/menu/memberTransferHistory")}
           classNames={{
             body: "!p-0",
           }}
@@ -334,6 +398,23 @@ const MemberTransferPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
+                />
+                <Select
+                  size="small"
+                  placeholder="By Color"
+                  className="min-w-28"
+                  allowClear
+                />
+                <Select
+                  size="small"
+                  placeholder="By Level"
+                  className="min-w-28"
+                  allowClear
+                  onClear={onLevelChange}
+                  options={levelOption}
+                  labelRender={labelRenderer}
+                  onChange={onLevelChange}
                 />
               </Space>
               <Space.Compact className="gap-1">
@@ -421,6 +502,38 @@ const MemberTransferPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
+
+          <Modal
+            open={colorModal}
+            onCancel={() => setColorModal(false)}
+            onOk={onChangeColors}
+          >
+            <Space direction="vertical" className="gap-2">
+              <Radio.Group
+                onChange={(e) => setColorOptoin(e.target.value)}
+                className="!flex !flex-col gap-2"
+                defaultValue={"new"}
+              >
+                <Radio value={"new"}>New Search Criteria</Radio>
+                {colorOption == "new" ? (
+                  <Form.Item>
+                    <Input />
+                  </Form.Item>
+                ) : null}
+                <Radio value={"list"}>
+                  Apply the member list search conditions as is:
+                </Radio>
+                {colorOption == "list" ? (
+                  <Form.Item>
+                    <Select />
+                  </Form.Item>
+                ) : null}
+              </Radio.Group>
+              <Form.Item label="Change Color">
+                <Select />
+              </Form.Item>
+            </Space>
+          </Modal>
         </Card>
       </Content>
     </Layout>

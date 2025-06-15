@@ -895,5 +895,9 @@
   "partner/menu/connectedMember" : "Connected Member",
   "partner/menu/waitingForMemberApproval" : "Waiting for Member Approval",
   "partner/menu/pleaseLogin" : "Please login first to place a bet",
-  "user/menu/betlog" : "Betting History"
+  "user/menu/betlog" : "Betting History",
+  "Status" : "Status",
+  "Show From" : "Show From",
+  "Description" : "Description",
+  "betting/placingBet" : "Placing Bet"
 }

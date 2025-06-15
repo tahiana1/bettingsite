@@ -33,7 +33,6 @@ import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 
 const BettingLog: React.FC = () => {
-  const [profile] = useAtom<any>(userState);
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
@@ -47,29 +46,29 @@ const BettingLog: React.FC = () => {
   const [bets, setBets] = useState<any[]>([]);
   // const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
-  const [user] = useAtom<any>(userState);
   const router = useRouter();
-  
   useEffect(() => {
-    const fetchBets = async () => {
-      console.log(user, "user.userId");
-      const userid = Number(user.userId);
-      const response = await api("bets/get-betting", {
-        method: "POST",
-        data: {
-          user_id: 10,
-        }
-      });
-
-      if (response.status) {
-        setBets(response.data); 
-      } else {
-        setBets([]);
-      }
-    };
-
-    fetchBets();
+    api("user/me").then((res) => {
+      fetchBets(res.data.profile);
+    }).catch((err) => {
+      console.log(err);
+    });
   }, []);
+
+  const fetchBets = async (profile: any) => {
+    const userid = Number(profile.userId);
+    const response = await api("bets/get-betting", {
+      method: "POST",
+      data: {
+        user_id: userid,
+      }
+    });
+    if (response.status) {
+      setBets(response.data); 
+    } else {
+      setBets([]);
+    }
+  };
   
   const onTransactionTypeChange = (v: string = "") => {
     updateFilter("transactions.type", v, "eq");

@@ -87,7 +87,6 @@ const BettingCart: React.FC = () => {
       } else {
         setFeedback({ type: "error", message: t("betting/betFailed") });
       }
-
     } catch (error: any) {
       setFeedback({ type: "error", message: error.message || t("betting/betFailed") });
     } finally {

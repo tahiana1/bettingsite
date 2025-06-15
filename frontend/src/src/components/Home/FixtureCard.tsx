@@ -13,12 +13,12 @@ const FixtureCard: React.FC<{ data: any; title: any }> = ({ data, title }) => {
   const [show, setShow] = useState<boolean>(false);
   const [rates, setRates] = useAtom<any[]>(rateState);
   const [, setShowBettingCart] = useAtom(showBettingCartState);
-  const [user] = useAtom(userState);
+  const [profile] = useAtom(userState);
   const router = useRouter();
   const t = useTranslations();
   const onBet = (v: any, rate: any) => {
     // Check if user is logged in
-    if (!user?.userid) {
+    if (!profile?.userId) {
       message.warning(t("partner/menu/pleaseLogin"));
       router.push("/auth/signIn");
       return;

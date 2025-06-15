@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useAtom } from "jotai";
 
 import EventSidebar from "@/components/Home/EventSidebar";
@@ -13,7 +13,8 @@ import Layout from "@/components/Layout";
 import "@/styles/globals.css";
 import DeviceTracker from "@/components/Common/DeviceTracker";
 import ContactCard from "@/components/Common/Contact";
-import { showBettingCartState } from "@/state/state";
+import { showBettingCartState, userState } from "@/state/state";
+import api from "@/api";
 /* 
 export const metadata: Metadata = {
   title: "Betting",
@@ -26,7 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const [showBettingCart] = useAtom(showBettingCartState);
-
+  const [profile, setProfile] = useAtom<any>(userState);
+  useEffect(() => {
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
   return (
     <Layout>
       <DeviceTracker />

@@ -34,6 +34,7 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
+import * as XLSX from 'xlsx';
 
 const MemberDWPage: React.FC = () => {
   const t = useTranslations();
@@ -83,7 +84,43 @@ const MemberDWPage: React.FC = () => {
       });
   };
   const onTransactionTypeChange = (v: string = "") => {
-    updateFilter("type", v, "eq");
+    console.log(v, 'v');
+    if (v == "entire") {
+      // Clear all transaction-related filters
+      let filters = tableOptions?.filters?.filter(
+        (f: any) => !f.field.startsWith('transactions.')
+      ) || [];
+      
+      setTableOptions({ ...tableOptions, filters });
+      refetch({
+        options: {
+          filter: {
+            shortcut: null,
+          },
+        },
+      });
+    } else {
+      // Clear existing transaction type and status filters
+      let filters = tableOptions?.filters?.filter(
+        (f: any) => !f.field.startsWith('transactions.')
+      ) || [];
+
+      if (v == "C") {
+        filters.push({
+          field: "transactions.status",
+          value: v,
+          op: "eq",
+        });
+      } else {
+        filters.push({
+          field: "transactions.type",
+          value: v,
+          op: "eq",
+        });
+      }
+
+      setTableOptions({ ...tableOptions, filters });
+    }
   };
 
   const labelRenderer = (props: any) =>
@@ -349,24 +386,99 @@ const MemberDWPage: React.FC = () => {
     setRange(dateStrings);
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "transactions.created_at");
-    if (dates?.at(0)) {
+    
+    // Remove any existing date filters
+    filters = filters.filter((f) => f.field !== "transactions.created_at");
+    
+    // Only add date filters if both dates are selected and valid
+    if (dates?.[0] && dates?.[1]) {
+      const startDate = dates[0].startOf('day').toISOString();
+      const endDate = dates[1].endOf('day').toISOString();
+      
       filters = [
-        ...f,
+        ...filters,
         {
           field: "transactions.created_at",
-          value: dateStrings[0],
-          op: "gt",
+          value: startDate,
+          op: "gte",
         },
         {
           field: "transactions.created_at",
-          value: dateStrings[1],
-          op: "lt",
+          value: endDate,
+          op: "lte",
         },
       ];
     }
-    console.log({ filters });
+    
     setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
+  };
+
+  const onSearch = (value: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+
+    // Remove any existing search filters
+    filters = filters.filter(
+      (f) =>
+        !f.field.startsWith("transactions.profile.nickname") &&
+        !f.field.startsWith("transactions.profile.holderName") &&
+        !f.field.startsWith("transactions.profile.phone")
+    );
+
+    if (value) {
+      // Add new search filters
+      filters = [
+        ...filters,
+        {
+          field: "transactions.profile.nickname",
+          value: value,
+          op: "like",
+        },
+        {
+          field: "transactions.profile.phone",
+          value: value,
+          op: "like",
+        },
+      ];
+    }
+
+    setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
+  };
+
+  const handleDownload = () => {
+    // Create worksheet from transactions data
+    const worksheet = XLSX.utils.json_to_sheet(
+      transactions.map((transaction) => ({
+        [t("ID")]: transaction.user?.id,
+        [t("root_dist")]: transaction.user?.root?.userid,
+        [t("top_dist")]: transaction.user?.parent?.userid,
+        [t("nickname")]: transaction.user?.profile?.nickname,
+        [t("phone")]: transaction.user?.profile?.phone,
+        [t("bank")]: transaction.user?.profile?.bankName,
+        [t("accountNumber")]: transaction.user?.profile?.accountNumber,
+        [t("holderName")]: transaction.user?.profile?.holderName,
+        [t("amount")]: transaction.amount,
+        [t("balanceBefore")]: transaction.balanceBefore,
+        [t("balanceAfter")]: transaction.balanceAfter,
+        [t("pointBefore")]: transaction.pointBefore,
+        [t("pointAfter")]: transaction.pointAfter,
+        [t("usdtDesc")]: transaction.usdtDesc,
+        [t("status")]: transaction.status,
+        [t("shortcut")]: transaction.shortcut,
+        [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
+        [t("approvedAt")]: transaction.approvedAt ? f.dateTime(new Date(transaction.approvedAt)) : "",
+        [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+      }))
+    );
+
+    // Create workbook and append worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+
+    // Generate Excel file and trigger download
+    XLSX.writeFile(workbook, "member_transactions.xlsx");
   };
 
   useEffect(() => {
@@ -417,12 +529,16 @@ const MemberDWPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
+                    label: t("entire"),
+                    value: "entire",
+                  },
+                  {
                     label: t("deposit"),
-                    value: "D",
+                    value: "deposit",
                   },
                   {
                     label: t("withdraw"),
-                    value: "W",
+                    value: "withdrawal",
                   },
                   {
                     label: t("adminPay"),
@@ -461,7 +577,7 @@ const MemberDWPage: React.FC = () => {
                     value: "DL",
                   },
                 ]}
-                defaultValue={""}
+                defaultValue={"entire"}
                 onChange={(e) => onTransactionTypeChange(e.target.value)}
               />
 
@@ -530,6 +646,7 @@ const MemberDWPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
                 <Select
                   size="small"
@@ -549,7 +666,7 @@ const MemberDWPage: React.FC = () => {
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={onResetCoupon}>
+                <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
               </Space.Compact>

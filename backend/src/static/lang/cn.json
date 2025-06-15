@@ -897,5 +897,9 @@
   "partner/menu/integratedMoneyTransferHistory" : "综合资金转移历史",
   "partner/menu/connectedMember" : "连接会员",
   "partner/menu/waitingForMemberApproval" : "等待会员批准",
-  "partner/menu/pleaseLogin" : "请先登录以进行投注"
+  "partner/menu/pleaseLogin" : "请先登录以进行投注",
+  "Status" : "状态",
+  "Show From" : "显示从",
+  "Description" : "描述",
+  "betting/placingBet" : "投注中"
 }

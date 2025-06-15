@@ -31,19 +31,19 @@ const Qna = () => {
     const [form] = Form.useForm();
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);
-    const { loading, data, refetch } = useQuery(FILTER_QNAS, {
-        variables: {
-            options: {
-                sort: {
-                    createdAt: -1,
-                },
-                filter: {
-                    type: "contact",
-                    userid: 10,
-                }
-            }
-        }
-    });
+    // const { loading, data, refetch } = useQuery(FILTER_QNAS, {
+    //     variables: {
+    //         options: {
+    //             sort: {
+    //                 createdAt: -1,
+    //             },
+    //             filter: {
+    //                 type: "contact",
+    //                 userid: 10,
+    //             }
+    //         }
+    //     }
+    // });
     const [loadingCreate, setLoadingCreate] = useState(false);
     const modules = {
         toolbar: [
@@ -132,11 +132,11 @@ const Qna = () => {
         }
     }, [quill]);
 
-    useEffect(() => {
-        if (data?.filterQnas) {
-            setQnas(data.filterQnas);
-        }
-    }, [data]);
+    // useEffect(() => {
+    //     if (data?.filterQnas) {
+    //         setQnas(data.filterQnas);
+    //     }
+    // }, [data]);
 
     const handleQuillChange = (editor: any, fieldName: string) => {
         if (editor) {
@@ -212,7 +212,7 @@ const Qna = () => {
                 </Card>
                 <Table<QnaItem>
                     columns={columns}
-                    loading={loading}
+                    // loading={loading}
                     dataSource={qnas}
                     className="w-full pt-3"
                     size="small"

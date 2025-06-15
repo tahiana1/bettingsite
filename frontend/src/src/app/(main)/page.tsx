@@ -32,10 +32,11 @@ import gtype6 from "@/assets/img/slide/gtype6.png";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useAtom } from "jotai";
-import { notificationState, notiState } from "@/state/state";
+import { notificationState, notiState, userState } from "@/state/state";
 import api from "@/api";
 import dayjs from "dayjs";
 import { useQuery } from "@apollo/client";
+import { FILTER_NOTI } from "@/actions/notification";
 import { GET_TOP_EVENT } from "@/actions/event";
 import TransactionFeed from '@/components/Common/TransactionFeed';
 
@@ -54,9 +55,8 @@ const Index: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState<any>(null);
   const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
-
-  const { data: eventData } = useQuery(GET_TOP_EVENT);
-
+  const [eventData, setEventData] = React.useState<any>(null);
+  const [notiData, setNotiData] = React.useState<any>(null);
   const [notiApi, contextHolder] = notification.useNotification();
 
   const [noti, setNoti] = useAtom<any>(notiState);
@@ -69,7 +69,14 @@ const Index: React.FC = () => {
     nn.push({ id: n.id, hiddenAt: now });
     setNoti({ ...noti, [tk]: nn });
   };
-
+  const [profile, setProfile] = useAtom<any>(userState);
+  useEffect(() => {
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
   useEffect(() => {
     notifications.map((n) => {
       const hiddenNotifications = noti[dayjs().format("YYYYMMDD")] ?? [];
@@ -94,13 +101,14 @@ const Index: React.FC = () => {
     });
   }, [notifications]);
 
+
   useEffect(() => {
     api("common/notifications").then((result) => {
-      setNotififications(result.data);
+      setNotiData(result.data);
     });
-    return () => {
-      setNotififications([]);
-    };
+    api("common/events").then((result) => {
+      setEventData(result.data);
+    });
   }, []);
 
   const handleNotificationClick = (notification: any) => {
@@ -207,13 +215,13 @@ const Index: React.FC = () => {
               <List
                 size="small"
                 className="w-full"
-                dataSource={eventData?.response ?? []}
-                renderItem={({ title, status, showFrom, showTo, description }: Event) => (
+                dataSource={notiData ?? []}
+                renderItem={({ title, createdAt, description }: any) => (
                   <List.Item 
-                    onClick={() => handleEventClick({ title, status, showFrom, showTo, description })}
+                    onClick={() => handleNotificationClick({ title, createdAt, description })}
                     className="cursor-pointer"
                   >
-                    {title} - {t(status ? "active" : "inactive")} - {showFrom} - {showTo}
+                    {title} - {dayjs(createdAt).format("YYYY-MM-DD HH:mm:ss")}
                   </List.Item>
                 )}
               />
@@ -250,7 +258,7 @@ const Index: React.FC = () => {
               <List
                 size="small"
                 className="w-full"
-                dataSource={eventData?.response ?? []}
+                dataSource={eventData ?? []}
                 renderItem={({ title, status, showFrom, showTo, description }: Event) => (
                   <List.Item 
                     onClick={() => handleEventClick({ title, status, showFrom, showTo, description })}

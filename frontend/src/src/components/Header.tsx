@@ -52,8 +52,7 @@ const Head = () => {
   });
   const onMenuClick = (e: MenuInfo) => {
     setSelectedkeys(e.keyPath);
-    // console.log(e.key)
-    router.push(e.key);
+    router.replace(e.key);
   };
 
   const onLogout = () => {

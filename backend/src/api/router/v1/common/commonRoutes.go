@@ -23,4 +23,10 @@ func GetCommonRoute(r *gin.RouterGroup) {
 	{
 		notificationRouter.GET("", controllers.GetNotifications)
 	}
+
+	// events routes
+	eventRouter := r.Group("/events")
+	{
+		eventRouter.GET("", controllers.GetEvents)
+	}
 }

@@ -9,11 +9,9 @@ interface Transaction {
   timestamp: string;
 }
 
-
 const TransactionFeed: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [ws, setWs] = useState<WebSocket | null>(null);
-  console.log(ws, 'ws');
   useEffect(() => {
     const socket = new WebSocket(wsURL);
     
@@ -22,7 +20,6 @@ const TransactionFeed: React.FC = () => {
     };
 
     socket.onmessage = (event) => {
-      console.log('Received message:', event.data);
       try {
         const transaction = JSON.parse(event.data);
         setTransactions((prev) => {

@@ -60,10 +60,11 @@ const DepositRequest: React.FC = () => {
       message.error(t("rechargeBonusError"));
       return;
     }
+    const userid = Number(profile.userId);
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.userId,
+        userId: userid,
         amount: amount,
         type: "deposit",
         explation: rechargeBonus
