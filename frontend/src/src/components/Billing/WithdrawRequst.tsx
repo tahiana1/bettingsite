@@ -28,32 +28,35 @@ import dayjs from "dayjs";
 const WithdrawRequest: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [profile] = useAtom<any>(userState);
   const [amount, setAmount] = useAtom<number>(betAmount);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
-
+  const [profile, setProfile] = useState<any>(null);
   const handleDelete = (id: number) => {
     console.log('delete function not implemented');
   };
-
   useEffect(() => {
-    const userid = String(profile.userId);
-    api("transactions/get", { 
-      method: "GET",
-      params: {
-        userid,
-        type: "withdrawal"
-      }
-    }).then((res) => {
-      setTransactions(res.data);
-      setBalance(res.balance);
-      setTimeout(() => {
-        setTimeoutState(!timeoutState);
-      }, 60000);
-    });
-  }, [profile, timeoutState]);
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+      const userid = String(res.data.profile?.userId);
+      api("transactions/get", { 
+        method: "GET",
+        params: {
+          userid,
+          type: "withdrawal"
+        }
+      }).then((res) => {
+        setTransactions(res.data);
+        setBalance(res.balance);
+        setTimeout(() => {
+          setTimeoutState(!timeoutState);
+        }, 60000);
+      });
+    }).catch((err) => {
+      console.log(err);
+    });    
+  }, [timeoutState]);
 
   const submitWithdraw = (amount: number) => {
     if (amount <= 0) {

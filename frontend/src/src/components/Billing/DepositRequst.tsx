@@ -30,27 +30,33 @@ import dayjs from "dayjs";
 const DepositRequest: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [profile] = useAtom<any>(userState);
   const [rechargeBonus, setRechargeBonus] = useState<string>("");
   const [transactions, setTransactions] = useState<any[]>([]);
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
+  const [profile, setProfile] = useState<any>(null);
+  
   useEffect(() => {
-    const userid = String(profile.userId);
-    api("transactions/get", { 
-      method: "GET",
-      params: {
-        userid,
-        type: "deposit"
-      }
-    }).then((res) => {
-      setTransactions(res.data);
-      setBalance(res.balance);
-      setTimeout(() => {
-        setTimeoutState(!timeoutState);
-      }, 60000);
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+      const userid = String(res.data.profile.userId);
+      api("transactions/get", { 
+        method: "GET",
+        params: {
+          userid,
+          type: "deposit"
+        }
+      }).then((res) => {
+        setTransactions(res.data);
+        setBalance(res.balance);
+        setTimeout(() => {
+          setTimeoutState(!timeoutState);
+        }, 60000);
+      });
+      }).catch((err) => {
+        console.log(err);
     });
-  }, [profile, timeoutState]);
+  }, [timeoutState]);
 
   const submitDeposit = (amount: number, rechargeBonus: string) => {
     if (amount <= 0) {
