@@ -401,8 +401,16 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/casino/setting",
-          label: t("admin/menu/sports"),
+          key: "admin/game/casino/live",
+          label: t("admin/menu/casinoLive"),
+        },
+        {
+          key: "admin/game/casino/slot",
+          label: t("admin/menu/casinoSlot"),
+        },
+        {
+          key: "admin/game/casino/poker",
+          label: t("admin/menu/casinoPoker"),
         },
       ],
     },
@@ -413,8 +421,32 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/api/setting",
-          label: t("admin/menu/gameapi"),
+          key: "admin/game/api/hororlink",
+          label: t("admin/menu/gameapi/hororlink"),
+        },
+        {
+          key: "admin/game/api/khan",
+          label: t("admin/menu/gameapi/khan"),
+        },
+        {
+          key: "admin/game/api/redfox",
+          label: t("admin/menu/gameapi/redfox"),
+        },
+        {
+          key: "admin/game/api/revolution",
+          label: t("admin/menu/gameapi/revolution"),
+        },
+        {
+          key: "admin/game/api/slotcity",
+          label: t("admin/menu/gameapi/slotcity"),
+        },
+        {
+          key: "admin/game/api/swix",
+          label: t("admin/menu/gameapi/swix"),
+        },
+        {
+          key: "admin/game/api/wildgames",
+          label: t("admin/menu/gameapi/wildgames"),
         },
       ],
     },
