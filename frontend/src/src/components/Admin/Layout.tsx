@@ -32,6 +32,7 @@ import {
   CalculatorOutlined,
   InboxOutlined,
   HomeOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 import { GrUserAdmin } from "react-icons/gr";
 import LayoutContext from "@/contexts/LayoutContextProvider";
@@ -908,7 +909,19 @@ export default function AdminRootLayout({
                         </Tag>
                       </Space.Compact>
                     </Space.Compact>
-                  </Flex>
+                    <Space.Compact className="justify-center items-center mr-3">
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:0/0</Tag>
+                    </Space.Compact>
+                  </Flex> 
                   <Flex
                     align="flex-end"
                     justify="space-between"

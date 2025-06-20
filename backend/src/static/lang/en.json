@@ -928,6 +928,23 @@
   "admin/menu/gameapi/revolution": "Revolution",
   "admin/menu/gameapi/slotcity": "Slotcity",
   "admin/menu/gameapi/swix": "Swix",
-  "admin/menu/gameapi/wildgames": "Wildgames"
-
+  "admin/menu/gameapi/wildgames": "Wildgames",
+  "admin/menu/gameapi/hororlinksetting": "Hororlink Setting",
+  "honorEvol": "Honor Evol",
+  "exchangeAllGameMoney": "Exchange All Game Money",
+  "gameCompanySearch": "Game Company Search",
+  "gameApiName": "Game API Name",
+  "apiCompanyName": "API Company Name",
+  "gameCompanyName": "Game Company Name",
+  "gameType": "Game Type",
+  "create": "Create",
+  "connectedUsers": "Connected Users",
+  "todaysSubscribers": "Todays Subscribers",
+  "todaysWithdrawal": "Todays Withdrawal",
+  "firstDeposit": "First Deposit",
+  "numberOfLoginFailures": "Number of Login Failures",
+  "numberOfDepositorsToday": "Number of Depositors Today",
+  "numberOfWithdrawalToday": "Number of Withdrawal Today",
+  "numberOfBettingMembersToday": "Number of Betting Members Today",
+  "numberOfBetsToday": "Number of Bets Today"
 }
