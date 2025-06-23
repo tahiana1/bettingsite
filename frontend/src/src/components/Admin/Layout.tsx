@@ -921,7 +921,7 @@ export default function AdminRootLayout({
                       <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:0/0</Tag>
                       <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:0/0</Tag>
                     </Space.Compact>
-                  </Flex> 
+                  </Flex>
                   <Flex
                     align="flex-end"
                     justify="space-between"

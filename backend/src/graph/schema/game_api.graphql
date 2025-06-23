@@ -1,0 +1,56 @@
+# Represents a third-party game API configuration in the system.
+type GameAPI {
+  id: ID!
+  apiCompanyName: String!
+  gameApiName: String!
+  gameCompanyName: String!
+  gameType: String!
+  other: String
+  whetherToUse: Boolean!
+  order: Int
+  type: String
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewGameApiInput {
+  apiCompanyName: String!
+  gameApiName: String!
+  gameCompanyName: String!
+  gameType: String!
+  other: String
+  whetherToUse: Boolean
+  order: Int
+  type: String
+}
+
+input UpdateGameApiInput {
+  apiCompanyName: String
+  gameApiName: String
+  gameCompanyName: String
+  gameType: String
+  other: String
+  whetherToUse: Boolean
+  order: Int
+  type: String
+}
+
+type GameAPIList {
+  gameApis: [GameAPI!]!
+  total: Int!
+}
+
+extend type Query {
+  getGameApis(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): GameAPIList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createGameApi(input: NewGameApiInput!): GameAPI! @hasRole(role: A)
+  updateGameApi(id: ID!, input: UpdateGameApiInput!): GameAPI! @hasRole(role: A)
+  deleteGameApi(id: ID!): Boolean! @hasRole(role: A)
+} 

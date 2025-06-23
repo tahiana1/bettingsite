@@ -46,6 +46,26 @@ type Filter struct {
 	And   []*Filter `json:"and,omitempty"`
 }
 
+type GameAPI struct {
+	ID              uint            `json:"id"`
+	APICompanyName  string          `json:"apiCompanyName"`
+	GameAPIName     string          `json:"gameApiName"`
+	GameCompanyName string          `json:"gameCompanyName"`
+	GameType        string          `json:"gameType"`
+	Other           *string         `json:"other,omitempty"`
+	WhetherToUse    bool            `json:"whetherToUse"`
+	Order           *int32          `json:"order,omitempty"`
+	Type            *string         `json:"type,omitempty"`
+	CreatedAt       time.Time       `json:"createdAt"`
+	UpdatedAt       time.Time       `json:"updatedAt"`
+	DeletedAt       *gorm.DeletedAt `json:"deletedAt,omitempty"`
+}
+
+type GameAPIList struct {
+	GameApis []*GameAPI `json:"gameApis"`
+	Total    int32      `json:"total"`
+}
+
 type InboxList struct {
 	Inboxes []*models.Inbox `json:"inboxes"`
 	Total   int32           `json:"total"`
@@ -127,6 +147,17 @@ type NewEventInput struct {
 	Description string     `json:"description"`
 	MainImage   *string    `json:"mainImage,omitempty"`
 	ImageUpload *string    `json:"imageUpload,omitempty"`
+}
+
+type NewGameAPIInput struct {
+	APICompanyName  string  `json:"apiCompanyName"`
+	GameAPIName     string  `json:"gameApiName"`
+	GameCompanyName string  `json:"gameCompanyName"`
+	GameType        string  `json:"gameType"`
+	Other           *string `json:"other,omitempty"`
+	WhetherToUse    *bool   `json:"whetherToUse,omitempty"`
+	Order           *int32  `json:"order,omitempty"`
+	Type            *string `json:"type,omitempty"`
 }
 
 type NewInboxInput struct {
@@ -405,6 +436,17 @@ type UpdateEventInput struct {
 	ShowFrom    *time.Time `json:"showFrom,omitempty"`
 	ShowTo      *time.Time `json:"showTo,omitempty"`
 	Level       *uint      `json:"level,omitempty"`
+}
+
+type UpdateGameAPIInput struct {
+	APICompanyName  *string `json:"apiCompanyName,omitempty"`
+	GameAPIName     *string `json:"gameApiName,omitempty"`
+	GameCompanyName *string `json:"gameCompanyName,omitempty"`
+	GameType        *string `json:"gameType,omitempty"`
+	Other           *string `json:"other,omitempty"`
+	WhetherToUse    *bool   `json:"whetherToUse,omitempty"`
+	Order           *int32  `json:"order,omitempty"`
+	Type            *string `json:"type,omitempty"`
 }
 
 type UpdateInboxInput struct {

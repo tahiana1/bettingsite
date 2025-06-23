@@ -42,6 +42,7 @@ func main() {
 		models.Notification{},
 		models.Menu{},
 		models.Bank{},
+		models.GameAPI{},
 	)
 
 	if err != nil {

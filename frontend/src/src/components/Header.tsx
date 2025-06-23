@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 import { Layout, Menu, Avatar, Button, theme, Dropdown } from "antd";
 import type { MenuProps } from "antd";
@@ -29,6 +29,7 @@ import Link from "next/link";
 const { Header } = Layout;
 
 const Head = () => {
+  const pathname = usePathname();
   const router = useRouter();
   const { token } = theme.useToken();
   const [profile, setProfile] = useAtom<any>(userState);
@@ -52,7 +53,16 @@ const Head = () => {
   });
   const onMenuClick = (e: MenuInfo) => {
     setSelectedkeys(e.keyPath);
-    router.replace(e.key);
+    console.log(e.key, 'e.key');
+    if (pathname === e.key) {
+      router.refresh();
+    } else {
+      if (pathname === "/billing/deposit" || pathname === "/billing/withdraw" || pathname === "/profile/point") {
+        router.push("../" + e.key);
+      } else {
+        router.push(e.key as string);
+      }
+    }
   };
 
   const onLogout = () => {

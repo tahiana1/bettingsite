@@ -946,5 +946,6 @@
   "numberOfDepositorsToday": "Number of Depositors Today",
   "numberOfWithdrawalToday": "Number of Withdrawal Today",
   "numberOfBettingMembersToday": "Number of Betting Members Today",
-  "numberOfBetsToday": "Number of Bets Today"
+  "numberOfBetsToday": "Number of Bets Today",
+  "other": "Other"
 }

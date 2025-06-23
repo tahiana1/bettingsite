@@ -179,6 +179,26 @@ type ComplexityRoot struct {
 		Total  func(childComplexity int) int
 	}
 
+	GameAPI struct {
+		APICompanyName  func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		DeletedAt       func(childComplexity int) int
+		GameAPIName     func(childComplexity int) int
+		GameCompanyName func(childComplexity int) int
+		GameType        func(childComplexity int) int
+		ID              func(childComplexity int) int
+		Order           func(childComplexity int) int
+		Other           func(childComplexity int) int
+		Type            func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		WhetherToUse    func(childComplexity int) int
+	}
+
+	GameAPIList struct {
+		GameApis func(childComplexity int) int
+		Total    func(childComplexity int) int
+	}
+
 	Inbox struct {
 		CreatedAt   func(childComplexity int) int
 		DeletedAt   func(childComplexity int) int
@@ -258,6 +278,7 @@ type ComplexityRoot struct {
 		CreateBank            func(childComplexity int, input model.NewBankInput) int
 		CreateDomain          func(childComplexity int, input model.NewDomainInput) int
 		CreateEvent           func(childComplexity int, input model.NewEventInput) int
+		CreateGameAPI         func(childComplexity int, input model.NewGameAPIInput) int
 		CreateInbox           func(childComplexity int, input model.NewInboxInput) int
 		CreateLog             func(childComplexity int, input model.NewLogInput) int
 		CreateMenu            func(childComplexity int, input model.NewMenuInput) int
@@ -272,6 +293,7 @@ type ComplexityRoot struct {
 		DeleteBank            func(childComplexity int, id uint) int
 		DeleteDomain          func(childComplexity int, id uint) int
 		DeleteEvent           func(childComplexity int, id uint) int
+		DeleteGameAPI         func(childComplexity int, id uint) int
 		DeleteInbox           func(childComplexity int, id uint) int
 		DeleteLog             func(childComplexity int, id uint) int
 		DeleteMenu            func(childComplexity int, id uint) int
@@ -288,6 +310,7 @@ type ComplexityRoot struct {
 		UpdateBank            func(childComplexity int, id uint, input model.UpdateBankInput) int
 		UpdateDomain          func(childComplexity int, id uint, input model.UpdateDomainInput) int
 		UpdateEvent           func(childComplexity int, id uint, input model.UpdateEventInput) int
+		UpdateGameAPI         func(childComplexity int, id uint, input model.UpdateGameAPIInput) int
 		UpdateInbox           func(childComplexity int, id uint, input model.UpdateInboxInput) int
 		UpdateMenu            func(childComplexity int, id uint, input model.UpdateMenuInput) int
 		UpdateNotification    func(childComplexity int, id uint, input model.UpdateNotificationInput) int
@@ -392,6 +415,7 @@ type ComplexityRoot struct {
 		GetDistributors  func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetDomains       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetEvents        func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetGameApis      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetInboxes       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetLogs          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
 		GetMenus         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
@@ -550,6 +574,9 @@ type MutationResolver interface {
 	CreateEvent(ctx context.Context, input model.NewEventInput) (*models.Event, error)
 	UpdateEvent(ctx context.Context, id uint, input model.UpdateEventInput) (*models.Event, error)
 	DeleteEvent(ctx context.Context, id uint) (bool, error)
+	CreateGameAPI(ctx context.Context, input model.NewGameAPIInput) (*model.GameAPI, error)
+	UpdateGameAPI(ctx context.Context, id uint, input model.UpdateGameAPIInput) (*model.GameAPI, error)
+	DeleteGameAPI(ctx context.Context, id uint) (bool, error)
 	CreateInbox(ctx context.Context, input model.NewInboxInput) (*models.Inbox, error)
 	UpdateInbox(ctx context.Context, id uint, input model.UpdateInboxInput) (*models.Inbox, error)
 	DeleteInbox(ctx context.Context, id uint) (bool, error)
@@ -603,6 +630,7 @@ type QueryResolver interface {
 	TopEvents(ctx context.Context) ([]*models.Event, error)
 	Events(ctx context.Context) ([]*models.Event, error)
 	GetEvents(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.EventList, error)
+	GetGameApis(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.GameAPIList, error)
 	GetInboxes(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.InboxList, error)
 	Logs(ctx context.Context) ([]*models.Log, error)
 	GetLogs(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.LogList, error)
@@ -1288,6 +1316,104 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.EventList.Total(childComplexity), true
 
+	case "GameAPI.apiCompanyName":
+		if e.complexity.GameAPI.APICompanyName == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.APICompanyName(childComplexity), true
+
+	case "GameAPI.createdAt":
+		if e.complexity.GameAPI.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.CreatedAt(childComplexity), true
+
+	case "GameAPI.deletedAt":
+		if e.complexity.GameAPI.DeletedAt == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.DeletedAt(childComplexity), true
+
+	case "GameAPI.gameApiName":
+		if e.complexity.GameAPI.GameAPIName == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.GameAPIName(childComplexity), true
+
+	case "GameAPI.gameCompanyName":
+		if e.complexity.GameAPI.GameCompanyName == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.GameCompanyName(childComplexity), true
+
+	case "GameAPI.gameType":
+		if e.complexity.GameAPI.GameType == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.GameType(childComplexity), true
+
+	case "GameAPI.id":
+		if e.complexity.GameAPI.ID == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.ID(childComplexity), true
+
+	case "GameAPI.order":
+		if e.complexity.GameAPI.Order == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.Order(childComplexity), true
+
+	case "GameAPI.other":
+		if e.complexity.GameAPI.Other == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.Other(childComplexity), true
+
+	case "GameAPI.type":
+		if e.complexity.GameAPI.Type == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.Type(childComplexity), true
+
+	case "GameAPI.updatedAt":
+		if e.complexity.GameAPI.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.UpdatedAt(childComplexity), true
+
+	case "GameAPI.whetherToUse":
+		if e.complexity.GameAPI.WhetherToUse == nil {
+			break
+		}
+
+		return e.complexity.GameAPI.WhetherToUse(childComplexity), true
+
+	case "GameAPIList.gameApis":
+		if e.complexity.GameAPIList.GameApis == nil {
+			break
+		}
+
+		return e.complexity.GameAPIList.GameApis(childComplexity), true
+
+	case "GameAPIList.total":
+		if e.complexity.GameAPIList.Total == nil {
+			break
+		}
+
+		return e.complexity.GameAPIList.Total(childComplexity), true
+
 	case "Inbox.createdAt":
 		if e.complexity.Inbox.CreatedAt == nil {
 			break
@@ -1763,6 +1889,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Mutation.CreateEvent(childComplexity, args["input"].(model.NewEventInput)), true
 
+	case "Mutation.createGameApi":
+		if e.complexity.Mutation.CreateGameAPI == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createGameApi_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateGameAPI(childComplexity, args["input"].(model.NewGameAPIInput)), true
+
 	case "Mutation.createInbox":
 		if e.complexity.Mutation.CreateInbox == nil {
 			break
@@ -1930,6 +2068,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.DeleteEvent(childComplexity, args["id"].(uint)), true
+
+	case "Mutation.deleteGameApi":
+		if e.complexity.Mutation.DeleteGameAPI == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deleteGameApi_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeleteGameAPI(childComplexity, args["id"].(uint)), true
 
 	case "Mutation.deleteInbox":
 		if e.complexity.Mutation.DeleteInbox == nil {
@@ -2117,6 +2267,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateEvent(childComplexity, args["id"].(uint), args["input"].(model.UpdateEventInput)), true
+
+	case "Mutation.updateGameApi":
+		if e.complexity.Mutation.UpdateGameAPI == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGameApi_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGameAPI(childComplexity, args["id"].(uint), args["input"].(model.UpdateGameAPIInput)), true
 
 	case "Mutation.updateInbox":
 		if e.complexity.Mutation.UpdateInbox == nil {
@@ -2814,6 +2976,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.GetEvents(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
+	case "Query.getGameApis":
+		if e.complexity.Query.GetGameApis == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getGameApis_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetGameApis(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
 
 	case "Query.getInboxes":
 		if e.complexity.Query.GetInboxes == nil {
@@ -3597,6 +3771,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputNewBankInput,
 		ec.unmarshalInputNewDomainInput,
 		ec.unmarshalInputNewEventInput,
+		ec.unmarshalInputNewGameApiInput,
 		ec.unmarshalInputNewInboxInput,
 		ec.unmarshalInputNewLogInput,
 		ec.unmarshalInputNewMenuInput,
@@ -3615,6 +3790,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateBankInput,
 		ec.unmarshalInputUpdateDomainInput,
 		ec.unmarshalInputUpdateEventInput,
+		ec.unmarshalInputUpdateGameApiInput,
 		ec.unmarshalInputUpdateInboxInput,
 		ec.unmarshalInputUpdateMenuInput,
 		ec.unmarshalInputUpdateNotificationInput,
@@ -4074,6 +4250,62 @@ extend type Mutation {
   deleteEvent(id: ID!): Boolean! @hasRole(role: A)
 }
 `, BuiltIn: false},
+	{Name: "../schema/game_api.graphql", Input: `# Represents a third-party game API configuration in the system.
+type GameAPI {
+  id: ID!
+  apiCompanyName: String!
+  gameApiName: String!
+  gameCompanyName: String!
+  gameType: String!
+  other: String
+  whetherToUse: Boolean!
+  order: Int
+  type: String
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input NewGameApiInput {
+  apiCompanyName: String!
+  gameApiName: String!
+  gameCompanyName: String!
+  gameType: String!
+  other: String
+  whetherToUse: Boolean
+  order: Int
+  type: String
+}
+
+input UpdateGameApiInput {
+  apiCompanyName: String
+  gameApiName: String
+  gameCompanyName: String
+  gameType: String
+  other: String
+  whetherToUse: Boolean
+  order: Int
+  type: String
+}
+
+type GameAPIList {
+  gameApis: [GameAPI!]!
+  total: Int!
+}
+
+extend type Query {
+  getGameApis(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): GameAPIList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createGameApi(input: NewGameApiInput!): GameAPI! @hasRole(role: A)
+  updateGameApi(id: ID!, input: UpdateGameApiInput!): GameAPI! @hasRole(role: A)
+  deleteGameApi(id: ID!): Boolean! @hasRole(role: A)
+} `, BuiltIn: false},
 	{Name: "../schema/inbox.graphql", Input: `type Inbox {
   id: ID!
   type: String!
@@ -5200,6 +5432,29 @@ func (ec *executionContext) field_Mutation_createEvent_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createGameApi_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createGameApi_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createGameApi_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.NewGameAPIInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNNewGameApiInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewGameAPIInput(ctx, tmp)
+	}
+
+	var zeroVal model.NewGameAPIInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createInbox_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -5510,6 +5765,29 @@ func (ec *executionContext) field_Mutation_deleteEvent_args(ctx context.Context,
 	return args, nil
 }
 func (ec *executionContext) field_Mutation_deleteEvent_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_deleteGameApi_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_deleteGameApi_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_deleteGameApi_argsID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (uint, error) {
@@ -5972,6 +6250,47 @@ func (ec *executionContext) field_Mutation_updateEvent_argsInput(
 	}
 
 	var zeroVal model.UpdateEventInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGameApi_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateGameApi_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	arg1, err := ec.field_Mutation_updateGameApi_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateGameApi_argsID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (uint, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2uint(ctx, tmp)
+	}
+
+	var zeroVal uint
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGameApi_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (model.UpdateGameAPIInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateGameApiInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateGameAPIInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateGameAPIInput
 	return zeroVal, nil
 }
 
@@ -6873,6 +7192,65 @@ func (ec *executionContext) field_Query_getEvents_argsOrders(
 }
 
 func (ec *executionContext) field_Query_getEvents_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getGameApis_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getGameApis_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_getGameApis_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_getGameApis_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_getGameApis_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getGameApis_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getGameApis_argsPagination(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*model.Pagination, error) {
@@ -11717,6 +12095,636 @@ func (ec *executionContext) fieldContext_EventList_total(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _GameAPI_id(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalNID2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_apiCompanyName(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_apiCompanyName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APICompanyName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_apiCompanyName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_gameApiName(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_gameApiName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameAPIName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_gameApiName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_gameCompanyName(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_gameCompanyName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameCompanyName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_gameCompanyName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_gameType(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_gameType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_gameType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_other(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_other(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Other, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_other(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_whetherToUse(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_whetherToUse(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WhetherToUse, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_whetherToUse(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_order(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_order(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Order, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int32)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_order(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_type(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPI_deletedAt(ctx context.Context, field graphql.CollectedField, obj *model.GameAPI) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPI_deletedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeletedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gorm.DeletedAt)
+	fc.Result = res
+	return ec.marshalODeletedAt2ᚖgormᚗioᚋgormᚐDeletedAt(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPI_deletedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPI",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DeletedAt does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPIList_gameApis(ctx context.Context, field graphql.CollectedField, obj *model.GameAPIList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPIList_gameApis(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameApis, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GameAPI)
+	fc.Result = res
+	return ec.marshalNGameAPI2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPIᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPIList_gameApis(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPIList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GameAPI_id(ctx, field)
+			case "apiCompanyName":
+				return ec.fieldContext_GameAPI_apiCompanyName(ctx, field)
+			case "gameApiName":
+				return ec.fieldContext_GameAPI_gameApiName(ctx, field)
+			case "gameCompanyName":
+				return ec.fieldContext_GameAPI_gameCompanyName(ctx, field)
+			case "gameType":
+				return ec.fieldContext_GameAPI_gameType(ctx, field)
+			case "other":
+				return ec.fieldContext_GameAPI_other(ctx, field)
+			case "whetherToUse":
+				return ec.fieldContext_GameAPI_whetherToUse(ctx, field)
+			case "order":
+				return ec.fieldContext_GameAPI_order(ctx, field)
+			case "type":
+				return ec.fieldContext_GameAPI_type(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GameAPI_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GameAPI_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GameAPI_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GameAPI", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GameAPIList_total(ctx context.Context, field graphql.CollectedField, obj *model.GameAPIList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GameAPIList_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GameAPIList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GameAPIList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Inbox_id(ctx context.Context, field graphql.CollectedField, obj *models.Inbox) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Inbox_id(ctx, field)
 	if err != nil {
@@ -15674,6 +16682,304 @@ func (ec *executionContext) fieldContext_Mutation_deleteEvent(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_deleteEvent_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createGameApi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createGameApi(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateGameAPI(rctx, fc.Args["input"].(model.NewGameAPIInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.GameAPI
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.GameAPI
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GameAPI); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.GameAPI`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameAPI)
+	fc.Result = res
+	return ec.marshalNGameAPI2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPI(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createGameApi(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GameAPI_id(ctx, field)
+			case "apiCompanyName":
+				return ec.fieldContext_GameAPI_apiCompanyName(ctx, field)
+			case "gameApiName":
+				return ec.fieldContext_GameAPI_gameApiName(ctx, field)
+			case "gameCompanyName":
+				return ec.fieldContext_GameAPI_gameCompanyName(ctx, field)
+			case "gameType":
+				return ec.fieldContext_GameAPI_gameType(ctx, field)
+			case "other":
+				return ec.fieldContext_GameAPI_other(ctx, field)
+			case "whetherToUse":
+				return ec.fieldContext_GameAPI_whetherToUse(ctx, field)
+			case "order":
+				return ec.fieldContext_GameAPI_order(ctx, field)
+			case "type":
+				return ec.fieldContext_GameAPI_type(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GameAPI_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GameAPI_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GameAPI_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GameAPI", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createGameApi_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGameApi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateGameApi(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateGameAPI(rctx, fc.Args["id"].(uint), fc.Args["input"].(model.UpdateGameAPIInput))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.GameAPI
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.GameAPI
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GameAPI); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.GameAPI`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameAPI)
+	fc.Result = res
+	return ec.marshalNGameAPI2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPI(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGameApi(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_GameAPI_id(ctx, field)
+			case "apiCompanyName":
+				return ec.fieldContext_GameAPI_apiCompanyName(ctx, field)
+			case "gameApiName":
+				return ec.fieldContext_GameAPI_gameApiName(ctx, field)
+			case "gameCompanyName":
+				return ec.fieldContext_GameAPI_gameCompanyName(ctx, field)
+			case "gameType":
+				return ec.fieldContext_GameAPI_gameType(ctx, field)
+			case "other":
+				return ec.fieldContext_GameAPI_other(ctx, field)
+			case "whetherToUse":
+				return ec.fieldContext_GameAPI_whetherToUse(ctx, field)
+			case "order":
+				return ec.fieldContext_GameAPI_order(ctx, field)
+			case "type":
+				return ec.fieldContext_GameAPI_type(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GameAPI_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GameAPI_updatedAt(ctx, field)
+			case "deletedAt":
+				return ec.fieldContext_GameAPI_deletedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GameAPI", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGameApi_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deleteGameApi(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteGameApi(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeleteGameAPI(rctx, fc.Args["id"].(uint))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal bool
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal bool
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deleteGameApi(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deleteGameApi_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -22914,6 +24220,94 @@ func (ec *executionContext) fieldContext_Query_getEvents(ctx context.Context, fi
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getEvents_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getGameApis(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getGameApis(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetGameApis(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.GameAPIList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.GameAPIList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.GameAPIList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.GameAPIList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GameAPIList)
+	fc.Result = res
+	return ec.marshalNGameAPIList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPIList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getGameApis(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "gameApis":
+				return ec.fieldContext_GameAPIList_gameApis(ctx, field)
+			case "total":
+				return ec.fieldContext_GameAPIList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GameAPIList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getGameApis_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -31377,6 +32771,82 @@ func (ec *executionContext) unmarshalInputNewEventInput(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputNewGameApiInput(ctx context.Context, obj any) (model.NewGameAPIInput, error) {
+	var it model.NewGameAPIInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"apiCompanyName", "gameApiName", "gameCompanyName", "gameType", "other", "whetherToUse", "order", "type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "apiCompanyName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiCompanyName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.APICompanyName = data
+		case "gameApiName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameApiName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameAPIName = data
+		case "gameCompanyName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameCompanyName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameCompanyName = data
+		case "gameType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameType"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameType = data
+		case "other":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("other"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Other = data
+		case "whetherToUse":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("whetherToUse"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WhetherToUse = data
+		case "order":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Order = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewInboxInput(ctx context.Context, obj any) (model.NewInboxInput, error) {
 	var it model.NewInboxInput
 	asMap := map[string]any{}
@@ -32897,6 +34367,82 @@ func (ec *executionContext) unmarshalInputUpdateEventInput(ctx context.Context, 
 				return it, err
 			}
 			it.Level = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateGameApiInput(ctx context.Context, obj any) (model.UpdateGameAPIInput, error) {
+	var it model.UpdateGameAPIInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"apiCompanyName", "gameApiName", "gameCompanyName", "gameType", "other", "whetherToUse", "order", "type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "apiCompanyName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiCompanyName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.APICompanyName = data
+		case "gameApiName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameApiName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameAPIName = data
+		case "gameCompanyName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameCompanyName"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameCompanyName = data
+		case "gameType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("gameType"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GameType = data
+		case "other":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("other"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Other = data
+		case "whetherToUse":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("whetherToUse"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WhetherToUse = data
+		case "order":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("order"))
+			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Order = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		}
 	}
 
@@ -34460,6 +36006,132 @@ func (ec *executionContext) _EventList(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
+var gameAPIImplementors = []string{"GameAPI"}
+
+func (ec *executionContext) _GameAPI(ctx context.Context, sel ast.SelectionSet, obj *model.GameAPI) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameAPIImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameAPI")
+		case "id":
+			out.Values[i] = ec._GameAPI_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "apiCompanyName":
+			out.Values[i] = ec._GameAPI_apiCompanyName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "gameApiName":
+			out.Values[i] = ec._GameAPI_gameApiName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "gameCompanyName":
+			out.Values[i] = ec._GameAPI_gameCompanyName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "gameType":
+			out.Values[i] = ec._GameAPI_gameType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "other":
+			out.Values[i] = ec._GameAPI_other(ctx, field, obj)
+		case "whetherToUse":
+			out.Values[i] = ec._GameAPI_whetherToUse(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "order":
+			out.Values[i] = ec._GameAPI_order(ctx, field, obj)
+		case "type":
+			out.Values[i] = ec._GameAPI_type(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._GameAPI_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GameAPI_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deletedAt":
+			out.Values[i] = ec._GameAPI_deletedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var gameAPIListImplementors = []string{"GameAPIList"}
+
+func (ec *executionContext) _GameAPIList(ctx context.Context, sel ast.SelectionSet, obj *model.GameAPIList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameAPIListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GameAPIList")
+		case "gameApis":
+			out.Values[i] = ec._GameAPIList_gameApis(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._GameAPIList_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var inboxImplementors = []string{"Inbox"}
 
 func (ec *executionContext) _Inbox(ctx context.Context, sel ast.SelectionSet, obj *models.Inbox) graphql.Marshaler {
@@ -35013,6 +36685,27 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "deleteEvent":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_deleteEvent(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createGameApi":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createGameApi(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateGameApi":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGameApi(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deleteGameApi":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deleteGameApi(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -35963,6 +37656,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getEvents(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getGameApis":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getGameApis(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -37759,6 +39474,78 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNGameAPI2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPI(ctx context.Context, sel ast.SelectionSet, v model.GameAPI) graphql.Marshaler {
+	return ec._GameAPI(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGameAPI2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPIᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GameAPI) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGameAPI2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPI(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNGameAPI2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPI(ctx context.Context, sel ast.SelectionSet, v *model.GameAPI) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GameAPI(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGameAPIList2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPIList(ctx context.Context, sel ast.SelectionSet, v model.GameAPIList) graphql.Marshaler {
+	return ec._GameAPIList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGameAPIList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐGameAPIList(ctx context.Context, sel ast.SelectionSet, v *model.GameAPIList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._GameAPIList(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2uint(ctx context.Context, v any) (uint, error) {
 	res, err := graphql.UnmarshalUint(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -38065,6 +39852,11 @@ func (ec *executionContext) unmarshalNNewDomainInput2githubᚗcomᚋhotbrainyᚋ
 
 func (ec *executionContext) unmarshalNNewEventInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewEventInput(ctx context.Context, v any) (model.NewEventInput, error) {
 	res, err := ec.unmarshalInputNewEventInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNNewGameApiInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐNewGameAPIInput(ctx context.Context, v any) (model.NewGameAPIInput, error) {
+	res, err := ec.unmarshalInputNewGameApiInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -38590,6 +40382,11 @@ func (ec *executionContext) unmarshalNUpdateDomainInput2githubᚗcomᚋhotbrainy
 
 func (ec *executionContext) unmarshalNUpdateEventInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateEventInput(ctx context.Context, v any) (model.UpdateEventInput, error) {
 	res, err := ec.unmarshalInputUpdateEventInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateGameApiInput2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUpdateGameAPIInput(ctx context.Context, v any) (model.UpdateGameAPIInput, error) {
+	res, err := ec.unmarshalInputUpdateGameApiInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

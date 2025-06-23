@@ -948,5 +948,6 @@
   "numberOfDepositorsToday": "今日存款人数",
   "numberOfWithdrawalToday": "今日提款人数",
   "numberOfBettingMembersToday": "今日投注人数",
-  "numberOfBetsToday": "今日投注次数"
+  "numberOfBetsToday": "今日投注次数",
+  "other": "其他"
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card, Form, Input, notification } from "antd";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -15,15 +15,11 @@ const UserSchema = z.object({
 });
 type User = z.infer<typeof UserSchema>;
 const Login: React.FC = () => {
-
   const t = useTranslations();
   const router = useRouter();
   const [, setUser] = useAtom<any>(userState);
-
   const { register } = useForm<User>();
-
   const [notiApi, contextHolder] = notification.useNotification();
-
   const onSubmit: SubmitHandler<User> = (data) => {
     api("auth/login", { method: "POST", data })
       .then((result) => {
@@ -49,6 +45,13 @@ const Login: React.FC = () => {
       });
 
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.replace("/");
+    }
+  }, []);
 
   const onFinishFailed = () => {};
   return (
