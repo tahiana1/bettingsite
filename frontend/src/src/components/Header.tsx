@@ -141,12 +141,12 @@ const Head = () => {
           alignItems: "center",
         }}
       >
-        <Link href="/" className="min-w-[123px]">
-          <Image src={Logo} width={123} height={45} alt="Toto Admin"  className=" cursor-pointer"/>
+        <Link href="/" className="min-w-[108px]">
+          <Image src={Logo} width={108} height={45} alt="Toto Admin"  className=" cursor-pointer"/>
         </Link>
         
         <Menu
-          className="!hidden md:!flex !w-[calc(100vw-230px)]"
+          className="!hidden md:!flex !w-[calc(100vw-300px)]"
           theme={isDarkTheme ? "dark" : "light"}
           mode="horizontal"
           defaultSelectedKeys={["event"]}

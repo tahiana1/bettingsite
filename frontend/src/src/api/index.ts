@@ -12,6 +12,8 @@ export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_
 export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1/ws`;
 export const apolloWSURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
 
+console.log(wsURL, 'wsURL');
+
 export default function api(url: string, config?: AxiosRequestConfig) {
   const requestURL = url.startsWith("http") ? url : `${baseURL}${url}`;
   return axios(requestURL, {
