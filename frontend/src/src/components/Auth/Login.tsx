@@ -46,12 +46,12 @@ const Login: React.FC = () => {
 
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.replace("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (token) {
+  //     router.replace("/");
+  //   }
+  // }, []);
 
   const onFinishFailed = () => {};
   return (
