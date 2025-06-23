@@ -51,6 +51,9 @@ export default async function RootLayout({
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{
+          overflow: "hidden",
+        }}
       >
         <AntdRegistry>
           <JotaiContextProvider>

@@ -15,6 +15,8 @@ import DeviceTracker from "@/components/Common/DeviceTracker";
 import ContactCard from "@/components/Common/Contact";
 import { showBettingCartState, userState } from "@/state/state";
 import api from "@/api";
+import CasinoSidebar from "@/components/Casino/CasinoSidebar";
+import { useRouter , usePathname} from "next/navigation";
 /* 
 export const metadata: Metadata = {
   title: "Betting",
@@ -26,6 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   const [showBettingCart] = useAtom(showBettingCartState);
   const [profile, setProfile] = useAtom<any>(userState);
   useEffect(() => {
@@ -48,7 +51,9 @@ export default function RootLayout({
           className="!pr-2 h-[calc(100vh-40px)] hidden md:block"
           collapsible
         >
-          <EventSidebar />
+          {
+            pathname === "/casino"  ?  (<CasinoSidebar />) : (<EventSidebar />)
+          }
         </Splitter.Panel>
         <Splitter.Panel
           defaultSize="80%"
