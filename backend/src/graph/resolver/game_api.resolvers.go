@@ -6,27 +6,150 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
+	"github.com/hotbrainy/go-betting/backend/internal/models"
 )
 
 // CreateGameAPI is the resolver for the createGameApi field.
 func (r *mutationResolver) CreateGameAPI(ctx context.Context, input model.NewGameAPIInput) (*model.GameAPI, error) {
-	panic(fmt.Errorf("not implemented: CreateGameAPI - createGameApi"))
+	gameAPI := models.GameAPI{
+		ApiCompanyName:  input.APICompanyName,
+		GameApiName:     input.GameAPIName,
+		GameCompanyName: input.GameCompanyName,
+		GameType:        input.GameType,
+		Other:           "",
+		Type:            "",
+		WhetherToUse:    false,
+		OrderNum:        1,
+	}
+	if input.Other != nil {
+		gameAPI.Other = *input.Other
+	}
+	if input.Type != nil {
+		gameAPI.Type = *input.Type
+	}
+	if input.WhetherToUse != nil {
+		gameAPI.WhetherToUse = *input.WhetherToUse
+	}
+	if input.Order != nil {
+		gameAPI.OrderNum = uint(*input.Order)
+	}
+	if err := initializers.DB.Create(&gameAPI).Error; err != nil {
+		return nil, err
+	}
+	return &model.GameAPI{
+		ID:              gameAPI.ID,
+		APICompanyName:  gameAPI.ApiCompanyName,
+		GameAPIName:     gameAPI.GameApiName,
+		GameCompanyName: gameAPI.GameCompanyName,
+		GameType:        gameAPI.GameType,
+		Other:           &gameAPI.Other,
+		WhetherToUse:    gameAPI.WhetherToUse,
+		Order:           func() *int32 { o := int32(gameAPI.OrderNum); return &o }(),
+		Type:            &gameAPI.Type,
+		CreatedAt:       gameAPI.CreatedAt,
+		UpdatedAt:       gameAPI.UpdatedAt,
+		DeletedAt:       gameAPI.DeletedAt,
+	}, nil
 }
 
 // UpdateGameAPI is the resolver for the updateGameApi field.
 func (r *mutationResolver) UpdateGameAPI(ctx context.Context, id uint, input model.UpdateGameAPIInput) (*model.GameAPI, error) {
-	panic(fmt.Errorf("not implemented: UpdateGameAPI - updateGameApi"))
+	var gameAPI models.GameAPI
+	if err := initializers.DB.First(&gameAPI, id).Error; err != nil {
+		return nil, err
+	}
+	if input.APICompanyName != nil {
+		gameAPI.ApiCompanyName = *input.APICompanyName
+	}
+	if input.GameAPIName != nil {
+		gameAPI.GameApiName = *input.GameAPIName
+	}
+	if input.GameCompanyName != nil {
+		gameAPI.GameCompanyName = *input.GameCompanyName
+	}
+	if input.GameType != nil {
+		gameAPI.GameType = *input.GameType
+	}
+	if input.Other != nil {
+		gameAPI.Other = *input.Other
+	}
+	if input.Type != nil {
+		gameAPI.Type = *input.Type
+	}
+	if input.WhetherToUse != nil {
+		gameAPI.WhetherToUse = *input.WhetherToUse
+	}
+	if input.Order != nil {
+		gameAPI.OrderNum = uint(*input.Order)
+	}
+	if err := initializers.DB.Save(&gameAPI).Error; err != nil {
+		return nil, err
+	}
+	return &model.GameAPI{
+		ID:              gameAPI.ID,
+		APICompanyName:  gameAPI.ApiCompanyName,
+		GameAPIName:     gameAPI.GameApiName,
+		GameCompanyName: gameAPI.GameCompanyName,
+		GameType:        gameAPI.GameType,
+		Other:           &gameAPI.Other,
+		WhetherToUse:    gameAPI.WhetherToUse,
+		Order:           func() *int32 { o := int32(gameAPI.OrderNum); return &o }(),
+		Type:            &gameAPI.Type,
+		CreatedAt:       gameAPI.CreatedAt,
+		UpdatedAt:       gameAPI.UpdatedAt,
+		DeletedAt:       gameAPI.DeletedAt,
+	}, nil
 }
 
 // DeleteGameAPI is the resolver for the deleteGameApi field.
 func (r *mutationResolver) DeleteGameAPI(ctx context.Context, id uint) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteGameAPI - deleteGameApi"))
+	if err := initializers.DB.Delete(&models.GameAPI{}, id).Error; err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // GetGameApis is the resolver for the getGameApis field.
 func (r *queryResolver) GetGameApis(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.GameAPIList, error) {
-	panic(fmt.Errorf("not implemented: GetGameApis - getGameApis"))
+	var gameAPIs []models.GameAPI
+	db := initializers.DB.Model(&models.GameAPI{})
+	// TODO: Apply filters and orders if needed
+	var total int64
+	db.Count(&total)
+	if pagination != nil {
+		if pagination.Limit != nil {
+			db = db.Limit(int(*pagination.Limit))
+		}
+		if pagination.Offset != nil {
+			db = db.Offset(int(*pagination.Offset))
+		}
+	}
+	if err := db.Find(&gameAPIs).Error; err != nil {
+		return nil, err
+	}
+	result := make([]*model.GameAPI, 0, len(gameAPIs))
+	for _, g := range gameAPIs {
+		gapi := &model.GameAPI{
+			ID:              g.ID,
+			APICompanyName:  g.ApiCompanyName,
+			GameAPIName:     g.GameApiName,
+			GameCompanyName: g.GameCompanyName,
+			GameType:        g.GameType,
+			Other:           &g.Other,
+			WhetherToUse:    g.WhetherToUse,
+			Order:           func() *int32 { o := int32(g.OrderNum); return &o }(),
+			Type:            &g.Type,
+			CreatedAt:       g.CreatedAt,
+			UpdatedAt:       g.UpdatedAt,
+			DeletedAt:       g.DeletedAt,
+		}
+		result = append(result, gapi)
+	}
+	return &model.GameAPIList{
+		GameApis: result,
+		Total:    int32(total),
+	}, nil
 }

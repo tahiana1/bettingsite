@@ -100,4 +100,12 @@ func GetV1Route(r *gin.RouterGroup) {
 		qnaRouter.POST("/create", controllers.CreateQna)
 		qnaRouter.POST("/delete", controllers.DeleteQna)
 	}
+
+	gameApiRouter := r.Group("/game-api")
+	{
+		gameApiRouter.POST("/get-game-api", controllers.GetGameAPI)
+		gameApiRouter.POST("/create", controllers.CreateGameAPI)
+		gameApiRouter.POST("/update", controllers.UpdateGameAPIByID)
+		gameApiRouter.POST("/delete", controllers.DeleteGameAPIByID)
+	}
 }

@@ -950,5 +950,10 @@
   "other": "Other",
   "totalLiveCasinoGameProviders": "A total of",
   "liveCasinoGameProviders": "live casino game providers are available.",
-  "casinoProviders": "Casino Providers"
+  "casinoProviders": "Casino Providers",
+  "khanAPI": "Khan API",
+  "redfoxAPI": "Redfox API",
+  "slotcityAPI": "Slotcity API",
+  "swixAPI": "Swix API",
+  "wildgamesAPI": "Wildgames API"
 }
