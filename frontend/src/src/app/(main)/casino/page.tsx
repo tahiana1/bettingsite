@@ -95,7 +95,7 @@ const Casino: React.FC = () => {
                             <span className="text-[25px] text-[yellow] font-bold">{provider.name}</span>
                         </div>
                         <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />
-                        <Image src={provider.img} alt={provider.name} className="opacity-10 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
+                        <Image src={provider.img} alt={provider.name} className="opacity-100 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
                     </div>
                 ))}
             </div>
