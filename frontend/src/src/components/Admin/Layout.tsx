@@ -861,7 +861,7 @@ export default function AdminRootLayout({
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("rollingTransition")}:0
                         </Tag>
-                        {/* <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag> */}
+                        <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag>
                       </Space.Compact>
                       <Space.Compact className="justify-center">
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
