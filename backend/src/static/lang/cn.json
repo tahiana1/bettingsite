@@ -949,5 +949,8 @@
   "numberOfWithdrawalToday": "今日提款人数",
   "numberOfBettingMembersToday": "今日投注人数",
   "numberOfBetsToday": "今日投注次数",
-  "other": "其他"
+  "other": "其他",
+  "totalLiveCasinoGameProviders": "共有",
+  "liveCasinoGameProviders": "个直播赌场游戏提供商",
+  "casinoProviders": "赌场提供商"
 }
