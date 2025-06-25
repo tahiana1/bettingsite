@@ -49,6 +49,16 @@ type UserInfoFieldStyle3Props = {
   buttonLabel: string;
 };
 
+type GameUsageInfoFieldProps = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+}
+
 const levelOption = [
     {label: "1", value: "1"},
     {label: "2", value: "2"},
@@ -110,6 +120,18 @@ const rollingPercentyType = [
     {label: 'Sports 4 pole', value: '10%'},
     {label: 'Sports 5 pole', value: '10%'},
     {label: 'Sports Dapol', value: '10%'},
+]
+
+const gameUsageType = [
+  {label: 'live', value: '12%'},
+  {label: 'slot', value: '10%'},
+  {label: "mini", value: '10%'},
+  {label: "Hold'em", value: '10%'},
+  {label: 'sports', value: '10%'},
+  {label: 'Virtualga', value: '10%'},
+  {label: 'Lotus', value: '10%'},
+  {label: 'MGM', value: '10%'},
+  {label: 'touch', value: '10%'},
 ]
 
 const UserInfoField: React.FC<UserInfoFieldProps> = ({
@@ -262,6 +284,46 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
         <div className="flex flex-row justify-between wrap max-w-[250px]" style={{flexWrap: 'wrap'}}>
         {
             rollingPercentyType.map((item, index) => (
+               <div className="flex flex-col mb-2 justify-start items-center w-[80px]" key={index}>
+                <div className="text-[10px] w-[80px]">{item.label}</div>
+                <div className="flex flex-row gap-2 w-full">
+                    <Input type="number" readOnly value={item.value} onChange={onChange} />
+                </div>
+               </div>
+            ))  
+        }
+        </div>
+       
+    </div>
+  );
+
+  const GameUsageInfoField: React.FC<GameUsageInfoFieldProps> = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    buttonLabel,
+    onButtonClick,
+    loading,
+  }) => (
+    <div className="flex flex-row gap-2 justify-start items-center">
+        <div className="flex flex-col gap-2 justify-start items-center">
+            <div className="text-xm w-[150px]">{label}</div>
+        </div>
+        
+        <div className="flex flex-row justify-between wrap max-w-[250px]" style={{flexWrap: 'wrap'}}>
+        {
+            gameUsageType.map((item, index) => (
+               <div className="flex flex-col mb-2 justify-start items-center w-[80px]" key={index}>
+                <div className="text-[10px] w-[80px]">{item.label}</div>
+                <div className="flex flex-row gap-2 w-full">
+                    <Input type="number" readOnly value={item.value} onChange={onChange} />
+                </div>
+               </div>
+            ))  
+        }
+        {
+            gameUsageType.map((item, index) => (
                <div className="flex flex-col mb-2 justify-start items-center w-[80px]" key={index}>
                 <div className="text-[10px] w-[80px]">{item.label}</div>
                 <div className="flex flex-row gap-2 w-full">
@@ -866,6 +928,15 @@ const UserBasicInformation: React.FC = () => {
               onChange={handleChange("sameIPCheck")}
               onButtonClick={handleButtonClick("sameIPCheck")}
               loading={loading.sameIPCheck}
+            />
+            <DisabledRollingPercentyInfoField
+              label="Rolling%"   
+              placeholder=""  
+              value={fields.rollingPercenty}
+              onChange={handleChange("rollingPercenty")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("rollingPercenty")}
+              loading={loading.rollingPercenty}
             />
             <DisabledRollingPercentyInfoField
               label="Rolling%"   
