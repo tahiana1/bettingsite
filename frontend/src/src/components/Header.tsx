@@ -57,11 +57,14 @@ const Head = () => {
     if (pathname === e.key) {
       router.refresh();
     } else {
-      if (pathname === "/billing/deposit" || pathname === "/billing/withdraw" || pathname === "/profile/point") {
-        router.push("../" + e.key);
-      } else {
-        router.push(e.key as string);
+      if (e.key == "/billing/deposit" || e.key == "/billing/withdraw" || e.key == "/profile/point" || e.key == "home" || e.key == "casino" || e.key == "notice" || e.key == "qna" || e.key == "profile" || e.key == "betlog" || e.key == "/") {
+        if (pathname === "/billing/deposit" || pathname === "/billing/withdraw" || pathname === "/profile/point") {
+          router.push("../" + e.key);
+        } else {
+          router.push(e.key as string);
+        }
       }
+      
     }
   };
 
