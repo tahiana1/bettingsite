@@ -59,6 +59,17 @@ type GameUsageInfoFieldProps = {
   buttonLabel: string;
 }
 
+
+type SlotcityPriorityUseFieldProps = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+}
+
 const levelOption = [
     {label: "1", value: "1"},
     {label: "2", value: "2"},
@@ -134,6 +145,18 @@ const gameUsageType = [
   {label: 'touch', value: '10%'},
 ]
 
+const gameDetailList = [
+  {label: 'Live Game Details', value: '12%'},
+  {label: 'Slot Game Details', value: '10%'},
+  {label: "Minigame Details", value: '10%'},
+  {label: "Sports use Details", value: '10%'},
+  {label: "Sports Folder Details", value: '10%'},
+]
+
+const slotcityPriorityUseType = [
+  {label: 'Not in use', value: false},
+  {label: 'In use', value: true},
+]
 const UserInfoField: React.FC<UserInfoFieldProps> = ({
   label,
   placeholder,
@@ -205,6 +228,29 @@ const UserInfoStyle3Field: React.FC<UserInfoFieldStyle3Props> = ({
       <Input type="text" placeholder={placeholder} value={value} onChange={onChange} />
       <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
         {buttonLabel}
+      </Button>
+    </div>
+  </div>
+);
+
+const SlotcityPriorityUseField: React.FC<SlotcityPriorityUseFieldProps> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+}) => (
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <Select placeholder={placeholder} options={slotcityPriorityUseType} className="w-full"/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        Blank Change
       </Button>
     </div>
   </div>
@@ -311,27 +357,32 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
             <div className="text-xm w-[150px]">{label}</div>
         </div>
         
-        <div className="flex flex-row justify-between wrap max-w-[250px]" style={{flexWrap: 'wrap'}}>
+        <div className="flex flex-row justify-start wrap max-w-[250px]" style={{flexWrap: 'wrap'}}>
         {
             gameUsageType.map((item, index) => (
-               <div className="flex flex-col mb-2 justify-start items-center w-[80px]" key={index}>
-                <div className="text-[10px] w-[80px]">{item.label}</div>
-                <div className="flex flex-row gap-2 w-full">
-                    <Input type="number" readOnly value={item.value} onChange={onChange} />
+               <div className="flex flex-col mb-2 justify-start items-center" key={index}>
+                {/* <div className="text-[10px] w-[80px]">{item.label}</div> */}
+                <div className="flex flex-row w-full">
+                   <Button type="primary">{item.label}</Button>
                 </div>
+               
                </div>
             ))  
         }
-        {
-            gameUsageType.map((item, index) => (
-               <div className="flex flex-col mb-2 justify-start items-center w-[80px]" key={index}>
-                <div className="text-[10px] w-[80px]">{item.label}</div>
-                <div className="flex flex-row gap-2 w-full">
-                    <Input type="number" readOnly value={item.value} onChange={onChange} />
-                </div>
-               </div>
+        <div className="flex gap-2 mb-3 justify-start w-full">
+          <Button>apply</Button>
+          <Button>Apply all sub-includes</Button>
+        </div>
+        <div className="flex gap-3" style={{flexWrap:'wrap'}}>
+          {
+            gameDetailList.map((item, index) => (
+                <Button className="px-3 py-2 " key={index}>
+                  <div className="text-[10px]">{item.label}</div>
+                </Button>
             ))  
-        }
+          }
+        </div>
+        
         </div>
        
     </div>
@@ -492,7 +543,8 @@ const UserBasicInformation: React.FC = () => {
     rollingGold: "",
     rollingGoldProcessing: "",
     sameIPCheck: "",
-    rollingPercenty: ""
+    rollingPercenty: "",
+    slotcityPriorityUse: ""
   });
 
   const [loading, setLoading] = useState({
@@ -533,7 +585,8 @@ const UserBasicInformation: React.FC = () => {
     rollingGold: false,
     rollingGoldProcessing: false,
     sameIPCheck: false,
-    rollingPercenty: false
+    rollingPercenty: false,
+    slotcityPriorityUse: false
   });
 
   const handleChange = (field: keyof typeof fields) => (
@@ -946,6 +999,33 @@ const UserBasicInformation: React.FC = () => {
               buttonLabel="Change"
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
+            />  
+            <GameUsageInfoField
+              label="Game usage"   
+              placeholder=""  
+              value={fields.rollingPercenty}
+              onChange={handleChange("rollingPercenty")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("rollingPercenty")}
+              loading={loading.rollingPercenty}
+            />  
+            <GameUsageInfoField
+              label="Game usage"   
+              placeholder=""  
+              value={fields.rollingPercenty}
+              onChange={handleChange("rollingPercenty")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("rollingPercenty")}
+              loading={loading.rollingPercenty}
+            />
+            <SlotcityPriorityUseField
+              label="Slotcity Priority Use"   
+              placeholder=""  
+              value={fields.slotcityPriorityUse}
+              onChange={handleChange("slotcityPriorityUse")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("slotcityPriorityUse")}
+              loading={loading.slotcityPriorityUse}
             />  
           </div>
         </div>
