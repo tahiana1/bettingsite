@@ -920,7 +920,7 @@ const UserBasicInformation: React.FC = () => {
 
   return (
     <div className="max-h-[90vh] overflow-auto">
-      <div className="bg-white p-4">
+      <div className="bg-white">
         <div className="flex flex-column gap-4">
           <div className="flex flex-col gap-2 text-xm">Deposit</div>
           <div className="flex flex-col gap-2 text-xm text-[#71cb4a]">
@@ -1883,6 +1883,11 @@ const UserBasicInformation: React.FC = () => {
               onButtonClick={handleButtonClick("minimumFolderForSportsBetting")}
               loading={loading.minimumFolderForSportsBetting}
             />
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 mt-10">
+          <div className="flex flex-col gap-2 text-xm">
+            Deposit
           </div>
         </div>
       </div>
