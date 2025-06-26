@@ -70,21 +70,65 @@ type SlotcityPriorityUseFieldProps = {
   buttonLabel: string;
 }
 
+type UserInfoFieldStyle4Props = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+  type: any;
+}
+
+type UserInfoFieldStyle5Props = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+}
+
+type UserInfoFieldStyle6Props = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+  type: any;
+}
+
+type UserInfoFieldStyle7Props = {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onButtonClick: () => void;
+  loading: boolean;
+  buttonLabel: string;
+  type: any;
+}
+
 const levelOption = [
-    {label: "1", value: "1"},
-    {label: "2", value: "2"},
-    {label: "3", value: "3"},
-    {label: "4", value: "4"},
-    {label: "5", value: "5"},
-    {label: "6", value: "6"},
-    {label: "7", value: "7"},
-    {label: "8", value: "8"},
-    {label: "9", value: "9"},
-    {label: "10", value: "10"},
-    {label: "11", value: "11"},
-    {label: "12", value: "12"},
-    {label: "13", value: "13"},
-    {label: "14", value: "14"},
+    {label: "Level 1", value: "1"},
+    {label: "Level 2", value: "2"},
+    {label: "Level 3", value: "3"},
+    {label: "Level 4", value: "4"},
+    {label: "Level 5", value: "5"},
+    {label: "Level 6", value: "6"},
+    {label: "Level 7", value: "7"},
+    {label: "Level 8", value: "8"},
+    {label: "Level 9", value: "9"},
+    {label: "Level 10", value: "10"},
+    {label: "Level 11", value: "11"},
+    {label: "Level 12", value: "12"},
+    {label: "VIP 1", value: "13"},
+    {label: "VIP 2", value: "14"},
+    {label: "Premium", value: "15"},
 ]
 
 const memberType = [
@@ -157,6 +201,27 @@ const slotcityPriorityUseType = [
   {label: 'Not in use', value: false},
   {label: 'In use', value: true},
 ]
+
+const distributorType = [
+  {label: 'member', value: '1'},
+  {label: 'distributor', value: '2'}
+]
+
+const distributorPropertiesType = [
+  {label: 'online distributor', value: '1'},
+  {label: 'offline distributor', value: '2'},
+]
+
+const cutBettingHistoryType = [
+  {label: 'Live', value: '1'},
+  {label: 'Slot', value: '2'},
+]
+
+const codeSignupAvailableType = [
+  {label: 'code signup available', value: '1'},
+  {label: 'code registration not possible', value: '2'},
+]
+
 const UserInfoField: React.FC<UserInfoFieldProps> = ({
   label,
   placeholder,
@@ -228,6 +293,136 @@ const UserInfoStyle3Field: React.FC<UserInfoFieldStyle3Props> = ({
       <Input type="text" placeholder={placeholder} value={value} onChange={onChange} />
       <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
         {buttonLabel}
+      </Button>
+    </div>
+  </div>
+);
+
+const UserInfoStyle4Field: React.FC<UserInfoFieldStyle4Props> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+  type,
+}) => ( 
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <Select placeholder={placeholder} options={type} className="w-full"/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+    </div>
+  </div>
+);
+
+const UserInfoStyle6Field: React.FC<UserInfoFieldStyle6Props> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+  type,
+}) => ( 
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <Select placeholder={placeholder} options={type} className="w-full"/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        Blank Change
+      </Button>
+    </div>
+  </div>
+);
+
+const UserInfoStyle7Field: React.FC<UserInfoFieldStyle7Props> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+  type,
+}) => ( 
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <div>
+        {
+          type?.map((item: any, index: number) => (
+            <Button key={index} className="flex flex-col gap-2">
+              <div className="text-[10px]">{item.label}</div>
+            </Button>
+          ))
+        }
+      </div>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        Blank Change
+      </Button>
+    </div>
+  </div>
+);
+
+const UserInfoStyle8Field: React.FC<UserInfoFieldStyle7Props> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+  type,
+}) => ( 
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <div className="flex flex-row">
+        {
+          type?.map((item: any, index: number) => (
+            <Input key={index} className="flex flex-col gap-2" />
+          ))
+        }
+      </div>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        Blank Change
+      </Button>
+    </div>
+  </div>
+);
+
+const UserInfoStyle5Field: React.FC<UserInfoFieldStyle5Props> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onButtonClick,
+  loading,
+  buttonLabel,
+}) => ( 
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <Input type="text" placeholder={placeholder} value={value} onChange={onChange} />
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        Duplicate Check
       </Button>
     </div>
   </div>
@@ -544,7 +739,64 @@ const UserBasicInformation: React.FC = () => {
     rollingGoldProcessing: "",
     sameIPCheck: "",
     rollingPercenty: "",
-    slotcityPriorityUse: ""
+    slotcityPriorityUse: "",
+    webLoginAvailable: "",
+    changeOfDistributorProperties: "",
+    delegationOfAdminstrator: "",
+    signUpCode: "",
+    codeSignupAvailable: "",
+    displayMemberCode: "",
+    initialLevelOfAcquaintanceRegistration: "",
+    memberPageAlarmSound: "",
+    useAttendanceCheck: "",
+    useRoulette: "",
+    customerCenterInquiryAvailable: "",
+    createPost: "",
+    whiteCommentOnPost: "",
+    pointsAwardedForThePost: "",
+    usingVirtualAccountApi: "",
+    usingOfWinningPoints: "",
+    usePaybackPayment: "",
+    useRefundLimit: "",
+    dailyFirstDepositBonusLimit: "",
+    signUpFirstDepositBonusLimit: "",
+    replenishmentBonusLimit: "",
+    surpriseBonusLimit: "",
+    ignoreOption: "",
+    rollingConversionAutomaticApproval: "",
+    cutBettingHistory: "",
+    maximumAmountOfBettingHistoryReduction: "",
+    percentageReductionInBettingAmount: "",
+    waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted: "",
+    waitingTimeForReApplicationAfterChargingIsCompleted: "",
+    waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted: "",
+    changeMemberProperties: "",
+    distributor: "",
+    changeOfMemberProperties: "",
+    displayOfAdministrator: "",
+    partnerButtonDisplay: "",
+    partnerMultiAccessPossible: "",
+    displayPartnerReductionDetail: "",
+    displayPartnerRollingPaymentRecoveryHistory: "",
+    createSubDistributor: "",
+    createSubordinatorDirectMember: "",
+    accessToSubDetails: "",
+    accessToSubBankInformation: "",
+    lowerConnectionCanBeKicked: "",
+    subMoneyPayable: "",
+    lowerMoneyRecoveryPossible: "",
+    lowerLosingChangePossible: "",
+    lowerRollingChangeable: "",
+    referalBenefitsMember: "",
+    referalBenefitsMini: "",
+    referalBenefitsVirtual: "",
+    referalBenefitsSportsSinglePoles: "",
+    referalBenefitsSports2Poles: "",
+    referalBenefitsSports3Poles: "",
+    referalBenefitsSports4Poles: "",
+    referalBenefitsSportsDapol: "",
+    sportsBettingAllowed: "",
+    minimumFolderForSportsBetting: "",
   });
 
   const [loading, setLoading] = useState({
@@ -586,7 +838,64 @@ const UserBasicInformation: React.FC = () => {
     rollingGoldProcessing: false,
     sameIPCheck: false,
     rollingPercenty: false,
-    slotcityPriorityUse: false
+    slotcityPriorityUse: false,
+    webLoginAvailable: false,
+    changeOfDistributorProperties: false,
+    delegationOfAdminstrator: false,
+    signUpCode: false,
+    codeSignupAvailable: false,
+    displayMemberCode: false,
+    initialLevelOfAcquaintanceRegistration: false,
+    memberPageAlarmSound: false,
+    useAttendanceCheck: false,
+    useRoulette: false,
+    customerCenterInquiryAvailable: false,
+    createPost: false,
+    whiteCommentOnPost: false,
+    pointsAwardedForThePost: false,
+    usingVirtualAccountApi: false,
+    usePaybackPayment: false,
+    useRefundLimit: false,
+    usingOfWinningPoints: false,
+    dailyFirstDepositBonusLimit: false,
+    signUpFirstDepositBonusLimit: false,
+    replenishmentBonusLimit: false,
+    surpriseBonusLimit: false,
+    ignoreOption: false,
+    rollingConversionAutomaticApproval: false,
+    cutBettingHistory: false,
+    maximumAmountOfBettingHistoryReduction: false,
+    percentageReductionInBettingAmount: false,
+    waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted: false,
+    waitingTimeForReApplicationAfterChargingIsCompleted: false,
+    waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted: false,
+    changeMemberProperties: false,
+    distributor: false,
+    changeOfMemberProperties: false,
+    displayOfAdministrator: false,
+    partnerButtonDisplay: false,
+    partnerMultiAccessPossible: false,
+    displayPartnerReductionDetail: false,
+    displayPartnerRollingPaymentRecoveryHistory: false,
+    createSubDistributor: false,
+    createSubordinatorDirectMember: false,
+    accessToSubDetails: false,
+    accessToSubBankInformation: false,
+    lowerConnectionCanBeKicked: false,
+    subMoneyPayable: false,
+    lowerMoneyRecoveryPossible: false,
+    lowerLosingChangePossible: false,
+    lowerRollingChangeable: false,
+    referalBenefitsMember: false,
+    referalBenefitsMini: false,
+    referalBenefitsVirtual: false,
+    referalBenefitsSportsSinglePoles: false,
+    referalBenefitsSports2Poles: false,
+    referalBenefitsSports3Poles: false,
+    referalBenefitsSports4Poles: false,
+    referalBenefitsSportsDapol: false,
+    sportsBettingAllowed: false,
+    minimumFolderForSportsBetting: false,
   });
 
   const handleChange = (field: keyof typeof fields) => (
@@ -610,7 +919,7 @@ const UserBasicInformation: React.FC = () => {
   };
 
   return (
-    <div className="max-h-[90vh] overflow-y-auto">
+    <div className="max-h-[90vh] overflow-auto">
       <div className="bg-white p-4">
         <div className="flex flex-column gap-4">
           <div className="flex flex-col gap-2 text-xm">Deposit</div>
@@ -872,15 +1181,15 @@ const UserBasicInformation: React.FC = () => {
                   loading={loading.exchangeRollingBettingAmount}
               />
 
-              <DisabledCurrencyInfoField
-                  label="Currency Rollover"   
-                  placeholder=""  
-                  value={fields.currencyRollover}
-                  onChange={handleChange("currencyRollover")}
-                  buttonLabel="Change"
-                  onButtonClick={handleButtonClick("currencyRollover")}
-                  loading={loading.currencyRollover}
-              />  
+            <DisabledCurrencyInfoField
+                label="Currency Rollover"   
+                placeholder=""  
+                value={fields.currencyRollover}
+                onChange={handleChange("currencyRollover")}
+                buttonLabel="Change"
+                onButtonClick={handleButtonClick("currencyRollover")}
+                loading={loading.currencyRollover}
+            />  
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle1Field
@@ -990,15 +1299,6 @@ const UserBasicInformation: React.FC = () => {
               buttonLabel="Change"
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
-            />
-            <DisabledRollingPercentyInfoField
-              label="Rolling%"   
-              placeholder=""  
-              value={fields.rollingPercenty}
-              onChange={handleChange("rollingPercenty")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("rollingPercenty")}
-              loading={loading.rollingPercenty}
             />  
             <GameUsageInfoField
               label="Game usage"   
@@ -1009,15 +1309,6 @@ const UserBasicInformation: React.FC = () => {
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
             />  
-            <GameUsageInfoField
-              label="Game usage"   
-              placeholder=""  
-              value={fields.rollingPercenty}
-              onChange={handleChange("rollingPercenty")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("rollingPercenty")}
-              loading={loading.rollingPercenty}
-            />
             <SlotcityPriorityUseField
               label="Slotcity Priority Use"   
               placeholder=""  
@@ -1028,8 +1319,572 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.slotcityPriorityUse}
             />  
           </div>
+          <div className="flex flex-col gap-4 mt-10">
+            <UserInfoStyle4Field
+              label="Web login available"   
+              placeholder=""  
+              type={distributorType}
+              value={fields.webLoginAvailable}
+              onChange={handleChange("webLoginAvailable")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("webLoginAvailable")}
+              loading={loading.webLoginAvailable}
+            />
+            <UserInfoStyle5Field
+              label="Sign up code"   
+              placeholder="" 
+              value={fields.signUpCode}
+              onChange={handleChange("signUpCode")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("signUpCode")}
+              loading={loading.signUpCode}
+            />
+            <UserInfoStyle4Field
+              label="Code signup available"   
+              placeholder=""  
+              type={codeSignupAvailableType}
+              value={fields.codeSignupAvailable}
+              onChange={handleChange("codeSignupAvailable")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("codeSignupAvailable")}
+              loading={loading.codeSignupAvailable}
+            />  
+            <UserInfoStyle4Field
+              label="Display member code"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.displayMemberCode}
+              onChange={handleChange("displayMemberCode")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("displayMemberCode")}
+              loading={loading.displayMemberCode}
+            />  
+            <UserInfoStyle6Field
+              label="Initial level of acquaintance registration"   
+              placeholder=""  
+              type={levelOption}
+              value={fields.initialLevelOfAcquaintanceRegistration}
+              onChange={handleChange("initialLevelOfAcquaintanceRegistration")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("initialLevelOfAcquaintanceRegistration")}
+              loading={loading.initialLevelOfAcquaintanceRegistration}
+            />
+            <UserInfoStyle6Field
+              label="Member page alarm sound"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.memberPageAlarmSound}
+              onChange={handleChange("memberPageAlarmSound")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("memberPageAlarmSound")}
+              loading={loading.memberPageAlarmSound}
+            />
+            <UserInfoStyle4Field
+              label="Use attendance check"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.useAttendanceCheck}
+              onChange={handleChange("useAttendanceCheck")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("useAttendanceCheck")}
+              loading={loading.useAttendanceCheck}
+            />  
+            <UserInfoStyle4Field
+              label="Use the roulette"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.useRoulette}
+              onChange={handleChange("useRoulette")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("useRoulette")}
+              loading={loading.useRoulette}
+            />  
+            <UserInfoStyle4Field
+              label="Customer center inquiry available"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.customerCenterInquiryAvailable}
+              onChange={handleChange("customerCenterInquiryAvailable")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("customerCenterInquiryAvailable")}
+              loading={loading.customerCenterInquiryAvailable}
+            />  
+            <UserInfoStyle4Field
+              label="Create post"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.createPost}
+              onChange={handleChange("createPost")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("createPost")}
+              loading={loading.createPost}
+            />  
+            <UserInfoStyle4Field
+              label="White a comment on the post"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.whiteCommentOnPost}
+              onChange={handleChange("whiteCommentOnPost")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("whiteCommentOnPost")}
+              loading={loading.whiteCommentOnPost}
+            />  
+            <UserInfoStyle4Field
+              label="Points awarded for the post"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.pointsAwardedForThePost}
+              onChange={handleChange("pointsAwardedForThePost")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("pointsAwardedForThePost")}
+              loading={loading.pointsAwardedForThePost}
+            />  
+            <UserInfoStyle6Field
+              label="Using virtualAccount api"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.usingVirtualAccountApi}
+              onChange={handleChange("usingVirtualAccountApi")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("usingVirtualAccountApi")}
+              loading={loading.usingVirtualAccountApi}
+            /> 
+            <UserInfoStyle6Field
+              label="Using of winning points"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.usingOfWinningPoints}
+              onChange={handleChange("usingOfWinningPoints")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("usingOfWinningPoints")}
+              loading={loading.usingOfWinningPoints}
+            />  
+            <UserInfoStyle6Field
+              label="Use payback payment"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.usePaybackPayment}
+              onChange={handleChange("usePaybackPayment")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("usePaybackPayment")}
+              loading={loading.usePaybackPayment}
+            />  
+            <UserInfoStyle6Field
+              label="Use the refund limit"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.useRefundLimit}
+              onChange={handleChange("useRefundLimit")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("useRefundLimit")}
+              loading={loading.useRefundLimit}
+            />  
+            <UserInfoStyle4Field
+              label="Daily first deposit bonus limit"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.dailyFirstDepositBonusLimit}
+              onChange={handleChange("dailyFirstDepositBonusLimit")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("dailyFirstDepositBonusLimit")}
+              loading={loading.dailyFirstDepositBonusLimit}
+            />  
+            <UserInfoStyle4Field
+              label="SignUp first deposit bonus limit"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.signUpFirstDepositBonusLimit}
+              onChange={handleChange("signUpFirstDepositBonusLimit")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("signUpFirstDepositBonusLimit")}
+              loading={loading.signUpFirstDepositBonusLimit}
+            />  
+            <UserInfoStyle4Field
+              label="Replenishment Bonus Limit"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.replenishmentBonusLimit}
+              onChange={handleChange("replenishmentBonusLimit")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("replenishmentBonusLimit")}
+              loading={loading.replenishmentBonusLimit}
+            />
+            <UserInfoStyle4Field
+              label="Surprise Bonus Limit"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.surpriseBonusLimit}
+              onChange={handleChange("surpriseBonusLimit")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("surpriseBonusLimit")}
+              loading={loading.surpriseBonusLimit}
+            />  
+            <UserInfoStyle4Field
+              label="[Apply rolling to members only] Ignore option"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.ignoreOption}
+              onChange={handleChange("ignoreOption")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("ignoreOption")}
+              loading={loading.ignoreOption}
+            />  
+            <UserInfoStyle6Field
+              label="Rolling conversion automatic approval"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.rollingConversionAutomaticApproval}
+              onChange={handleChange("rollingConversionAutomaticApproval")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("rollingConversionAutomaticApproval")}
+              loading={loading.rollingConversionAutomaticApproval}
+            />  
+            <UserInfoStyle7Field
+              label="Cut betting history"   
+              placeholder=""  
+              type={cutBettingHistoryType}
+              value={fields.cutBettingHistory}
+              onChange={handleChange("cutBettingHistory")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("cutBettingHistory")}
+              loading={loading.cutBettingHistory}
+            />  
+            <UserInfoStyle8Field
+              label="Cut betting history"   
+              placeholder=""  
+              type={cutBettingHistoryType}
+              value={fields.cutBettingHistory}
+              onChange={handleChange("cutBettingHistory")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("cutBettingHistory")}
+              loading={loading.cutBettingHistory}
+            />  
+            <UserInfoStyle8Field
+              label="Maximum amount of betting history reduction"   
+              placeholder=""  
+              type={cutBettingHistoryType}
+              value={fields.maximumAmountOfBettingHistoryReduction}
+              onChange={handleChange("maximumAmountOfBettingHistoryReduction")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("maximumAmountOfBettingHistoryReduction")}
+              loading={loading.maximumAmountOfBettingHistoryReduction}
+            /> 
+            <UserInfoStyle8Field
+              label="% reduction in betting amount"   
+              placeholder=""  
+              type={cutBettingHistoryType}
+              value={fields.percentageReductionInBettingAmount}
+              onChange={handleChange("percentageReductionInBettingAmount")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("percentageReductionInBettingAmount")}
+              loading={loading.percentageReductionInBettingAmount}
+            /> 
+            <UserInfoStyle4Field
+              label="Waiting time for re-application after currency exchange is completed"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
+              onChange={handleChange("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}
+              loading={loading.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
+            />
+            <UserInfoStyle4Field
+              label="Waiting time for re-application after charging is completed"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.waitingTimeForReApplicationAfterChargingIsCompleted}
+              onChange={handleChange("waitingTimeForReApplicationAfterChargingIsCompleted")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("waitingTimeForReApplicationAfterChargingIsCompleted")}
+              loading={loading.waitingTimeForReApplicationAfterChargingIsCompleted}
+            />
+            <UserInfoStyle4Field
+              label="Waiting time for currency exchange request after charging is completed"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
+              onChange={handleChange("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}
+              loading={loading.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
+            />  
+            <UserInfoStyle4Field
+              label="Change member properties"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.changeMemberProperties}
+              onChange={handleChange("changeMemberProperties")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("changeMemberProperties")}
+              loading={loading.changeMemberProperties}
+            />  
+            
+          </div>
+          <div className="flex flex-col gap-4 mt-10">
+            <UserInfoStyle4Field
+              label="Change of member properties"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.changeOfMemberProperties}
+              onChange={handleChange("changeOfMemberProperties")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("changeOfMemberProperties")}
+              loading={loading.changeOfMemberProperties}
+            />  
+            <UserInfoStyle4Field
+              label="Change of distributor properties"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.changeOfDistributorProperties}
+              onChange={handleChange("changeOfDistributorProperties")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("changeOfDistributorProperties")}
+              loading={loading.changeOfDistributorProperties}
+            />  
+            <UserInfoStyle4Field
+              label="Delegation of Adminstrator"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.delegationOfAdminstrator}
+              onChange={handleChange("delegationOfAdminstrator")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("delegationOfAdminstrator")}
+              loading={loading.delegationOfAdminstrator}
+            /> 
+            <UserInfoStyle4Field
+              label="Display of Administrator"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.displayOfAdministrator}
+              onChange={handleChange("displayOfAdministrator")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("displayOfAdministrator")}
+              loading={loading.displayOfAdministrator}
+            />
+            <UserInfoStyle4Field
+              label="Partner button display"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.partnerButtonDisplay}
+              onChange={handleChange("partnerButtonDisplay")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("partnerButtonDisplay")}
+              loading={loading.partnerButtonDisplay}
+            /> 
+            <UserInfoStyle4Field
+              label="Partner multi-access possible"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.partnerMultiAccessPossible}
+              onChange={handleChange("partnerMultiAccessPossible")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("partnerMultiAccessPossible")}
+              loading={loading.partnerMultiAccessPossible}
+            /> 
+            <UserInfoStyle4Field
+              label="Display partner reduction details"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.displayPartnerReductionDetail}
+              onChange={handleChange("displayPartnerReductionDetail")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("displayPartnerReductionDetail")}
+              loading={loading.displayPartnerReductionDetail}
+            /> 
+            <UserInfoStyle4Field
+              label="Display of Partner Rolling Payment/Recovery History"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.displayPartnerRollingPaymentRecoveryHistory}
+              onChange={handleChange("displayPartnerRollingPaymentRecoveryHistory")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("displayPartnerRollingPaymentRecoveryHistory")}
+              loading={loading.displayPartnerRollingPaymentRecoveryHistory}
+            /> 
+            <UserInfoStyle6Field
+              label="Create a sub-distributor"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.createSubDistributor}
+              onChange={handleChange("createSubDistributor")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("createSubDistributor")}
+              loading={loading.createSubDistributor}
+            /> 
+            <UserInfoStyle6Field
+              label="Create a subordinator direct member"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.createSubordinatorDirectMember}
+              onChange={handleChange("createSubordinatorDirectMember")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("createSubordinatorDirectMember")}
+              loading={loading.createSubordinatorDirectMember}
+            /> 
+            <UserInfoStyle6Field
+              label="Access to sub-details"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.accessToSubDetails}
+              onChange={handleChange("accessToSubDetails")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("accessToSubDetails")}
+              loading={loading.accessToSubDetails}
+            /> 
+            <UserInfoStyle6Field
+              label="Access to sub-bank information"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.accessToSubBankInformation}
+              onChange={handleChange("accessToSubBankInformation")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("accessToSubBankInformation")}
+              loading={loading.accessToSubBankInformation}
+            />
+            <UserInfoStyle6Field
+              label="Lower connection can be kicked"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.lowerConnectionCanBeKicked}
+              onChange={handleChange("lowerConnectionCanBeKicked")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("lowerConnectionCanBeKicked")}
+              loading={loading.lowerConnectionCanBeKicked}
+            />
+            <UserInfoStyle6Field
+              label="Sub-money payable"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.subMoneyPayable}
+              onChange={handleChange("subMoneyPayable")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("subMoneyPayable")}
+              loading={loading.subMoneyPayable}
+            />
+            <UserInfoStyle6Field
+              label="Lower money recovery possible"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.lowerMoneyRecoveryPossible}
+              onChange={handleChange("lowerMoneyRecoveryPossible")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("lowerMoneyRecoveryPossible")}
+              loading={loading.lowerMoneyRecoveryPossible}
+            />
+            <UserInfoStyle6Field
+              label="Lower losing change possible"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.lowerLosingChangePossible}
+              onChange={handleChange("lowerLosingChangePossible")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("lowerLosingChangePossible")}
+              loading={loading.lowerLosingChangePossible}
+            />
+            <UserInfoStyle6Field
+              label="Lower rolling changeable"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.lowerRollingChangeable}
+              onChange={handleChange("lowerRollingChangeable")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("lowerRollingChangeable")}
+              loading={loading.lowerRollingChangeable}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Mini)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsMini}
+              onChange={handleChange("referalBenefitsMini")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsMini")}
+              loading={loading.referalBenefitsMini}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Virtual)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsVirtual}
+              onChange={handleChange("referalBenefitsVirtual")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsVirtual")}
+              loading={loading.referalBenefitsVirtual}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Sports Single Poles)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsSportsSinglePoles}
+              onChange={handleChange("referalBenefitsSportsSinglePoles")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsSportsSinglePoles")}
+              loading={loading.referalBenefitsSportsSinglePoles}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Sports 2-Poles)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsSports2Poles}
+              onChange={handleChange("referalBenefitsSports2Poles")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsSports2Poles")}
+              loading={loading.referalBenefitsSports2Poles}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Sports 3-Poles)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsSports3Poles}
+              onChange={handleChange("referalBenefitsSports3Poles")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsSports3Poles")}
+              loading={loading.referalBenefitsSports3Poles}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Sports 4-Poles)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsSports4Poles}
+              onChange={handleChange("referalBenefitsSports4Poles")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsSports4Poles")}
+              loading={loading.referalBenefitsSports4Poles}
+            />
+            <UserInfoStyle6Field
+              label="Referal Benefits (Sports Dapol)"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.referalBenefitsSportsDapol}
+              onChange={handleChange("referalBenefitsSportsDapol")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("referalBenefitsSportsDapol")}
+              loading={loading.referalBenefitsSportsDapol}
+            />
+
+            <UserInfoStyle4Field
+              label="Sports betting allowed"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.sportsBettingAllowed}
+              onChange={handleChange("sportsBettingAllowed")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("sportsBettingAllowed")}
+              loading={loading.sportsBettingAllowed}
+            />
+            <UserInfoStyle4Field
+              label="Minimum folder for sports betting"   
+              placeholder=""  
+              type={onoffType}
+              value={fields.minimumFolderForSportsBetting}
+              onChange={handleChange("minimumFolderForSportsBetting")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("minimumFolderForSportsBetting")}
+              loading={loading.minimumFolderForSportsBetting}
+            />
+          </div>
         </div>
-        
       </div>
     </div>
   );
