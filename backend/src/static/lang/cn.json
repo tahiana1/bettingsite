@@ -957,5 +957,11 @@
   "redfoxAPI": "红狐API",
   "slotcityAPI": "老虎机城API",
   "swixAPI": "斯威克斯API",
-  "wildgamesAPI": "狂野游戏API"
+  "wildgamesAPI": "狂野游戏API",
+  "blacklist": "黑名单",
+  "id": "ID",
+  "depositor": "存款人",
+  "mobilePhone": "手机号码",
+  "ipAddress": "IP地址",
+  "enterYourPassword": "输入您的密码"
 }

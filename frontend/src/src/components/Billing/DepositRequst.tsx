@@ -14,6 +14,8 @@ import {
   Popconfirm,
   message,
   Tag,
+  Modal,
+  Input,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { useTranslations, useFormatter } from "next-intl";
@@ -35,6 +37,7 @@ const DepositRequest: React.FC = () => {
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
   const [profile, setProfile] = useState<any>(null);
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
   
   useEffect(() => {
     api("user/me").then((res) => {
@@ -181,6 +184,15 @@ const DepositRequest: React.FC = () => {
       ),
     },
   ];
+
+  const showAccountModal = () => {
+    setIsAccountModalOpen(true);
+  };
+
+  const handleAccountModalCancel = () => {
+    setIsAccountModalOpen(false);
+  };
+
   return (
     <Layout.Content className="w-full">
       <Card
@@ -217,8 +229,13 @@ const DepositRequest: React.FC = () => {
               processing
               <br />
               * Deposits maybe delayed during bank inspection times.
-              <br />* You can check the account information below or through the
-              cusomter center.
+              <br />* <button 
+                className="text-blue-500 cursor-pointer border-1 border-blue-500 px-2"
+                onClick={showAccountModal}
+              >
+                {t("accountInquiry")}
+              </button> You can check the account information below or through the
+              customer center.
             </p>
           }
           type="success"
@@ -320,8 +337,18 @@ const DepositRequest: React.FC = () => {
           pageSizeOptions: [10, 20, 50],
         }}
       />
+
+      <Modal
+        title={t("enterYourPassword")}
+        open={isAccountModalOpen}
+        onCancel={handleAccountModalCancel}
+        width={600}
+      >
+        <div className="space-y-4">
+          <Input.Password placeholder={t("enterYourPassword")} /> 
+        </div>
+      </Modal>
     </Layout.Content>
-    
   );
 };
 

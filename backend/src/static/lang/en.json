@@ -955,5 +955,11 @@
   "redfoxAPI": "Redfox API",
   "slotcityAPI": "Slotcity API",
   "swixAPI": "Swix API",
-  "wildgamesAPI": "Wildgames API"
+  "wildgamesAPI": "Wildgames API",
+  "blacklist" : "Blacklist",
+  "id": "ID",
+  "depositor": "Depositor",
+  "mobilePhone": "Mobile Phone",
+  "ipAddress": "IP Address",
+  "enterYourPassword": "Enter Your Password"
 }

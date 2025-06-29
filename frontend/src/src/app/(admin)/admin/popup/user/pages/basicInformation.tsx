@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button, Input, Layout, message, Select } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { ReloadOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
 
 // Mock API call function
 const mockApiCall = (field: string, value: string) => {
@@ -678,25 +679,65 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     </div>
   );
 
-  const ColorTypeField: React.FC<UserInfoFieldProps> = ({
-    label,
-    placeholder,
-    value,
-    onChange,
-    buttonLabel,
-    onButtonClick,
-    loading,
-  }) => (
-    <div className="flex flex-column gap-2 justify-start items-center">
-      <div className="text-xm w-[150px]">{label}</div>
-      <div className="flex flex-row gap-2 w-[250px]">
-        <Input type="color" placeholder={placeholder} onChange={onChange} value={value} className="w-full"/>
-        <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
-          {buttonLabel}
-        </Button>
-      </div>
+const ColorTypeField: React.FC<UserInfoFieldProps> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  buttonLabel,
+  onButtonClick,
+  loading,
+}) => (
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[250px]">
+      <Input type="color" placeholder={placeholder} onChange={onChange} value={value} className="w-full"/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
+        {buttonLabel}
+      </Button>
     </div>
-  );
+  </div>
+);
+
+const MemoInputFiled: React.FC<UserInfoFieldProps> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  buttonLabel,
+  onButtonClick,
+  loading,
+}) => (
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[500px]">
+      <Input type="text" placeholder={placeholder} onChange={onChange} value={value} className="w-full"/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} className="min-w-[150px]" disabled={loading}>
+        {buttonLabel}
+      </Button>
+    </div>
+  </div>
+);
+
+const MemoInput1Filed: React.FC<UserInfoFieldProps> = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  buttonLabel,
+  onButtonClick,
+  loading,
+}) => (
+  <div className="flex flex-column gap-2 justify-start items-center">
+    <div className="text-xm w-[150px]">{label}</div>
+    <div className="flex flex-row gap-2 w-[500px]">
+      <TextArea rows={4} placeholder={placeholder} value={value} className="w-ful l "/>
+      <Button type="primary" onClick={onButtonClick} loading={loading} className="min-w-[150px]" disabled={loading}>
+        {buttonLabel}
+      </Button>
+    </div>
+  </div>
+);
 
 
 const UserBasicInformation: React.FC = () => {
@@ -797,6 +838,10 @@ const UserBasicInformation: React.FC = () => {
     referalBenefitsSportsDapol: "",
     sportsBettingAllowed: "",
     minimumFolderForSportsBetting: "",
+    accountMemo: "",
+    adminNote: "",
+    adminMemo2: "",
+    xxx: "",
   });
 
   const [loading, setLoading] = useState({
@@ -896,6 +941,10 @@ const UserBasicInformation: React.FC = () => {
     referalBenefitsSportsDapol: false,
     sportsBettingAllowed: false,
     minimumFolderForSportsBetting: false,
+    accountMemo: false,
+    adminNote: false,
+    adminMemo2: false,
+    xxx: false,
   });
 
   const handleChange = (field: keyof typeof fields) => (
@@ -1885,9 +1934,48 @@ const UserBasicInformation: React.FC = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-4 mt-10">
+        <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">
-            Deposit
+            <MemoInputFiled 
+              label="Account memo"
+              placeholder="Account memo"
+              value={fields.accountMemo}
+              onChange={handleChange("accountMemo")}
+              buttonLabel="Change account memo"
+              onButtonClick={handleButtonClick("accountMemo")}
+              loading={loading.accountMemo}
+            />
+            <MemoInput1Filed 
+              label="Admin Note"
+              placeholder="Admin Note"
+              value={fields.adminNote}
+              onChange={handleChange("adminNote")}
+              buttonLabel="Change admin note"
+              onButtonClick={handleButtonClick("adminNote")}
+              loading={loading.adminNote}
+            />
+            <MemoInput1Filed 
+              label="Admin Memo2"
+              placeholder="Admin Memo2"
+              value={fields.adminMemo2}
+              onChange={handleChange("adminMemo2")}
+              buttonLabel="Change admin memo2"
+              onButtonClick={handleButtonClick("adminMemo2")}
+              loading={loading.adminMemo2}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 mt-10 min-w-[1200px]">
+          <div className="flex flex-col gap-2 text-xm">
+            <MemoInput1Filed 
+              label="Allowed IP address"
+              placeholder="xxx.xxx.xxx.xxx"
+              value={fields.xxx}
+              onChange={handleChange("xxx")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("xxx")}
+              loading={loading.xxx}
+            />
           </div>
         </div>
       </div>
