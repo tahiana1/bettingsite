@@ -961,5 +961,7 @@
   "depositor": "Depositor",
   "mobilePhone": "Mobile Phone",
   "ipAddress": "IP Address",
-  "enterYourPassword": "Enter Your Password"
+  "enterYourPassword": "Enter Your Password",
+  "confirm" : "Confirm",
+  "passwordIncorrect" : "Password Incorrect"
 }

@@ -299,6 +299,44 @@ func GetMyProfile(c *gin.Context) {
 
 }
 
+func CheckPassword(c *gin.Context) {
+
+	// Get the userid and password from the request
+	var userInput struct {
+		Userid      uint   `json:"userid" binding:"required"`
+		SecPassword string `json:"password" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		format_errors.BadRequestError(c, err)
+		return
+	}
+
+	// Find the user by userid
+	var user models.User
+	initializers.DB.Model(&models.User{}).Preload("Profile").Find(&user, "id = ?", userInput.Userid)
+	if user.ID == 0 {
+		format_errors.NotFound(c, fmt.Errorf("Invalid UserID!"))
+		return
+	}
+
+	// err := bcrypt.CompareHashAndPassword([]byte(user.SecPassword), []byte(userInput.SecPassword))
+	// if err != nil {
+	// 	format_errors.UnauthorizedError(c, err)
+	// 	return
+	// }
+	if user.SecPassword == userInput.SecPassword {
+		c.JSON(http.StatusOK, responses.Status{
+			Message: "correct",
+		})
+	} else {
+		c.JSON(http.StatusOK, responses.Status{
+			Message: "incorrect",
+		})
+	}
+
+}
+
 func GetInfo(c *gin.Context) {
 	today := time.Now().Truncate(24 * time.Hour)
 	now := time.Now()

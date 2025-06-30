@@ -38,7 +38,8 @@ const DepositRequest: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [profile, setProfile] = useState<any>(null);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState<boolean>(false);
-  
+  const [password, setPassword] = useState<string>("");
+  const [isPasswordCorrect, setIsPasswordCorrect] = useState<boolean>(true);
   useEffect(() => {
     api("user/me").then((res) => {
       setProfile(res.data.profile);
@@ -193,6 +194,25 @@ const DepositRequest: React.FC = () => {
     setIsAccountModalOpen(false);
   };
 
+  const handleAccountInquiry = () => {
+    api("user/checkPassword", {
+      method: "POST",
+      data: {
+        userid: profile.userId,
+        password: password
+      }
+    }).then((res) => {
+      console.log(res.message, 'res.data.message');
+      if (res.message == "correct") {
+        setIsPasswordCorrect(true);
+        handleAccountModalCancel(); 
+      } else {
+        setIsPasswordCorrect(false);
+        setPassword("");
+      }
+    });
+  }
+
   return (
     <Layout.Content className="w-full">
       <Card
@@ -343,10 +363,16 @@ const DepositRequest: React.FC = () => {
         open={isAccountModalOpen}
         onCancel={handleAccountModalCancel}
         width={600}
+        okText={t("confirm")}
+        cancelText={t("cancel")}
+        onOk={handleAccountInquiry}
       >
         <div className="space-y-4">
-          <Input.Password placeholder={t("enterYourPassword")} /> 
+          <Input.Password className={`${isPasswordCorrect ? "border-green-500" : "border-red-500"}`} placeholder={t("enterYourPassword")} onChange={(e) => setPassword(e.target.value)} /> 
         </div>
+        {
+          !isPasswordCorrect && <Alert message={t("passwordIncorrect")} type="error" className="mt-4" />
+        }
       </Modal>
     </Layout.Content>
   );

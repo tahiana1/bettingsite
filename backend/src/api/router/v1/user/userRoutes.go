@@ -10,6 +10,7 @@ func GetUserRoute(r *gin.RouterGroup) {
 
 	r.Use(middleware.RequireAuth)
 	r.GET("/me", controllers.Me)
+	r.POST("/checkPassword", controllers.CheckPassword)
 	r.GET("/myprofile", controllers.GetMyProfile)
 	r.POST("/me", controllers.UpdateMe)
 	r.GET("/getInfo", controllers.GetInfo)

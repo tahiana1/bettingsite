@@ -963,5 +963,7 @@
   "depositor": "存款人",
   "mobilePhone": "手机号码",
   "ipAddress": "IP地址",
-  "enterYourPassword": "输入您的密码"
+  "enterYourPassword": "输入您的密码",
+  "confirm" : "确认",
+  "passwordIncorrect" : "密码错误"
 }
