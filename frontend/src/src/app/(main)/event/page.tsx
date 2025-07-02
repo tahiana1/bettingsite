@@ -79,15 +79,16 @@ const Event: React.FC = () => {
         >
             {/* <Tabs items={items} /> */}
             <Table
-                    columns={columns}
-                    dataSource={eventData.map((event, idx) => ({
-                        ...event,
-                        number: idx + 1,
-                        key: event.id || idx,
-                    }))}
-                    pagination={false}
-                    className="mb-6"
-                />
+                columns={columns}
+                dataSource={eventData.map((event, idx) => ({
+                    ...event,
+                    number: idx + 1,
+                    key: event.id || idx,
+                }))}
+                pagination={false}
+                className="mb-6"
+            />
+
         </Card>
     </Content>
   );
