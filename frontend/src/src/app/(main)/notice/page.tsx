@@ -1,180 +1,88 @@
 "use client"
 
-import { Button, Card, Form, Input, Layout, Select, Space, Switch, Table } from "antd";
-import React, { useEffect, useState } from "react";
-import { useFormatter, useTranslations } from "next-intl";
-import { useQuill } from "react-quilljs";
+import { Button, Card, Form, Input, Layout, Select, Table, TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
-import 'quill/dist/quill.snow.css';
-import { FILTER_QNAS } from "@/actions/qna";
-import { useQuery } from "@apollo/client";
-import "./index.css";
-
-interface QnaItem {
-    id: string;
-    title: string;
-    description: string;
-    createdAt: string;
-    user?: {
-        root?: {
-            userid: string;
-        };
-        parent?: {
-            userid: string;
-        };
-    };
-}
+import {
+    CREATE_ANNOUNCEMENT,
+    DELETE_ANNOUNCEMENT,
+    GET_ANNOUNCEMENTS,
+    UPDATE_ANNOUNCEMENT,
+  } from "@/actions/announcement"; 
+import React, { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
+import { ColumnsType } from "antd/es/table";
+import api from "@/api";
+import dayjs from "dayjs";
+import { useMutation, useQuery } from "@apollo/client";
 
 const Notice = () => {
-    const [form] = Form.useForm();
     const t = useTranslations();
-    const [qnas, setQnas] = useState<QnaItem[]>([]);
-    const { loading, data, refetch } = useQuery(FILTER_QNAS, {
-        variables: {
-            options: {
-                sort: {
-                    createdAt: -1,
-                },
-                filter: {
-                    type: "contact",
-                    userid: 10,
-                }
-            }
-        }
+    const { loading, data, refetch } = useQuery(GET_ANNOUNCEMENTS);
+    const [announcements, setAnnouncements] = useState<any[]>([]);
+    const [pagination, setPagination] = useState({
+        pageSize: 10,
+        current: 1,
     });
-    const [loadingCreate, setLoadingCreate] = useState(false);
-    const modules = {
-        toolbar: [
-          ["bold", "italic", "underline", "strike", "blockquote"],
-          [
-            { list: "ordered" },
-            { list: "bullet" },
-            { indent: "-1" },
-            { indent: "+1" },
-          ],
-          ["link", "image"],
-          ["clean"],
-        ],
-      };
-
-    const formats = [
-        "bold",
-        "italic",
-        "underline",
-        "strike",
-        "blockquote",
-        "list",
-        "indent",
-        "link",
-        "image",
-    ];
-    const { quill, quillRef } = useQuill({ modules, formats });
-
-    useEffect(() => {
-        if (quill) {
-            const handleTextChange = () => handleQuillChange(quill, 'description');
-            quill.on('text-change', handleTextChange);
-
-            // Check for captured image in localStorage
-            const capturedImage = localStorage.getItem('capturedBetImage');
-            if (capturedImage) {
-                // Insert the image into the editor
-                const range = quill.getSelection(true);
-                quill.insertEmbed(range.index, 'image', capturedImage);
-                // Clear the stored image
-                localStorage.removeItem('capturedBetImage');
+    const [columns, setColumns] = useState<ColumnsType<any>>([
+        {
+            title: t("number"),
+            dataIndex: "number",
+            key: "number",
+            render: (text,  record: any, index) => index + 1,
+        },
+        {
+            title: t("title"),
+            dataIndex: "title",
+            key: "title",
+            width: 700,
+            render: (_, record: any) => record.title,
+        },
+        {
+            title: t("dateOfWriting"),   
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (_, record: any) => {
+                return dayjs(record.createdAt).format('DD/MM/YYYY HH:mm');
             }
-
-            return () => {
-                quill.off('text-change', handleTextChange);
-            };
         }
-    }, [quill]);
+    ]);
 
-    useEffect(() => {
-        if (data?.filterQnas) {
-            setQnas(data.filterQnas);
-        }
-    }, [data]);
-
-    const handleQuillChange = (editor: any, fieldName: string) => {
-        if (editor) {
-            const content = editor.root.innerHTML;
-            form.setFieldValue(fieldName, content);
-        }
-    };    
-
-    const handleDelete = (id: string) => {
-        setQnas(prevQnas => prevQnas.filter(qna => qna.id !== id));
+    const expandedRowRender = (record: any) => {
+        return (
+            <div className="p-4 bg-black">
+                <h3 className="font-bold mb-2">{record.title}</h3>
+                <p className="text-gray-600">{record.description && <div dangerouslySetInnerHTML={{ __html: record.description }} />}</p>
+            </div>
+        );
     };
-          
-    const onCreate = async (values: any) => {
-        // setLoadingCreate(true);
-        // try {
-        //     // Create a new QnA item
-        //     const newQna: QnaItem = {
-        //         id: Date.now().toString(), // Temporary ID
-        //         title: values.title,
-        //         description: values.description,
-        //         createdAt: new Date().toISOString(),
-        //         user: {
-        //             root: { userid: "10" },
-        //             parent: { userid: "10" }
-        //         }
-        //     };
-            
-        //     // Add to the list
-        //     setQnas(prevQnas => [newQna, ...prevQnas]);
-            
-        //     // Reset form
-        //     form.resetFields();
-        //     if (quill) {
-        //         quill.setText('');
-        //     }
-        // } catch (error) {
-        //     console.error('Error creating QnA:', error);
-        // } finally {
-        //     setLoadingCreate(false);
-        // }
-    }
 
+    const onChange: TableProps<any>["onChange"] = (
+        pagination,
+        filters,
+        sorter,
+        extra
+      ) => {
+        console.log('params', pagination, filters, sorter, extra);
+        
+      };
+                
     return (
         <Layout>
-            <Content id="qna-content" className="p-3">
+            <Content id="note-page" className="p-3">
                 <Card
                     title={t("noticePage")}
                     >
-                        <Form
-                            name="newForm"
-                            layout="vertical"
-                            form={form}
-                            clearOnDestroy
-                            onFinish={onCreate}
-                        >
-                        <Form.Item name="title" label={t("title")}
-                        rules={[{ required: true, message: t("required") }]}>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item 
-                            name="type" 
-                            label={t("type")}
-                            rules={[{ required: true, message: t("required") }]}
-                        >
-                           <Select options={[]} />
-                        </Form.Item>
-                        <Form.Item 
-                            name="description" 
-                            label={t("desc")}
-                            rules={[{ required: true, message: t("required") }]}
-                        >
-                            <div ref={quillRef}></div>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button htmlType="submit" loading={loadingCreate}>
-                            {t("submit")}
-                            </Button>
-                        </Form.Item>
-                    </Form>
+                        <Table
+                            columns={columns}
+                            dataSource={data?.response?.announcements}
+                            loading={loading}
+                            pagination={pagination}
+                            onChange={onChange}
+                            expandable={{
+                                expandedRowRender,
+                                rowExpandable: (record) => true,
+                            }}
+                        />
                 </Card>
             </Content>
         </Layout>

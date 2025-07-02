@@ -43,7 +43,6 @@ const Event: React.FC = () => {
             render: (date: string) => dayjs(date).format("DD/MM/YYYY")
         },
     ];
-
     
     const bodyElement = () => {
         return (
@@ -70,7 +69,6 @@ const Event: React.FC = () => {
             children: <div>{bodyElement()}</div>
         }
     })
-
     
     return (
     <Content className="p-3 overflow-y-auto h-[calc(100vh-40px)]" id="eventPage">
@@ -88,7 +86,6 @@ const Event: React.FC = () => {
                 pagination={false}
                 className="mb-6"
             />
-
         </Card>
     </Content>
   );

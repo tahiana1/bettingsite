@@ -830,6 +830,7 @@
   "contactUs": "联系我们",
   "required": "必填",
   "noticePage": "公告期",
+  "noticeBoard": "公告板",
   "bettingAcceptanceTime": "投注接受时间",
   "home/niceHello" : "祝您今天愉快！",
   "auth/noallow" : "您需要从管理员那里获得允许。",
@@ -965,5 +966,6 @@
   "ipAddress": "IP地址",
   "enterYourPassword": "输入您的密码",
   "confirm" : "确认",
-  "passwordIncorrect" : "密码错误"
+  "passwordIncorrect" : "密码错误",
+  "createdDate" : "创建日期"
 }

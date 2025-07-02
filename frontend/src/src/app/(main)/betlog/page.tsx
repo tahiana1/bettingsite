@@ -212,7 +212,7 @@ const BettingLog: React.FC = () => {
           reader.onloadend = () => {
             localStorage.setItem('capturedBetImage', reader.result as string);
             // Navigate to QnA page
-            router.push('/notice');
+            router.push('/bulletin');
           };
           reader.readAsDataURL(file);
         }
