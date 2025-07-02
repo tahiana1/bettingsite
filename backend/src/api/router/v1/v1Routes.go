@@ -108,4 +108,9 @@ func GetV1Route(r *gin.RouterGroup) {
 		gameApiRouter.POST("/update", controllers.UpdateGameAPIByID)
 		gameApiRouter.POST("/delete", controllers.DeleteGameAPIByID)
 	}
+
+	eventRouter := r.Group("/event")
+	{
+		eventRouter.GET("/get-event", controllers.GetEvent)
+	}
 }

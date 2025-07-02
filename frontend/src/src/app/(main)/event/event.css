@@ -1,0 +1,12 @@
+#eventPage .ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+    margin-left: 0px !important;
+}
+
+#eventPage .ant-card-body {
+    padding: 10px !important;
+}
+
+#eventPage .ant-tabs-top >.ant-tabs-nav::before, #eventPage .ant-tabs-bottom >.ant-tabs-nav::before, #eventPage .ant-tabs-top >div>.ant-tabs-nav::before, #eventPage .ant-tabs-bottom >div>.ant-tabs-nav::before {
+    display: none !important;
+}
+

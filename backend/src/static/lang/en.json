@@ -963,5 +963,6 @@
   "ipAddress": "IP Address",
   "enterYourPassword": "Enter Your Password",
   "confirm" : "Confirm",
-  "passwordIncorrect" : "Password Incorrect"
+  "passwordIncorrect" : "Password Incorrect",
+  "createdDate" : "Created Date"
 }
