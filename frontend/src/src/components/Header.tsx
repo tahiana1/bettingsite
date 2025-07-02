@@ -57,7 +57,7 @@ const Head = () => {
     if (pathname === e.key) {
       router.refresh();
     } else {
-      if (e.key == "/billing/deposit" || e.key == "/billing/withdraw" || e.key == "event" || e.key == "/profile/point" || e.key == "home" || e.key == "casino" || e.key == "notice" || e.key == "qna" || e.key == "profile" || e.key == "betlog" || e.key == "/") {
+      if (e.key == "/billing/deposit" || e.key == "/billing/withdraw" || e.key == "event" || e.key == "bulletin" || e.key == "/profile/point" || e.key == "home" || e.key == "casino" || e.key == "notice" || e.key == "qna" || e.key == "profile" || e.key == "betlog" || e.key == "/") {
         if (pathname === "/billing/deposit" || pathname === "/billing/withdraw" || pathname === "/profile/point") {
           router.push("../" + e.key);
         } else {
