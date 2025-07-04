@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, Spin } from "antd";
+import { Card, message, Spin } from "antd";
 import Image from "next/image";
 import { Content } from "antd/es/layout/layout";
 import CasinoLogo from "@/assets/img/casino/casino.png";
@@ -50,7 +50,8 @@ import { useEffect, useState } from "react";
 const Casino: React.FC = () => {
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
-    const [userId, setUserId] = useState<any>("")
+    const [userId, setUserId] = useState<any>("");
+    const [selectedGame, setSelectedGame] = useState("");
     useEffect(() => {
         api("user/me").then((res) => {
             setUserId(res.data.userid);
@@ -60,6 +61,7 @@ const Casino: React.FC = () => {
       }, []);
     const ProcessCasino = (name : string) => {
         setLoading(true);
+        setSelectedGame(name);
         console.log(userId, 'userid')
         api("casino/get-game-link", {
             method: "GET",
@@ -71,7 +73,7 @@ const Casino: React.FC = () => {
             console.log(res.link);
             window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
         }).catch((err) => {
-            console.log(err);
+            message.error(err.response.data.error);
         }).finally(() => {
             setLoading(false);
         });
@@ -117,6 +119,9 @@ const Casino: React.FC = () => {
                         className="relative cursor-pointer w-[200px] h-[200px]"
                         onClick={() => ProcessCasino(provider.name)}
                     >
+                        {
+                            loading && selectedGame === provider.name && <Spin className="flex z-[1000] justify-center items-center absolute top-[100px] left-0 w-full h-full" />
+                        }
                         <div className="z-[3] absolute w-full top-1 justify-center flex">
                             <Image src={provider.logo} alt={provider.name} width={100} height={100} />
                         </div>
