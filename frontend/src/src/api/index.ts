@@ -9,8 +9,8 @@ if (typeof window !== "undefined") {
   }
 }
 export const baseURL = `/api/v1/`; // `http://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
-// export const wsURL = `ws${isSSL}://${host}/api/v1/ws`;
-export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1/ws`;
+export const wsURL = `ws${isSSL}://${host}/api/v1/ws`;
+// export const wsURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1/ws`;
 export const apolloWSURL = `ws${isSSL}://${host}:${process.env.NEXT_PUBLIC_PROXY_PORT}/api/v1`;
 
 console.log(wsURL, 'wsURL');
