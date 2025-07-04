@@ -44,11 +44,26 @@ import OneTouchLogo from "@/assets/img/casino/logo/onetouch.png";
 import ALGLogo from "@/assets/img/casino/logo/alg.png";
 import SevenMojosLogo from "@/assets/img/casino/logo/7mojos.png";
 import HiltonCasinoLogo from "@/assets/img/casino/logo/hilton.png";
-
-
+import api from "@/api";
 
 const Casino: React.FC = () => {
     const t = useTranslations();
+    
+    const ProcessCasino = (name : string) => {
+        api("casino/get-game-link", {
+            method: "GET",
+            params: {
+                username: "test",
+                gameName: name
+            }
+        }).then((res) => {
+            console.log(res.link);
+            window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
     return (
     <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
         <Card
@@ -87,6 +102,7 @@ const Casino: React.FC = () => {
                     <div
                         key={provider.name}
                         className="relative cursor-pointer w-[200px] h-[200px]"
+                        onClick={() => ProcessCasino(provider.name)}
                     >
                         <div className="z-[3] absolute w-full top-1 justify-center flex">
                             <Image src={provider.logo} alt={provider.name} width={100} height={100} />

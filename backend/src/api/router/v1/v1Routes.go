@@ -113,4 +113,9 @@ func GetV1Route(r *gin.RouterGroup) {
 	{
 		eventRouter.GET("/get-event", controllers.GetEvent)
 	}
+
+	casinoRouter := r.Group("/casino")
+	{
+		casinoRouter.GET("/get-game-link", controllers.GetGameLink)
+	}
 }
