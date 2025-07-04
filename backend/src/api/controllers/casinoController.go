@@ -151,9 +151,7 @@ func getGameConfig(gameName string) GameConfig {
 	}
 
 	if config, exists := gameConfigs[gameName]; exists {
-		// Use gameName as vendor as requested
-		config.Vendor = strings.ToLower(strings.ReplaceAll(gameName, " ", ""))
-		return config
+		return config // Do NOT overwrite Vendor!
 	}
 
 	// Return default config with gameName as vendor
