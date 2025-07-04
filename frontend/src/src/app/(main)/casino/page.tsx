@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "antd";
+import { Card, Spin } from "antd";
 import Image from "next/image";
 import { Content } from "antd/es/layout/layout";
 import CasinoLogo from "@/assets/img/casino/casino.png";
@@ -45,15 +45,26 @@ import ALGLogo from "@/assets/img/casino/logo/alg.png";
 import SevenMojosLogo from "@/assets/img/casino/logo/7mojos.png";
 import HiltonCasinoLogo from "@/assets/img/casino/logo/hilton.png";
 import api from "@/api";
+import { useEffect, useState } from "react";
 
 const Casino: React.FC = () => {
     const t = useTranslations();
-    
+    const [loading, setLoading] = useState(false);
+    const [userId, setUserId] = useState<any>("")
+    useEffect(() => {
+        api("user/me").then((res) => {
+            setUserId(res.data.userid);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }, []);
     const ProcessCasino = (name : string) => {
+        setLoading(true);
+        console.log(userId, 'userid')
         api("casino/get-game-link", {
             method: "GET",
             params: {
-                username: "test",
+                username: userId,
                 gameName: name
             }
         }).then((res) => {
@@ -61,6 +72,8 @@ const Casino: React.FC = () => {
             window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
         }).catch((err) => {
             console.log(err);
+        }).finally(() => {
+            setLoading(false);
         });
     }
 
