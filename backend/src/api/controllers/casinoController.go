@@ -14,7 +14,7 @@ import (
 
 // GameConfig holds the configuration for different game types
 type GameConfig struct {
-	GameID string
+	GameID any
 	Vendor string
 }
 
@@ -22,21 +22,21 @@ type GameConfig struct {
 var gameConfigs = map[string]GameConfig{
 	"Evolution":     {GameID: "evolution_baccarat_sicbo", Vendor: "evolution"},
 	"Taishan":       {GameID: "taishan_baccarat", Vendor: "taishan"},
-	"Asia Gaming":   {GameID: "asiagaming_baccarat", Vendor: "asiagaming"},
-	"Ejugi":         {GameID: "ezugi_baccarat", Vendor: "ezugi"},
-	"Allbet":        {GameID: "allbet_baccarat", Vendor: "allbet"},
-	"Dream Gaming":  {GameID: "dreamgaming_baccarat", Vendor: "dreamgaming"},
-	"Pragmatic":     {GameID: "pragmatic_baccarat", Vendor: "pragmatic"},
-	"Sexy Casino":   {GameID: "sexycasino_baccarat", Vendor: "sexycasino"},
-	"Vivogaming":    {GameID: "vivogaming_baccarat", Vendor: "vivogaming"},
-	"WM Casino":     {GameID: "wmcasino_baccarat", Vendor: "wmcasino"},
-	"BetgamesTV":    {GameID: "betgamestv_baccarat", Vendor: "betgamestv"},
+	"Asia Gaming":   {GameID: 0, Vendor: "Asia Gaming"},
+	"Ejugi":         {GameID: "ezugi", Vendor: "ezugi"},
+	"Allbet":        {GameID: "allBet_lobby", Vendor: "AllBet"},
+	"Dream Gaming":  {GameID: "dgcasino", Vendor: "DreamGame"},
+	"Pragmatic":     {GameID: "101", Vendor: "PragmaticPlay"},
+	"Sexy Casino":   {GameID: "MX-LIVE-001", Vendor: "sexybcrt"},
+	"Vivogaming":    {GameID: "vivo_lobby", Vendor: "vivo"},
+	"WM Casino":     {GameID: "wmcasino", Vendor: "WM Live"},
+	"BetgamesTV":    {GameID: "bg_baccarat", Vendor: "Betgames.tv"},
 	"Bota Casino":   {GameID: "botacasino_baccarat", Vendor: "botacasino"},
-	"Skywind":       {GameID: "skywind_baccarat", Vendor: "skywind"},
+	"Skywind":       {GameID: "sw_ro_spbac", Vendor: "Skywind"},
 	"Dowin":         {GameID: "dowin_baccarat", Vendor: "dowin"},
-	"Playtech":      {GameID: "playtech_baccarat", Vendor: "playtech"},
+	"Playtech":      {GameID: "ubal", Vendor: "PlayTech"},
 	"One Touch":     {GameID: "onetouch_baccarat", Vendor: "onetouch"},
-	"ALG Casino":    {GameID: "algcasino_baccarat", Vendor: "algcasino"},
+	"ALG Casino":    {GameID: "absolutelive", Vendor: "absolute"},
 	"7Mojos":        {GameID: "7mojos_baccarat", Vendor: "7mojos"},
 	"Hilton Casino": {GameID: "hiltoncasino_baccarat", Vendor: "hiltoncasino"},
 }
@@ -344,7 +344,7 @@ func requestGameLaunchLink(username, nickname string, gameConfig GameConfig, bea
 	q := reqURL.Query()
 	q.Set("username", username)
 	q.Set("nickname", nickname)
-	q.Set("game_id", gameConfig.GameID)
+	q.Set("game_id", fmt.Sprintf("%v", gameConfig.GameID))
 	q.Set("vendor", gameConfig.Vendor)
 
 	// Use user token if provided, otherwise use bearer token
