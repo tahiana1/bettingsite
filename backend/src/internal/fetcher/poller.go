@@ -37,4 +37,8 @@ func StartPolling() {
 			}
 		}
 	}()
+
+	// Start HonorLink fetcher
+	honorLinkFetcher := NewHonorLinkFetcher()
+	honorLinkFetcher.StartPeriodicFetching()
 }
