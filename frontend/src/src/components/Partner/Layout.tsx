@@ -552,13 +552,13 @@ export default function PartnerRootLayout({
                       <Space.Compact className="justify-center">
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membership")} {t("deposit")}:0
+                          {t("membershipDeposit")}:0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membership")} {t("withdraw")}:0
+                          {t("membershipWithdraw")}:0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membership")} {t("inquiry")}:0
+                          {t("membershipInquiry")}:0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("rollingTransition")}:0
@@ -569,7 +569,7 @@ export default function PartnerRootLayout({
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("distributor")} {t("inquiry")} :0
+                          {t("distributorInquiry")} :0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
                       </Space.Compact>

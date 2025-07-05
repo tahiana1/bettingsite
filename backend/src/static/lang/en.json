@@ -966,5 +966,9 @@
   "enterYourPassword": "Enter Your Password",
   "confirm" : "Confirm",
   "passwordIncorrect" : "Password Incorrect",
-  "createdDate" : "Created Date"
+  "createdDate" : "Created Date",
+  "membershipDeposit" : "Membership Deposit",
+  "membershipWithdraw" : "Membership Withdraw",
+  "membershipInquiry" : "Membership Inquiry",
+  "distributorInquiry" : "Distributor Inquiry"
 }
