@@ -151,10 +151,9 @@ func (h *HonorLinkFetcher) ManualFetch() {
 }
 
 func (h *HonorLinkFetcher) fetchAndLogTransactions() {
-	// Use current time as end time
+	// Set time range to last 12 minutes
 	end := time.Now()
-	// Set start time to 5 minutes ago
-	start := end.Add(-5 * time.Minute)
+	start := end.Add(-12 * time.Minute)
 	fmt.Println(start, end, "date")
 	response, err := h.FetchTransactions(start, end, 1, 100)
 	if err != nil {
@@ -177,11 +176,16 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 			// if i >= 5 { // Show only first 5 transactions
 			// 	break
 			// }
-			fmt.Printf("%d. ID: %s, UserID: %s, Username: '%s', Amount: %.2f, Type: %s, Status: %s\n",
-				i+1, transaction.GetIDString(), transaction.UserID, transaction.User.Username, transaction.Amount, transaction.Type, transaction.Status)
-
-			// Process each transaction and create database records
-			h.processTransaction(transaction)
+			// check transaction id is exist in transction table explation
+			var transactionDB models.Transaction
+			if err := initializers.DB.Where("explation = ?", transaction.GetIDString()).First(&transactionDB).Error; err == nil {
+				fmt.Printf("❌ Transaction with explation %s already exists\n", transaction.GetIDString())
+				continue
+			} else {
+				fmt.Printf("%d. ID: %s, UserID: %s, Username: '%s', Amount: %.2f, Type: %s, Status: %s\n",
+					i+1, transaction.GetIDString(), transaction.UserID, transaction.User.Username, transaction.Amount, transaction.Type, transaction.Status)
+				h.processTransaction(transaction)
+			}
 		}
 	} else {
 		fmt.Printf("   No transactions found in the specified time range\n")
@@ -246,8 +250,8 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 	transaction := models.Transaction{
 		UserID:        user.ID,
 		Amount:        hlTransaction.Amount,
-		Type:          "HonorLink Casino" + hlTransaction.Type,
-		Explation:     "HonorLink Casino",
+		Type:          "HonorLink",
+		Explation:     hlTransaction.GetIDString(),
 		BalanceBefore: balanceBefore,
 		BalanceAfter:  balanceAfter,
 		Status:        "success",
@@ -259,10 +263,12 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		return
 	}
 
-	// Update user's balance
-	if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
-		fmt.Printf("❌ Error updating user balance: %v\n", err)
-		return
+	if transaction.Type == "causer.agent.add_balance" {
+		// Update user's balance
+		// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
+		// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
+		// 	return
+		// }
 	}
 
 	fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f, Type=%s\n",

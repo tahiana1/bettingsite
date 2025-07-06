@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, message, Spin } from "antd";
+import { Button, Card, message, Spin, Modal, Form, InputNumber } from "antd";
 import Image from "next/image";
 import { Content } from "antd/es/layout/layout";
 import CasinoLogo from "@/assets/img/casino/casino.png";
@@ -52,13 +52,28 @@ const Casino: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<any>("");
     const [selectedGame, setSelectedGame] = useState("");
+    const [balance, setBalance] = useState<any>(0);
+    const [isAddBalanceModalOpen, setIsAddBalanceModalOpen] = useState(false);
+    const [addBalanceForm] = Form.useForm();
+    const [addBalanceLoading, setAddBalanceLoading] = useState(false);
+
     useEffect(() => {
         api("user/me").then((res) => {
             setUserId(res.data.userid);
+            api("casino/get-balance", {
+                method: "GET",
+                params: {
+                    username: res.data.userid
+                }
+            }).then((response) => {
+                setBalance(response.balance);
+                console.log(response.balance, 'balance');
+            });
         }).catch((err) => {
           console.log(err);
         });
-      }, []);
+    }, []);
+
     const ProcessCasino = (name : string) => {
         setLoading(true);
         setSelectedGame(name);
@@ -80,15 +95,52 @@ const Casino: React.FC = () => {
         });
     }
 
+    const handleAddBalance = async (values: any) => {
+        setAddBalanceLoading(true);
+        api("casino/add-balance", {
+            method: "GET",
+            params: {
+                username: userId,
+                amount: values.amount
+            }
+        }).then((response) => {     
+            console.log(response, 'response');
+        }).catch((err) => {
+            message.error(err.response.data.error);
+        }).finally(() => {
+            setAddBalanceLoading(false);
+            handleAddBalanceModalCancel();
+            window.location.reload();
+        });
+    };
+
+    const handleAddBalanceModalCancel = () => {
+        setIsAddBalanceModalOpen(false);
+        addBalanceForm.resetFields();
+    };
+
     return (
     <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
+       
         <Card
             title={
-                <div className="flex justify-start items-center gap-2 py-1 mb-1">
-                    <Image src={CasinoLogo} alt="casino" width={70} height={70} />
-                    <div className="flex flex-col mt-1">
-                        <div className="text-2xl font-bold">{t("casino")}</div>
-                        <div className="text-sm text-gray-500">{t("totalLiveCasinoGameProviders")} <span className="text-blue-500">19</span> {t("liveCasinoGameProviders")}</div>
+                <div className="flex justify-between flex-row w-full items-center gap-2 py-1 mb-1">  
+                    <div className="flex flex-row items-center gap-2">
+                        <Image src={CasinoLogo} alt="casino" width={70} height={70} />
+                        <div className="flex flex-col mt-1">
+                            <div className="text-2xl font-bold">{t("casino")}</div>
+                            <div className="text-sm text-gray-500">{t("totalLiveCasinoGameProviders")} <span className="text-blue-500">19</span> {t("liveCasinoGameProviders")}</div>
+                        </div>
+                    </div>
+                    <div className="flex justify-end items-center gap-2 py-1 mb-1">
+                        <div className="text-sm text-gray-500">{t("balance")}: <span className="text-blue-500">{balance}</span></div>
+                        <button 
+                            className="bg-blue-500 text-white px-3 py-1 rounded-md cursor-pointer"
+                            onClick={() => setIsAddBalanceModalOpen(true)}
+                        >
+                            {t("addBalance")}
+                        </button>
+                        <button className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer">{t("withdraw")}</button>
                     </div>
                 </div>
             }
@@ -130,11 +182,55 @@ const Casino: React.FC = () => {
                             <span className="text-[25px] text-[yellow] font-bold">{provider.name}</span>
                         </div>
                         <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />
-                        <Image src={provider.img} alt={provider.name} className="opacity-100 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
+                        <Image src={provider.img} alt={provider.name} className="opacity-1 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
                     </div>
                 ))}
             </div>
         </Card>
+
+        {/* Add Balance Modal */}
+        <Modal
+            title={t("addBalance")}
+            open={isAddBalanceModalOpen}
+            onCancel={handleAddBalanceModalCancel}
+            footer={null}
+        >
+            <Form
+                form={addBalanceForm}
+                layout="vertical"
+                onFinish={handleAddBalance}
+            >
+                <Form.Item
+                    name="amount"
+                    label={t("amount")}
+                    rules={[
+                        { required: true, message: "Please enter an amount" },
+                        { type: "number", min: 1, message: "Amount must be greater than 0" }
+                    ]}
+                >
+                    <InputNumber
+                        style={{ width: "100%" }}
+                        placeholder="Enter amount to add"
+                        min={1}
+                        precision={2}
+                    />
+                </Form.Item>
+                <Form.Item>
+                    <div className="flex justify-end gap-2">
+                        <Button onClick={handleAddBalanceModalCancel}>
+                            {t("cancel")}
+                        </Button>
+                        <Button 
+                            type="primary" 
+                            htmlType="submit" 
+                            loading={addBalanceLoading}
+                        >
+                            {t("submit")}
+                        </Button>
+                    </div>
+                </Form.Item>
+            </Form>
+        </Modal>
     </Content>
   );
 };

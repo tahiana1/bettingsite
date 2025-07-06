@@ -9,4 +9,6 @@ import (
 func GetCasinoRoute(r *gin.RouterGroup) {
 	r.Use(middleware.RequireAuth)
 	r.GET("/get-game-link", controllers.GetGameLink)
+	r.GET("/get-balance", controllers.GetBalance)
+	r.GET("/add-balance", controllers.AddBalance)
 }

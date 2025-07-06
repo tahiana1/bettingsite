@@ -970,5 +970,6 @@
   "membershipDeposit" : "Membership Deposit",
   "membershipWithdraw" : "Membership Withdraw",
   "membershipInquiry" : "Membership Inquiry",
-  "distributorInquiry" : "Distributor Inquiry"
+  "distributorInquiry" : "Distributor Inquiry",
+  "addBalance" : "Add Balance"
 }

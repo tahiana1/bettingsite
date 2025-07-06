@@ -972,5 +972,6 @@
   "membershipDeposit" : "会员存款",
   "membershipWithdraw" : "会员提款",
   "membershipInquiry" : "会员咨询",
-  "distributorInquiry" : "分销商咨询"
+  "distributorInquiry" : "分销商咨询",
+  "addBalance" : "添加余额"
 }
