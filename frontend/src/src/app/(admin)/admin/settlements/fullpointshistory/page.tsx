@@ -234,6 +234,75 @@ const FullPointsHistoryPage: React.FC = () => {
               defaultValue={""}
             />
 
+            <Radio.Group
+              size="small"
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: t("all"),
+                  value: "",
+                },
+                {
+                  label: t("rechargeBonus"),
+                  value: "rechargeBonus",
+                },
+                {
+                  label: t("pointConversion"),
+                  value: "pointConversion",
+                },
+                {
+                  label: t("administratorPayment"),
+                  value: "administratorPayment",
+                },
+                {
+                  label: t("administratorRecovery"),
+                  value: "administratorRecovery",
+                },
+                {
+                  label: t("attendanceBonus"),
+                  value: "attendanceBonus",
+                },
+                {
+                  label: t("couponBonus"),
+                  value: "couponBonus",
+                },
+                {
+                  label: t("distributorPayment"),
+                  value: "distributorPayment",
+                },
+                {
+                  label: t("totalRecovery"),
+                  value: "totalRecovery",
+                },
+                {
+                  label: t("winnerBonus"),
+                  value: "winnerBonus",
+                },
+                {
+                  label: t("recoverWinningBonus"),
+                  value: "recoverWinningBonus",
+                },
+                {
+                  label: t("referralBenefits"),
+                  value: "referralBenefits",
+                },
+                {
+                  label: t("stepByStepPlus"),
+                  value: "stepByStepPlus",
+                },
+                {
+                  label: t("paybackPayment"),
+                  value: "paybackPayment",
+                },
+                {
+                  label: t("postBonus"),
+                  value: "postBonus",
+                },
+              ]}
+              defaultValue={""}
+            />
+
             <Space className="!w-full justify-between">
               <Space>
                 <DatePicker.RangePicker

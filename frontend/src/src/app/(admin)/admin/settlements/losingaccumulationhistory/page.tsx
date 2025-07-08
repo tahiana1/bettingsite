@@ -42,101 +42,138 @@ const FullPointsHistoryPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
-      fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("number"),
+      dataIndex: "number",
+      key: "number",
+      fixed: "left"
     },
     {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
+      title: t("rootDistributor"),
+      dataIndex: "rootDistributor",
+      key: "rootDistributor",
+      render: (text) => text ?? "rootDistributor",
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: '"User"."userid"',
-      render(_, record) {
-        return record.user?.userid;
-      },
+      title: t("topDistributor"),
+      dataIndex: "topDistributor",
+      key: "topDistributor",
+      render: (text) => text ?? "topDistributor",
     },
     {
-      title: t("nickname"),
-      dataIndex: "profile.nickname",
-      key: '"Profile"."nickname"',
-      render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("id"),
+      dataIndex: "id",
+      key: "id",
+      render: (_, record) => record.user?.id,
     },
     {
-      title: t("holderName"),
-      dataIndex: "holderName",
-      key: '"Profile"."holderName"',
-      render: (_, record) => record.user?.profile?.holderName,
-    },
-    {
-      title: t("rolling"),
+      title: t("losingRelatedInformation"),
       children: [
         {
-          title: t("amount"),
-          dataIndex: "amount",
-          key: "amount",
+          title: t("bettingUser"),
+          dataIndex: "bettingUser",
+          key: "bettingUser",
         },
         {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
+          title: t("gameCompany"),
+          dataIndex: "gameCompany",
+          key: "gameCompany",
         },
         {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
+          title: t("gameName"),
+          dataIndex: "gameName",
+          key: "gameName",
         },
+        {
+          title: t("bettingAmount"),
+          dataIndex: "bettingAmount",
+          key: "bettingAmount",
+        },
+        {
+          title: t("prizeMoney"),
+          dataIndex: "prizeMoney",
+          key: "prizeMoney",
+        },
+        {
+          title: t("deposit"),
+          dataIndex: "deposit",
+          key: "deposit",
+        },
+        {
+          title: t("withdrawal"),
+          dataIndex: "withdrawal",
+          key: "withdrawal",
+        },
+        {
+          title: t("currentHoldings"),
+          dataIndex: "currentHoldings",
+          key: "currentHoldings",
+        },
+        {
+          title: t("previouslyOwned"),
+          dataIndex: "previouslyOwned",
+          key: "previouslyOwned",
+        },
+        {
+          title: t("point"),
+          dataIndex: "point",
+          key: "point",
+        },
+        {
+          title: t("rollingGold"),
+          dataIndex: "rollingGold",
+          key: "rollingGold",
+        },
+        {
+          title: t("rollingCoversationFund"),
+          dataIndex: "rollingCoversationFund",
+          key: "rollingCoversationFund",
+        },
+        {
+          title: t("losing(%)"),
+          dataIndex: "losing(%)",
+          key: "losing(%)",
+        }
       ],
     },
     {
-      title: t("balance"),
-      children: [
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("losingMoney"),
+      dataIndex: "losingMoney",
+      key: "losingMoney",
     },
     {
-      title: t("transactionAt"),
-      dataIndex: "transactionAt",
-      key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("previousLoss"),
+      dataIndex: "previousLoss",
+      key: "previousLoss",
     },
     {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("afterThatTheLoss"),
+      dataIndex: "afterThatTheLoss",
+      key: "afterThatTheLoss",
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("type"),
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: t("settlementType"),
+      dataIndex: "settlementType",
+      key: "settlementType",
+    },
+    {
+      title: t("meme"),
+      dataIndex: "meme",
+      key: "meme",
+    },
+    {
+      title: t("bettingTime"),
+      dataIndex: "bettingTime",
+      key: "bettingTime",
+    },
+    {
+      title: t("registrationTime"),
+      dataIndex: "registrationTime",
+      key: "registrationTime",
     },
   ];
 
@@ -230,6 +267,35 @@ const FullPointsHistoryPage: React.FC = () => {
                   label: t("site"),
                   value: "site",
                 },
+              ]}
+              defaultValue={""}
+            />
+
+            <Radio.Group
+              size="small"
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: t("all"),
+                  value: "",
+                },
+                {
+                  label: t("bettingRelatedLosing"),
+                  value: "bettingRelatedLosing",
+                },
+                {
+                  label: t("entrieAndExitLosing"),
+                  value: "entrieAndExitLosing",
+                },
+                {
+                  label: t("totalLossSettlement"),
+                  value: "totalLossSettlement",
+                },
+                {
+                  label: t("adminLosingPayment"),
+                  value: "adminLosingPayment",
+                }
               ]}
               defaultValue={""}
             />

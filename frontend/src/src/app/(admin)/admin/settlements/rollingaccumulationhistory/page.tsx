@@ -42,101 +42,103 @@ const RollingAccumulationPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
-      fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("number"),
+      dataIndex: "number",
+      key: "number",
+      fixed: "left"
     },
     {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
+      title: t("rootDistributor"),
+      dataIndex: "rootDistributor",
+      key: "rootDistributor",
+      render: (text) => text ?? "rootDistributor",
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: '"User"."userid"',
-      render(_, record) {
-        return record.user?.userid;
-      },
+      title: t("topDistributor"),
+      dataIndex: "topDistributor",
+      key: "topDistributor",
+      render: (text) => text ?? "topDistributor",
     },
     {
-      title: t("nickname"),
+      title: t("ID(Nickname)"),
       dataIndex: "profile.nickname",
-      key: '"Profile"."nickname"',
-      render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      key: "nickname",
+      render: (text) => text ?? "nickname",
     },
     {
-      title: t("holderName"),
-      dataIndex: "holderName",
-      key: '"Profile"."holderName"',
-      render: (_, record) => record.user?.profile?.holderName,
-    },
-    {
-      title: t("rolling"),
+      title: t("bettingInformation"),
       children: [
         {
-          title: t("amount"),
-          dataIndex: "amount",
-          key: "amount",
+          title: t("bettingUser"),
+          dataIndex: "bettingUser",
+          key: "bettingUser",
         },
         {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
+          title: t("gameCompany"),
+          dataIndex: "gameCompany",
+          key: "gameCompany",
         },
         {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
+          title: t("gameName"),
+          dataIndex: "gameName",
+          key: "gameName",
         },
+        {
+          title: t("bettingAmount"),
+          dataIndex: "bettingAmount",
+          key: "bettingAmount",
+        },
+        {
+          title: t("prizeMoney"),
+          dataIndex: "prizeMoney",
+          key: "prizeMoney",
+        },
+        {
+          title: t("bettingTime"),
+          dataIndex: "bettingTime",
+          key: "bettingTime",
+        }, 
+        {
+          title: t("rolling(%)"),
+          dataIndex: "rolling(%)",
+          key: "rolling(%)",
+        }
       ],
     },
     {
-      title: t("balance"),
-      children: [
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("rollingGold"),
+      dataIndex: "rollingGold",
+      key: "rollingGold"
     },
     {
-      title: t("transactionAt"),
-      dataIndex: "transactionAt",
-      key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("previousRollingFee"),
+      dataIndex: "previousRollingFee",
+      key: "previousRollingFee"
     },
     {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("afterThatRollingMoney"),
+      dataIndex: "afterThatRollingMoney",
+      key: "afterThatRollingMoney",
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("type"),
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: t("explanation"),
+      dataIndex: "explanation",
+      key: "explanation",
+    },
+    {
+      title: t("bettingTime"),
+      dataIndex: "bettingTime",
+      key: "bettingTime",
+    },
+    {
+      title: t("registrationTime"),
+      dataIndex: "registrationTime",
+      key: "registrationTime",
     },
   ];
 
@@ -233,8 +235,38 @@ const RollingAccumulationPage: React.FC = () => {
               ]}
               defaultValue={""}
             />
+            
 
-            <Space className="!w-full justify-between">
+            <Radio.Group
+              size="small"
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: t("all"),
+                  value: "",
+                },
+                {
+                  label: t("bettingRelatedRolling"),
+                  value: "bettingRelatedRolling",
+                },
+                {
+                  label: t("memberRollingCoversation"),
+                  value: "memberRollingCoversation",
+                },
+                {
+                  label: t("rollingCoversationOfDistributor"),
+                  value: "rollingCoversationOfDistributor",
+                },
+                {
+                  label: t("adminRollingPayments"),
+                  value: "adminRollingPayments",
+                }
+              ]}
+              defaultValue={""}
+            />
+          
+            <Space className="!w-full">
               <Space>
                 <DatePicker.RangePicker
                   size="small"
@@ -253,6 +285,7 @@ const RollingAccumulationPage: React.FC = () => {
                   enterButton={t("search")}
                 />
               </Space>
+              <div className="ml-3"><span className="text-sm">{t("rollingPrice")}:</span> <span>1000</span></div>
             </Space>
           </Space>
 

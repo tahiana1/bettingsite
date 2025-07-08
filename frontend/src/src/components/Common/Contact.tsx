@@ -8,19 +8,19 @@ const data = [
   {
     title: "Telegram",
     icon: <BsTelegram className="w-14" />,
-    href: "https://t.me/atmark5555",
+    href: "https://t.me/",
     target: "_blank",
   },
   {
     title: "Talk",
     icon: <GiTalk />,
-    href: "tel:+8615286182741",
+    href: "tel:+111111111111",
     target: "",
   },
   {
     title: "Call Us",
     icon: <BiPhoneCall />,
-    href: "tel:+8617285416241",
+    href: "tel:+111111111111",
     target: "",
   },
 ];

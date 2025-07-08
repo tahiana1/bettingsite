@@ -140,7 +140,7 @@ const Casino: React.FC = () => {
                         >
                             {t("addBalance")}
                         </button>
-                        <button className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer">{t("withdraw")}</button>
+                        {/* <button className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer">{t("withdraw")}</button> */}
                     </div>
                 </div>
             }

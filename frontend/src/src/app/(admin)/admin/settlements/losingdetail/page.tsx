@@ -6,200 +6,46 @@ import {
   Space,
   Card,
   Table,
-  Tag,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
-  Select,
-  Modal,
-  Form,
 } from "antd";
+
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useMutation, useQuery } from "@apollo/client";
-import {
-  APPROVE_USER,
-  BLOCK_USER,
-  FILTER_USERS,
-  UPDATE_USER,
-} from "@/actions/user";
-import { BiBlock, BiTrash } from "react-icons/bi";
-import { PiUserCircleCheckLight } from "react-icons/pi";
+import { useQuery } from "@apollo/client";
+import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-import dayjs, { Dayjs } from "dayjs";
-import { parseTableOptions } from "@/lib";
-import { USER_STATUS, USER_TYPE } from "@/constants";
-import { UPDATE_PROFILE } from "@/actions/profile";
+import { Dayjs } from "dayjs";
+import { isValidDate, parseTableOptions } from "@/lib";
 
-// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
-
-// type UserIndex = keyof User;
-
-const GeneralDWPage: React.FC = () => {
+const LosingDeailsPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        field: "transactions.type",
+        value: "T",
+        op: "eq",
+      },
+    ],
+  });
 
-  const [modal, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
-  const [users, setUsers] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_USERS);
-  const [updateProfile] = useMutation(UPDATE_PROFILE);
-  const [colorModal, setColorModal] = useState<boolean>(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
 
-  const [updateUser] = useMutation(UPDATE_USER);
-  const [approveUser] = useMutation(APPROVE_USER);
-  const [blockUser] = useMutation(BLOCK_USER);
-
-  const onBlockUser = (user: User) => {
-    blockUser({ variables: { id: user.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-
-  const onApproveUser = (user: User) => {
-    approveUser({ variables: { id: user.id } })
-      .then((res) => {
-        console.log({ res });
-        if (res.data?.success) {
-        }
-        refetch();
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
-  const onUserLevelChange = (u: User, v: string = "") => {
-    updateProfile({
-      variables: {
-        id: u.id,
-        input: {
-          level: v ? parseInt(v) : 0,
-        },
-      },
-    }).then(() => {
-      refetch(tableOptions);
-    });
-  };
-  const onUserTypeChange = (u: User, v: string = "") => {
-    updateUser({
-      variables: {
-        id: u.id,
-        input: {
-          type: v,
-        },
-      },
-    }).then(() => {
-      refetch(tableOptions);
-    });
-  };
-
-  const onUserRoleChange = (u: User, v: string = "USER") => {
-    updateUser({
-      variables: {
-        id: u.id,
-        input: {
-          role: v,
-        },
-      },
-    }).then(() => {
-      refetch(tableOptions);
-    });
-  };
-  const labelRenderer = (props: any) =>
-    props.value.toString() == "100"
-      ? "Premium"
-      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-        props.value;
-
-  const levelOption = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-  ].map((i) => ({
-    value: i,
-    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-  }));
-
-  const userTypeOption = [
+  const columns: TableProps<Transaction>["columns"] = [
     {
-      label: "General",
-      value: "G",
-    },
-    {
-      label: "Test",
-      value: "T",
-    },
-    {
-      label: "Interest",
-      value: "I",
-    },
-    {
-      label: "Working",
-      value: "W",
-    },
-  ];
-  const roleOption = [
-    {
-      label: "Admin",
-      value: "A",
-    },
-    {
-      label: "Partner",
-      value: "P",
-    },
-    {
-      label: "User",
-      value: "U",
-    },
-  ];
-  const columns: TableProps<User>["columns"] = [
-    {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
-      fixed: "left",
-      sorter: {
-        compare: (a, b) => {
-          return a.userid > b.userid ? -1 : 1;
-        },
-        multiple: 1,
-      },
-      render: (text, record) => {
-        if (!record.status) {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Button type="link" size="small">
-                {text}
-              </Button>
-            </Popconfirm>
-          );
-        }
-        return text;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("number"),
+      dataIndex: "number",
+      key: "number",
+      fixed: "left"
     },
     {
       title: t("site"),
@@ -208,299 +54,92 @@ const GeneralDWPage: React.FC = () => {
       render: (text) => text ?? "site",
     },
     {
-      title: t("root_dist"),
-      dataIndex: "root.userid",
-      key: "root.userid",
-      render(_, record) {
-        return record.root?.userid;
-      },
-    },
-    {
-      title: t("top_dist"),
-      dataIndex: "top_dist",
-      key: "top_dist",
-      render(_, record) {
-        return record.parent?.userid;
-      },
+      title: t("distributorID"),
+      dataIndex: "distributorID",
+      key: "distributorID",
+      render: (text) => text ?? "distributorID",
     },
     {
       title: t("nickname"),
-      dataIndex: "profile.nickname",
-      key: '"Profile"."nickname"',
-      render: (_, { profile }) => profile.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      dataIndex: "nickname",
+      key: "nickname",
+      render: (_, record) => record.user?.id,
     },
     {
-      title: t("holderName"),
-      dataIndex: "profile.holderName",
-      key: '"Profile"."holder_name"',
-      render: (_, { profile }) => profile.holderName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("depositor"),
+      dataIndex: "depositor",
+      key: "depositor",
     },
     {
-      title: t("phone"),
-      dataIndex: "profile.phone",
-      key: '"Profile"."phone"',
-      render: (_, { profile }) => profile.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("alias"),
+      dataIndex: "alias",
+      key: "alias",
     },
     {
-      title: t("birthday"),
-      dataIndex: "profile.birthday",
-      key: "birthday",
-      render: (_, { profile }) =>
-        f.dateTime(new Date(profile.birthday) ?? null),
+      title: t("from"),
+      dataIndex: "from",
+      key: "from",
     },
     {
-      title: t("level"),
-      dataIndex: "profile.level",
-      key: "level",
-      render: (_, record) => (
-        <Select
-          size="small"
-          placeholder="By Level"
-          className="min-w-28"
-          defaultValue={`${record.profile.level}`}
-          allowClear
-          onClear={() => onUserLevelChange(record, "")}
-          labelRender={(props) => labelRenderer(props)}
-          options={levelOption}
-          onChange={(e) => onUserLevelChange(record, e)}
-        />
-      ),
+      title: t("until"),
+      dataIndex: "until",
+      key: "until",
     },
     {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
-      render: (_, record) => (
-        <Select
-          size="small"
-          placeholder="By Level"
-          className="min-w-28"
-          defaultValue={`${record.type}`}
-          allowClear
-          options={userTypeOption}
-          onClear={() => onUserTypeChange(record, "")}
-          labelRender={(props) => USER_TYPE[props.value]}
-          onChange={(e) => onUserTypeChange(record, e)}
-        />
-      ),
+      title: t("bet"),
+      dataIndex: "bet",
+      key: "bet",
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text, record) => {
-        if (record.status == "P") {
-          return (
-            <Popconfirm
-              title={t("confirmSure")}
-              onConfirm={
-                record.status
-                  ? () => onBlockUser(record)
-                  : () => onApproveUser(record)
-              }
-              description={t("approveMessage")}
-            >
-              <Tag color="warning" className="mr-2">
-                {USER_STATUS[text]}
-              </Tag>
-            </Popconfirm>
-          );
-        }
-        return (
-          <Tag color={text == "A" ? "success" : "gold"}>
-            {USER_STATUS[text]}
-          </Tag>
-        );
-      },
+      title: t("winner"),
+      dataIndex: "winner",
+      key: "winner",
     },
     {
-      title: t("balance"),
-      dataIndex: "balance",
-      key: "balance",
-      render: (_, { profile }) => profile.balance,
+      title: t("losingMoney"),
+      dataIndex: "losingMoney",
+      key: "losingMoney",
     },
     {
-      title: t("point"),
-      dataIndex: "point",
-      key: "point",
-      render: (_, { profile }) => profile.point,
+      title: t("settlementAmount"),
+      dataIndex: "settlementAmount",
+      key: "settlementAmount",
     },
     {
-      title: t("comp"),
-      dataIndex: "comp",
-      key: "comp",
-      render: (_, { profile }) => profile.comp,
+      title: t("applicationDate"),
+      dataIndex: "applicationDate",
+      key: "applicationDate",
     },
     {
-      title: t("usdtAddress"),
-      dataIndex: "usdtAddress",
-      key: "usdtAddress",
+      title: t("processingDate"),
+      dataIndex: "processingDate",
+      key: "processingDate",
     },
     {
-      title: t("currentIP"),
-      dataIndex: "currentIP",
-      key: "currentIP",
+      title: t("situlation"),
+      dataIndex: "situlation",
+      key: "situlation",
     },
     {
-      title: "IP",
-      dataIndex: "IP",
-      key: "IP",
-    },
-    {
-      title: t("coupon"),
-      dataIndex: "profile.coupon",
-      key: "profile.coupon",
-      render: (_, { profile }) => profile.coupon,
-    },
-    {
-      title: t("lastDeposit"),
-      dataIndex: "profile.lastDeposit",
-      key: "lastDeposit",
-      render: (_, { profile }) =>
-        profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
-    },
-    {
-      title: t("lastWithdraw"),
-      dataIndex: "profile.lastWithdraw",
-      key: "lastWithdraw",
-      render: (_, { profile }) =>
-        profile.lastWithdraw
-          ? f.dateTime(new Date(profile.lastWithdraw))
-          : null,
-    },
-    {
-      title: t("role"),
-      key: "role",
-      dataIndex: "role",
-      render: (role, record) => (
-        <Select
-          size="small"
-          placeholder="By Level"
-          className="min-w-28"
-          defaultValue={`${role}`}
-          labelRender={(props) => USER_TYPE[props.value]}
-          options={roleOption}
-          onChange={(e) => onUserRoleChange(record, e)}
-        />
-      ),
-    },
-    {
-      title: t("lastLogin"),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      sorter: {
-        compare: (a, b) => {
-          return new Date(a.updatedAt) > new Date(b.updatedAt) ? -1 : 1;
-        },
-        multiple: 2,
-      },
-      render: (text) => f.dateTime(new Date(text) ?? null),
-      // defaultFilteredValue: getDefaultFilter("updatedAt"),
-      filterDropdown: (props) => (
-        <FilterDropdown
-          {...props}
-          mapValue={(selectedKeys, event) => {
-            if (event === "value") {
-              return selectedKeys?.map((key) => {
-                if (typeof key === "string") {
-                  return dayjs(key);
-                }
-
-                return key;
-              });
-            }
-
-            if (event === "onChange") {
-              if (selectedKeys.every(dayjs.isDayjs)) {
-                return selectedKeys?.map((date: any) =>
-                  dayjs(date).toISOString()
-                );
-              }
-            }
-
-            return selectedKeys;
-          }}
-        >
-          <DatePicker.RangePicker />
-        </FilterDropdown>
-      ),
-    },
-    {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockUser(record)
-                : () => onApproveUser(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
-          >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<PiUserCircleCheckLight />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
-        </Space.Compact>
-      ),
-    },
+      title: t("-"),
+      dataIndex: "-",
+      key: "-",
+    }
   ];
 
-  const onChange: TableProps<User>["onChange"] = (
+  const onChange: TableProps<Transaction>["onChange"] = (
     pagination,
     filters,
     sorter,
     extra
   ) => {
-    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
+    setTableOptions({
+      ...parseTableOptions(pagination, filters, sorter, extra),
+      filters: tableOptions?.filters,
+    });
   };
 
-  const updateFilter = (field: string, v: string, op: string = "eq") => {
+  /*   const updateFilter = (field: string, v: string, op: string = "eq") => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
     filters = filters.filter((f) => f.field !== field);
@@ -515,70 +154,37 @@ const GeneralDWPage: React.FC = () => {
       ];
     }
     setTableOptions({ ...tableOptions, filters });
-  };
+  }; */
 
-  const onBlackMemoChange = (v: string) => {
-    updateFilter("black_memo", v, "eq");
-  };
-
-  const onReferralChange = (v: string) => {
-    updateFilter(
-      '"Profile"."referral"',
-      v,
-      v == "not_null" ? "is_not_null" : "is_null"
-    );
-  };
-
-  const onMemberTypeChange = (v: string) => {
-    updateFilter("type", v, "eq");
-  };
-
-  const onMemberStatusChange = (v: string) => {
-    updateFilter("status", v, "eq");
-  };
-
-  const onLevelChange = (v: string = "") => {
-    updateFilter(`"Profile"."level"`, v, "eq");
-  };
-
-  const onResetCoupon = async () => {
-    const confirmed = await modal.confirm({
-      title: "Do you want to reset the number of coupons for all members to 0?",
-    });
-    console.log("Confirmed: ", confirmed);
-  };
-  const [colorOption, setColorOptoin] = useState<any>("new");
-  const onChangeColors = async () => {
-    setColorModal(false);
-  };
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
   ) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "users.created_at");
+    const f = filters.filter((f) => f.field !== "transactions.created_at");
     if (dates?.at(0)) {
       filters = [
         ...f,
         {
-          field: "users.created_at",
+          field: "transactions.created_at",
           value: dateStrings[0],
           op: "gt",
         },
         {
-          field: "users.created_at",
+          field: "transactions.created_at",
           value: dateStrings[1],
           op: "lt",
         },
       ];
     }
+    console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
   };
 
   useEffect(() => {
-    setUsers(
-      data?.response?.users?.map((u: any) => {
+    setTransactions(
+      data?.response?.transactions?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -590,10 +196,9 @@ const GeneralDWPage: React.FC = () => {
   }, [tableOptions]);
   return (
     <Layout>
-      {contextHolder}
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("admin/users")}
+          title={t("admin/menu/settlements/losingdetail")}
           classNames={{
             body: "!p-0",
           }}
@@ -615,187 +220,9 @@ const GeneralDWPage: React.FC = () => {
               ]}
               defaultValue={""}
             />
-            <Space wrap>
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("member"),
-                    value: "member",
-                  },
-                  {
-                    label: t("distributor"),
-                    value: "dist",
-                  },
-                  {
-                    label: t("member") + "+" + t("distributor"),
-                    value: "",
-                  },
-                ]}
-                defaultValue={""}
-              />
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("referral") + " O",
-                    value: "not_null",
-                  },
-                  {
-                    label: t("referral") + " X",
-                    value: "null",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onReferralChange(e.target.value)}
-              />
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("blackMemo") + " O",
-                    value: "true",
-                  },
-                  {
-                    label: t("blackMemo") + " X",
-                    value: "false",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onBlackMemoChange(e.target.value)}
-              />
 
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("general"),
-                    value: "G",
-                  },
-                  {
-                    label: t("test"),
-                    value: "T",
-                  },
-                  {
-                    label: t("interest"),
-                    value: "I",
-                  },
-                  {
-                    label: t("working"),
-                    value: "W",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onMemberTypeChange(e.target.value)}
-              />
-              <Radio.Group
-                className="flex-nowrap"
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("withdrawn"),
-                    value: "W",
-                  },
-                  {
-                    label: t("approved"),
-                    value: "A",
-                  },
-                  {
-                    label: t("suspened"),
-                    value: "S",
-                  },
-                  {
-                    label: t("deleted"),
-                    value: "D",
-                  },
-                  {
-                    label: t("blocked"),
-                    value: "B",
-                  },
-                  {
-                    label: t("inactive"),
-                    value: "I",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onMemberStatusChange(e.target.value)}
-              />
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("reg_ip_dup"),
-                    value: true,
-                  },
-                  {
-                    label: t("current_ip_dup"),
-                    value: false,
-                  },
-                ]}
-                defaultValue={""}
-              />
-            </Space>
             <Space className="!w-full justify-between">
               <Space>
-                <Select
-                  size="small"
-                  placeholder="select dist"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={[
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-                  ].map((i) => ({
-                    value: i,
-                    label:
-                      i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-                  }))}
-                  onChange={onLevelChange}
-                />
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
@@ -813,30 +240,13 @@ const GeneralDWPage: React.FC = () => {
                   enterButton={t("search")}
                 />
               </Space>
-              <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={onResetCoupon}>
-                  {t("reset_all_coupon")}
-                </Button>
-                <Button
-                  size="small"
-                  type="primary"
-                  onClick={() => setColorModal(true)}
-                >
-                  {t("change_color_in_batches")}
-                </Button>
-                <Button size="small" type="primary">
-                  {t("change_password_in_bulk")}
-                </Button>
-                <Button size="small" type="primary">
-                  {t("point_multi_payment")}
-                </Button>
-              </Space.Compact>
             </Space>
           </Space>
-          <Table<User>
+
+          <Table<Transaction>
             columns={columns}
             loading={loading}
-            dataSource={users ?? []}
+            dataSource={transactions ?? []}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}
@@ -855,41 +265,10 @@ const GeneralDWPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
-          <Modal
-            open={colorModal}
-            onCancel={() => setColorModal(false)}
-            onOk={onChangeColors}
-          >
-            <Space direction="vertical" className="gap-2">
-              <Radio.Group
-                onChange={(e) => setColorOptoin(e.target.value)}
-                className="!flex !flex-col gap-2"
-                defaultValue={"new"}
-              >
-                <Radio value={"new"}>New Search Criteria</Radio>
-                {colorOption == "new" ? (
-                  <Form.Item>
-                    <Input />
-                  </Form.Item>
-                ) : null}
-                <Radio value={"list"}>
-                  Apply the member list search conditions as is:
-                </Radio>
-                {colorOption == "list" ? (
-                  <Form.Item>
-                    <Select />
-                  </Form.Item>
-                ) : null}
-              </Radio.Group>
-              <Form.Item label="Change Color">
-                <Select />
-              </Form.Item>
-            </Space>
-          </Modal>
         </Card>
       </Content>
     </Layout>
   );
 };
 
-export default GeneralDWPage;
+export default LosingDeailsPage;

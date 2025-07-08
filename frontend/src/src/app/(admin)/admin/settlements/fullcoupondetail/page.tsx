@@ -56,18 +56,20 @@ const FullCouponDetailPage: React.FC = () => {
       ),
     },
     {
-      title: t("site"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
+      title: t("rootDistributor"),
+      dataIndex: "rootDistributor",
+      key: "rootDistributor",
+      render: (text) => text ?? "rootDistributor",
     },
     {
-      title: t("userid"),
-      dataIndex: "user.userid",
-      key: '"User"."userid"',
-      render(_, record) {
-        return record.user?.userid;
-      },
+      title: t("topDistributor"),
+      dataIndex: "topDistributor",
+      key: 'topDistributor'
+    },
+    {
+      title: t("id"),
+      dataIndex: "id",
+      key: 'id'
     },
     {
       title: t("nickname"),
@@ -81,62 +83,29 @@ const FullCouponDetailPage: React.FC = () => {
       ),
     },
     {
-      title: t("holderName"),
-      dataIndex: "holderName",
-      key: '"Profile"."holderName"',
-      render: (_, record) => record.user?.profile?.holderName,
+      title: t("previousCouponCount"),
+      dataIndex: "hopreviousCouponCountlderName",
+      key: 'previousCouponCount',  
     },
     {
-      title: t("rolling"),
-      children: [
-        {
-          title: t("amount"),
-          dataIndex: "amount",
-          key: "amount",
-        },
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("numberOfPaymentCoupons"),
+      dataIndex: "numberOfPaymentCoupons",
+      key: "numberOfPaymentCoupons",
     },
     {
-      title: t("balance"),
-      children: [
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("numberOfCouponsSince"),
+      dataIndex: "numberOfCouponsSince",
+      key: "numberOfCouponsSince"
     },
     {
-      title: t("transactionAt"),
-      dataIndex: "transactionAt",
-      key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("type"),
+      dataIndex: "type",
+      key: "type"
     },
     {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      title: t("registrationDate"),
+      dataIndex: "registrationDate",
+      key: "registrationDate"
     },
   ];
 
@@ -229,6 +198,35 @@ const FullCouponDetailPage: React.FC = () => {
                 {
                   label: t("site"),
                   value: "site",
+                },
+              ]}
+              defaultValue={""}
+            />
+
+            <Radio.Group
+              size="small"
+              optionType="button"
+              buttonStyle="solid"
+              options={[
+                {
+                  label: t("all"),
+                  value: "",
+                },
+                {
+                  label: t("attendanceCheckPayment"),
+                  value: "attendanceCheckPayment",
+                },
+                {
+                  label: t("roulette"),
+                  value: "roulette",
+                },
+                {
+                  label: t("pointConversation"),
+                  value: "pointConversation",
+                },
+                {
+                  label: t("administratorPayment"),
+                  value: "adminstratorPayment",
                 },
               ]}
               defaultValue={""}
