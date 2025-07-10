@@ -28,10 +28,15 @@ const LosingDeailsPage: React.FC = () => {
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
+      // {
+      //   field: "transactions.type",
+      //   value: "T",
+      //   op: "eq",
+      // },
       {
-        field: "transactions.type",
-        value: "T",
-        op: "eq",
+        field: "transactions.amount",
+        value: 0,
+        op: "lt",
       },
     ],
   });
@@ -45,7 +50,8 @@ const LosingDeailsPage: React.FC = () => {
       title: t("number"),
       dataIndex: "number",
       key: "number",
-      fixed: "left"
+      fixed: "left",
+      render: (text, record, index) => index + 1,
     },
     {
       title: t("site"),
@@ -53,17 +59,27 @@ const LosingDeailsPage: React.FC = () => {
       key: "site",
       render: (text) => text ?? "site",
     },
+
     {
       title: t("distributorID"),
       dataIndex: "distributorID",
       key: "distributorID",
-      render: (text) => text ?? "distributorID",
+      render: (_, record) => {
+        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
+        return <div className="flex items-center">
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+        </div>
+      },
     },
     {
       title: t("nickname"),
       dataIndex: "nickname",
       key: "nickname",
-      render: (_, record) => record.user?.id,
+      render: (_, record) => {
+        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
+        return record.user?.profile?.nickname;
+      },
     },
     {
       title: t("depositor"),
