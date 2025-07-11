@@ -1398,5 +1398,6 @@
   "MGM (Be-Dang) Losing (%)" : "MGM(贝当)输赢(%)",
   "save" : "保存",
   "spot" : "位置",
-  "blankChange" : "清空"
+  "blankChange" : "清空",
+  "onlyDistributorMembers" : "只有分销商成员可以配置输赢相关设置。"
 }

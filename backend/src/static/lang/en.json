@@ -1374,7 +1374,7 @@
   "Ladder 7 (Lucky Seven)" : "Ladder 7 (Lucky Seven)",
   "Companion ladder (companion)" : "Companion ladder (companion)",
   "Entry Keyno Ladder (Entry)" : "Entry Keyno Ladder (Entry)",
-  "Timo (Jolly)" : "Timo (Jolly)",
+  "Timo (Jolly)" : "Timo (Jolly)",  
   "Dog board hole (one line)" : "Dog board hole (one line)",
   "Mini Baccarat (Crown)" : "Mini Baccarat (Crown)",
   "Odd or Even (Crown)" : "Odd or Even (Crown)",
@@ -1394,5 +1394,6 @@
   "MGM (Be-Dang) Losing (%)" : "MGM (Be-Dang) Losing (%)",
   "save" : "Save",
   "spot" : "Spot",
-  "blankChange" : "Blank Change"
+  "blankChange" : "Blank Change",
+  "onlyDistributorMembers" : "Only distributor members can configure losing-related settings."
 }

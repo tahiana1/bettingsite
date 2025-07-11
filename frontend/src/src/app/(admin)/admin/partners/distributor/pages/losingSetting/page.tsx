@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Input, Table } from "antd";
+import { Button, Input, InputNumber, Table } from "antd";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
@@ -128,7 +128,7 @@ const LosingSettingPage = (props: any) => {
             key: "spot",
             render: (text: string) => {
                 return <div className="flex items-center gap-2">
-                    <Input />
+                    <InputNumber width={200} min={0}/>
                     <Button type="primary">{t("save")}</Button>
                     <Button type="default">{t("blankChange")}</Button>
                 </div>
@@ -140,7 +140,7 @@ const LosingSettingPage = (props: any) => {
             key: "lotusLosing(Be-Dang)",
             render: (text: string) => {
                 return <div className="flex items-center gap-2">
-                    <Input />
+                    <InputNumber width={200} min={0}/>
                     <Button type="primary">{t("save")}</Button>
                     <Button type="default">{t("blankChange")}</Button>
                 </div>
@@ -152,7 +152,7 @@ const LosingSettingPage = (props: any) => {
             key: "mgmLosing(Be-Dang)",
             render: (text: string) => {
                 return <div className="flex items-center gap-2">
-                    <Input />
+                    <InputNumber width={200} min={0}/>
                     <Button type="primary">{t("save")}</Button>
                     <Button type="default">{t("blankChange")}</Button>
                 </div>
@@ -177,12 +177,13 @@ const LosingSettingPage = (props: any) => {
     console.log("Current treeUsers:", treeUsers);
     console.log("Expanded row keys:", expandedRowKeys);
 
-    return <Table<User>
-        columns={columns}
+    return <div className="flex w-full flex-col gap-2"> 
+        <Table<User>
+        columns={columns}   
         loading={loading}
         dataSource={treeUsers ?? []}
         className="w-full"
-        size="small"
+        size="small"    
         scroll={{ x: "max-content" }}
         rowKey="id"
         expandable={{
@@ -205,6 +206,10 @@ const LosingSettingPage = (props: any) => {
         pageSizeOptions: [25, 50, 100, 250, 500, 1000],
         }}
     />
+    <div className="flex items-center gap-2 mt-4">
+        <span className="text-red-500">*</span> {t("onlyDistributorMembers")}
+    </div>
+    </div>
 };
 
 export default LosingSettingPage;
