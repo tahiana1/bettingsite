@@ -37,6 +37,17 @@ type User {
   device: String
   fingerPrint: String
 
+  live: Float
+  slot: Float
+  hold: Float  
+
+  entireLosing : Float
+  liveLosingBeDang: Float
+  slotLosingBeDang: Float
+  holdLosingBeDang: Float
+
+  losingMethod: String
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -127,6 +138,15 @@ input UpdateUser {
   usdtAddress: String
   status: UserStatus
   orderNum: Uint
+  
+  live: Float
+  slot: Float
+  hold: Float
+  entireLosing: Float
+  liveLosingBeDang: Float
+  slotLosingBeDang: Float
+  holdLosingBeDang: Float
+  losingMethod: String
 }
 
 input NewUser {

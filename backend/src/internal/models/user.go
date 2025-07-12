@@ -52,6 +52,17 @@ type User struct {
 
 	OrderNum uint `json:"orderNum" gorm:"default:1"`
 
+	Live float64 `json:"live" gorm:"default:1.0"`
+	Slot float64 `json:"slot" gorm:"default:1.0"`
+	Hold float64 `json:"hold" gorm:"default:0"`
+
+	EntireLosing     float64 `json:"entireLosing" gorm:"default:0"`
+	LiveLosingBeDang float64 `json:"liveLosingBeDang" gorm:"default:0"`
+	SlotLosingBeDang float64 `json:"slotLosingBeDang" gorm:"default:0"`
+	HoldLosingBeDang float64 `json:"holdLosingBeDang" gorm:"default:0"`
+
+	LosingMethod string `json:"losingMethod" gorm:"default:'(input-output)*rate%'"`
+
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`

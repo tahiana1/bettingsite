@@ -518,30 +518,38 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		BlackMemo     func(childComplexity int) int
-		Children      func(childComplexity int) int
-		ChildrenCount func(childComplexity int) int
-		CreatedAt     func(childComplexity int) int
-		CurrentIP     func(childComplexity int) int
-		DeletedAt     func(childComplexity int) int
-		Device        func(childComplexity int) int
-		FingerPrint   func(childComplexity int) int
-		ID            func(childComplexity int) int
-		IP            func(childComplexity int) int
-		Name          func(childComplexity int) int
-		OS            func(childComplexity int) int
-		OrderNum      func(childComplexity int) int
-		Parent        func(childComplexity int) int
-		ParentID      func(childComplexity int) int
-		Profile       func(childComplexity int) int
-		Role          func(childComplexity int) int
-		Root          func(childComplexity int) int
-		RootID        func(childComplexity int) int
-		Status        func(childComplexity int) int
-		Type          func(childComplexity int) int
-		USDTAddress   func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		Userid        func(childComplexity int) int
+		BlackMemo        func(childComplexity int) int
+		Children         func(childComplexity int) int
+		ChildrenCount    func(childComplexity int) int
+		CreatedAt        func(childComplexity int) int
+		CurrentIP        func(childComplexity int) int
+		DeletedAt        func(childComplexity int) int
+		Device           func(childComplexity int) int
+		EntireLosing     func(childComplexity int) int
+		FingerPrint      func(childComplexity int) int
+		Hold             func(childComplexity int) int
+		HoldLosingBeDang func(childComplexity int) int
+		ID               func(childComplexity int) int
+		IP               func(childComplexity int) int
+		Live             func(childComplexity int) int
+		LiveLosingBeDang func(childComplexity int) int
+		LosingMethod     func(childComplexity int) int
+		Name             func(childComplexity int) int
+		OS               func(childComplexity int) int
+		OrderNum         func(childComplexity int) int
+		Parent           func(childComplexity int) int
+		ParentID         func(childComplexity int) int
+		Profile          func(childComplexity int) int
+		Role             func(childComplexity int) int
+		Root             func(childComplexity int) int
+		RootID           func(childComplexity int) int
+		Slot             func(childComplexity int) int
+		SlotLosingBeDang func(childComplexity int) int
+		Status           func(childComplexity int) int
+		Type             func(childComplexity int) int
+		USDTAddress      func(childComplexity int) int
+		UpdatedAt        func(childComplexity int) int
+		Userid           func(childComplexity int) int
 	}
 
 	UserList struct {
@@ -3624,12 +3632,33 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Device(childComplexity), true
 
+	case "User.entireLosing":
+		if e.complexity.User.EntireLosing == nil {
+			break
+		}
+
+		return e.complexity.User.EntireLosing(childComplexity), true
+
 	case "User.fingerPrint":
 		if e.complexity.User.FingerPrint == nil {
 			break
 		}
 
 		return e.complexity.User.FingerPrint(childComplexity), true
+
+	case "User.hold":
+		if e.complexity.User.Hold == nil {
+			break
+		}
+
+		return e.complexity.User.Hold(childComplexity), true
+
+	case "User.holdLosingBeDang":
+		if e.complexity.User.HoldLosingBeDang == nil {
+			break
+		}
+
+		return e.complexity.User.HoldLosingBeDang(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -3644,6 +3673,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.IP(childComplexity), true
+
+	case "User.live":
+		if e.complexity.User.Live == nil {
+			break
+		}
+
+		return e.complexity.User.Live(childComplexity), true
+
+	case "User.liveLosingBeDang":
+		if e.complexity.User.LiveLosingBeDang == nil {
+			break
+		}
+
+		return e.complexity.User.LiveLosingBeDang(childComplexity), true
+
+	case "User.losingMethod":
+		if e.complexity.User.LosingMethod == nil {
+			break
+		}
+
+		return e.complexity.User.LosingMethod(childComplexity), true
 
 	case "User.name":
 		if e.complexity.User.Name == nil {
@@ -3707,6 +3757,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.RootID(childComplexity), true
+
+	case "User.slot":
+		if e.complexity.User.Slot == nil {
+			break
+		}
+
+		return e.complexity.User.Slot(childComplexity), true
+
+	case "User.slotLosingBeDang":
+		if e.complexity.User.SlotLosingBeDang == nil {
+			break
+		}
+
+		return e.complexity.User.SlotLosingBeDang(childComplexity), true
 
 	case "User.status":
 		if e.complexity.User.Status == nil {
@@ -4984,6 +5048,17 @@ type User {
   device: String
   fingerPrint: String
 
+  live: Float
+  slot: Float
+  hold: Float  
+
+  entireLosing : Float
+  liveLosingBeDang: Float
+  slotLosingBeDang: Float
+  holdLosingBeDang: Float
+
+  losingMethod: String
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -5074,6 +5149,15 @@ input UpdateUser {
   usdtAddress: String
   status: UserStatus
   orderNum: Uint
+  
+  live: Float
+  slot: Float
+  hold: Float
+  entireLosing: Float
+  liveLosingBeDang: Float
+  slotLosingBeDang: Float
+  holdLosingBeDang: Float
+  losingMethod: String
 }
 
 input NewUser {
@@ -7968,6 +8052,22 @@ func (ec *executionContext) fieldContext_AdminPermission_user(_ context.Context,
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -8940,6 +9040,22 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -10688,6 +10804,22 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -11312,6 +11444,22 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13111,6 +13259,22 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13249,6 +13413,22 @@ func (ec *executionContext) fieldContext_Inbox_FromUser(_ context.Context, field
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13974,6 +14154,22 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -22756,6 +22952,22 @@ func (ec *executionContext) fieldContext_Qna_user(_ context.Context, field graph
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -25554,6 +25766,22 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -25675,6 +25903,22 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -25969,6 +26213,22 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -27117,6 +27377,22 @@ func (ec *executionContext) fieldContext_Setting_user(_ context.Context, field g
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -28057,6 +28333,22 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -28236,6 +28528,22 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -29418,6 +29726,22 @@ func (ec *executionContext) fieldContext_User_root(_ context.Context, field grap
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -29550,6 +29874,22 @@ func (ec *executionContext) fieldContext_User_parent(_ context.Context, field gr
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -29641,6 +29981,22 @@ func (ec *executionContext) fieldContext_User_children(_ context.Context, field 
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -30044,6 +30400,334 @@ func (ec *executionContext) fieldContext_User_fingerPrint(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _User_live(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_live(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Live, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_live(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_slot(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_slot(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Slot, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_slot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_hold(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_hold(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hold, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_hold(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_entireLosing(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_entireLosing(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EntireLosing, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_entireLosing(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_liveLosingBeDang(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_liveLosingBeDang(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiveLosingBeDang, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_liveLosingBeDang(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_slotLosingBeDang(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_slotLosingBeDang(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlotLosingBeDang, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_slotLosingBeDang(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_holdLosingBeDang(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_holdLosingBeDang(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoldLosingBeDang, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_holdLosingBeDang(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_losingMethod(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_losingMethod(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LosingMethod, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_losingMethod(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
@@ -30254,6 +30938,22 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_device(ctx, field)
 			case "fingerPrint":
 				return ec.fieldContext_User_fingerPrint(ctx, field)
+			case "live":
+				return ec.fieldContext_User_live(ctx, field)
+			case "slot":
+				return ec.fieldContext_User_slot(ctx, field)
+			case "hold":
+				return ec.fieldContext_User_hold(ctx, field)
+			case "entireLosing":
+				return ec.fieldContext_User_entireLosing(ctx, field)
+			case "liveLosingBeDang":
+				return ec.fieldContext_User_liveLosingBeDang(ctx, field)
+			case "slotLosingBeDang":
+				return ec.fieldContext_User_slotLosingBeDang(ctx, field)
+			case "holdLosingBeDang":
+				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
+			case "losingMethod":
+				return ec.fieldContext_User_losingMethod(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -35197,7 +35897,7 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "userid", "rootId", "partentId", "type", "role", "usdtAddress", "status", "orderNum"}
+	fieldsInOrder := [...]string{"name", "userid", "rootId", "partentId", "type", "role", "usdtAddress", "status", "orderNum", "live", "slot", "hold", "entireLosing", "liveLosingBeDang", "slotLosingBeDang", "holdLosingBeDang", "losingMethod"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35267,6 +35967,62 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 				return it, err
 			}
 			it.OrderNum = data
+		case "live":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("live"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Live = data
+		case "slot":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slot"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Slot = data
+		case "hold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hold"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Hold = data
+		case "entireLosing":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("entireLosing"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EntireLosing = data
+		case "liveLosingBeDang":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("liveLosingBeDang"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LiveLosingBeDang = data
+		case "slotLosingBeDang":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slotLosingBeDang"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SlotLosingBeDang = data
+		case "holdLosingBeDang":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("holdLosingBeDang"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HoldLosingBeDang = data
+		case "losingMethod":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("losingMethod"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LosingMethod = data
 		}
 	}
 
@@ -38665,6 +39421,22 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_device(ctx, field, obj)
 		case "fingerPrint":
 			out.Values[i] = ec._User_fingerPrint(ctx, field, obj)
+		case "live":
+			out.Values[i] = ec._User_live(ctx, field, obj)
+		case "slot":
+			out.Values[i] = ec._User_slot(ctx, field, obj)
+		case "hold":
+			out.Values[i] = ec._User_hold(ctx, field, obj)
+		case "entireLosing":
+			out.Values[i] = ec._User_entireLosing(ctx, field, obj)
+		case "liveLosingBeDang":
+			out.Values[i] = ec._User_liveLosingBeDang(ctx, field, obj)
+		case "slotLosingBeDang":
+			out.Values[i] = ec._User_slotLosingBeDang(ctx, field, obj)
+		case "holdLosingBeDang":
+			out.Values[i] = ec._User_holdLosingBeDang(ctx, field, obj)
+		case "losingMethod":
+			out.Values[i] = ec._User_losingMethod(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

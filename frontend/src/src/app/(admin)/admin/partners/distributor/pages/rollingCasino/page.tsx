@@ -61,7 +61,7 @@ interface User {
     children?: User[];
 }
 
-const LosingSettingPage = (props: any) => {
+const RollingCasinoPage = (props: any) => {
     console.log(props, "props");
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
@@ -74,11 +74,9 @@ const LosingSettingPage = (props: any) => {
     
     // State for losing setting values - keyed by user ID
     const [formValues, setFormValues] = useState<{[key: string]: {
-        entireLosing: number;
-        liveLosingBeDang: number;
-        slotLosingBeDang: number;
-        holdLosingBeDang: number;
-        losingMethod: string;
+        live: number;
+        slot: number;
+        hold: number;
     }}>({});
     
     // GraphQL mutation
@@ -145,20 +143,16 @@ const LosingSettingPage = (props: any) => {
     useEffect(() => {
         if (treeUsers && treeUsers.length > 0) {
             const newFormValues: {[key: string]: {
-                entireLosing: number;
-                liveLosingBeDang: number;
-                slotLosingBeDang: number;
-                holdLosingBeDang: number;
-                losingMethod: string;
+                live: number;
+                slot: number;
+                hold: number;
             }} = {};
 
             const initializeUserValues = (user: User) => {
                 newFormValues[user.id] = {
-                    entireLosing: user.entireLosing || 0,
-                    liveLosingBeDang: user.liveLosingBeDang || 0,
-                    slotLosingBeDang: user.slotLosingBeDang || 0,
-                    holdLosingBeDang: user.holdLosingBeDang || 0,
-                    losingMethod: user.losingMethod || '(input-output)*rate%'
+                    live: user.live || 0,
+                    slot: user.slot || 0,
+                    hold: user.hold || 0,
                 };
 
                 // Initialize children recursively
@@ -224,21 +218,21 @@ const LosingSettingPage = (props: any) => {
             key: "userid"
         },
         {
-            title: t("entireLosing"),
-            dataIndex: "entireLosing",
-            key: "entireLosing",
+            title: t("live"),
+            dataIndex: "live",
+            key: "live",
             render: (text: string, record: User) => {
                 return <div className="flex items-center gap-2">
                     <InputNumber 
                         style={{ width: 200 }} 
                         min={0} 
-                        value={formValues[record.id]?.entireLosing || 0}
-                        onChange={(value) => updateFormValue(record.id, 'entireLosing', value || 0)}
+                        value={formValues[record.id]?.live || 0}
+                        onChange={(value) => updateFormValue(record.id, 'live', value || 0)}
                     />
                     <Button 
                         type="primary" 
                         loading={updateLoading}
-                        onClick={() => handleSave(record.id, 'entireLosing')}
+                        onClick={() => handleSave(record.id, 'live')}
                     >
                         {t("save")}
                     </Button>
@@ -246,21 +240,21 @@ const LosingSettingPage = (props: any) => {
             }
         },
         {
-            title: t("liveLosingBeDang"),
-            dataIndex: "liveLosingBeDang",
-            key: "liveLosingBeDang",
+            title: t("slot"),
+            dataIndex: "slot",
+            key: "slot",
             render: (text: string, record: User) => {
                 return <div className="flex items-center gap-2">
                     <InputNumber 
                         style={{ width: 200 }} 
                         min={0} 
-                        value={formValues[record.id]?.liveLosingBeDang || 0}
-                        onChange={(value) => updateFormValue(record.id, 'liveLosingBeDang', value || 0)}
+                        value={formValues[record.id]?.slot || 0}
+                        onChange={(value) => updateFormValue(record.id, 'slot', value || 0)}
                     />
                     <Button 
                         type="primary" 
                         loading={updateLoading}
-                        onClick={() => handleSave(record.id, 'liveLosingBeDang')}
+                        onClick={() => handleSave(record.id, 'slot')}
                     >
                         {t("save")}
                     </Button>
@@ -268,71 +262,27 @@ const LosingSettingPage = (props: any) => {
             }
         },
         {
-            title: t("slotLosingBeDang"),
-            dataIndex: "slotLosingBeDang",
-            key: "slotLosingBeDang",
+            title: t("hold'em"),
+            dataIndex: "hold",
+            key: "hold",
             render: (text: string, record: User) => {
                 return <div className="flex items-center gap-2">
                     <InputNumber 
                         style={{ width: 200 }} 
                         min={0} 
-                        value={formValues[record.id]?.slotLosingBeDang || 0}
-                        onChange={(value) => updateFormValue(record.id, 'slotLosingBeDang', value || 0)}
+                        value={formValues[record.id]?.hold || 0}
+                        onChange={(value) => updateFormValue(record.id, 'hold', value || 0)}
                     />
                     <Button 
                         type="primary" 
                         loading={updateLoading}
-                        onClick={() => handleSave(record.id, 'slotLosingBeDang')}
+                        onClick={() => handleSave(record.id, 'hold')}
                     >
                         {t("save")}
                     </Button>
                 </div>
             }
         },
-        {
-            title: t("holdLosingBeDang"),
-            dataIndex: "holdLosingBeDang",
-            key: "holdLosingBeDang",
-            render: (text: string, record: User) => {
-                return <div className="flex items-center gap-2">
-                    <InputNumber 
-                        style={{ width: 200 }} 
-                        min={0} 
-                        value={formValues[record.id]?.holdLosingBeDang || 0}
-                        onChange={(value) => updateFormValue(record.id, 'holdLosingBeDang', value || 0)}
-                    />
-                    <Button 
-                        type="primary" 
-                        loading={updateLoading}
-                        onClick={() => handleSave(record.id, 'holdLosingBeDang')}
-                    >
-                        {t("save")}
-                    </Button>
-                </div>
-            }
-        },
-        {
-            title: t("losingMethod"),
-            dataIndex: "losingMethod",
-            key: "losingMethod",
-            render: (text: string, record: User) => {
-                return <div className="flex items-center gap-2">
-                    <Select 
-                        value={formValues[record.id]?.losingMethod || '(input-output)*rate%'} 
-                        options={[{label: '(input-output)*rate%', value: '(input-output)*rate%'}]}
-                        style={{ width: 200 }}
-                        onChange={(value) => updateFormValue(record.id, 'losingMethod', value)}
-                    />   
-                    <Button 
-                        type="primary" 
-                        loading={updateLoading}
-                        onClick={() => handleSave(record.id, 'losingMethod')}
-                    >
-                        {t("save")}
-                    </Button>
-                </div>
-            }
-        }
 
     ];
 
@@ -388,4 +338,4 @@ const LosingSettingPage = (props: any) => {
     </div>
 };
 
-export default LosingSettingPage;
+export default RollingCasinoPage;

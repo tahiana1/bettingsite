@@ -557,15 +557,23 @@ type UpdateTransactionInput struct {
 }
 
 type UpdateUser struct {
-	Name        *string     `json:"name,omitempty"`
-	Userid      *string     `json:"userid,omitempty"`
-	RootID      *uint       `json:"rootId,omitempty"`
-	PartentID   *uint       `json:"partentId,omitempty"`
-	Type        *UserType   `json:"type,omitempty"`
-	Role        *string     `json:"role,omitempty"`
-	UsdtAddress *string     `json:"usdtAddress,omitempty"`
-	Status      *UserStatus `json:"status,omitempty"`
-	OrderNum    *uint       `json:"orderNum,omitempty"`
+	Name             *string     `json:"name,omitempty"`
+	Userid           *string     `json:"userid,omitempty"`
+	RootID           *uint       `json:"rootId,omitempty"`
+	PartentID        *uint       `json:"partentId,omitempty"`
+	Type             *UserType   `json:"type,omitempty"`
+	Role             *string     `json:"role,omitempty"`
+	UsdtAddress      *string     `json:"usdtAddress,omitempty"`
+	Status           *UserStatus `json:"status,omitempty"`
+	OrderNum         *uint       `json:"orderNum,omitempty"`
+	Live             *float64    `json:"live,omitempty"`
+	Slot             *float64    `json:"slot,omitempty"`
+	Hold             *float64    `json:"hold,omitempty"`
+	EntireLosing     *float64    `json:"entireLosing,omitempty"`
+	LiveLosingBeDang *float64    `json:"liveLosingBeDang,omitempty"`
+	SlotLosingBeDang *float64    `json:"slotLosingBeDang,omitempty"`
+	HoldLosingBeDang *float64    `json:"holdLosingBeDang,omitempty"`
+	LosingMethod     *string     `json:"losingMethod,omitempty"`
 }
 
 type UserList struct {

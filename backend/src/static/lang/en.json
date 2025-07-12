@@ -1395,5 +1395,12 @@
   "save" : "Save",
   "spot" : "Spot",
   "blankChange" : "Blank Change",
-  "onlyDistributorMembers" : "Only distributor members can configure losing-related settings."
+  "onlyDistributorMembers" : "Only distributor members can configure losing-related settings.",
+  "losingSetting" : "Losing Setting",
+  "entireLosing" : "Entire Losing",
+  "liveLosingBeDang" : "Live Losing BeDang",
+  "slotLosingBeDang" : "Slot Losing BeDang",
+  "holdLosingBeDang" : "Hold Losing BeDang",
+  "losingMethod" : "Losing Method",
+  "hold'em" : "Hold'em"
 }

@@ -1399,5 +1399,12 @@
   "save" : "保存",
   "spot" : "位置",
   "blankChange" : "清空",
-  "onlyDistributorMembers" : "只有分销商成员可以配置输赢相关设置。"
+  "onlyDistributorMembers" : "只有分销商成员可以配置输赢相关设置。",
+  "losingSetting" : "输赢设置",
+  "entireLosing" : "全部输赢",
+  "liveLosingBeDang" : "现场输赢贝当",
+  "slotLosingBeDang" : "老虎机输赢贝当",
+  "holdLosingBeDang" : "扑克输赢贝当",
+  "losingMethod" : "输赢方法",
+  "hold'em" : "扑克"
 }

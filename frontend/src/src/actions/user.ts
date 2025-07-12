@@ -134,6 +134,14 @@ export const GET_DISTRIBUTORS = gql`
         createdAt
         updatedAt
         status
+        live
+        slot
+        hold
+        entireLosing
+        liveLosingBeDang
+        slotLosingBeDang
+        holdLosingBeDang
+        losingMethod
         profile {
           id
           userId

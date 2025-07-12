@@ -287,6 +287,32 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 		me.Status = string(*updates.Status)
 	}
 
+	// Handle losing-related fields
+	if updates.Live != nil {
+		me.Live = *updates.Live
+	}
+	if updates.Slot != nil {
+		me.Slot = *updates.Slot
+	}
+	if updates.Hold != nil {
+		me.Hold = *updates.Hold
+	}
+	if updates.EntireLosing != nil {
+		me.EntireLosing = *updates.EntireLosing
+	}
+	if updates.LiveLosingBeDang != nil {
+		me.LiveLosingBeDang = *updates.LiveLosingBeDang
+	}
+	if updates.SlotLosingBeDang != nil {
+		me.SlotLosingBeDang = *updates.SlotLosingBeDang
+	}
+	if updates.HoldLosingBeDang != nil {
+		me.HoldLosingBeDang = *updates.HoldLosingBeDang
+	}
+	if updates.LosingMethod != nil {
+		me.LosingMethod = *updates.LosingMethod
+	}
+
 	tx := initializers.DB.Save(&me)
 
 	return tx.Error
