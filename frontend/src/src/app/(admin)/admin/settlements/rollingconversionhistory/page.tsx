@@ -30,7 +30,7 @@ const RollingConversionPage: React.FC = () => {
     filters: [
       {
         field: "transactions.type",
-        value: "Rolling",
+        value: "RollingCoversation",
         op: "eq",
       },
     ],

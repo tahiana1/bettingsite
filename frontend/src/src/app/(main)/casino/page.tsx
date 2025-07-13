@@ -45,7 +45,7 @@ import ALGLogo from "@/assets/img/casino/logo/alg.png";
 import SevenMojosLogo from "@/assets/img/casino/logo/7mojos.png";
 import HiltonCasinoLogo from "@/assets/img/casino/logo/hilton.png";
 import api from "@/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const Casino: React.FC = () => {
     const t = useTranslations();
@@ -56,6 +56,9 @@ const Casino: React.FC = () => {
     const [isAddBalanceModalOpen, setIsAddBalanceModalOpen] = useState(false);
     const [addBalanceForm] = Form.useForm();
     const [addBalanceLoading, setAddBalanceLoading] = useState(false);
+    const [popupWindow, setPopupWindow] = useState<Window | null>(null);
+    const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
+    const popupGameName = useRef<string>('');
 
     useEffect(() => {
         api("user/me").then((res) => {
@@ -74,10 +77,83 @@ const Casino: React.FC = () => {
         });
     }, []);
 
+    // Cleanup popup check interval on component unmount
+    useEffect(() => {
+        return () => {
+            if (popupCheckInterval.current) {
+                clearInterval(popupCheckInterval.current);
+            }
+        };
+    }, []);
+
+    // Add window focus event listener to detect when popup closes
+    useEffect(() => {
+        const handleWindowFocus = () => {
+            if (popupWindow && popupGameName.current) {
+                // When main window gains focus, check if popup is still open
+                setTimeout(() => {
+                    checkPopupClosed(popupGameName.current);
+                }, 100);
+            }
+        };
+
+        window.addEventListener('focus', handleWindowFocus);
+        
+        return () => {
+            window.removeEventListener('focus', handleWindowFocus);
+        };
+    }, [popupWindow]);
+
+    const handlePopupOpen = (gameName: string) => {
+        console.log(`🎮 Popup opened for game: ${gameName}`);
+        message.success(`Opening ${gameName} game...`);
+        // You can add any logic here when popup opens
+        // For example, track analytics, show notifications, etc.
+    };
+
+    const handlePopupClose = (gameName: string) => {
+        console.log(`🔒 Popup closed for game: ${gameName}`);
+        message.info(`${gameName} game window closed`);
+        setPopupWindow(null);
+        popupGameName.current = ''; // Clear the game name
+        if (popupCheckInterval.current) {
+            clearInterval(popupCheckInterval.current);
+            popupCheckInterval.current = null;
+        }
+        // You can add any logic here when popup closes
+        // For example, refresh balance, show completion message, etc.
+    };
+
+    const checkPopupClosed = (gameName: string) => {
+        try {
+            if (popupWindow) {
+                // Try to access the window to check if it's closed
+                // This will throw an error if the window is closed
+                const isClosed = popupWindow.closed;
+                console.log(`🔍 Checking popup status for ${gameName}:`, isClosed);
+                
+                if (isClosed) {
+                    handlePopupClose(gameName);
+                }
+            }
+        } catch (error) {
+            console.log(`❌ Error checking popup status for ${gameName}:`, error);
+            // If we can't access the window, it's likely closed
+            handlePopupClose(gameName);
+        }
+    };
+
     const ProcessCasino = (name : string) => {
         setLoading(true);
         setSelectedGame(name);
         console.log(userId, 'userid')
+        
+        // Clear any existing popup check interval
+        if (popupCheckInterval.current) {
+            clearInterval(popupCheckInterval.current);
+            popupCheckInterval.current = null;
+        }
+        
         api("casino/get-game-link", {
             method: "GET",
             params: {
@@ -86,10 +162,37 @@ const Casino: React.FC = () => {
                 gameName: name
             }
         }).then((res) => {
-            console.log(res.link);
-            window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+            console.log('🎯 Game link received:', res.link);
+            const newWindow = window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+            
+            if (newWindow) {
+                console.log('✅ Popup window opened successfully');
+                setPopupWindow(newWindow);
+                popupGameName.current = name; // Store the game name
+                handlePopupOpen(name);
+                
+                // Check if popup is closed every 2 seconds
+                popupCheckInterval.current = setInterval(() => {
+                    checkPopupClosed(name);
+                }, 2000);
+                
+                // Also try to add an onbeforeunload event listener to the popup
+                try {
+                    newWindow.onbeforeunload = () => {
+                        console.log(`🔄 Popup window unloading for ${name}`);
+                        handlePopupClose(name);
+                    };
+                } catch (error) {
+                    console.log('⚠️ Could not add onbeforeunload listener (cross-origin restriction)');
+                }
+                
+            } else {
+                console.log('❌ Popup blocked by browser');
+                message.error('Popup blocked by browser. Please allow popups for this site.');
+            }
         }).catch((err) => {
-            message.error(err.response.data.error);
+            console.log('❌ API error:', err);
+            message.error(err.response?.data?.error || 'Failed to get game link');
         }).finally(() => {
             setLoading(false);
         });
