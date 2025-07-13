@@ -48,6 +48,71 @@ type User {
 
   losingMethod: String
 
+  # Additional rolling fields for different game types
+  miniDanpolRolling: Float
+  miniCombinationRolling: Float
+  sportsDanpolRolling: Float
+  sportsDupolRolling: Float
+  sports3PoleRolling: Float
+  sports4PoleRolling: Float
+  sports5PoleRolling: Float
+  sportsDapolRolling: Float
+  virtualGameRolling: Float
+  lotusRolling: Float
+  mgmRolling: Float
+  touchRolling: Float
+
+  # Financial statistics
+  membershipDeposit: Float
+  membershipWithdrawal: Float
+  totalWithdrawal: Float
+  numberOfMembers: Int
+  rollingHoldings: Float
+
+  # Betting/Winning statistics
+  liveBetting: Float
+  liveWinning: Float
+  slotBetting: Float
+  slotJackpot: Float
+  miniDanpolBetting: Float
+  miniDanpolWinner: Float
+  miniCombinationBetting: Float
+  miniCombinationWinnings: Float
+  sportsDanpolBetting: Float
+  sportsDanpolWinner: Float
+  sportsDupolBetting: Float
+  sportsDupolWinner: Float
+  sports3poleBetting: Float
+  sports3poleWinner: Float
+  sports4poleBetting: Float
+  sports4poleWinner: Float
+  sports5poleBetting: Float
+  sports5poleWinner: Float
+  sportsDapolBetting: Float
+  sportsDapolWinner: Float
+  virtualGameBetting: Float
+  virtualGameWinnings: Float
+  lotusBetting: Float
+  lotusLottery: Float
+  mgmBetting: Float
+  mgmWinning: Float
+  touchBetting: Float
+  touchWinning: Float
+  holdemBetting: Float
+  holdemWinning: Float
+
+  # Rolling statistics
+  rollingRate: Float
+  rollingTransition: Float
+
+  # Losing statistics
+  losingRate: Float
+  losingSettlement: Float
+
+  # Partnership statistics
+  partnershipRolling: Float
+  partnershipMoneyInHand: Float
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -202,6 +267,12 @@ extend type Query {
   user(id: ID!): User @hasRole(role: A)
 
   getDistributors(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: A)
+
+  getDistributorDetails(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination

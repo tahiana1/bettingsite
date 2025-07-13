@@ -354,3 +354,106 @@ func (ur *userReader) GetDistributors(ctx context.Context, filters []*model.Filt
 		Total: int32(count),
 	}, nil
 }
+
+// GetDistributorDetails returns detailed distributor statistics with calculated financial data
+func (ur *userReader) GetDistributorDetails(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	var users []*models.User
+
+	db := ur.db.Model(&models.User{}).Preload("Root").Preload("Parent").Joins("Profile")
+
+	// Filtering
+	db = helpers.ApplyFilters(db, filters)
+
+	// Count total
+	var count int64
+	if err := db.Count(&count).Error; err != nil {
+		return nil, err
+	}
+
+	// Ordering
+	db = helpers.ApplyOrders(db, orders)
+	db = db.Order("order_num")
+
+	// Pagination
+	db = helpers.ApplyPagination(db, pagination)
+
+	// Query results
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+
+	// Calculate additional statistics for each user
+	for _, user := range users {
+		// Calculate membership deposit/withdrawal from transactions
+		var membershipDeposit, membershipWithdrawal, totalWithdrawal float64
+		var numberOfMembers int64
+
+		// Get deposit transactions
+		if err := ur.db.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = 'deposit' AND status = 'A'", user.ID).
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&membershipDeposit).Error; err != nil {
+			return nil, err
+		}
+
+		// Get withdrawal transactions
+		if err := ur.db.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = 'withdrawal' AND status = 'A'", user.ID).
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&membershipWithdrawal).Error; err != nil {
+			return nil, err
+		}
+
+		// Get total withdrawal (including pending)
+		if err := ur.db.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = 'withdrawal'", user.ID).
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalWithdrawal).Error; err != nil {
+			return nil, err
+		}
+
+		// Count number of members (children users)
+		if err := ur.db.Model(&models.User{}).
+			Where("parent_id = ?", user.ID).
+			Count(&numberOfMembers).Error; err != nil {
+			return nil, err
+		}
+
+		// Set calculated values
+		user.MembershipDeposit = membershipDeposit
+		user.MembershipWithdrawal = membershipWithdrawal
+		user.TotalWithdrawal = totalWithdrawal
+		user.NumberOfMembers = int(numberOfMembers)
+		user.RollingHoldings = user.Profile.Balance // Money in hand is the current balance
+
+		// Calculate rolling holdings (sum of all rolling fields)
+		user.RollingHoldings = user.Live + user.Slot + user.Hold +
+			user.MiniDanpolRolling + user.MiniCombinationRolling +
+			user.SportsDanpolRolling + user.SportsDupolRolling +
+			user.Sports3PoleRolling + user.Sports4PoleRolling +
+			user.Sports5PoleRolling + user.SportsDapolRolling +
+			user.VirtualGameRolling + user.LotusRolling +
+			user.MgmRolling + user.TouchRolling
+
+		// Calculate rolling rate (percentage)
+		if user.RollingHoldings > 0 {
+			user.RollingRate = (user.RollingHoldings / (user.MembershipDeposit + user.MembershipWithdrawal)) * 100
+		}
+
+		// Calculate rolling transition
+		user.RollingTransition = user.RollingHoldings
+
+		// Calculate losing rate and settlement
+		user.LosingRate = user.EntireLosing
+		user.LosingSettlement = user.LiveLosingBeDang + user.SlotLosingBeDang + user.HoldLosingBeDang
+
+		// Calculate partnership statistics
+		user.PartnershipRolling = user.RollingHoldings
+		user.PartnershipMoneyInHand = user.Profile.Balance
+	}
+
+	return &model.UserList{
+		Users: users,
+		Total: int32(count),
+	}, nil
+}

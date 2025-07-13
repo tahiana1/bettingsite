@@ -18,37 +18,197 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
-import { FILTER_TRANSACTIONS } from "@/actions/transaction";
+import { GET_DISTRIBUTORS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, buildTree } from "@/lib";
 
 const DistributorStatisticsDetailPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
-    filters: [
-      {
-        field: "transactions.type",
-        value: "T",
-        op: "eq",
-      },
-    ],
+    pagination: { limit: 25, offset: 0 },
   });
 
   const [total, setTotal] = useState<number>(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
+  const [users, setUsers] = useState<any[]>([]);
+  const [treeUsers, setTreeUsers] = useState<any[]>([]);
+  const [totals, setTotals] = useState<any>({});
+  const { loading, data, refetch } = useQuery(GET_DISTRIBUTORS, {
+    variables: {
+      filters: tableOptions?.filters || [],
+      orders: tableOptions?.orders || [],
+      pagination: tableOptions?.pagination || { limit: 25, offset: 0 },
+    },
+    fetchPolicy: "cache-and-network",
+  });
 
-  const columns: TableProps<Transaction>["columns"] = [
+  const { data: childrenData, refetch: refetchChildren } = useQuery(GET_DISTRIBUTORS);
+
+  // Calculate totals function
+  const calculateTotals = (data: any[]) => {
+    const totals = {
+      membershipDeposit: 0,
+      membershipWithdrawal: 0,
+      totalWithdrawal: 0,
+      numberOfMembers: 0,
+      moneyInHand: 0,
+      rollingHoldings: 0,
+      liveRolling: 0,
+      slotRolling: 0,
+      miniDanpolRolling: 0,
+      miniCombinationRolling: 0,
+      sportsDanpolRolling: 0,
+      sportsDupolRolling: 0,
+      sports3PoleRolling: 0,
+      sports4PoleRolling: 0,
+      sports5PoleRolling: 0,
+      sportsDapolRolling: 0,
+      virtualGameRolling: 0,
+      lotusRolling: 0,
+      mgmRolling: 0,
+      touchRolling: 0,
+      holdemRolling: 0,
+      // Add betting/winning totals
+      liveBetting: 0,
+      liveWinning: 0,
+      slotBetting: 0,
+      slotJackpot: 0,
+      miniDanpolWinning: 0,
+      miniCombinationWinning: 0,
+      sportsDanpolWinning: 0,
+      sportsDupolWinning: 0,
+      sports3PoleWinning: 0,
+      sports4PoleWinning: 0,
+      sports5PoleWinning: 0,
+      sportsDapolWinning: 0,
+      virtualGameWinning: 0,
+      lotusWinning: 0,
+      mgmWinning: 0,
+      touchWinning: 0,
+      holdemWinning: 0,
+      // Add rolling totals
+      rollingRate: 0,
+      rollingTransition: 0,
+      // Add losing totals
+      losingRate: 0,
+      losingSettlement: 0,
+      liveLosing: 0,
+      miniDanpolLosing: 0,
+      sportsDanpolLosing: 0,
+      sports3PoleLosing: 0,
+      sports5PoleLosing: 0,
+      virtualGameLosing: 0,
+      lotusLosing: 0,
+      mgmLosing: 0,
+      touchLosing: 0,
+      holdemLosing: 0,
+      // Add partnership totals
+      partnershipRolling: 0,
+      partnershipMoneyInHand: 0,
+      // Add cut reduce
+      cutReduce: 0,
+    };
+
+    const processUser = (user: any) => {
+      // Use distributor fields - these would map to actual distributor data
+      totals.membershipDeposit += user.membershipDeposit || 0;
+      totals.membershipWithdrawal += user.membershipWithdrawal || 0;
+      totals.totalWithdrawal += user.totalWithdrawal || 0;
+      totals.numberOfMembers += user.numberOfMembers || 1; // Each distributor counts as 1 member
+      totals.moneyInHand += user.profile?.balance || 0;
+      totals.rollingHoldings += user.rollingHoldings || 0;
+      totals.liveRolling += user.live || 0;
+      totals.slotRolling += user.slot || 0;
+      totals.miniDanpolRolling += user.miniDanpolRolling || 0;
+      totals.miniCombinationRolling += user.miniCombinationRolling || 0;
+      totals.sportsDanpolRolling += user.sportsDanpolRolling || 0;
+      totals.sportsDupolRolling += user.sportsDupolRolling || 0;
+      totals.sports3PoleRolling += user.sports3PoleRolling || 0;
+      totals.sports4PoleRolling += user.sports4PoleRolling || 0;
+      totals.sports5PoleRolling += user.sports5PoleRolling || 0;
+      totals.sportsDapolRolling += user.sportsDapolRolling || 0;
+      totals.virtualGameRolling += user.virtualGameRolling || 0;
+      totals.lotusRolling += user.lotusRolling || 0;
+      totals.mgmRolling += user.mgmRolling || 0;
+      totals.touchRolling += user.touchRolling || 0;
+      totals.holdemRolling += user.hold || 0;
+      
+      // Add betting/winning calculations
+      totals.liveBetting += user.liveBetting || 0;
+      totals.liveWinning += user.liveWinning || 0;
+      totals.slotBetting += user.slotBetting || 0;
+      totals.slotJackpot += user.slotJackpot || 0;
+      totals.miniDanpolWinning += user.miniDanpolWinning || 0;
+      totals.miniCombinationWinning += user.miniCombinationWinning || 0;
+      totals.sportsDanpolWinning += user.sportsDanpolWinning || 0;
+      totals.sportsDupolWinning += user.sportsDupolWinning || 0;
+      totals.sports3PoleWinning += user.sports3PoleWinning || 0;
+      totals.sports4PoleWinning += user.sports4PoleWinning || 0;
+      totals.sports5PoleWinning += user.sports5PoleWinning || 0;
+      totals.sportsDapolWinning += user.sportsDapolWinning || 0;
+      totals.virtualGameWinning += user.virtualGameWinning || 0;
+      totals.lotusWinning += user.lotusWinning || 0;
+      totals.mgmWinning += user.mgmWinning || 0;
+      totals.touchWinning += user.touchWinning || 0;
+      totals.holdemWinning += user.holdemWinning || 0;
+      
+      // Add rolling calculations
+      totals.rollingRate += user.rollingRate || 0;
+      totals.rollingTransition += user.rollingTransition || 0;
+      
+      // Add losing calculations
+      totals.losingRate += user.losingRate || 0;
+      totals.losingSettlement += user.losingSettlement || 0;
+      totals.liveLosing += user.liveLosing || 0;
+      totals.miniDanpolLosing += user.miniDanpolLosing || 0;
+      totals.sportsDanpolLosing += user.sportsDanpolLosing || 0;
+      totals.sports3PoleLosing += user.sports3PoleLosing || 0;
+      totals.sports5PoleLosing += user.sports5PoleLosing || 0;
+      totals.virtualGameLosing += user.virtualGameLosing || 0;
+      totals.lotusLosing += user.lotusLosing || 0;
+      totals.mgmLosing += user.mgmLosing || 0;
+      totals.touchLosing += user.touchLosing || 0;
+      totals.holdemLosing += user.holdemLosing || 0;
+      
+      // Add partnership calculations
+      totals.partnershipRolling += user.partnershipRolling || 0;
+      totals.partnershipMoneyInHand += user.partnershipMoneyInHand || 0;
+      
+      // Add cut reduce
+      totals.cutReduce += user.cutReduce || 0;
+      
+      // Process children recursively
+      if (user.children && user.children.length > 0) {
+        user.children.forEach((child: any) => processUser(child));
+      }
+    };
+
+    data.forEach(processUser);
+    return totals;
+  };
+
+  const columns: TableProps<any>["columns"] = [
     {
       title: t("distributor"),
-      dataIndex: "userid",
-      key: "userid",
+      dataIndex: "distributor",
+      key: "distributor",
       fixed: "left",
+      width: 150,
       render: (_, record) => {
-        return record.user.id;
-      }
+        const level = record.profile?.level || 1;
+        const name = record.profile?.name || record.userid || "Unknown";
+        return (
+          <div className="flex items-center gap-2">
+            <span className="w-[20px] h-[20px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">
+              {level}
+            </span>
+            <span className="text-xs text-[white] bg-[#000] px-2 py-1 rounded">
+              {name}
+            </span>
+          </div>
+        );
+      },
     },
     {
       title: t("deposit/withdraw"),
@@ -59,9 +219,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("membershipWithdraw"),
-              dataIndex: "amount",
+              dataIndex: "membershipWithdrawal",
               align: "center",
-              key: "amount",
+              key: "membershipWithdrawal",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -71,9 +232,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("totalWithdraw"),
-              dataIndex: "amount",
+              dataIndex: "totalWithdrawal",
               align: "center",
-              key: "amount",
+              key: "totalWithdrawal",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -84,9 +246,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       children: [
         {
           title: t("numberOfMembers"),
-          dataIndex: "amount",
+          dataIndex: "numberOfMembers",
           align: "center",
-          key: "amount",
+          key: "numberOfMembers",
+          render: (value) => f.number(value || 1),
         },
         {
           title: t("moneyInHand"),
@@ -94,9 +257,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("rollingholdings"),
-              dataIndex: "amount",
+              dataIndex: "profile",
               align: "center",
-              key: "amount",
+              key: "balance",
+              render: (profile) => f.number(profile?.balance || 0),
             },
           ],
         },
@@ -106,9 +270,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("slotRolling"),
-              dataIndex: "amount",
+              dataIndex: "slot",
               align: "center",
-              key: "amount",
+              key: "slot",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -118,9 +283,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("minCombinationRolling"),
-              dataIndex: "amount",
+              dataIndex: "miniCombinationRolling",
               align: "center",
-              key: "amount",
+              key: "miniCombinationRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -130,9 +296,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDupolRolling"),
-              dataIndex: "amount",
+              dataIndex: "sportsDupolRolling",
               align: "center",
-              key: "amount",
+              key: "sportsDupolRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -142,9 +309,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports4PoleRolling"),
-              dataIndex: "amount",
+              dataIndex: "sports4PoleRolling",
               align: "center",
-              key: "amount",
+              key: "sports4PoleRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -154,42 +322,48 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDapololling"),
-              dataIndex: "amount",
+              dataIndex: "sportsDapolRolling",
               align: "center",
-              key: "amount",
+              key: "sportsDapolRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
         {
           title: t("virtualGameRolling"),
-          dataIndex: "amount",
+          dataIndex: "virtualGameRolling",
           align: "center",
-          key: "amount",
+          key: "virtualGameRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("lotusRolling"),
-          dataIndex: "amount",
+          dataIndex: "lotusRolling",
           align: "center",
-          key: "amount",
+          key: "lotusRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("mgmRolling"),
-          dataIndex: "amount",
+          dataIndex: "mgmRolling",
           align: "center",
-          key: "amount",
+          key: "mgmRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("touchRolling"),
-          dataIndex: "amount",
+          dataIndex: "touchRolling",
           align: "center",
-          key: "amount",
+          key: "touchRolling",
+          render: (value) => f.number(value || 0),
         },
-        {
-          title: t("holdemRolling"),
-          dataIndex: "amount",
-          align: "center",
-          key: "amount",
-        },
+                  {
+            title: t("holdemRolling"),
+            dataIndex: "hold",
+            align: "center",
+            key: "hold",
+            render: (value) => f.number(value || 0),
+          },
       ],
     },
     {
@@ -201,9 +375,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("liveWinning"),
-              dataIndex: "amount",
+              dataIndex: "liveWinning",
               align: "center",
-              key: "amount",
+              key: "liveWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -213,9 +388,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("slotJackpot"),
-              dataIndex: "amount",
+              dataIndex: "slotJackpot",
               align: "center",
-              key: "amount",
+              key: "slotJackpot",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -225,9 +401,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("miniDanpolwinner"),
-              dataIndex: "amount",
+              dataIndex: "miniDanpolWinning",
               align: "center",
-              key: "amount",
+              key: "miniDanpolWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -237,9 +414,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("miniCombinationWinnings"),
-              dataIndex: "amount",
+              dataIndex: "miniCombinationWinning",
               align: "center",
-              key: "amount",
+              key: "miniCombinationWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -249,9 +427,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDanpolWinner"),
-              dataIndex: "amount",
+              dataIndex: "sportsDanpolWinning",
               align: "center",
-              key: "amount",
+              key: "sportsDanpolWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -261,9 +440,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDupolWinner"),
-              dataIndex: "amount",
+              dataIndex: "sportsDupolWinning",
               align: "center",
-              key: "amount",
+              key: "sportsDupolWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -273,9 +453,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports3poleWinner"),
-              dataIndex: "amount",
+              dataIndex: "sports3PoleWinning",
               align: "center",
-              key: "amount",
+              key: "sports3PoleWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -285,9 +466,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports4poleWinner"),
-              dataIndex: "amount",
+              dataIndex: "sports4PoleWinning",
               align: "center",
-              key: "amount",
+              key: "sports4PoleWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -297,9 +479,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports5poleWinner"),
-              dataIndex: "amount",
+              dataIndex: "sports5PoleWinning",
               align: "center",
-              key: "amount",
+              key: "sports5PoleWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -309,9 +492,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDapolWinner"),
-              dataIndex: "amount",
+              dataIndex: "sportsDapolWinning",
               align: "center",
-              key: "amount",
+              key: "sportsDapolWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -321,9 +505,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("virtualGameWinnings"),
-              dataIndex: "amount",
+              dataIndex: "virtualGameWinning",
               align: "center",
-              key: "amount",
+              key: "virtualGameWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -333,9 +518,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("lotusLottery"),
-              dataIndex: "amount",
+              dataIndex: "lotusWinning",
               align: "center",
-              key: "amount",
+              key: "lotusWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -345,9 +531,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("mgmWinning"),
-              dataIndex: "amount",
+              dataIndex: "mgmWinning",
               align: "center",
-              key: "amount",
+              key: "mgmWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -357,9 +544,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("touchWinning"),
-              dataIndex: "amount",
+              dataIndex: "touchWinning",
               align: "center",
-              key: "amount",
+              key: "touchWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -369,9 +557,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("holdemWinning"),
-              dataIndex: "amount",
+              dataIndex: "holdemWinning",
               align: "center",
-              key: "amount",
+              key: "holdemWinning",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -386,9 +575,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("rollingtransition"),
-              dataIndex: "amount",
+              dataIndex: "rollingTransition",
               align: "center",
-              key: "amount",
+              key: "rollingTransition",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -398,9 +588,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("slot"),
-              dataIndex: "amount",
+              dataIndex: "liveRolling",
               align: "center",
-              key: "amount",
+              key: "liveRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -410,9 +601,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("minicombination"),
-              dataIndex: "amount",
+              dataIndex: "miniDanpolRolling",
               align: "center",
-              key: "amount",
+              key: "miniDanpolRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -422,9 +614,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDupol"),
-              dataIndex: "amount",
+              dataIndex: "sportsDanpolRolling",
               align: "center",
-              key: "amount",
+              key: "sportsDanpolRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -434,9 +627,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports4Pole"),
-              dataIndex: "amount",
+              dataIndex: "sports3PoleRolling",
               align: "center",
-              key: "amount",
+              key: "sports3PoleRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -446,47 +640,54 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDapol"),
-              dataIndex: "amount",
+              dataIndex: "sports5PoleRolling",
               align: "center",
-              key: "amount",
+              key: "sports5PoleRolling",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
         {
           title: t("virtualGame"),
-          dataIndex: "amount",
+          dataIndex: "virtualGameRolling",
           align: "center",
-          key: "amount",
+          key: "virtualGameRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("lotus"),
-          dataIndex: "amount",
+          dataIndex: "lotusRolling",
           align: "center",
-          key: "amount",
+          key: "lotusRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("mgm"),
-          dataIndex: "amount",
+          dataIndex: "mgmRolling",
           align: "center",
-          key: "amount",
+          key: "mgmRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("touch"),
-          dataIndex: "amount",
+          dataIndex: "touchRolling",
           align: "center",
-          key: "amount",
+          key: "touchRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("holdem"),
-          dataIndex: "amount",
+          dataIndex: "holdemRolling",
           align: "center",
-          key: "amount",
+          key: "holdemRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("cutReduce"),
           align: "center",
-          dataIndex: "amount",
-          key: "amount",
+          dataIndex: "cutReduce",
+          key: "cutReduce",
+          render: (value) => f.number(value || 0),
         },
        
       ],
@@ -500,9 +701,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("loadingSettlement"),
-              dataIndex: "amount",
+              dataIndex: "losingSettlement",
               align: "center",
-              key: "amount",
+              key: "losingSettlement",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -512,9 +714,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("slot"),
-              dataIndex: "amount",
+              dataIndex: "liveLosing",
               align: "center",
-              key: "amount",
+              key: "liveLosing",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -524,9 +727,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("minicombination"),
-              dataIndex: "amount",
+              dataIndex: "miniDanpolLosing",
               align: "center",
-              key: "amount",
+              key: "miniDanpolLosing",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -536,9 +740,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDupol"),
-              dataIndex: "amount",
+              dataIndex: "sportsDanpolLosing",
               align: "center",
-              key: "amount",
+              key: "sportsDanpolLosing",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -548,9 +753,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sports4Pole"),
-              dataIndex: "amount",
+              dataIndex: "sports3PoleLosing",
               align: "center",
-              key: "amount",
+              key: "sports3PoleLosing",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
@@ -560,41 +766,47 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("sportsDapol"),
-              dataIndex: "amount",
+              dataIndex: "sports5PoleLosing",
               align: "center",
-              key: "amount",
+              key: "sports5PoleLosing",
+              render: (value) => f.number(value || 0),
             },
           ],
         },
         {
           title: t("virtualGame"),
-          dataIndex: "amount",
+          dataIndex: "virtualGameLosing",
           align: "center",
-          key: "amount",
+          key: "virtualGameLosing",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("lotus"),
-          dataIndex: "amount",
+          dataIndex: "lotusLosing",
           align: "center",
-          key: "amount",
+          key: "lotusLosing",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("mgm"),
-          dataIndex: "amount",
+          dataIndex: "mgmLosing",
           align: "center",
-          key: "amount",
+          key: "mgmLosing",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("touch"),
-          dataIndex: "amount",
+          dataIndex: "touchLosing",
           align: "center",
-          key: "amount",
+          key: "touchLosing",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("holdem"),
-          dataIndex: "amount",
+          dataIndex: "holdemLosing",
           align: "center",
-          key: "amount",
+          key: "holdemLosing",
+          render: (value) => f.number(value || 0),
         },
         
       ],
@@ -608,9 +820,10 @@ const DistributorStatisticsDetailPage: React.FC = () => {
           children: [
             {
               title: t("moneyInHand"),
-              dataIndex: "amount",
+              dataIndex: "partnershipMoneyInHand",
               align: "center",
-              key: "amount",
+              key: "partnershipMoneyInHand",
+              render: (value) => f.number(value || 0),
             },
           ],
         }
@@ -619,15 +832,16 @@ const DistributorStatisticsDetailPage: React.FC = () => {
    
   ];
 
-  const onChange: TableProps<Transaction>["onChange"] = (
+  const onChange: TableProps<any>["onChange"] = (
     pagination,
     filters,
     sorter,
     extra
   ) => {
+    const newTableOptions = parseTableOptions(pagination, filters, sorter, extra);
     setTableOptions({
-      ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions?.filters,
+      ...newTableOptions,
+      filters: newTableOptions.filters || [],
     });
   };
 
@@ -654,29 +868,50 @@ const DistributorStatisticsDetailPage: React.FC = () => {
   ) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "transactions.created_at");
+    const f = filters.filter((f) => f.field !== "created_at");
     if (dates?.at(0)) {
       filters = [
         ...f,
         {
-          field: "transactions.created_at",
+          field: "created_at",
           value: dateStrings[0],
           op: "gt",
         },
         {
-          field: "transactions.created_at",
+          field: "created_at",
           value: dateStrings[1],
           op: "lt",
         },
       ];
     }
-    console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
   };
 
+  // Add expand functionality like in distributor page
+  const onExpand = (expanded: boolean, record: any) => {
+    if (expanded) {
+      refetchChildren({
+        filters: [
+          {
+            field: "parent_id",
+            value: record.id,
+            op: "eq",
+          },
+        ],
+      }).then(() => {
+        setUsers([
+          ...(users ?? []),
+          ...(childrenData?.response?.users?.map((u: any) => {
+            return { ...u, key: u.id };
+          }) ?? []),
+        ]);
+      });
+    }
+  };
+
   useEffect(() => {
-    setTransactions(
-      data?.response?.transactions?.map((u: any) => {
+    setUsers(
+      data?.response?.users?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -684,8 +919,18 @@ const DistributorStatisticsDetailPage: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
+    const treeData = buildTree(users ?? []);
+    setTreeUsers(treeData);
+    setTotals(calculateTotals(treeData));
+  }, [users]);
+
+  useEffect(() => {
+    refetch({
+      filters: tableOptions?.filters || [],
+      orders: tableOptions?.orders || [],
+      pagination: tableOptions?.pagination || { limit: 25, offset: 0 },
+    });
+  }, [tableOptions, refetch]);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -695,69 +940,241 @@ const DistributorStatisticsDetailPage: React.FC = () => {
             body: "!p-0",
           }}
         >
-          <Space className="p-2 !w-full" direction="vertical">
-            <Radio.Group
-              size="small"
-              optionType="button"
-              buttonStyle="solid"
-              options={[
-                {
-                  label: t("all"),
-                  value: "",
-                },
-                {
-                  label: t("site"),
-                  value: "site",
-                },
-              ]}
-              defaultValue={""}
-            />
+    <Space className="p-2 !w-full" direction="vertical">
+      <Radio.Group
+        size="small"
+        optionType="button"
+        buttonStyle="solid"
+        options={[
+          {
+            label: t("all"),
+            value: "",
+          },
+          {
+            label: t("site"),
+            value: "site",
+          },
+        ]}
+        defaultValue={""}
+      />
 
-            <Space className="!w-full justify-between">
-              <Space>
-                <DatePicker.RangePicker
-                  size="small"
-                  onChange={onRangerChange}
-                />
-                <Input.Search
-                  size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
-                  suffix={
-                    <Button
-                      size="small"
-                      type="text"
-                      icon={<RxLetterCaseToggle />}
-                    />
-                  }
-                  enterButton={t("search")}
-                />
-              </Space>
-            </Space>
-          </Space>
-
-          <Table<Transaction>
-            columns={columns}
-            loading={loading}
-            dataSource={transactions ?? []}
-            className="w-full"
+      <Space className="!w-full justify-between">
+        <Space>
+          <DatePicker.RangePicker
             size="small"
-            bordered
-            scroll={{ x: "max-content" }}
-            onChange={onChange}
-            pagination={{
-              showTotal(total, range) {
-                return t("paginationLabel", {
-                  from: range[0],
-                  to: range[1],
-                  total,
-                });
-              },
-              total: total,
-              showSizeChanger: true,
-              defaultPageSize: 25,
-              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
-            }}
+            onChange={onRangerChange}
           />
+          <Input.Search
+            size="small"
+            placeholder="ID,Nickname,Account Holder,Phone Number"
+            suffix={
+              <Button
+                size="small"
+                type="text"
+                icon={<RxLetterCaseToggle />}
+              />
+            }
+            enterButton={t("search")}
+          />
+        </Space>
+      </Space>
+    </Space>
+
+    <Table<any>
+      columns={columns}
+      loading={loading}
+      dataSource={treeUsers ?? []}
+      className="w-full"
+      size="small"
+      bordered
+      scroll={{ x: "max-content" }}
+      onChange={onChange}
+      expandable={{
+        onExpand,
+      }}
+      summary={() => (
+        <Table.Summary>
+          <Table.Summary.Row style={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}>
+            <Table.Summary.Cell index={0} className="font-bold bg-gray-100 text-center">
+              {t("total")}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={1} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.membershipWithdrawal || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={2} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.totalWithdrawal || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={3} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.numberOfMembers || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={4} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.moneyInHand || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={5} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.slotRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={6} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.miniCombinationRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={7} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.sportsDupolRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={8} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.sports4PoleRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={9} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.sportsDapolRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={10} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.virtualGameRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={11} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.lotusRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={12} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.mgmRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={13} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.touchRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              {f.number(totals.holdemRolling || 0)}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+              0
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        </Table.Summary>
+      )}
+      pagination={{
+        showTotal(total, range) {
+          return t("paginationLabel", {
+            from: range[0],
+            to: range[1],
+            total,
+          });
+        },
+        total: total,
+        showSizeChanger: true,
+        defaultPageSize: 25,
+        pageSizeOptions: [25, 50, 100, 250, 500, 1000],
+      }}
+    />
         </Card>
       </Content>
     </Layout>

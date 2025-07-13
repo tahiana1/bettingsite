@@ -404,37 +404,38 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AdminPermissions    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		Announcements       func(childComplexity int) int
-		ConnectedUsers      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		Domains             func(childComplexity int) int
-		Events              func(childComplexity int) int
-		FilterUsers         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetAnnouncements    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetBanks            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetDistributors     func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetDomains          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetEvents           func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetGameApis         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetInboxes          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetLogs             func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetMenus            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetNotifications    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetQnas             func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetSMSApis          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetSetting          func(childComplexity int) int
-		GetTransactions     func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetUserMenus        func(childComplexity int) int
-		GetWeeklyLosingData func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		Logs                func(childComplexity int) int
-		Me                  func(childComplexity int) int
-		Notifications       func(childComplexity int) int
-		Profile             func(childComplexity int) int
-		Time                func(childComplexity int) int
-		Todos               func(childComplexity int) int
-		TopEvents           func(childComplexity int) int
-		User                func(childComplexity int, id uint) int
-		Users               func(childComplexity int) int
+		AdminPermissions      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Announcements         func(childComplexity int) int
+		ConnectedUsers        func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Domains               func(childComplexity int) int
+		Events                func(childComplexity int) int
+		FilterUsers           func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetAnnouncements      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetBanks              func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDistributorDetails func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDistributors       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDomains            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetEvents             func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetGameApis           func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetInboxes            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetLogs               func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetMenus              func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetNotifications      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetQnas               func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetSMSApis            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetSetting            func(childComplexity int) int
+		GetTransactions       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetUserMenus          func(childComplexity int) int
+		GetWeeklyLosingData   func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Logs                  func(childComplexity int) int
+		Me                    func(childComplexity int) int
+		Notifications         func(childComplexity int) int
+		Profile               func(childComplexity int) int
+		Time                  func(childComplexity int) int
+		Todos                 func(childComplexity int) int
+		TopEvents             func(childComplexity int) int
+		User                  func(childComplexity int, id uint) int
+		Users                 func(childComplexity int) int
 	}
 
 	SMSApi struct {
@@ -519,38 +520,91 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		BlackMemo        func(childComplexity int) int
-		Children         func(childComplexity int) int
-		ChildrenCount    func(childComplexity int) int
-		CreatedAt        func(childComplexity int) int
-		CurrentIP        func(childComplexity int) int
-		DeletedAt        func(childComplexity int) int
-		Device           func(childComplexity int) int
-		EntireLosing     func(childComplexity int) int
-		FingerPrint      func(childComplexity int) int
-		Hold             func(childComplexity int) int
-		HoldLosingBeDang func(childComplexity int) int
-		ID               func(childComplexity int) int
-		IP               func(childComplexity int) int
-		Live             func(childComplexity int) int
-		LiveLosingBeDang func(childComplexity int) int
-		LosingMethod     func(childComplexity int) int
-		Name             func(childComplexity int) int
-		OS               func(childComplexity int) int
-		OrderNum         func(childComplexity int) int
-		Parent           func(childComplexity int) int
-		ParentID         func(childComplexity int) int
-		Profile          func(childComplexity int) int
-		Role             func(childComplexity int) int
-		Root             func(childComplexity int) int
-		RootID           func(childComplexity int) int
-		Slot             func(childComplexity int) int
-		SlotLosingBeDang func(childComplexity int) int
-		Status           func(childComplexity int) int
-		Type             func(childComplexity int) int
-		USDTAddress      func(childComplexity int) int
-		UpdatedAt        func(childComplexity int) int
-		Userid           func(childComplexity int) int
+		BlackMemo               func(childComplexity int) int
+		Children                func(childComplexity int) int
+		ChildrenCount           func(childComplexity int) int
+		CreatedAt               func(childComplexity int) int
+		CurrentIP               func(childComplexity int) int
+		DeletedAt               func(childComplexity int) int
+		Device                  func(childComplexity int) int
+		EntireLosing            func(childComplexity int) int
+		FingerPrint             func(childComplexity int) int
+		Hold                    func(childComplexity int) int
+		HoldLosingBeDang        func(childComplexity int) int
+		HoldemBetting           func(childComplexity int) int
+		HoldemWinning           func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		IP                      func(childComplexity int) int
+		Live                    func(childComplexity int) int
+		LiveBetting             func(childComplexity int) int
+		LiveLosingBeDang        func(childComplexity int) int
+		LiveWinning             func(childComplexity int) int
+		LosingMethod            func(childComplexity int) int
+		LosingRate              func(childComplexity int) int
+		LosingSettlement        func(childComplexity int) int
+		LotusBetting            func(childComplexity int) int
+		LotusLottery            func(childComplexity int) int
+		LotusRolling            func(childComplexity int) int
+		MembershipDeposit       func(childComplexity int) int
+		MembershipWithdrawal    func(childComplexity int) int
+		MgmBetting              func(childComplexity int) int
+		MgmRolling              func(childComplexity int) int
+		MgmWinning              func(childComplexity int) int
+		MiniCombinationBetting  func(childComplexity int) int
+		MiniCombinationRolling  func(childComplexity int) int
+		MiniCombinationWinnings func(childComplexity int) int
+		MiniDanpolBetting       func(childComplexity int) int
+		MiniDanpolRolling       func(childComplexity int) int
+		MiniDanpolWinner        func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		NumberOfMembers         func(childComplexity int) int
+		OS                      func(childComplexity int) int
+		OrderNum                func(childComplexity int) int
+		Parent                  func(childComplexity int) int
+		ParentID                func(childComplexity int) int
+		PartnershipMoneyInHand  func(childComplexity int) int
+		PartnershipRolling      func(childComplexity int) int
+		Profile                 func(childComplexity int) int
+		Role                    func(childComplexity int) int
+		RollingHoldings         func(childComplexity int) int
+		RollingRate             func(childComplexity int) int
+		RollingTransition       func(childComplexity int) int
+		Root                    func(childComplexity int) int
+		RootID                  func(childComplexity int) int
+		Slot                    func(childComplexity int) int
+		SlotBetting             func(childComplexity int) int
+		SlotJackpot             func(childComplexity int) int
+		SlotLosingBeDang        func(childComplexity int) int
+		Sports3PoleRolling      func(childComplexity int) int
+		Sports3poleBetting      func(childComplexity int) int
+		Sports3poleWinner       func(childComplexity int) int
+		Sports4PoleRolling      func(childComplexity int) int
+		Sports4poleBetting      func(childComplexity int) int
+		Sports4poleWinner       func(childComplexity int) int
+		Sports5PoleRolling      func(childComplexity int) int
+		Sports5poleBetting      func(childComplexity int) int
+		Sports5poleWinner       func(childComplexity int) int
+		SportsDanpolBetting     func(childComplexity int) int
+		SportsDanpolRolling     func(childComplexity int) int
+		SportsDanpolWinner      func(childComplexity int) int
+		SportsDapolBetting      func(childComplexity int) int
+		SportsDapolRolling      func(childComplexity int) int
+		SportsDapolWinner       func(childComplexity int) int
+		SportsDupolBetting      func(childComplexity int) int
+		SportsDupolRolling      func(childComplexity int) int
+		SportsDupolWinner       func(childComplexity int) int
+		Status                  func(childComplexity int) int
+		TotalWithdrawal         func(childComplexity int) int
+		TouchBetting            func(childComplexity int) int
+		TouchRolling            func(childComplexity int) int
+		TouchWinning            func(childComplexity int) int
+		Type                    func(childComplexity int) int
+		USDTAddress             func(childComplexity int) int
+		UpdatedAt               func(childComplexity int) int
+		Userid                  func(childComplexity int) int
+		VirtualGameBetting      func(childComplexity int) int
+		VirtualGameRolling      func(childComplexity int) int
+		VirtualGameWinnings     func(childComplexity int) int
 	}
 
 	UserList struct {
@@ -685,6 +739,7 @@ type QueryResolver interface {
 	ConnectedUsers(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
 	User(ctx context.Context, id uint) (*models.User, error)
 	GetDistributors(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
+	GetDistributorDetails(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error)
 }
 type SubscriptionResolver interface {
 	Time(ctx context.Context) (<-chan string, error)
@@ -693,6 +748,8 @@ type UserResolver interface {
 	Type(ctx context.Context, obj *models.User) (model.UserType, error)
 
 	Status(ctx context.Context, obj *models.User) (model.UserStatus, error)
+
+	NumberOfMembers(ctx context.Context, obj *models.User) (*int32, error)
 }
 
 type executableSchema struct {
@@ -2976,6 +3033,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetBanks(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
 
+	case "Query.getDistributorDetails":
+		if e.complexity.Query.GetDistributorDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getDistributorDetails_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetDistributorDetails(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
 	case "Query.getDistributors":
 		if e.complexity.Query.GetDistributors == nil {
 			break
@@ -3699,6 +3768,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.HoldLosingBeDang(childComplexity), true
 
+	case "User.holdemBetting":
+		if e.complexity.User.HoldemBetting == nil {
+			break
+		}
+
+		return e.complexity.User.HoldemBetting(childComplexity), true
+
+	case "User.holdemWinning":
+		if e.complexity.User.HoldemWinning == nil {
+			break
+		}
+
+		return e.complexity.User.HoldemWinning(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -3720,12 +3803,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Live(childComplexity), true
 
+	case "User.liveBetting":
+		if e.complexity.User.LiveBetting == nil {
+			break
+		}
+
+		return e.complexity.User.LiveBetting(childComplexity), true
+
 	case "User.liveLosingBeDang":
 		if e.complexity.User.LiveLosingBeDang == nil {
 			break
 		}
 
 		return e.complexity.User.LiveLosingBeDang(childComplexity), true
+
+	case "User.liveWinning":
+		if e.complexity.User.LiveWinning == nil {
+			break
+		}
+
+		return e.complexity.User.LiveWinning(childComplexity), true
 
 	case "User.losingMethod":
 		if e.complexity.User.LosingMethod == nil {
@@ -3734,12 +3831,131 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.LosingMethod(childComplexity), true
 
+	case "User.losingRate":
+		if e.complexity.User.LosingRate == nil {
+			break
+		}
+
+		return e.complexity.User.LosingRate(childComplexity), true
+
+	case "User.losingSettlement":
+		if e.complexity.User.LosingSettlement == nil {
+			break
+		}
+
+		return e.complexity.User.LosingSettlement(childComplexity), true
+
+	case "User.lotusBetting":
+		if e.complexity.User.LotusBetting == nil {
+			break
+		}
+
+		return e.complexity.User.LotusBetting(childComplexity), true
+
+	case "User.lotusLottery":
+		if e.complexity.User.LotusLottery == nil {
+			break
+		}
+
+		return e.complexity.User.LotusLottery(childComplexity), true
+
+	case "User.lotusRolling":
+		if e.complexity.User.LotusRolling == nil {
+			break
+		}
+
+		return e.complexity.User.LotusRolling(childComplexity), true
+
+	case "User.membershipDeposit":
+		if e.complexity.User.MembershipDeposit == nil {
+			break
+		}
+
+		return e.complexity.User.MembershipDeposit(childComplexity), true
+
+	case "User.membershipWithdrawal":
+		if e.complexity.User.MembershipWithdrawal == nil {
+			break
+		}
+
+		return e.complexity.User.MembershipWithdrawal(childComplexity), true
+
+	case "User.mgmBetting":
+		if e.complexity.User.MgmBetting == nil {
+			break
+		}
+
+		return e.complexity.User.MgmBetting(childComplexity), true
+
+	case "User.mgmRolling":
+		if e.complexity.User.MgmRolling == nil {
+			break
+		}
+
+		return e.complexity.User.MgmRolling(childComplexity), true
+
+	case "User.mgmWinning":
+		if e.complexity.User.MgmWinning == nil {
+			break
+		}
+
+		return e.complexity.User.MgmWinning(childComplexity), true
+
+	case "User.miniCombinationBetting":
+		if e.complexity.User.MiniCombinationBetting == nil {
+			break
+		}
+
+		return e.complexity.User.MiniCombinationBetting(childComplexity), true
+
+	case "User.miniCombinationRolling":
+		if e.complexity.User.MiniCombinationRolling == nil {
+			break
+		}
+
+		return e.complexity.User.MiniCombinationRolling(childComplexity), true
+
+	case "User.miniCombinationWinnings":
+		if e.complexity.User.MiniCombinationWinnings == nil {
+			break
+		}
+
+		return e.complexity.User.MiniCombinationWinnings(childComplexity), true
+
+	case "User.miniDanpolBetting":
+		if e.complexity.User.MiniDanpolBetting == nil {
+			break
+		}
+
+		return e.complexity.User.MiniDanpolBetting(childComplexity), true
+
+	case "User.miniDanpolRolling":
+		if e.complexity.User.MiniDanpolRolling == nil {
+			break
+		}
+
+		return e.complexity.User.MiniDanpolRolling(childComplexity), true
+
+	case "User.miniDanpolWinner":
+		if e.complexity.User.MiniDanpolWinner == nil {
+			break
+		}
+
+		return e.complexity.User.MiniDanpolWinner(childComplexity), true
+
 	case "User.name":
 		if e.complexity.User.Name == nil {
 			break
 		}
 
 		return e.complexity.User.Name(childComplexity), true
+
+	case "User.numberOfMembers":
+		if e.complexity.User.NumberOfMembers == nil {
+			break
+		}
+
+		return e.complexity.User.NumberOfMembers(childComplexity), true
 
 	case "User.os":
 		if e.complexity.User.OS == nil {
@@ -3769,6 +3985,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.ParentID(childComplexity), true
 
+	case "User.partnershipMoneyInHand":
+		if e.complexity.User.PartnershipMoneyInHand == nil {
+			break
+		}
+
+		return e.complexity.User.PartnershipMoneyInHand(childComplexity), true
+
+	case "User.partnershipRolling":
+		if e.complexity.User.PartnershipRolling == nil {
+			break
+		}
+
+		return e.complexity.User.PartnershipRolling(childComplexity), true
+
 	case "User.profile":
 		if e.complexity.User.Profile == nil {
 			break
@@ -3782,6 +4012,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.Role(childComplexity), true
+
+	case "User.rollingHoldings":
+		if e.complexity.User.RollingHoldings == nil {
+			break
+		}
+
+		return e.complexity.User.RollingHoldings(childComplexity), true
+
+	case "User.rollingRate":
+		if e.complexity.User.RollingRate == nil {
+			break
+		}
+
+		return e.complexity.User.RollingRate(childComplexity), true
+
+	case "User.rollingTransition":
+		if e.complexity.User.RollingTransition == nil {
+			break
+		}
+
+		return e.complexity.User.RollingTransition(childComplexity), true
 
 	case "User.root":
 		if e.complexity.User.Root == nil {
@@ -3804,6 +4055,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Slot(childComplexity), true
 
+	case "User.slotBetting":
+		if e.complexity.User.SlotBetting == nil {
+			break
+		}
+
+		return e.complexity.User.SlotBetting(childComplexity), true
+
+	case "User.slotJackpot":
+		if e.complexity.User.SlotJackpot == nil {
+			break
+		}
+
+		return e.complexity.User.SlotJackpot(childComplexity), true
+
 	case "User.slotLosingBeDang":
 		if e.complexity.User.SlotLosingBeDang == nil {
 			break
@@ -3811,12 +4076,166 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.SlotLosingBeDang(childComplexity), true
 
+	case "User.sports3PoleRolling":
+		if e.complexity.User.Sports3PoleRolling == nil {
+			break
+		}
+
+		return e.complexity.User.Sports3PoleRolling(childComplexity), true
+
+	case "User.sports3poleBetting":
+		if e.complexity.User.Sports3poleBetting == nil {
+			break
+		}
+
+		return e.complexity.User.Sports3poleBetting(childComplexity), true
+
+	case "User.sports3poleWinner":
+		if e.complexity.User.Sports3poleWinner == nil {
+			break
+		}
+
+		return e.complexity.User.Sports3poleWinner(childComplexity), true
+
+	case "User.sports4PoleRolling":
+		if e.complexity.User.Sports4PoleRolling == nil {
+			break
+		}
+
+		return e.complexity.User.Sports4PoleRolling(childComplexity), true
+
+	case "User.sports4poleBetting":
+		if e.complexity.User.Sports4poleBetting == nil {
+			break
+		}
+
+		return e.complexity.User.Sports4poleBetting(childComplexity), true
+
+	case "User.sports4poleWinner":
+		if e.complexity.User.Sports4poleWinner == nil {
+			break
+		}
+
+		return e.complexity.User.Sports4poleWinner(childComplexity), true
+
+	case "User.sports5PoleRolling":
+		if e.complexity.User.Sports5PoleRolling == nil {
+			break
+		}
+
+		return e.complexity.User.Sports5PoleRolling(childComplexity), true
+
+	case "User.sports5poleBetting":
+		if e.complexity.User.Sports5poleBetting == nil {
+			break
+		}
+
+		return e.complexity.User.Sports5poleBetting(childComplexity), true
+
+	case "User.sports5poleWinner":
+		if e.complexity.User.Sports5poleWinner == nil {
+			break
+		}
+
+		return e.complexity.User.Sports5poleWinner(childComplexity), true
+
+	case "User.sportsDanpolBetting":
+		if e.complexity.User.SportsDanpolBetting == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDanpolBetting(childComplexity), true
+
+	case "User.sportsDanpolRolling":
+		if e.complexity.User.SportsDanpolRolling == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDanpolRolling(childComplexity), true
+
+	case "User.sportsDanpolWinner":
+		if e.complexity.User.SportsDanpolWinner == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDanpolWinner(childComplexity), true
+
+	case "User.sportsDapolBetting":
+		if e.complexity.User.SportsDapolBetting == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDapolBetting(childComplexity), true
+
+	case "User.sportsDapolRolling":
+		if e.complexity.User.SportsDapolRolling == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDapolRolling(childComplexity), true
+
+	case "User.sportsDapolWinner":
+		if e.complexity.User.SportsDapolWinner == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDapolWinner(childComplexity), true
+
+	case "User.sportsDupolBetting":
+		if e.complexity.User.SportsDupolBetting == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDupolBetting(childComplexity), true
+
+	case "User.sportsDupolRolling":
+		if e.complexity.User.SportsDupolRolling == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDupolRolling(childComplexity), true
+
+	case "User.sportsDupolWinner":
+		if e.complexity.User.SportsDupolWinner == nil {
+			break
+		}
+
+		return e.complexity.User.SportsDupolWinner(childComplexity), true
+
 	case "User.status":
 		if e.complexity.User.Status == nil {
 			break
 		}
 
 		return e.complexity.User.Status(childComplexity), true
+
+	case "User.totalWithdrawal":
+		if e.complexity.User.TotalWithdrawal == nil {
+			break
+		}
+
+		return e.complexity.User.TotalWithdrawal(childComplexity), true
+
+	case "User.touchBetting":
+		if e.complexity.User.TouchBetting == nil {
+			break
+		}
+
+		return e.complexity.User.TouchBetting(childComplexity), true
+
+	case "User.touchRolling":
+		if e.complexity.User.TouchRolling == nil {
+			break
+		}
+
+		return e.complexity.User.TouchRolling(childComplexity), true
+
+	case "User.touchWinning":
+		if e.complexity.User.TouchWinning == nil {
+			break
+		}
+
+		return e.complexity.User.TouchWinning(childComplexity), true
 
 	case "User.type":
 		if e.complexity.User.Type == nil {
@@ -3845,6 +4264,27 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.User.Userid(childComplexity), true
+
+	case "User.virtualGameBetting":
+		if e.complexity.User.VirtualGameBetting == nil {
+			break
+		}
+
+		return e.complexity.User.VirtualGameBetting(childComplexity), true
+
+	case "User.virtualGameRolling":
+		if e.complexity.User.VirtualGameRolling == nil {
+			break
+		}
+
+		return e.complexity.User.VirtualGameRolling(childComplexity), true
+
+	case "User.virtualGameWinnings":
+		if e.complexity.User.VirtualGameWinnings == nil {
+			break
+		}
+
+		return e.complexity.User.VirtualGameWinnings(childComplexity), true
 
 	case "UserList.total":
 		if e.complexity.UserList.Total == nil {
@@ -5262,6 +5702,71 @@ type User {
 
   losingMethod: String
 
+  # Additional rolling fields for different game types
+  miniDanpolRolling: Float
+  miniCombinationRolling: Float
+  sportsDanpolRolling: Float
+  sportsDupolRolling: Float
+  sports3PoleRolling: Float
+  sports4PoleRolling: Float
+  sports5PoleRolling: Float
+  sportsDapolRolling: Float
+  virtualGameRolling: Float
+  lotusRolling: Float
+  mgmRolling: Float
+  touchRolling: Float
+
+  # Financial statistics
+  membershipDeposit: Float
+  membershipWithdrawal: Float
+  totalWithdrawal: Float
+  numberOfMembers: Int
+  rollingHoldings: Float
+
+  # Betting/Winning statistics
+  liveBetting: Float
+  liveWinning: Float
+  slotBetting: Float
+  slotJackpot: Float
+  miniDanpolBetting: Float
+  miniDanpolWinner: Float
+  miniCombinationBetting: Float
+  miniCombinationWinnings: Float
+  sportsDanpolBetting: Float
+  sportsDanpolWinner: Float
+  sportsDupolBetting: Float
+  sportsDupolWinner: Float
+  sports3poleBetting: Float
+  sports3poleWinner: Float
+  sports4poleBetting: Float
+  sports4poleWinner: Float
+  sports5poleBetting: Float
+  sports5poleWinner: Float
+  sportsDapolBetting: Float
+  sportsDapolWinner: Float
+  virtualGameBetting: Float
+  virtualGameWinnings: Float
+  lotusBetting: Float
+  lotusLottery: Float
+  mgmBetting: Float
+  mgmWinning: Float
+  touchBetting: Float
+  touchWinning: Float
+  holdemBetting: Float
+  holdemWinning: Float
+
+  # Rolling statistics
+  rollingRate: Float
+  rollingTransition: Float
+
+  # Losing statistics
+  losingRate: Float
+  losingSettlement: Float
+
+  # Partnership statistics
+  partnershipRolling: Float
+  partnershipMoneyInHand: Float
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -5416,6 +5921,12 @@ extend type Query {
   user(id: ID!): User @hasRole(role: A)
 
   getDistributors(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): UserList! @hasRole(role: A)
+
+  getDistributorDetails(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
@@ -7314,6 +7825,65 @@ func (ec *executionContext) field_Query_getBanks_argsPagination(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_getDistributorDetails_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getDistributorDetails_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_getDistributorDetails_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_getDistributorDetails_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_getDistributorDetails_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getDistributorDetails_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getDistributorDetails_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_getDistributors_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -8330,6 +8900,112 @@ func (ec *executionContext) fieldContext_AdminPermission_user(_ context.Context,
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -9318,6 +9994,112 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -11082,6 +11864,112 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -11722,6 +12610,112 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13537,6 +14531,112 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13691,6 +14791,112 @@ func (ec *executionContext) fieldContext_Inbox_FromUser(_ context.Context, field
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -14432,6 +15638,112 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -23230,6 +24542,112 @@ func (ec *executionContext) fieldContext_Qna_user(_ context.Context, field graph
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -26132,6 +27550,112 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -26269,6 +27793,112 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -26579,6 +28209,112 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -26685,6 +28421,94 @@ func (ec *executionContext) fieldContext_Query_getDistributors(ctx context.Conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getDistributors_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getDistributorDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getDistributorDetails(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetDistributorDetails(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.UserList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.UserList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.UserList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.UserList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserList)
+	fc.Result = res
+	return ec.marshalNUserList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getDistributorDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "users":
+				return ec.fieldContext_UserList_users(ctx, field)
+			case "total":
+				return ec.fieldContext_UserList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getDistributorDetails_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -27743,6 +29567,112 @@ func (ec *executionContext) fieldContext_Setting_user(_ context.Context, field g
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -28699,6 +30629,112 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -28894,6 +30930,112 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -30092,6 +32234,112 @@ func (ec *executionContext) fieldContext_User_root(_ context.Context, field grap
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -30240,6 +32488,112 @@ func (ec *executionContext) fieldContext_User_parent(_ context.Context, field gr
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -30347,6 +32701,112 @@ func (ec *executionContext) fieldContext_User_children(_ context.Context, field 
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -31078,6 +33538,2179 @@ func (ec *executionContext) fieldContext_User_losingMethod(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _User_miniDanpolRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniDanpolRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniDanpolRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniDanpolRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_miniCombinationRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniCombinationRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniCombinationRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniCombinationRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDanpolRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDanpolRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDanpolRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDupolRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDupolRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDupolRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDupolRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports3PoleRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports3PoleRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports3PoleRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports3PoleRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports4PoleRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports4PoleRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports4PoleRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports4PoleRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports5PoleRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports5PoleRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports5PoleRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports5PoleRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDapolRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDapolRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDapolRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDapolRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_virtualGameRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_virtualGameRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VirtualGameRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_virtualGameRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_lotusRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_lotusRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LotusRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_lotusRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_mgmRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_mgmRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MgmRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_mgmRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_touchRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_touchRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TouchRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_touchRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_membershipDeposit(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_membershipDeposit(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MembershipDeposit, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_membershipDeposit(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_membershipWithdrawal(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_membershipWithdrawal(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MembershipWithdrawal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_membershipWithdrawal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_totalWithdrawal(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_totalWithdrawal(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalWithdrawal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_totalWithdrawal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_numberOfMembers(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_numberOfMembers(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().NumberOfMembers(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int32)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_numberOfMembers(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_rollingHoldings(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_rollingHoldings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RollingHoldings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_rollingHoldings(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_liveBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_liveBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiveBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_liveBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_liveWinning(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_liveWinning(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LiveWinning, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_liveWinning(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_slotBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_slotBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlotBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_slotBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_slotJackpot(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_slotJackpot(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SlotJackpot, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_slotJackpot(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_miniDanpolBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniDanpolBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniDanpolBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniDanpolBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_miniDanpolWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniDanpolWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniDanpolWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniDanpolWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_miniCombinationBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniCombinationBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniCombinationBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniCombinationBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_miniCombinationWinnings(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MiniCombinationWinnings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_miniCombinationWinnings(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDanpolBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDanpolBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDanpolBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDanpolWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDanpolWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDanpolWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDupolBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDupolBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDupolBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDupolBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDupolWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDupolWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDupolWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDupolWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports3poleBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports3poleBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports3poleBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports3poleBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports3poleWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports3poleWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports3poleWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports3poleWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports4poleBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports4poleBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports4poleBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports4poleBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports4poleWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports4poleWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports4poleWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports4poleWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports5poleBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports5poleBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports5poleBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports5poleBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sports5poleWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sports5poleWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sports5poleWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sports5poleWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDapolBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDapolBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDapolBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDapolBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_sportsDapolWinner(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_sportsDapolWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SportsDapolWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_sportsDapolWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_virtualGameBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_virtualGameBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VirtualGameBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_virtualGameBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_virtualGameWinnings(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_virtualGameWinnings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.VirtualGameWinnings, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_virtualGameWinnings(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_lotusBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_lotusBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LotusBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_lotusBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_lotusLottery(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_lotusLottery(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LotusLottery, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_lotusLottery(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_mgmBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_mgmBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MgmBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_mgmBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_mgmWinning(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_mgmWinning(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MgmWinning, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_mgmWinning(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_touchBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_touchBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TouchBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_touchBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_touchWinning(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_touchWinning(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TouchWinning, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_touchWinning(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_holdemBetting(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_holdemBetting(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoldemBetting, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_holdemBetting(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_holdemWinning(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_holdemWinning(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HoldemWinning, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_holdemWinning(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_rollingRate(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_rollingRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RollingRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_rollingRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_rollingTransition(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_rollingTransition(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RollingTransition, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_rollingTransition(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_losingRate(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_losingRate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LosingRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_losingRate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_losingSettlement(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_losingSettlement(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LosingSettlement, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_losingSettlement(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_partnershipRolling(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_partnershipRolling(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PartnershipRolling, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_partnershipRolling(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_partnershipMoneyInHand(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PartnershipMoneyInHand, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalOFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_partnershipMoneyInHand(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
@@ -31304,6 +35937,112 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_holdLosingBeDang(ctx, field)
 			case "losingMethod":
 				return ec.fieldContext_User_losingMethod(ctx, field)
+			case "miniDanpolRolling":
+				return ec.fieldContext_User_miniDanpolRolling(ctx, field)
+			case "miniCombinationRolling":
+				return ec.fieldContext_User_miniCombinationRolling(ctx, field)
+			case "sportsDanpolRolling":
+				return ec.fieldContext_User_sportsDanpolRolling(ctx, field)
+			case "sportsDupolRolling":
+				return ec.fieldContext_User_sportsDupolRolling(ctx, field)
+			case "sports3PoleRolling":
+				return ec.fieldContext_User_sports3PoleRolling(ctx, field)
+			case "sports4PoleRolling":
+				return ec.fieldContext_User_sports4PoleRolling(ctx, field)
+			case "sports5PoleRolling":
+				return ec.fieldContext_User_sports5PoleRolling(ctx, field)
+			case "sportsDapolRolling":
+				return ec.fieldContext_User_sportsDapolRolling(ctx, field)
+			case "virtualGameRolling":
+				return ec.fieldContext_User_virtualGameRolling(ctx, field)
+			case "lotusRolling":
+				return ec.fieldContext_User_lotusRolling(ctx, field)
+			case "mgmRolling":
+				return ec.fieldContext_User_mgmRolling(ctx, field)
+			case "touchRolling":
+				return ec.fieldContext_User_touchRolling(ctx, field)
+			case "membershipDeposit":
+				return ec.fieldContext_User_membershipDeposit(ctx, field)
+			case "membershipWithdrawal":
+				return ec.fieldContext_User_membershipWithdrawal(ctx, field)
+			case "totalWithdrawal":
+				return ec.fieldContext_User_totalWithdrawal(ctx, field)
+			case "numberOfMembers":
+				return ec.fieldContext_User_numberOfMembers(ctx, field)
+			case "rollingHoldings":
+				return ec.fieldContext_User_rollingHoldings(ctx, field)
+			case "liveBetting":
+				return ec.fieldContext_User_liveBetting(ctx, field)
+			case "liveWinning":
+				return ec.fieldContext_User_liveWinning(ctx, field)
+			case "slotBetting":
+				return ec.fieldContext_User_slotBetting(ctx, field)
+			case "slotJackpot":
+				return ec.fieldContext_User_slotJackpot(ctx, field)
+			case "miniDanpolBetting":
+				return ec.fieldContext_User_miniDanpolBetting(ctx, field)
+			case "miniDanpolWinner":
+				return ec.fieldContext_User_miniDanpolWinner(ctx, field)
+			case "miniCombinationBetting":
+				return ec.fieldContext_User_miniCombinationBetting(ctx, field)
+			case "miniCombinationWinnings":
+				return ec.fieldContext_User_miniCombinationWinnings(ctx, field)
+			case "sportsDanpolBetting":
+				return ec.fieldContext_User_sportsDanpolBetting(ctx, field)
+			case "sportsDanpolWinner":
+				return ec.fieldContext_User_sportsDanpolWinner(ctx, field)
+			case "sportsDupolBetting":
+				return ec.fieldContext_User_sportsDupolBetting(ctx, field)
+			case "sportsDupolWinner":
+				return ec.fieldContext_User_sportsDupolWinner(ctx, field)
+			case "sports3poleBetting":
+				return ec.fieldContext_User_sports3poleBetting(ctx, field)
+			case "sports3poleWinner":
+				return ec.fieldContext_User_sports3poleWinner(ctx, field)
+			case "sports4poleBetting":
+				return ec.fieldContext_User_sports4poleBetting(ctx, field)
+			case "sports4poleWinner":
+				return ec.fieldContext_User_sports4poleWinner(ctx, field)
+			case "sports5poleBetting":
+				return ec.fieldContext_User_sports5poleBetting(ctx, field)
+			case "sports5poleWinner":
+				return ec.fieldContext_User_sports5poleWinner(ctx, field)
+			case "sportsDapolBetting":
+				return ec.fieldContext_User_sportsDapolBetting(ctx, field)
+			case "sportsDapolWinner":
+				return ec.fieldContext_User_sportsDapolWinner(ctx, field)
+			case "virtualGameBetting":
+				return ec.fieldContext_User_virtualGameBetting(ctx, field)
+			case "virtualGameWinnings":
+				return ec.fieldContext_User_virtualGameWinnings(ctx, field)
+			case "lotusBetting":
+				return ec.fieldContext_User_lotusBetting(ctx, field)
+			case "lotusLottery":
+				return ec.fieldContext_User_lotusLottery(ctx, field)
+			case "mgmBetting":
+				return ec.fieldContext_User_mgmBetting(ctx, field)
+			case "mgmWinning":
+				return ec.fieldContext_User_mgmWinning(ctx, field)
+			case "touchBetting":
+				return ec.fieldContext_User_touchBetting(ctx, field)
+			case "touchWinning":
+				return ec.fieldContext_User_touchWinning(ctx, field)
+			case "holdemBetting":
+				return ec.fieldContext_User_holdemBetting(ctx, field)
+			case "holdemWinning":
+				return ec.fieldContext_User_holdemWinning(ctx, field)
+			case "rollingRate":
+				return ec.fieldContext_User_rollingRate(ctx, field)
+			case "rollingTransition":
+				return ec.fieldContext_User_rollingTransition(ctx, field)
+			case "losingRate":
+				return ec.fieldContext_User_losingRate(ctx, field)
+			case "losingSettlement":
+				return ec.fieldContext_User_losingSettlement(ctx, field)
+			case "partnershipRolling":
+				return ec.fieldContext_User_partnershipRolling(ctx, field)
+			case "partnershipMoneyInHand":
+				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -40099,6 +44838,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getDistributorDetails":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getDistributorDetails(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -40681,6 +45442,143 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_holdLosingBeDang(ctx, field, obj)
 		case "losingMethod":
 			out.Values[i] = ec._User_losingMethod(ctx, field, obj)
+		case "miniDanpolRolling":
+			out.Values[i] = ec._User_miniDanpolRolling(ctx, field, obj)
+		case "miniCombinationRolling":
+			out.Values[i] = ec._User_miniCombinationRolling(ctx, field, obj)
+		case "sportsDanpolRolling":
+			out.Values[i] = ec._User_sportsDanpolRolling(ctx, field, obj)
+		case "sportsDupolRolling":
+			out.Values[i] = ec._User_sportsDupolRolling(ctx, field, obj)
+		case "sports3PoleRolling":
+			out.Values[i] = ec._User_sports3PoleRolling(ctx, field, obj)
+		case "sports4PoleRolling":
+			out.Values[i] = ec._User_sports4PoleRolling(ctx, field, obj)
+		case "sports5PoleRolling":
+			out.Values[i] = ec._User_sports5PoleRolling(ctx, field, obj)
+		case "sportsDapolRolling":
+			out.Values[i] = ec._User_sportsDapolRolling(ctx, field, obj)
+		case "virtualGameRolling":
+			out.Values[i] = ec._User_virtualGameRolling(ctx, field, obj)
+		case "lotusRolling":
+			out.Values[i] = ec._User_lotusRolling(ctx, field, obj)
+		case "mgmRolling":
+			out.Values[i] = ec._User_mgmRolling(ctx, field, obj)
+		case "touchRolling":
+			out.Values[i] = ec._User_touchRolling(ctx, field, obj)
+		case "membershipDeposit":
+			out.Values[i] = ec._User_membershipDeposit(ctx, field, obj)
+		case "membershipWithdrawal":
+			out.Values[i] = ec._User_membershipWithdrawal(ctx, field, obj)
+		case "totalWithdrawal":
+			out.Values[i] = ec._User_totalWithdrawal(ctx, field, obj)
+		case "numberOfMembers":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_numberOfMembers(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "rollingHoldings":
+			out.Values[i] = ec._User_rollingHoldings(ctx, field, obj)
+		case "liveBetting":
+			out.Values[i] = ec._User_liveBetting(ctx, field, obj)
+		case "liveWinning":
+			out.Values[i] = ec._User_liveWinning(ctx, field, obj)
+		case "slotBetting":
+			out.Values[i] = ec._User_slotBetting(ctx, field, obj)
+		case "slotJackpot":
+			out.Values[i] = ec._User_slotJackpot(ctx, field, obj)
+		case "miniDanpolBetting":
+			out.Values[i] = ec._User_miniDanpolBetting(ctx, field, obj)
+		case "miniDanpolWinner":
+			out.Values[i] = ec._User_miniDanpolWinner(ctx, field, obj)
+		case "miniCombinationBetting":
+			out.Values[i] = ec._User_miniCombinationBetting(ctx, field, obj)
+		case "miniCombinationWinnings":
+			out.Values[i] = ec._User_miniCombinationWinnings(ctx, field, obj)
+		case "sportsDanpolBetting":
+			out.Values[i] = ec._User_sportsDanpolBetting(ctx, field, obj)
+		case "sportsDanpolWinner":
+			out.Values[i] = ec._User_sportsDanpolWinner(ctx, field, obj)
+		case "sportsDupolBetting":
+			out.Values[i] = ec._User_sportsDupolBetting(ctx, field, obj)
+		case "sportsDupolWinner":
+			out.Values[i] = ec._User_sportsDupolWinner(ctx, field, obj)
+		case "sports3poleBetting":
+			out.Values[i] = ec._User_sports3poleBetting(ctx, field, obj)
+		case "sports3poleWinner":
+			out.Values[i] = ec._User_sports3poleWinner(ctx, field, obj)
+		case "sports4poleBetting":
+			out.Values[i] = ec._User_sports4poleBetting(ctx, field, obj)
+		case "sports4poleWinner":
+			out.Values[i] = ec._User_sports4poleWinner(ctx, field, obj)
+		case "sports5poleBetting":
+			out.Values[i] = ec._User_sports5poleBetting(ctx, field, obj)
+		case "sports5poleWinner":
+			out.Values[i] = ec._User_sports5poleWinner(ctx, field, obj)
+		case "sportsDapolBetting":
+			out.Values[i] = ec._User_sportsDapolBetting(ctx, field, obj)
+		case "sportsDapolWinner":
+			out.Values[i] = ec._User_sportsDapolWinner(ctx, field, obj)
+		case "virtualGameBetting":
+			out.Values[i] = ec._User_virtualGameBetting(ctx, field, obj)
+		case "virtualGameWinnings":
+			out.Values[i] = ec._User_virtualGameWinnings(ctx, field, obj)
+		case "lotusBetting":
+			out.Values[i] = ec._User_lotusBetting(ctx, field, obj)
+		case "lotusLottery":
+			out.Values[i] = ec._User_lotusLottery(ctx, field, obj)
+		case "mgmBetting":
+			out.Values[i] = ec._User_mgmBetting(ctx, field, obj)
+		case "mgmWinning":
+			out.Values[i] = ec._User_mgmWinning(ctx, field, obj)
+		case "touchBetting":
+			out.Values[i] = ec._User_touchBetting(ctx, field, obj)
+		case "touchWinning":
+			out.Values[i] = ec._User_touchWinning(ctx, field, obj)
+		case "holdemBetting":
+			out.Values[i] = ec._User_holdemBetting(ctx, field, obj)
+		case "holdemWinning":
+			out.Values[i] = ec._User_holdemWinning(ctx, field, obj)
+		case "rollingRate":
+			out.Values[i] = ec._User_rollingRate(ctx, field, obj)
+		case "rollingTransition":
+			out.Values[i] = ec._User_rollingTransition(ctx, field, obj)
+		case "losingRate":
+			out.Values[i] = ec._User_losingRate(ctx, field, obj)
+		case "losingSettlement":
+			out.Values[i] = ec._User_losingSettlement(ctx, field, obj)
+		case "partnershipRolling":
+			out.Values[i] = ec._User_partnershipRolling(ctx, field, obj)
+		case "partnershipMoneyInHand":
+			out.Values[i] = ec._User_partnershipMoneyInHand(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

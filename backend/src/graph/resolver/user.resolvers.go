@@ -149,6 +149,12 @@ func (r *queryResolver) GetDistributors(ctx context.Context, filters []*model.Fi
 	return ldr.UserReader.GetDistributors(ctx, filters, orders, pagination)
 }
 
+// GetDistributorDetails is the resolver for the getDistributorDetails field.
+func (r *queryResolver) GetDistributorDetails(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.UserList, error) {
+	ldr := loaders.For(ctx)
+	return ldr.UserReader.GetDistributorDetails(ctx, filters, orders, pagination)
+}
+
 // Type is the resolver for the type field.
 func (r *userResolver) Type(ctx context.Context, obj *models.User) (model.UserType, error) {
 	switch obj.Type {
@@ -181,6 +187,11 @@ func (r *userResolver) Status(ctx context.Context, obj *models.User) (model.User
 		return model.UserStatusP, nil
 	}
 	return "", fmt.Errorf("Unknown status %s", obj.Status)
+}
+
+// NumberOfMembers is the resolver for the numberOfMembers field.
+func (r *userResolver) NumberOfMembers(ctx context.Context, obj *models.User) (*int32, error) {
+	panic(fmt.Errorf("not implemented: NumberOfMembers - numberOfMembers"))
 }
 
 // User returns generated.UserResolver implementation.

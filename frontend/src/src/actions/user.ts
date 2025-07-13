@@ -251,3 +251,140 @@ export const BLOCK_USER = gql`
     success: blockUser(id: $id)
   }
 `;
+
+export const GET_DISTRIBUTORSDETAILS = gql`
+  query GetDistributorDetails(
+    $filters: [Filter!]
+    $orders: [Order!]
+    $pagination: Pagination
+  ) {
+    response: getDistributorDetails(
+      filters: $filters
+      orders: $orders
+      pagination: $pagination
+    ) {
+      users {
+        id
+        name
+        userid
+        role
+        parentId
+        parent {
+          id
+          userid
+        }
+        root {
+          id
+          userid
+        }
+        type
+        blackMemo
+        usdtAddress
+        currentIP
+        IP
+        createdAt
+        updatedAt
+        status
+        
+        # Rolling fields
+        live
+        slot
+        hold
+        
+        # Losing fields
+        entireLosing
+        liveLosingBeDang
+        slotLosingBeDang
+        holdLosingBeDang
+        losingMethod
+        
+        # Additional rolling fields for different game types
+        miniDanpolRolling
+        miniCombinationRolling
+        sportsDanpolRolling
+        sportsDupolRolling
+        sports3PoleRolling
+        sports4PoleRolling
+        sports5PoleRolling
+        sportsDapolRolling
+        virtualGameRolling
+        lotusRolling
+        mgmRolling
+        touchRolling
+        
+        # Financial statistics
+        membershipDeposit
+        membershipWithdrawal
+        totalWithdrawal
+        numberOfMembers
+        rollingHoldings
+        
+        # Betting/Winning statistics
+        liveBetting
+        liveWinning
+        slotBetting
+        slotJackpot
+        miniDanpolBetting
+        miniDanpolWinner
+        miniCombinationBetting
+        miniCombinationWinnings
+        sportsDanpolBetting
+        sportsDanpolWinner
+        sportsDupolBetting
+        sportsDupolWinner
+        sports3poleBetting
+        sports3poleWinner
+        sports4poleBetting
+        sports4poleWinner
+        sports5poleBetting
+        sports5poleWinner
+        sportsDapolBetting
+        sportsDapolWinner
+        virtualGameBetting
+        virtualGameWinnings
+        lotusBetting
+        lotusLottery
+        mgmBetting
+        mgmWinning
+        touchBetting
+        touchWinning
+        holdemBetting
+        holdemWinning
+        
+        # Rolling statistics
+        rollingRate
+        rollingTransition
+        
+        # Losing statistics
+        losingRate
+        losingSettlement
+        
+        # Partnership statistics
+        partnershipRolling
+        partnershipMoneyInHand
+        
+        profile {
+          id
+          userId
+          name
+          nickname
+          bankName
+          holderName
+          accountNumber
+          birthday
+          phone
+          mobile
+          balance
+          point
+          comp
+          level
+          favorites
+          referral
+          lastDeposit
+          lastWithdraw
+        }
+      }
+      total
+    }
+  }
+`;
