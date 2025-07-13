@@ -20,7 +20,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
 const RollingAccumulationPage: React.FC = () => {
@@ -30,7 +30,7 @@ const RollingAccumulationPage: React.FC = () => {
     filters: [
       {
         field: "transactions.type",
-        value: "T",
+        value: "Rolling",
         op: "eq",
       },
     ],
@@ -45,85 +45,121 @@ const RollingAccumulationPage: React.FC = () => {
       title: t("number"),
       dataIndex: "number",
       key: "number",
-      fixed: "left"
+      fixed: "left",
+      render: (text, record, index) => {
+        return index + 1;
+      }
     },
     {
       title: t("rootDistributor"),
-      dataIndex: "rootDistributor",
+      dataIndex: ["user", "root", "userid"],
       key: "rootDistributor",
-      render: (text) => text ?? "rootDistributor",
+      render: (text) => text ?? "-",
     },
     {
       title: t("topDistributor"),
-      dataIndex: "topDistributor",
+      dataIndex: ["user", "parent", "userid"],
       key: "topDistributor",
-      render: (text) => text ?? "topDistributor",
+      render: (text) => text ?? "-",
     },
     {
       title: t("ID(Nickname)"),
-      dataIndex: "profile.nickname",
+      dataIndex: ["user", "profile", "nickname"],
       key: "nickname",
-      render: (text) => text ?? "nickname",
+      render: (text, record) => {
+        const userId = record.user?.userid || "-";
+        const nickname = record.user?.profile?.nickname || "-";
+        return `${userId} (${nickname})`;
+      },
     },
     {
       title: t("bettingInformation"),
       children: [
         {
           title: t("bettingUser"),
-          dataIndex: "bettingUser",
+          dataIndex: ["user", "profile", "nickname"],
           key: "bettingUser",
+          render: (text, record) => {
+            return record.user?.profile?.nickname || "-";
+          },
         },
         {
           title: t("gameCompany"),
-          dataIndex: "gameCompany",
-          key: "gameCompany",
+          dataIndex: "shortcut",
+          key: "shortcut",
+          render: (text, record) => {
+            return record.shortcut.split("|")[0] || "-";
+          },
         },
         {
           title: t("gameName"),
-          dataIndex: "gameName",
-          key: "gameName",
+          dataIndex: "shortcut",
+          key: "shortcut",
+          render: (text, record) => {
+            return record.shortcut.split("|")[1] || "-";
+          },
         },
         {
           title: t("bettingAmount"),
-          dataIndex: "bettingAmount",
-          key: "bettingAmount",
+          dataIndex: "amount",
+          key: "amount",
+          render: (text, record) => {
+            return Math.abs(record.amount);
+          },
         },
         {
           title: t("prizeMoney"),
           dataIndex: "prizeMoney",
           key: "prizeMoney",
+          render: (text, record) => {
+            return 0;
+          },
         },
-        {
-          title: t("bettingTime"),
-          dataIndex: "bettingTime",
-          key: "bettingTime",
-        }, 
-        {
-          title: t("rolling(%)"),
-          dataIndex: "rolling(%)",
-          key: "rolling(%)",
-        }
+                  {
+            title: t("rolling(%)"),
+            dataIndex: 'user.live',
+            key: "live",
+            render: (text, record) => {
+              return (record.user as any)?.live + "%" || "-";
+            },
+          }
       ],
     },
     {
       title: t("rollingGold"),
-      dataIndex: "rollingGold",
-      key: "rollingGold"
+      dataIndex: ["balanceBefore", "balanceAfter"],
+      key: "amount",
+      render: (text, record) => {
+        return record.balanceAfter - record.balanceBefore;
+      },
     },
     {
       title: t("previousRollingFee"),
-      dataIndex: "previousRollingFee",
-      key: "previousRollingFee"
+      dataIndex: "balanceBefore",
+      key: "balanceBefore",
+      render: (text) => {
+        return text ? text : "-";
+      },
     },
     {
       title: t("afterThatRollingMoney"),
-      dataIndex: "afterThatRollingMoney",
-      key: "afterThatRollingMoney",
+      dataIndex: "balanceAfter",
+      key: "balanceAfter",
+      render: (text) => {
+        return text ? text : "-";
+      },
     },
     {
       title: t("type"),
       dataIndex: "type",
       key: "type",
+      render: (text) => {
+       
+        if (text === "Rolling") {
+          return <div className="text-white cursor-pointer bg-blue-500 px-2 py-1 rounded-md">{t("bettingRelatedRolling")}</div>;
+        }
+        return text;
+      },
     },
     {
       title: t("explanation"),
@@ -131,14 +167,12 @@ const RollingAccumulationPage: React.FC = () => {
       key: "explanation",
     },
     {
-      title: t("bettingTime"),
-      dataIndex: "bettingTime",
-      key: "bettingTime",
-    },
-    {
       title: t("registrationTime"),
-      dataIndex: "registrationTime",
-      key: "registrationTime",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => {
+        return text ? dayjs(text).format("YYYY-MM-DD HH:mm:ss") : "-";
+      },
     },
   ];
 
@@ -194,6 +228,41 @@ const RollingAccumulationPage: React.FC = () => {
       ];
     }
     console.log({ filters });
+    setTableOptions({ ...tableOptions, filters });
+  };
+
+  const onSearch = (searchTerm: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+    
+    // Remove existing search filters
+    const baseFilters = filters.filter((f) => 
+      !["users.userid", "profiles.nickname", "profiles.holder_name"].includes(f.field)
+    );
+    
+    if (searchTerm.trim()) {
+      filters = [
+        ...baseFilters,
+        {
+          field: "users.userid",
+          value: searchTerm,
+          op: "ilike",
+        },
+        {
+          field: "profiles.nickname", 
+          value: searchTerm,
+          op: "ilike",
+        },
+        {
+          field: "profiles.holder_name",
+          value: searchTerm,
+          op: "ilike",
+        },
+      ];
+    } else {
+      filters = baseFilters;
+    }
+    
     setTableOptions({ ...tableOptions, filters });
   };
 
@@ -274,7 +343,7 @@ const RollingAccumulationPage: React.FC = () => {
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder="ID,Nickname,Account Holder"
                   suffix={
                     <Button
                       size="small"
@@ -283,9 +352,10 @@ const RollingAccumulationPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
               </Space>
-              <div className="ml-3"><span className="text-sm">{t("rollingPrice")}:</span> <span>1000</span></div>
+              {/* <div className="ml-3"><span className="text-sm">{t("rollingPrice")}:</span> <span>1000</span></div> */}
             </Space>
           </Space>
 

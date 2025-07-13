@@ -65,12 +65,43 @@ type TransactionList {
   total: Int!
 }
 
+type WeeklyLosingData {
+  weekStart: String!
+  weekEnd: String!
+  site: String!
+  distributorID: String!
+  distributorName: String!
+  distributorLevel: Int!
+  nickname: String!
+  depositor: String!
+  alias: String!
+  totalBet: Float!
+  totalWinner: Float!
+  totalLosingMoney: Float!
+  settlementAmount: Float!
+  applicationDate: String!
+  processingDate: String!
+  situation: String!
+  userCount: Int!
+}
+
+type WeeklyLosingDataList {
+  weeklyLosingData: [WeeklyLosingData!]!
+  total: Int!
+}
+
 extend type Query {
   getTransactions(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
   ): TransactionList! @hasRole(role: A)
+  
+  getWeeklyLosingData(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): WeeklyLosingDataList! @hasRole(role: A)
 }
 
 extend type Mutation {

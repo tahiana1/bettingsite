@@ -109,6 +109,8 @@ export const FILTER_TRANSACTIONS = gql`
           usdtAddress
           status
           blackMemo
+          live
+          entireLosing
           root {
             id
             userid
@@ -139,6 +141,41 @@ export const FILTER_TRANSACTIONS = gql`
             lastWithdraw
           }
         }
+      }
+      total
+    }
+  }
+`;
+
+export const GET_WEEK_LOSING_DATA = gql`
+  query GetWeeklyLosingData(
+    $filters: [Filter!]
+    $orders: [Order!]
+    $pagination: Pagination
+  ) {
+    response: getWeeklyLosingData(
+      filters: $filters
+      orders: $orders
+      pagination: $pagination
+    ) {
+      weeklyLosingData {
+        weekStart
+        weekEnd
+        site
+        distributorID
+        distributorName
+        distributorLevel
+        nickname
+        depositor
+        alias
+        totalBet
+        totalWinner
+        totalLosingMoney
+        settlementAmount
+        applicationDate
+        processingDate
+        situation
+        userCount
       }
       total
     }

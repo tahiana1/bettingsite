@@ -581,6 +581,31 @@ type UserList struct {
 	Total int32          `json:"total"`
 }
 
+type WeeklyLosingData struct {
+	WeekStart        string  `json:"weekStart"`
+	WeekEnd          string  `json:"weekEnd"`
+	Site             string  `json:"site"`
+	DistributorID    string  `json:"distributorID"`
+	DistributorName  string  `json:"distributorName"`
+	DistributorLevel int32   `json:"distributorLevel"`
+	Nickname         string  `json:"nickname"`
+	Depositor        string  `json:"depositor"`
+	Alias            string  `json:"alias"`
+	TotalBet         float64 `json:"totalBet"`
+	TotalWinner      float64 `json:"totalWinner"`
+	TotalLosingMoney float64 `json:"totalLosingMoney"`
+	SettlementAmount float64 `json:"settlementAmount"`
+	ApplicationDate  string  `json:"applicationDate"`
+	ProcessingDate   string  `json:"processingDate"`
+	Situation        string  `json:"situation"`
+	UserCount        int32   `json:"userCount"`
+}
+
+type WeeklyLosingDataList struct {
+	WeeklyLosingData []*WeeklyLosingData `json:"weeklyLosingData"`
+	Total            int32               `json:"total"`
+}
+
 type Op string
 
 const (

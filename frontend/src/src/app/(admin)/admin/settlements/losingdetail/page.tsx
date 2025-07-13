@@ -18,7 +18,7 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
-import { FILTER_TRANSACTIONS } from "@/actions/transaction";
+import { FILTER_TRANSACTIONS, GET_WEEK_LOSING_DATA } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
@@ -28,24 +28,43 @@ const LosingDeailsPage: React.FC = () => {
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
-      // {
-      //   field: "transactions.type",
-      //   value: "T",
-      //   op: "eq",
-      // },
       {
         field: "transactions.amount",
         value: 0,
         op: "lt",
       },
     ],
+    pagination: { limit: 25, offset: 0 },
   });
 
-  const [total, setTotal] = useState<number>(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
+  const [searchFilters, setSearchFilters] = useState<any[]>([]);
 
-  const columns: TableProps<Transaction>["columns"] = [
+  const [total, setTotal] = useState<number>(0);
+  const [weeklyData, setWeeklyData] = useState<any[]>([]);
+
+  // Combine search filters with table options filters
+  const getAllFilters = () => {
+    const baseFilters = [
+      {
+        field: "transactions.amount",
+        value: 0,
+        op: "lt",
+      },
+    ];
+    const tableFilters = tableOptions?.filters || [];
+    return [...baseFilters, ...tableFilters, ...searchFilters];
+  };
+
+  const { loading, data, refetch } = useQuery(GET_WEEK_LOSING_DATA, {
+    variables: {
+      filters: getAllFilters(),
+      orders: tableOptions?.orders || [],
+      pagination: tableOptions?.pagination || { limit: 25, offset: 0 },
+    },
+    fetchPolicy: "cache-and-network",
+  });
+
+  const columns: TableProps<any>["columns"] = [
     {
       title: t("number"),
       dataIndex: "number",
@@ -59,16 +78,14 @@ const LosingDeailsPage: React.FC = () => {
       key: "site",
       render: (text) => text ?? "site",
     },
-
     {
       title: t("distributorID"),
       dataIndex: "distributorID",
       key: "distributorID",
       render: (_, record) => {
-        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
         return <div className="flex items-center">
-          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
-          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.distributorLevel}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.distributorName}</p>
         </div>
       },
     },
@@ -77,8 +94,7 @@ const LosingDeailsPage: React.FC = () => {
       dataIndex: "nickname",
       key: "nickname",
       render: (_, record) => {
-        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
-        return record.user?.profile?.nickname;
+        return record.nickname;
       },
     },
     {
@@ -93,65 +109,74 @@ const LosingDeailsPage: React.FC = () => {
     },
     {
       title: t("from"),
-      dataIndex: "from",
-      key: "from",
+      dataIndex: "weekStart",
+      key: "weekStart",
+      render: (text) => text ? new Date(text).toLocaleDateString() : "",
     },
     {
       title: t("until"),
-      dataIndex: "until",
-      key: "until",
+      dataIndex: "weekEnd",
+      key: "weekEnd",
+      render: (text) => text ? new Date(text).toLocaleDateString() : "",
     },
     {
       title: t("bet"),
-      dataIndex: "bet",
-      key: "bet",
+      dataIndex: "totalBet",
+      key: "totalBet",
+      render: (text) => f.number(text || 0),
     },
     {
       title: t("winner"),
-      dataIndex: "winner",
-      key: "winner",
+      dataIndex: "totalWinner",
+      key: "totalWinner",
+      render: (text) => f.number(text || 0),
     },
     {
       title: t("losingMoney"),
-      dataIndex: "losingMoney",
-      key: "losingMoney",
+      dataIndex: "totalLosingMoney",
+      key: "totalLosingMoney",
+      render: (text) => f.number(text || 0),
     },
     {
       title: t("settlementAmount"),
       dataIndex: "settlementAmount",
       key: "settlementAmount",
+      render: (text) => f.number(text || 0),
     },
     {
       title: t("applicationDate"),
       dataIndex: "applicationDate",
       key: "applicationDate",
+      render: (text) => text ? new Date(text).toLocaleDateString() : "",
     },
     {
       title: t("processingDate"),
       dataIndex: "processingDate",
       key: "processingDate",
+      render: (text) => text ? new Date(text).toLocaleDateString() : "",
     },
     {
       title: t("situlation"),
-      dataIndex: "situlation",
-      key: "situlation",
+      dataIndex: "situation",
+      key: "situation",
+      render: (text) => (
+        <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+          {text}
+        </span>
+      ),
     },
-    {
-      title: t("-"),
-      dataIndex: "-",
-      key: "-",
-    }
   ];
 
-  const onChange: TableProps<Transaction>["onChange"] = (
+  const onChange: TableProps<any>["onChange"] = (
     pagination,
     filters,
     sorter,
     extra
   ) => {
+    const newTableOptions = parseTableOptions(pagination, filters, sorter, extra);
     setTableOptions({
-      ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions?.filters,
+      ...newTableOptions,
+      filters: newTableOptions.filters || [],
     });
   };
 
@@ -176,12 +201,14 @@ const LosingDeailsPage: React.FC = () => {
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
   ) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "transactions.created_at");
+    let filters = [...searchFilters];
+    
+    // Remove existing date filters
+    filters = filters.filter((f) => f.field !== "transactions.created_at");
+    
     if (dates?.at(0)) {
       filters = [
-        ...f,
+        ...filters,
         {
           field: "transactions.created_at",
           value: dateStrings[0],
@@ -194,22 +221,64 @@ const LosingDeailsPage: React.FC = () => {
         },
       ];
     }
-    console.log({ filters });
-    setTableOptions({ ...tableOptions, filters });
+    
+    setSearchFilters(filters);
+  };
+
+  const onSearch = (value: string) => {
+    let filters = [...searchFilters];
+    
+    // Remove existing search filters
+    filters = filters.filter((f) => 
+      !["nickname", "depositor", "alias", "distributorName"].includes(f.field)
+    );
+    
+    if (value.trim()) {
+      // Add search filters for multiple fields using ilike for case-insensitive search
+      const searchFiltersArray = [
+        {
+          field: "nickname",
+          value: `%${value.trim()}%`,
+          op: "ilike",
+        },
+        {
+          field: "depositor",
+          value: `%${value.trim()}%`,
+          op: "ilike",
+        },
+        {
+          field: "alias",
+          value: `%${value.trim()}%`,
+          op: "ilike",
+        },
+        {
+          field: "distributorName",
+          value: `%${value.trim()}%`,
+          op: "ilike",
+        },
+      ];
+      filters = [...filters, ...searchFiltersArray];
+    }
+    
+    setSearchFilters(filters);
   };
 
   useEffect(() => {
-    setTransactions(
-      data?.response?.transactions?.map((u: any) => {
-        return { ...u, key: u.id };
+    setWeeklyData(
+      data?.response?.weeklyLosingData?.map((u: any, index: number) => {
+        return { ...u, key: index };
       }) ?? []
     );
     setTotal(data?.response?.total);
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
+    refetch({
+      filters: getAllFilters(),
+      orders: tableOptions?.orders || [],
+      pagination: tableOptions?.pagination || { limit: 25, offset: 0 },
+    });
+  }, [tableOptions, searchFilters, refetch]);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -254,15 +323,16 @@ const LosingDeailsPage: React.FC = () => {
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
               </Space>
             </Space>
           </Space>
 
-          <Table<Transaction>
+          <Table<any>
             columns={columns}
             loading={loading}
-            dataSource={transactions ?? []}
+            dataSource={weeklyData ?? []}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}

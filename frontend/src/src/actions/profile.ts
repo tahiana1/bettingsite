@@ -14,6 +14,7 @@ export const GET_PROFILE = gql`
       phone
       mobile
       balance
+      roll
       point
       comp
       favorites
@@ -38,6 +39,7 @@ export const UPDATE_PROFILE = gql`
       phone
       mobile
       balance
+      roll
       point
       comp
       level

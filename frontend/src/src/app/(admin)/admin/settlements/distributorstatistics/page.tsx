@@ -18,215 +18,265 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
-import { FILTER_TRANSACTIONS } from "@/actions/transaction";
+import { GET_DISTRIBUTORS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, buildTree } from "@/lib";
 
 const DistributorStatisticsPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({
-    filters: [
-      {
-        field: "transactions.type",
-        value: "T",
-        op: "eq",
-      },
-    ],
   });
 
   const [total, setTotal] = useState<number>(0);
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
+  const [users, setUsers] = useState<any[]>([]);
+  const [treeUsers, setTreeUsers] = useState<any[]>([]);
+  const { loading, data, refetch } = useQuery(GET_DISTRIBUTORS);
 
-  const columns: TableProps<Transaction>["columns"] = [
+  const { data: childrenData, refetch: refetchChildren } = useQuery(GET_DISTRIBUTORS);
+
+  const onExpand = (expanded: boolean, record: any) => {
+    if (expanded) {
+      refetchChildren({
+        filters: [
+          {
+            field: "parent_id",
+            value: record.id,
+            op: "eq",
+          },
+        ],
+      }).then(() => {
+        setUsers([
+          ...(users ?? []),
+          ...(childrenData?.response?.users?.map((u: any) => {
+            return { ...u, key: u.id };
+          }) ?? []),
+        ]);
+      });
+    }
+  };
+
+  const columns: TableProps<any>["columns"] = [
     {
       title: t("rootDistributor"),
-      dataIndex: "user.id",
+      dataIndex: "userid",
+      key: "userid",
       fixed: "left",
-      key: "id",
-      render: (_, record) => record.user?.id,
+      width: 150,
+      render: (text, record) => text,
     },
     {
       title: t("numberOfMembers"),
-      dataIndex: "user.root.userid",
-      key: "root.userid",
-      render: (_, record) => record.user?.root?.userid,
-    },  
+      dataIndex: "member_count",
+      key: "member_count",
+      width: 120,
+      render: (_, record) => {
+        // Count children in the tree or use profile comp as placeholder
+        const childCount = record.children?.length || 0;
+        return childCount > 0 ? childCount : (record.profile?.comp || 0);
+      },
+    },
     {
       title: t("domain"),
-      dataIndex: "profile.comp",
-      key: "member_count",
-      render: (_, record) => record.user?.profile?.comp,
+      dataIndex: "site",
+      key: "site",
+      width: 100,
+      render: (text) => text ?? "",
     },
     {
       title: t("situation"),
-      dataIndex: "site",
-      key: "site",
-      render: (text) => text ?? "site",
+      dataIndex: "status",
+      key: "status",
+      width: 100,
+      render: (text) => (
+        <span className={text === 'A' ? 'text-blue-500' : 'text-orange-500'}>
+          {text === 'A' ? t("normal") : t("dormancy")}
+        </span>
+      ),
     },
     {
       title: t("depositor"),
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "profile.holderName",
+      key: "profile.holderName",
+      width: 100,
+      render: (_, { profile }) => profile?.holderName || '-',
     },
     {
       title: t("allas"),
-      dataIndex: "user.profile.holderName",
-      key: "holderName",
-      render: (_, record) => record.user?.profile?.holderName,
+      dataIndex: "profile.nickname",
+      key: "profile.nickname",
+      width: 100,
+      render: (_, { profile }) => profile?.nickname || '-',
     },
     {
       title: t("amountHeld"),
-      dataIndex: "user.profile.nickname",
-      key: "nickname",
-      render: (_, record) => record.user?.profile?.nickname,
+      dataIndex: "profile.balance",
+      key: "profile.balance",
+      width: 120,
+      render: (_, { profile }) => f.number(profile?.balance || 0),
     },
     {
       title: t("point"),
-      dataIndex: "user.profile.point",
-      key: "point",
-      render: (_, record) => record.user?.profile?.point,
+      dataIndex: "profile.point",
+      key: "profile.point",
+      width: 80,
+      render: (_, { profile }) => profile?.point || 0,
     },
     {
       title: t("deposit"),
       dataIndex: "deposit",
       key: "deposit",
-      render: () => "-",
+      width: 80,
+      render: () => 0,
     },
     {
       title: t("withdraw"),
-      dataIndex: "withdraw",
-      key: "withdraw",
-      render: () => "-",
+      dataIndex: "withdrawal",
+      key: "withdrawal",
+      width: 80,
+      render: () => 0,
     },
     {
       title: t("entry/exit"),
       key: "entry_exit",
-      render: (_, record) => [
-        <Button key="deposit" size="small">{t("deposit/withdraw")}</Button>,
-        <Button key="point" size="small">{t("points") + "+"}</Button>,
-      ],
+      width: 120,
+      render: (_, record) => 0,
     },
     {
       title: t("bet"),
       dataIndex: "bet",
       key: "bet",
-      render: () => "-",
+      width: 80,
+      render: () => 0,
     },
     {
       title: t("winner"),
       dataIndex: "winner",
       key: "winner",
-      render: () => "-",
+      width: 80,
+      render: () => 0,
     },
     {
       title: t("bedang"),
       dataIndex: "bedang",
       key: "bedang",
-      render: () => "-",
+      width: 80,
+      render: () => 0,
     },
     {
       title: t("settlementType"),
-      dataIndex: "user.profile.comp",
+      dataIndex: "settlementType",
       key: "settlementType",
-      render: (_, record) => record.user?.profile?.comp,
+      width: 120,
+      render: (_, { profile }) => (
+        <span className="text-xs">{profile?.comp || '(input-output)*rate %'}</span>
+      ),
     },
     {
       title: t("rollingRate"),
-      dataIndex: "rollingRate",
-      key: "rollingRate",
-      render: () => "-", // TODO: Implement logic if available
+      dataIndex: "user",
+      key: "user",
+      width: 150,
+      render: (_, record) => {
+        // Use actual user losing/rolling data from the record
+        const live = record.live || 0;
+        const slot = record.slot || 0;
+        const hold = record.hold || 0;
+        const rate = `${live}/${slot}/${hold}/0/0/0/0/0/0`;
+        return <span className="text-xs font-mono">{rate}</span>;
+      },
     },
     {
       title: t("rollingGold"),
-      dataIndex: "rolling",
-      key: "rolling",
-      render: () => "-", // TODO: Implement logic if available
+      key: "rollingGold",
+      width: 120,
+      render: (_, record) => 0,
     },
+    
     {
-      title: t("rollingTransition"),
-      dataIndex: "rollingTransition",
-      key: "rollingTransition",
-      render: () => "-", // TODO: Implement logic if available
+      title: t("rollingTransaction"),
+      key: "rollingTransaction",
+      width: 120,
+      render: (_, record) => 0,
     },
+
     {
-      title: t("losingRate"),
-      dataIndex: "losingRate",
-      key: "losingRate",
-      render: () => "-", // TODO: Implement logic if available
+      title: t("lossingRate"),
+      dataIndex: "user",
+      key: "user",
+      width: 150,
+      render: (_, record) => {
+        // Use actual user losing/rolling data from the record
+        const live = record.entireLosing || 0;
+        const slot = record.liveLosingBeDang || 0;
+        const hold = record.holdLosingBeDang || 0;
+        const rate = `${live}/${slot}/${hold}/0/0/0/0/0/0`;
+        return <span className="text-xs font-mono">{rate}</span>;
+      },
     },
-    {
-      title: t("losingMoney"),
-      dataIndex: "losing",
-      key: "losing",
-      render: () => "-", // TODO: Implement logic if available
-    },
+
     {
       title: t("settlementAmount"),
-      dataIndex: "settlementAmount",
       key: "settlementAmount",
-      render: () => "-",
+      width: 120,
+      render: (_, record) => 0,
     },
+
     {
       title: t("datePeriod"),
-      dataIndex: "transactionAt",
-      key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      key: "datePeriod",
+      width: 120,
+      render: (_, record) => 0,
     },
+
     {
-      title: t("processingStatus"),
-      dataIndex: "status",
-      key: "processingStatus",
-      render: (_, record) => record.status,
+      title: t("processStatus"),
+      key: "processStatus",
+      width: 120,
+      render: (_, record) => t("waiting"),
     },
     {
       title: t("viewDetails"),
       key: "viewDetails",
-      render: (_, record) => <div>
-        <Button size="small" className="bg-blue-500 text-white">{t("rolling")}</Button>
-        <Button size="small" className="bg-red-500 text-white">{t("losing")}</Button>
-      </div>,
+      width: 120,
+      render: (_, record) => {
+        return (
+          <div className="flex gap-1">
+            <Button size="small" type="primary" className="bg-red-500 text-white">
+              {t("rolling")}
+            </Button>
+            <Button size="small" type="default" className="bg-blue-500 text-white">
+              {t("losing")}
+            </Button>
+          </div>
+        );
+      },
     },
     {
       title: t("losingSettlement"),
-      dataIndex: "losingSettlement",
       key: "losingSettlement",
-      render: () => <div>
-        <Button size="small" className="bg-blue-300 text-white">{t("losing settlement")}</Button>
-      </div>,
+      width: 120,
+      render: (_, record) => {
+        return (
+          <div className="flex gap-1">
+            <Button size="small" type="primary" className="bg-red-500 text-white">
+              {t("losingSettlement")}
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
-  const onChange: TableProps<Transaction>["onChange"] = (
+  const onChange: TableProps<any>["onChange"] = (
     pagination,
     filters,
     sorter,
     extra
   ) => {
-    setTableOptions({
-      ...parseTableOptions(pagination, filters, sorter, extra),
-      filters: tableOptions?.filters,
-    });
+    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
-
-  /*   const updateFilter = (field: string, v: string, op: string = "eq") => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    filters = filters.filter((f) => f.field !== field);
-    if (v) {
-      filters = [
-        ...filters,
-        {
-          field: field,
-          value: v,
-          op: op,
-        },
-      ];
-    }
-    setTableOptions({ ...tableOptions, filters });
-  }; */
 
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
@@ -234,29 +284,28 @@ const DistributorStatisticsPage: React.FC = () => {
   ) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "transactions.created_at");
+    const f = filters.filter((f) => f.field !== "created_at");
     if (dates?.at(0)) {
       filters = [
         ...f,
         {
-          field: "transactions.created_at",
+          field: "created_at",
           value: dateStrings[0],
           op: "gt",
         },
         {
-          field: "transactions.created_at",
+          field: "created_at",
           value: dateStrings[1],
           op: "lt",
         },
       ];
     }
-    console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
   };
 
   useEffect(() => {
-    setTransactions(
-      data?.response?.transactions?.map((u: any) => {
+    setUsers(
+      data?.response?.users?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -264,8 +313,13 @@ const DistributorStatisticsPage: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
+    setTreeUsers(buildTree(users ?? []));
+  }, [users]);
+
+  useEffect(() => {
     refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
+  }, [tableOptions, refetch]);
+
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -315,13 +369,16 @@ const DistributorStatisticsPage: React.FC = () => {
             </Space>
           </Space>
 
-          <Table<Transaction>
+          <Table
             columns={columns}
             loading={loading}
-            dataSource={transactions ?? []}
+            dataSource={treeUsers ?? []}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}
+            expandable={{
+              onExpand,
+            }}
             onChange={onChange}
             pagination={{
               showTotal(total, range) {

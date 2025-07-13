@@ -1402,5 +1402,6 @@
   "slotLosingBeDang" : "Slot Losing BeDang",
   "holdLosingBeDang" : "Hold Losing BeDang",
   "losingMethod" : "Losing Method",
-  "hold'em" : "Hold'em"
+  "hold'em" : "Hold'em",
+  "rollingTransaction" : "Rolling Transaction"
 }

@@ -404,36 +404,37 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AdminPermissions func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		Announcements    func(childComplexity int) int
-		ConnectedUsers   func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		Domains          func(childComplexity int) int
-		Events           func(childComplexity int) int
-		FilterUsers      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetAnnouncements func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetBanks         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetDistributors  func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetDomains       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetEvents        func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetGameApis      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetInboxes       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetLogs          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetMenus         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetNotifications func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetQnas          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetSMSApis       func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetSetting       func(childComplexity int) int
-		GetTransactions  func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
-		GetUserMenus     func(childComplexity int) int
-		Logs             func(childComplexity int) int
-		Me               func(childComplexity int) int
-		Notifications    func(childComplexity int) int
-		Profile          func(childComplexity int) int
-		Time             func(childComplexity int) int
-		Todos            func(childComplexity int) int
-		TopEvents        func(childComplexity int) int
-		User             func(childComplexity int, id uint) int
-		Users            func(childComplexity int) int
+		AdminPermissions    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Announcements       func(childComplexity int) int
+		ConnectedUsers      func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Domains             func(childComplexity int) int
+		Events              func(childComplexity int) int
+		FilterUsers         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetAnnouncements    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetBanks            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDistributors     func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetDomains          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetEvents           func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetGameApis         func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetInboxes          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetLogs             func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetMenus            func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetNotifications    func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetQnas             func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetSMSApis          func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetSetting          func(childComplexity int) int
+		GetTransactions     func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		GetUserMenus        func(childComplexity int) int
+		GetWeeklyLosingData func(childComplexity int, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) int
+		Logs                func(childComplexity int) int
+		Me                  func(childComplexity int) int
+		Notifications       func(childComplexity int) int
+		Profile             func(childComplexity int) int
+		Time                func(childComplexity int) int
+		Todos               func(childComplexity int) int
+		TopEvents           func(childComplexity int) int
+		User                func(childComplexity int, id uint) int
+		Users               func(childComplexity int) int
 	}
 
 	SMSApi struct {
@@ -556,6 +557,31 @@ type ComplexityRoot struct {
 		Total func(childComplexity int) int
 		Users func(childComplexity int) int
 	}
+
+	WeeklyLosingData struct {
+		Alias            func(childComplexity int) int
+		ApplicationDate  func(childComplexity int) int
+		Depositor        func(childComplexity int) int
+		DistributorID    func(childComplexity int) int
+		DistributorLevel func(childComplexity int) int
+		DistributorName  func(childComplexity int) int
+		Nickname         func(childComplexity int) int
+		ProcessingDate   func(childComplexity int) int
+		SettlementAmount func(childComplexity int) int
+		Site             func(childComplexity int) int
+		Situation        func(childComplexity int) int
+		TotalBet         func(childComplexity int) int
+		TotalLosingMoney func(childComplexity int) int
+		TotalWinner      func(childComplexity int) int
+		UserCount        func(childComplexity int) int
+		WeekEnd          func(childComplexity int) int
+		WeekStart        func(childComplexity int) int
+	}
+
+	WeeklyLosingDataList struct {
+		Total            func(childComplexity int) int
+		WeeklyLosingData func(childComplexity int) int
+	}
 }
 
 type AnnouncementResolver interface {
@@ -651,6 +677,7 @@ type QueryResolver interface {
 	GetSMSApis(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.SMSApiList, error)
 	Todos(ctx context.Context) ([]*model.Todo, error)
 	GetTransactions(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.TransactionList, error)
+	GetWeeklyLosingData(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.WeeklyLosingDataList, error)
 	Profile(ctx context.Context) (*models.Profile, error)
 	Me(ctx context.Context) (*models.User, error)
 	Users(ctx context.Context) ([]*models.User, error)
@@ -3095,6 +3122,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Query.GetUserMenus(childComplexity), true
 
+	case "Query.getWeeklyLosingData":
+		if e.complexity.Query.GetWeeklyLosingData == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getWeeklyLosingData_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetWeeklyLosingData(childComplexity, args["filters"].([]*model.Filter), args["orders"].([]*model.Order), args["pagination"].(*model.Pagination)), true
+
 	case "Query.logs":
 		if e.complexity.Query.Logs == nil {
 			break
@@ -3820,6 +3859,139 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.UserList.Users(childComplexity), true
+
+	case "WeeklyLosingData.alias":
+		if e.complexity.WeeklyLosingData.Alias == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.Alias(childComplexity), true
+
+	case "WeeklyLosingData.applicationDate":
+		if e.complexity.WeeklyLosingData.ApplicationDate == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.ApplicationDate(childComplexity), true
+
+	case "WeeklyLosingData.depositor":
+		if e.complexity.WeeklyLosingData.Depositor == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.Depositor(childComplexity), true
+
+	case "WeeklyLosingData.distributorID":
+		if e.complexity.WeeklyLosingData.DistributorID == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.DistributorID(childComplexity), true
+
+	case "WeeklyLosingData.distributorLevel":
+		if e.complexity.WeeklyLosingData.DistributorLevel == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.DistributorLevel(childComplexity), true
+
+	case "WeeklyLosingData.distributorName":
+		if e.complexity.WeeklyLosingData.DistributorName == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.DistributorName(childComplexity), true
+
+	case "WeeklyLosingData.nickname":
+		if e.complexity.WeeklyLosingData.Nickname == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.Nickname(childComplexity), true
+
+	case "WeeklyLosingData.processingDate":
+		if e.complexity.WeeklyLosingData.ProcessingDate == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.ProcessingDate(childComplexity), true
+
+	case "WeeklyLosingData.settlementAmount":
+		if e.complexity.WeeklyLosingData.SettlementAmount == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.SettlementAmount(childComplexity), true
+
+	case "WeeklyLosingData.site":
+		if e.complexity.WeeklyLosingData.Site == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.Site(childComplexity), true
+
+	case "WeeklyLosingData.situation":
+		if e.complexity.WeeklyLosingData.Situation == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.Situation(childComplexity), true
+
+	case "WeeklyLosingData.totalBet":
+		if e.complexity.WeeklyLosingData.TotalBet == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.TotalBet(childComplexity), true
+
+	case "WeeklyLosingData.totalLosingMoney":
+		if e.complexity.WeeklyLosingData.TotalLosingMoney == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.TotalLosingMoney(childComplexity), true
+
+	case "WeeklyLosingData.totalWinner":
+		if e.complexity.WeeklyLosingData.TotalWinner == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.TotalWinner(childComplexity), true
+
+	case "WeeklyLosingData.userCount":
+		if e.complexity.WeeklyLosingData.UserCount == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.UserCount(childComplexity), true
+
+	case "WeeklyLosingData.weekEnd":
+		if e.complexity.WeeklyLosingData.WeekEnd == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.WeekEnd(childComplexity), true
+
+	case "WeeklyLosingData.weekStart":
+		if e.complexity.WeeklyLosingData.WeekStart == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingData.WeekStart(childComplexity), true
+
+	case "WeeklyLosingDataList.total":
+		if e.complexity.WeeklyLosingDataList.Total == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingDataList.Total(childComplexity), true
+
+	case "WeeklyLosingDataList.weeklyLosingData":
+		if e.complexity.WeeklyLosingDataList.WeeklyLosingData == nil {
+			break
+		}
+
+		return e.complexity.WeeklyLosingDataList.WeeklyLosingData(childComplexity), true
 
 	}
 	return 0, false
@@ -4991,12 +5163,43 @@ type TransactionList {
   total: Int!
 }
 
+type WeeklyLosingData {
+  weekStart: String!
+  weekEnd: String!
+  site: String!
+  distributorID: String!
+  distributorName: String!
+  distributorLevel: Int!
+  nickname: String!
+  depositor: String!
+  alias: String!
+  totalBet: Float!
+  totalWinner: Float!
+  totalLosingMoney: Float!
+  settlementAmount: Float!
+  applicationDate: String!
+  processingDate: String!
+  situation: String!
+  userCount: Int!
+}
+
+type WeeklyLosingDataList {
+  weeklyLosingData: [WeeklyLosingData!]!
+  total: Int!
+}
+
 extend type Query {
   getTransactions(
     filters: [Filter!]
     orders: [Order!]
     pagination: Pagination
   ): TransactionList! @hasRole(role: A)
+  
+  getWeeklyLosingData(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): WeeklyLosingDataList! @hasRole(role: A)
 }
 
 extend type Mutation {
@@ -7748,6 +7951,65 @@ func (ec *executionContext) field_Query_getTransactions_argsOrders(
 }
 
 func (ec *executionContext) field_Query_getTransactions_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*model.Pagination, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOPagination2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐPagination(ctx, tmp)
+	}
+
+	var zeroVal *model.Pagination
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getWeeklyLosingData_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_getWeeklyLosingData_argsFilters(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["filters"] = arg0
+	arg1, err := ec.field_Query_getWeeklyLosingData_argsOrders(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["orders"] = arg1
+	arg2, err := ec.field_Query_getWeeklyLosingData_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_getWeeklyLosingData_argsFilters(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Filter, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("filters"))
+	if tmp, ok := rawArgs["filters"]; ok {
+		return ec.unmarshalOFilter2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐFilterᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Filter
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getWeeklyLosingData_argsOrders(
+	ctx context.Context,
+	rawArgs map[string]any,
+) ([]*model.Order, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
+	if tmp, ok := rawArgs["orders"]; ok {
+		return ec.unmarshalOOrder2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐOrderᚄ(ctx, tmp)
+	}
+
+	var zeroVal []*model.Order
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getWeeklyLosingData_argsPagination(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*model.Pagination, error) {
@@ -25541,6 +25803,94 @@ func (ec *executionContext) fieldContext_Query_getTransactions(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_getWeeklyLosingData(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getWeeklyLosingData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		directive0 := func(rctx context.Context) (any, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetWeeklyLosingData(rctx, fc.Args["filters"].([]*model.Filter), fc.Args["orders"].([]*model.Order), fc.Args["pagination"].(*model.Pagination))
+		}
+
+		directive1 := func(ctx context.Context) (any, error) {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
+				var zeroVal *model.WeeklyLosingDataList
+				return zeroVal, err
+			}
+			if ec.directives.HasRole == nil {
+				var zeroVal *model.WeeklyLosingDataList
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.WeeklyLosingDataList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/hotbrainy/go-betting/backend/graph/model.WeeklyLosingDataList`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.WeeklyLosingDataList)
+	fc.Result = res
+	return ec.marshalNWeeklyLosingDataList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingDataList(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getWeeklyLosingData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "weeklyLosingData":
+				return ec.fieldContext_WeeklyLosingDataList_weeklyLosingData(ctx, field)
+			case "total":
+				return ec.fieldContext_WeeklyLosingDataList_total(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WeeklyLosingDataList", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getWeeklyLosingData_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_profile(ctx, field)
 	if err != nil {
@@ -31001,6 +31351,878 @@ func (ec *executionContext) _UserList_total(ctx context.Context, field graphql.C
 func (ec *executionContext) fieldContext_UserList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UserList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_weekStart(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_weekStart(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekStart, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_weekStart(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_weekEnd(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_weekEnd(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeekEnd, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_weekEnd(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_site(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_site(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Site, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_site(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_distributorID(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_distributorID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistributorID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_distributorID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_distributorName(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_distributorName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistributorName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_distributorName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_distributorLevel(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_distributorLevel(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DistributorLevel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_distributorLevel(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_nickname(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_nickname(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Nickname, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_nickname(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_depositor(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_depositor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Depositor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_depositor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_alias(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_totalBet(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_totalBet(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalBet, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_totalBet(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_totalWinner(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_totalWinner(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalWinner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_totalWinner(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_totalLosingMoney(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_totalLosingMoney(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalLosingMoney, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_totalLosingMoney(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_settlementAmount(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_settlementAmount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SettlementAmount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_settlementAmount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_applicationDate(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_applicationDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ApplicationDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_applicationDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_processingDate(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_processingDate(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProcessingDate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_processingDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_situation(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_situation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Situation, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_situation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingData_userCount(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingData_userCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingData_userCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingDataList_weeklyLosingData(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingDataList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingDataList_weeklyLosingData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WeeklyLosingData, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.WeeklyLosingData)
+	fc.Result = res
+	return ec.marshalNWeeklyLosingData2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingDataᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingDataList_weeklyLosingData(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingDataList",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "weekStart":
+				return ec.fieldContext_WeeklyLosingData_weekStart(ctx, field)
+			case "weekEnd":
+				return ec.fieldContext_WeeklyLosingData_weekEnd(ctx, field)
+			case "site":
+				return ec.fieldContext_WeeklyLosingData_site(ctx, field)
+			case "distributorID":
+				return ec.fieldContext_WeeklyLosingData_distributorID(ctx, field)
+			case "distributorName":
+				return ec.fieldContext_WeeklyLosingData_distributorName(ctx, field)
+			case "distributorLevel":
+				return ec.fieldContext_WeeklyLosingData_distributorLevel(ctx, field)
+			case "nickname":
+				return ec.fieldContext_WeeklyLosingData_nickname(ctx, field)
+			case "depositor":
+				return ec.fieldContext_WeeklyLosingData_depositor(ctx, field)
+			case "alias":
+				return ec.fieldContext_WeeklyLosingData_alias(ctx, field)
+			case "totalBet":
+				return ec.fieldContext_WeeklyLosingData_totalBet(ctx, field)
+			case "totalWinner":
+				return ec.fieldContext_WeeklyLosingData_totalWinner(ctx, field)
+			case "totalLosingMoney":
+				return ec.fieldContext_WeeklyLosingData_totalLosingMoney(ctx, field)
+			case "settlementAmount":
+				return ec.fieldContext_WeeklyLosingData_settlementAmount(ctx, field)
+			case "applicationDate":
+				return ec.fieldContext_WeeklyLosingData_applicationDate(ctx, field)
+			case "processingDate":
+				return ec.fieldContext_WeeklyLosingData_processingDate(ctx, field)
+			case "situation":
+				return ec.fieldContext_WeeklyLosingData_situation(ctx, field)
+			case "userCount":
+				return ec.fieldContext_WeeklyLosingData_userCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WeeklyLosingData", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WeeklyLosingDataList_total(ctx context.Context, field graphql.CollectedField, obj *model.WeeklyLosingDataList) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WeeklyLosingDataList_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int32)
+	fc.Result = res
+	return ec.marshalNInt2int32(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WeeklyLosingDataList_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WeeklyLosingDataList",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -38704,6 +39926,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getWeeklyLosingData":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getWeeklyLosingData(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "profile":
 			field := field
 
@@ -39490,6 +40734,169 @@ func (ec *executionContext) _UserList(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "total":
 			out.Values[i] = ec._UserList_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var weeklyLosingDataImplementors = []string{"WeeklyLosingData"}
+
+func (ec *executionContext) _WeeklyLosingData(ctx context.Context, sel ast.SelectionSet, obj *model.WeeklyLosingData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, weeklyLosingDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WeeklyLosingData")
+		case "weekStart":
+			out.Values[i] = ec._WeeklyLosingData_weekStart(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "weekEnd":
+			out.Values[i] = ec._WeeklyLosingData_weekEnd(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "site":
+			out.Values[i] = ec._WeeklyLosingData_site(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "distributorID":
+			out.Values[i] = ec._WeeklyLosingData_distributorID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "distributorName":
+			out.Values[i] = ec._WeeklyLosingData_distributorName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "distributorLevel":
+			out.Values[i] = ec._WeeklyLosingData_distributorLevel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "nickname":
+			out.Values[i] = ec._WeeklyLosingData_nickname(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "depositor":
+			out.Values[i] = ec._WeeklyLosingData_depositor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "alias":
+			out.Values[i] = ec._WeeklyLosingData_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalBet":
+			out.Values[i] = ec._WeeklyLosingData_totalBet(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalWinner":
+			out.Values[i] = ec._WeeklyLosingData_totalWinner(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalLosingMoney":
+			out.Values[i] = ec._WeeklyLosingData_totalLosingMoney(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "settlementAmount":
+			out.Values[i] = ec._WeeklyLosingData_settlementAmount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "applicationDate":
+			out.Values[i] = ec._WeeklyLosingData_applicationDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "processingDate":
+			out.Values[i] = ec._WeeklyLosingData_processingDate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "situation":
+			out.Values[i] = ec._WeeklyLosingData_situation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userCount":
+			out.Values[i] = ec._WeeklyLosingData_userCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var weeklyLosingDataListImplementors = []string{"WeeklyLosingDataList"}
+
+func (ec *executionContext) _WeeklyLosingDataList(ctx context.Context, sel ast.SelectionSet, obj *model.WeeklyLosingDataList) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, weeklyLosingDataListImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WeeklyLosingDataList")
+		case "weeklyLosingData":
+			out.Values[i] = ec._WeeklyLosingDataList_weeklyLosingData(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "total":
+			out.Values[i] = ec._WeeklyLosingDataList_total(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -41312,6 +42719,74 @@ func (ec *executionContext) unmarshalNUserType2githubᚗcomᚋhotbrainyᚋgoᚑb
 
 func (ec *executionContext) marshalNUserType2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐUserType(ctx context.Context, sel ast.SelectionSet, v model.UserType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNWeeklyLosingData2ᚕᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingDataᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.WeeklyLosingData) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWeeklyLosingData2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingData(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWeeklyLosingData2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingData(ctx context.Context, sel ast.SelectionSet, v *model.WeeklyLosingData) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WeeklyLosingData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWeeklyLosingDataList2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingDataList(ctx context.Context, sel ast.SelectionSet, v model.WeeklyLosingDataList) graphql.Marshaler {
+	return ec._WeeklyLosingDataList(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNWeeklyLosingDataList2ᚖgithubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐWeeklyLosingDataList(ctx context.Context, sel ast.SelectionSet, v *model.WeeklyLosingDataList) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WeeklyLosingDataList(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {

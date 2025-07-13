@@ -59,3 +59,9 @@ func (r *queryResolver) GetTransactions(ctx context.Context, filters []*model.Fi
 	ldr := loaders.For(ctx)
 	return ldr.TransactionReader.GetTransactions(ctx, filters, orders, pagination)
 }
+
+// GetWeeklyLosingData is the resolver for the getWeeklyLosingData field.
+func (r *queryResolver) GetWeeklyLosingData(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.WeeklyLosingDataList, error) {
+	ldr := loaders.For(ctx)
+	return ldr.TransactionReader.GetWeeklyLosingData(ctx, filters, orders, pagination)
+}

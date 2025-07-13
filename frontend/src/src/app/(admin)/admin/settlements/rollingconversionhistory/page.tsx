@@ -30,7 +30,7 @@ const RollingConversionPage: React.FC = () => {
     filters: [
       {
         field: "transactions.type",
-        value: "T",
+        value: "Rolling",
         op: "eq",
       },
     ],
@@ -43,7 +43,7 @@ const RollingConversionPage: React.FC = () => {
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
-      dataIndex: "userid",
+      dataIndex: ["user", "id"],
       key: "userid",
       fixed: "left",
       render: (_, record) => {
@@ -63,7 +63,7 @@ const RollingConversionPage: React.FC = () => {
     },
     {
       title: t("userid"),
-      dataIndex: "user.userid",
+      dataIndex: ["user", "userid"],
       key: '"User"."userid"',
       render(_, record) {
         return record.user?.userid;
@@ -71,7 +71,7 @@ const RollingConversionPage: React.FC = () => {
     },
     {
       title: t("nickname"),
-      dataIndex: "profile.nickname",
+      dataIndex: ["user", "profile", "nickname"],
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
       filterDropdown: (props) => (
@@ -82,7 +82,7 @@ const RollingConversionPage: React.FC = () => {
     },
     {
       title: t("holderName"),
-      dataIndex: "holderName",
+      dataIndex: ["user", "profile", "holderName"],
       key: '"Profile"."holderName"',
       render: (_, record) => record.user?.profile?.holderName,
     },

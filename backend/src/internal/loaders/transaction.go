@@ -303,3 +303,86 @@ func (pr *transactionReader) CancelTransaction(ctx context.Context, id uint) (bo
 	}
 	return true, nil
 }
+
+// GetWeeklyLosingData returns weekly losing data aggregated by week
+func (br *transactionReader) GetWeeklyLosingData(ctx context.Context, filters []*model.Filter, orders []*model.Order, pagination *model.Pagination) (*model.WeeklyLosingDataList, error) {
+	// Raw SQL query to get weekly losing data aggregated by week
+	query := `
+		SELECT 
+			DATE_TRUNC('week', t.created_at) as week_start,
+			DATE_TRUNC('week', t.created_at) + INTERVAL '6 days' as week_end,
+			'site' as site,
+			COALESCE(p.name, '') as distributor_name,
+			COALESCE(p.level, 0) as distributor_level,
+			COALESCE(p.nickname, '') as nickname,
+			COALESCE(p.holder_name, '') as depositor,
+			COALESCE(u.userid, '') as alias,
+			COUNT(CASE WHEN t.amount > 0 THEN 1 END) as total_bet,
+			COALESCE(SUM(CASE WHEN t.amount > 0 THEN t.amount ELSE 0 END), 0) as total_winner,
+			COALESCE(SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END), 0) as total_losing_money,
+			COALESCE(SUM(CASE WHEN t.amount < 0 THEN ABS(t.amount) ELSE 0 END), 0) as settlement_amount,
+			MIN(t.created_at) as application_date,
+			MAX(t.updated_at) as processing_date,
+			'Processing completed' as situation,
+			COUNT(DISTINCT t.user_id) as user_count
+		FROM transactions t
+		LEFT JOIN users u ON t.user_id = u.id
+		LEFT JOIN profiles p ON u.id = p.user_id
+		WHERE t.deleted_at IS NULL
+		GROUP BY DATE_TRUNC('week', t.created_at), p.name, p.level, p.nickname, p.holder_name, u.userid
+		ORDER BY week_start DESC
+	`
+
+	var results []struct {
+		WeekStart        string  `gorm:"column:week_start"`
+		WeekEnd          string  `gorm:"column:week_end"`
+		Site             string  `gorm:"column:site"`
+		DistributorName  string  `gorm:"column:distributor_name"`
+		DistributorLevel int32   `gorm:"column:distributor_level"`
+		Nickname         string  `gorm:"column:nickname"`
+		Depositor        string  `gorm:"column:depositor"`
+		Alias            string  `gorm:"column:alias"`
+		TotalBet         float64 `gorm:"column:total_bet"`
+		TotalWinner      float64 `gorm:"column:total_winner"`
+		TotalLosingMoney float64 `gorm:"column:total_losing_money"`
+		SettlementAmount float64 `gorm:"column:settlement_amount"`
+		ApplicationDate  string  `gorm:"column:application_date"`
+		ProcessingDate   string  `gorm:"column:processing_date"`
+		Situation        string  `gorm:"column:situation"`
+		UserCount        int32   `gorm:"column:user_count"`
+	}
+
+	// Execute the query
+	if err := br.db.Raw(query).Scan(&results).Error; err != nil {
+		return nil, err
+	}
+
+	// Convert to model format
+	weeklyData := make([]*model.WeeklyLosingData, len(results))
+	for i, result := range results {
+		weeklyData[i] = &model.WeeklyLosingData{
+			WeekStart:        result.WeekStart,
+			WeekEnd:          result.WeekEnd,
+			Site:             result.Site,
+			DistributorID:    fmt.Sprintf("L%d", result.DistributorLevel),
+			DistributorName:  result.DistributorName,
+			DistributorLevel: result.DistributorLevel,
+			Nickname:         result.Nickname,
+			Depositor:        result.Depositor,
+			Alias:            result.Alias,
+			TotalBet:         result.TotalBet,
+			TotalWinner:      result.TotalWinner,
+			TotalLosingMoney: result.TotalLosingMoney,
+			SettlementAmount: result.SettlementAmount,
+			ApplicationDate:  result.ApplicationDate,
+			ProcessingDate:   result.ProcessingDate,
+			Situation:        result.Situation,
+			UserCount:        result.UserCount,
+		}
+	}
+
+	return &model.WeeklyLosingDataList{
+		WeeklyLosingData: weeklyData,
+		Total:            int32(len(results)),
+	}, nil
+}
