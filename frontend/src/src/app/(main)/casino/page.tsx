@@ -157,7 +157,7 @@ const Casino: React.FC = () => {
         api("casino/get-game-link", {
             method: "GET",
             params: {
-                username : 'webforyou',
+                username : userId,
                 // username: userId,
                 gameName: name
             }
