@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, message, Spin, Modal, Form, InputNumber } from "antd";
+import { Button, Card, message, Spin, Modal, Form, InputNumber, Layout } from "antd";
 import Image from "next/image";
 import { Content } from "antd/es/layout/layout";
 import CasinoLogo from "@/assets/img/casino/casino.png";
@@ -49,6 +49,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
+import Login from "@/components/Auth/Login";
 
 const Casino: React.FC = () => {
     const t = useTranslations();
@@ -63,15 +64,17 @@ const Casino: React.FC = () => {
     const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
     const [currentStatus, setCurrentStatus] = useState<any>(null);
     const popupGameName = useRef<string>('');
-    const [profile] = useAtom(userState);
-    const router = useRouter();
+    const [profile, setProfile] = useState<any>(null);
+    const router = useRouter(); 
   
     // Check if user is logged in
-    // if (!profile?.userId) {
-    //   message.warning(t("partner/menu/pleaseLogin"));
-    //   router.push("/auth/signIn");  
-    //   return;
-    // }       
+    useEffect(() => {
+        api("user/me").then((res) => {
+            setProfile(res.data.profile);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }, []);
     useEffect(() => {
         api("user/me").then((res) => {
             setUserId(res.data.userid);
@@ -243,7 +246,13 @@ const Casino: React.FC = () => {
     };
 
     return (
-    <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
+    <>
+        {!profile?.userId ? (
+            <Layout className="flex justify-center items-center h-[90vh]">
+                <Login />
+            </Layout>
+        ) : (
+            <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
        
         <Card
             title={
@@ -354,7 +363,10 @@ const Casino: React.FC = () => {
                 </Form.Item>
             </Form>
         </Modal> */}
-    </Content>
+            </Content>
+        )}
+
+    </>
   );
 };
 

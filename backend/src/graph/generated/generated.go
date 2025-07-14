@@ -375,6 +375,7 @@ type ComplexityRoot struct {
 		PhoneVerified func(childComplexity int) int
 		Point         func(childComplexity int) int
 		Referral      func(childComplexity int) int
+		Roll          func(childComplexity int) int
 		SocialLinks   func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		UserID        func(childComplexity int) int
@@ -2811,6 +2812,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Profile.Referral(childComplexity), true
+
+	case "Profile.roll":
+		if e.complexity.Profile.Roll == nil {
+			break
+		}
+
+		return e.complexity.Profile.Roll(childComplexity), true
 
 	case "Profile.socialLinks":
 		if e.complexity.Profile.SocialLinks == nil {
@@ -5785,6 +5793,7 @@ type Profile {
   mobile: String
   phoneVerified: Boolean!
   balance: Float!
+  roll: Float!
   point: Int!
   comp: Int!
   level: Int!
@@ -5813,6 +5822,7 @@ input NewProfile {
   phone: String
   mobile: String
   balance: Float
+  roll: Float
   point: Int
   comp: Int
   level: Int
@@ -5834,6 +5844,7 @@ input UpdateProfile {
   phone: String
   mobile: String
   balance: Float
+  roll: Float
   point: Int
   comp: Int
   level: Int
@@ -21812,6 +21823,8 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
+			case "roll":
+				return ec.fieldContext_Profile_roll(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
@@ -23715,6 +23728,50 @@ func (ec *executionContext) _Profile_balance(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Profile_balance(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Profile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Profile_roll(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Profile_roll(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Roll, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Profile_roll(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Profile",
 		Field:      field,
@@ -27394,6 +27451,8 @@ func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field 
 				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
+			case "roll":
+				return ec.fieldContext_Profile_roll(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
@@ -32921,6 +32980,8 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 				return ec.fieldContext_Profile_phoneVerified(ctx, field)
 			case "balance":
 				return ec.fieldContext_Profile_balance(ctx, field)
+			case "roll":
+				return ec.fieldContext_Profile_roll(ctx, field)
 			case "point":
 				return ec.fieldContext_Profile_point(ctx, field)
 			case "comp":
@@ -39805,7 +39866,7 @@ func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userId", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks"}
+	fieldsInOrder := [...]string{"userId", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -39882,6 +39943,13 @@ func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj an
 				return it, err
 			}
 			it.Balance = data
+		case "roll":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roll"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Roll = data
 		case "point":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("point"))
 			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
@@ -41331,7 +41399,7 @@ func (ec *executionContext) unmarshalInputUpdateProfile(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userid", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks", "currentPassword", "confirmPassword", "newPassword"}
+	fieldsInOrder := [...]string{"userid", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks", "currentPassword", "confirmPassword", "newPassword"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41408,6 +41476,13 @@ func (ec *executionContext) unmarshalInputUpdateProfile(ctx context.Context, obj
 				return it, err
 			}
 			it.Balance = data
+		case "roll":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roll"))
+			data, err := ec.unmarshalOFloat2ᚖfloat64(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Roll = data
 		case "point":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("point"))
 			data, err := ec.unmarshalOInt2ᚖint32(ctx, v)
@@ -43964,6 +44039,11 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "balance":
 			out.Values[i] = ec._Profile_balance(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "roll":
+			out.Values[i] = ec._Profile_roll(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

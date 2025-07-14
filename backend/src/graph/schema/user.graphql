@@ -131,6 +131,7 @@ type Profile {
   mobile: String
   phoneVerified: Boolean!
   balance: Float!
+  roll: Float!
   point: Int!
   comp: Int!
   level: Int!
@@ -159,6 +160,7 @@ input NewProfile {
   phone: String
   mobile: String
   balance: Float
+  roll: Float
   point: Int
   comp: Int
   level: Int
@@ -180,6 +182,7 @@ input UpdateProfile {
   phone: String
   mobile: String
   balance: Float
+  roll: Float
   point: Int
   comp: Int
   level: Int

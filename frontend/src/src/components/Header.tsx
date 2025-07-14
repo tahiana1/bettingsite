@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-import { Layout, Menu, Avatar, Button, theme, Dropdown } from "antd";
+import { Layout, Menu, Avatar, Button, theme, Dropdown, message } from "antd";
 import type { MenuProps } from "antd";
 
 import {
@@ -51,6 +51,7 @@ const Head = () => {
       ],
     },
   });
+
   const onMenuClick = (e: MenuInfo) => {
     setSelectedkeys(e.keyPath);
     console.log(e.key, 'e.key');

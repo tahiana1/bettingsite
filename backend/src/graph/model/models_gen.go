@@ -213,6 +213,7 @@ type NewProfile struct {
 	Phone         *string    `json:"phone,omitempty"`
 	Mobile        *string    `json:"mobile,omitempty"`
 	Balance       *float64   `json:"balance,omitempty"`
+	Roll          *float64   `json:"roll,omitempty"`
 	Point         *int32     `json:"point,omitempty"`
 	Comp          *int32     `json:"comp,omitempty"`
 	Level         *int32     `json:"level,omitempty"`
@@ -491,6 +492,7 @@ type UpdateProfile struct {
 	Phone           *string    `json:"phone,omitempty"`
 	Mobile          *string    `json:"mobile,omitempty"`
 	Balance         *float64   `json:"balance,omitempty"`
+	Roll            *float64   `json:"roll,omitempty"`
 	Point           *int32     `json:"point,omitempty"`
 	Comp            *int32     `json:"comp,omitempty"`
 	Level           *int32     `json:"level,omitempty"`

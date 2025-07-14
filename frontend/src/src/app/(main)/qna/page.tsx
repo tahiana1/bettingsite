@@ -15,6 +15,7 @@ import api from "@/api";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
+import Login from "@/components/Auth/Login";
 
 interface QnaItem {
     id: string;
@@ -37,16 +38,17 @@ const Qna = () => {
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);
     const [loadingCreate, setLoadingCreate] = useState(false);
-    const [profile] = useAtom(userState);
+    const [profile, setProfile] = useState<any>(null);
     const router = useRouter();
-  
+    useEffect(() => {
+        api("user/me").then((res) => {
+            setProfile(res.data.profile);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }, []);
     // Check if user is logged in
-    if (!profile?.userId) {
-      message.warning(t("partner/menu/pleaseLogin"));
-      router.push("/auth/signIn");
-      return;
-    }
-    
+ 
     const modules = {
         toolbar: [
           ["bold", "italic", "underline", "strike", "blockquote"],
@@ -233,9 +235,15 @@ const Qna = () => {
     }
 
     return (
-        <Layout>
-            <Content id="qna-content" className="p-3">
-                <Card
+        <>
+            {!profile?.userId ? (
+                <Layout className="flex justify-center items-center h-[90vh]">
+                    <Login />
+                </Layout>
+            ) : (
+                <Layout>
+                    <Content id="qna-content" className="p-3">
+                        <Card
                     title={t("contactUs")}
                     >
                         <Form
@@ -273,6 +281,8 @@ const Qna = () => {
                 />
             </Content>
         </Layout>
+        )}
+        </>
     )
 }
 
