@@ -357,5 +357,87 @@ func GetDashboard(c *gin.Context) {
 
 	response.BettingChart = bettingChart
 
+	// Additional queries for admin header tags
+	// 11. Connected users (users who logged in today)
+	var connectedUsers int64
+	initializers.DB.Model(&models.User{}).
+		Where("DATE(last_login_at) = ?", today).
+		Count(&connectedUsers)
+
+	// 12. Today's subscribers (new users registered today)
+	var todaysSubscribers int64
+	initializers.DB.Model(&models.User{}).
+		Where("DATE(created_at) = ?", today).
+		Count(&todaysSubscribers)
+
+	// 13. Today's withdrawal count
+	var todaysWithdrawal int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "withdrawal", today).
+		Count(&todaysWithdrawal)
+
+	// 14. Total registered users count
+	var registeredUsersCount int64
+	initializers.DB.Model(&models.User{}).Count(&registeredUsersCount)
+
+	// 15. First deposit count (users who made their first deposit today)
+	var firstDeposit int64
+	initializers.DB.Raw(`
+		SELECT COUNT(DISTINCT t.user_id) 
+		FROM transactions t 
+		WHERE t.type = 'deposit' 
+		AND DATE(t.created_at AT TIME ZONE 'UTC') = ? 
+		AND t.user_id NOT IN (
+			SELECT DISTINCT user_id 
+			FROM transactions 
+			WHERE type = 'deposit' 
+			AND DATE(created_at AT TIME ZONE 'UTC') < ?
+		)
+	`, today, today).Scan(&firstDeposit)
+
+	// 16. Number of login failures today
+	var numberOfLoginFailures int64
+	// This would need a login_attempts table or similar - for now set to 0
+	numberOfLoginFailures = 0
+
+	// 17. Number of depositors today
+	var numberOfDepositorsToday int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "deposit", today).
+		Distinct("user_id").
+		Count(&numberOfDepositorsToday)
+
+	// 18. Number of withdrawal users today
+	var numberOfWithdrawalToday int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "withdrawal", today).
+		Distinct("user_id").
+		Count(&numberOfWithdrawalToday)
+
+	// 19. Number of betting members today
+	var numberOfBettingMembersToday int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "betting/placingBet", today).
+		Distinct("user_id").
+		Count(&numberOfBettingMembersToday)
+
+	// 20. Number of bets today
+	var numberOfBetsToday int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "betting/placingBet", today).
+		Count(&numberOfBetsToday)
+
+	// Update stats with additional fields
+	stats.ConnectedUsers = connectedUsers
+	stats.TodaysSubscribers = todaysSubscribers
+	stats.TodaysWithdrawal = todaysWithdrawal
+	stats.RegisteredUsersCount = registeredUsersCount
+	stats.FirstDeposit = firstDeposit
+	stats.NumberOfLoginFailures = numberOfLoginFailures
+	stats.NumberOfDepositorsToday = numberOfDepositorsToday
+	stats.NumberOfWithdrawalToday = numberOfWithdrawalToday
+	stats.NumberOfBettingMembersToday = numberOfBettingMembersToday
+	stats.NumberOfBetsToday = numberOfBetsToday
+
 	c.JSON(200, response)
 }

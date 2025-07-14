@@ -27,6 +27,18 @@ type DashboardStats struct {
 	SportsPendingBetting      int64   `json:"sportsPendingBetting"`
 	SportsRebateBetting       int64   `json:"sportsRebateBetting"`
 	RollingTotal              float64 `json:"rollingTotal"`
+
+	// Additional fields for admin header tags
+	ConnectedUsers              int64 `json:"connectedUsers"`
+	TodaysSubscribers           int64 `json:"todaysSubscribers"`
+	TodaysWithdrawal            int64 `json:"todaysWithdrawal"`
+	RegisteredUsersCount        int64 `json:"registeredUsersCount"`
+	FirstDeposit                int64 `json:"firstDeposit"`
+	NumberOfLoginFailures       int64 `json:"numberOfLoginFailures"`
+	NumberOfDepositorsToday     int64 `json:"numberOfDepositorsToday"`
+	NumberOfWithdrawalToday     int64 `json:"numberOfWithdrawalToday"`
+	NumberOfBettingMembersToday int64 `json:"numberOfBettingMembersToday"`
+	NumberOfBetsToday           int64 `json:"numberOfBetsToday"`
 }
 
 type DivisionSummary struct {
