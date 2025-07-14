@@ -88,11 +88,11 @@ export default function PartnerRootLayout({
   }, []);
 
   const fetchInfo = () => {
-    api("user/getInfo", {
+    api("admin/dashboard/get-data", {
       method: "GET",
     }).then((res) => {
       if (res) {
-        setInfo(res);
+        setInfo(res.stats);
         setTimeout(() => {
           fetchInfo();
         }, 15000);

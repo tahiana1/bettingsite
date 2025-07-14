@@ -89,14 +89,14 @@ export default function AdminRootLayout({
   }, []);
 
   const fetchInfo = () => {
-    api("user/getInfo", {
+    api("admin/dashboard/get-data", {
       method: "GET",
     }).then((res) => {
       if (res) {
-        setInfo(res);
+        setInfo(res.stats);
         setTimeout(() => {
           fetchInfo();
-        }, 15000);
+        }, 3000);
       }
     });
   };
@@ -154,7 +154,7 @@ export default function AdminRootLayout({
     },
     {
       label: t("rollingTheTotal"),
-      value: 0,
+      value: info.rollingTotal || 0,
       color: "yellow",
     },
     {
