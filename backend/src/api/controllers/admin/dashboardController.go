@@ -7,7 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
-	"github.com/hotbrainy/go-betting/backend/models"
+	"github.com/hotbrainy/go-betting/backend/internal/models"
+	dashboardModels "github.com/hotbrainy/go-betting/backend/models"
 )
 
 // GetDashboard fetches all dashboard data
@@ -16,10 +17,10 @@ func GetDashboard(c *gin.Context) {
 	today := time.Now().Format("2006-01-02")
 
 	// Initialize response
-	response := models.DashboardResponse{}
+	response := dashboardModels.DashboardResponse{}
 
 	// Get today's statistics
-	var stats models.DashboardStats
+	var stats dashboardModels.DashboardStats
 
 	// Debug: Print today's date
 	fmt.Printf("Today's date for filtering: %s\n", today)
@@ -81,13 +82,87 @@ func GetDashboard(c *gin.Context) {
 	stats.RegisteredUsers = int(userStats.RegisteredUsers)
 	stats.NumberOfVisiters = int(userStats.NumberOfVisiters)
 
+	// Calculate additional fields for admin layout
+	// 1. Today's deposit amount (approved only)
+	var depositToday float64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND status = ? AND DATE(transaction_at) = ?", "deposit", "A", today).
+		Select("COALESCE(SUM(amount),0)").
+		Scan(&depositToday)
+
+	// 2. Today's withdraw amount (approved only)
+	var withdrawToday float64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND status = ? AND DATE(transaction_at) = ?", "withdrawal", "A", today).
+		Select("COALESCE(SUM(amount),0)").
+		Scan(&withdrawToday)
+
+	// 3. Total balance and points of all users
+	var totalBalance float64
+	var totalPoints int64
+	initializers.DB.Model(&models.Profile{}).Select("COALESCE(SUM(balance),0)").Scan(&totalBalance)
+	initializers.DB.Model(&models.Profile{}).Select("COALESCE(SUM(point),0)").Scan(&totalPoints)
+
+	// 3.1. Rolling total: sum of all roll items in the profile table
+	var rollingTotal float64
+	initializers.DB.Model(&models.Profile{}).Select("COALESCE(SUM(roll),0)").Scan(&rollingTotal)
+
+	// 4. Count today's winners on bet (status = 'won' and settled today)
+	var todayWinners int64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(settled_at) = ?", "won", today).
+		Count(&todayWinners)
+
+	// 5. bettingToday: Absolute value of the sum of amounts from transactions with type "Rolling" for today
+	var bettingToday float64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "Rolling", today).
+		Select("COALESCE(ABS(SUM(amount)),0)").
+		Scan(&bettingToday)
+
+	// 6. totalLoss: Total stake of lost bets settled today
+	var totalLoss float64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(settled_at) = ?", "lost", today).
+		Select("COALESCE(SUM(stake),0)").
+		Scan(&totalLoss)
+
+	// 7. totalSalesLossToday: Alias for totalLoss
+	totalSalesLossToday := totalLoss
+
+	// 8. todaysDistributionRolling: Total stake of all bets placed today (or use a specific transaction type if you have one)
+	todaysDistributionRolling := bettingToday
+
+	// 9. sportsPendingBetting: Count of bets with status 'pending' placed today
+	var sportsPendingBetting int64
+	initializers.DB.Model(&models.Bet{}).
+		Where("status = ? AND DATE(placed_at) = ?", "pending", today).
+		Count(&sportsPendingBetting)
+
+	// 10. sportsRebateBetting: Placeholder (set to 0 or implement if you have logic)
+	sportsRebateBetting := int64(0)
+
+	// Update stats with additional fields
+	stats.DepositToday = depositToday
+	stats.WithdrawToday = withdrawToday
+	stats.TotalBalance = totalBalance
+	stats.TotalPoints = totalPoints
+	stats.TodayWinners = todayWinners
+	stats.BettingToday = bettingToday
+	stats.TotalLoss = totalLoss
+	stats.TotalSalesLossToday = totalSalesLossToday
+	stats.TodaysDistributionRolling = todaysDistributionRolling
+	stats.SportsPendingBetting = sportsPendingBetting
+	stats.SportsRebateBetting = sportsRebateBetting
+	stats.RollingTotal = rollingTotal
+
 	// Debug: Print final stats
 	fmt.Printf("Final Stats: %+v\n", stats)
 
 	response.Stats = stats
 
 	// Get division summary for last 4 days, this month, and last month
-	var divisionSummaries []models.DivisionSummary
+	var divisionSummaries []dashboardModels.DivisionSummary
 
 	dates := []string{}
 	for i := 0; i < 4; i++ {
@@ -97,7 +172,7 @@ func GetDashboard(c *gin.Context) {
 
 	// Last 4 days
 	for _, d := range dates {
-		var summary models.DivisionSummary
+		var summary dashboardModels.DivisionSummary
 		if err := initializers.DB.Raw(`
 			SELECT
 				? as division,
@@ -124,7 +199,7 @@ func GetDashboard(c *gin.Context) {
 	}
 
 	// This month
-	var summaryThisMonth models.DivisionSummary
+	var summaryThisMonth dashboardModels.DivisionSummary
 	firstOfMonth := time.Now().Format("2006-01") + "-01"
 	if err := initializers.DB.Raw(`
 		SELECT
@@ -151,7 +226,7 @@ func GetDashboard(c *gin.Context) {
 	}
 
 	// Last month
-	var summaryLastMonth models.DivisionSummary
+	var summaryLastMonth dashboardModels.DivisionSummary
 	firstOfLastMonth := time.Now().AddDate(0, -1, -time.Now().Day()+1).Format("2006-01-02")
 	firstOfThisMonth := time.Now().Format("2006-01") + "-01"
 	if err := initializers.DB.Raw(`
@@ -181,7 +256,7 @@ func GetDashboard(c *gin.Context) {
 	response.DivisionSummary = divisionSummaries
 
 	// Get recent payments
-	var recentPayments []models.PaymentTransaction
+	var recentPayments []dashboardModels.PaymentTransaction
 	if err := initializers.DB.Raw(`
 		SELECT 
 			ROW_NUMBER() OVER (ORDER BY t.created_at DESC) as number,
@@ -208,7 +283,7 @@ func GetDashboard(c *gin.Context) {
 	response.RecentPayments = recentPayments
 
 	// Get deposit/withdraw chart data
-	var depositChart []models.ChartData
+	var depositChart []dashboardModels.ChartData
 	if err := initializers.DB.Raw(`
 		WITH date_series AS (
 			SELECT generate_series(
@@ -239,7 +314,7 @@ func GetDashboard(c *gin.Context) {
 	response.DepositChart = depositChart
 
 	// Get betting/winning chart data
-	var bettingChart []models.ChartData
+	var bettingChart []dashboardModels.ChartData
 	if err := initializers.DB.Raw(`
 		WITH date_series AS (
 			SELECT generate_series(
