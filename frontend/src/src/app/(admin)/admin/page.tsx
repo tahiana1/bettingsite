@@ -79,45 +79,54 @@ const Dashboard: React.FC = () => {
     {
       title: t("admin/division"),
       dataIndex: "division",
-      key: "division"
+      key: "division",
+      render: (text: string) => {
+        if (text === "This month") return t("This month");
+        if (text === "Last month") return t("Last month");
+        return text;
+      },
     },
     {
       title: t("admin/numberOfDeposit"),
       dataIndex: "numberOfDeposit",
       key: "numberOfDeposit",
+      render: (value: number, record: DataType) => `${value} items - ${record.depositWithdraw > 0 ? record.depositWithdraw.toLocaleString() : 0} won`,
     },
     {
       title: t("admin/numberOfWithdraw"),
       dataIndex: "numberOfWithdraw",
       key: "numberOfWithdraw",
+      render: (value: number, record: DataType) => `${value} items - ${record.depositWithdraw < 0 ? Math.abs(record.depositWithdraw).toLocaleString() : 0} won`,
     },
     {
       title: t("admin/numberOfSettlement"),
       dataIndex: "numberOfSettlement",
       key: "numberOfSettlement",
+      render: (value: number) => `${value} items - 0 won`, // Adjust if you have settlement amount
     },
     {
       title: t("admin/depositWithdraw"),
       dataIndex: "depositWithdraw",
       key: "depositWithdraw",
-      render: (text: number) => {
-        return Number(text).toFixed(2)
-      }
+      render: (text: number) => `${Number(text).toLocaleString()} won`,
     },
     {
       title: t("admin/numberOfBets"),
       dataIndex: "numberOfBets",
       key: "numberOfBets",
+      render: (value: number, record: DataType) => `${value} items - ${record.bettingWinning > 0 ? record.bettingWinning.toLocaleString() : 0} won`,
     },
     {
       title: t("admin/numberOfWin"),
       dataIndex: "numberOfWin",
       key: "numberOfWin",
+      render: (value: number, record: DataType) => `${value} pieces - ${record.bettingWinning > 0 ? record.bettingWinning.toLocaleString() : 0} won`,
     },
     {
       title: t("admin/bettingWinning"),
       dataIndex: "bettingWinning",
       key: "bettingWinning",
+      render: (text: number) => `${Number(text).toLocaleString()} won`,
     },
     {
       title: t("admin/numberOfMembers"),
