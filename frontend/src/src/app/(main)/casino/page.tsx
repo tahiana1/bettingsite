@@ -46,6 +46,9 @@ import SevenMojosLogo from "@/assets/img/casino/logo/7mojos.png";
 import HiltonCasinoLogo from "@/assets/img/casino/logo/hilton.png";
 import api from "@/api";
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
+import { userState } from "@/state/state";
 
 const Casino: React.FC = () => {
     const t = useTranslations();
@@ -59,7 +62,15 @@ const Casino: React.FC = () => {
     const [popupWindow, setPopupWindow] = useState<Window | null>(null);
     const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
     const popupGameName = useRef<string>('');
-
+    const [profile] = useAtom(userState);
+    const router = useRouter();
+  
+    // Check if user is logged in
+    if (!profile?.userId) {
+      message.warning(t("partner/menu/pleaseLogin"));
+      router.push("/auth/signIn");
+      return;
+    }       
     useEffect(() => {
         api("user/me").then((res) => {
             setUserId(res.data.userid);

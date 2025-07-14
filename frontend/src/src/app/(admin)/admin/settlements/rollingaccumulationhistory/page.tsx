@@ -359,7 +359,7 @@ const RollingAccumulationPage: React.FC = () => {
             </Space>
           </Space>
 
-          <Table<Transaction>
+          <Table<Transaction>                  
             columns={columns}
             loading={loading}
             dataSource={transactions ?? []}

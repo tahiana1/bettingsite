@@ -194,10 +194,9 @@ const WithdrawRequest: React.FC = () => {
         <Alert
           description={
             <p>
-              * Please request a withdrawal of at least 10,000.
+              * {t("withdrawMinimum")}
               <br />
-              * Withdrawals can only be made to the account you requested
-              when requesting a deposit.
+              * {t("withdrawOnly")}
             </p>
           }
           type="success"

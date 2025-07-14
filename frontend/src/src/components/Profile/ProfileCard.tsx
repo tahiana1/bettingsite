@@ -64,7 +64,7 @@ const ProfileCard: React.FC = () => {
       }),
       action: (
         <Link href={ROUTES.deposit}>
-          <Button type="link">Deposit Withdraw</Button>
+          <Button type="link">{t("depositWithdraw")}</Button>
         </Link>
       ),
     },
@@ -74,7 +74,7 @@ const ProfileCard: React.FC = () => {
       value: profile?.xp ?? 0,
       action: (
         <Link href={ROUTES.point}>
-          <Button type="link">Point Conversion</Button>
+          <Button type="link">{t("pointConversion")}</Button>
         </Link>
       ),
     },
@@ -84,7 +84,7 @@ const ProfileCard: React.FC = () => {
       value: profile?.comp ?? 0,
       action: (
         <Link href={ROUTES.point}>
-          <Button type="link">Comp Conversion</Button>
+          <Button type="link">{t("compConversion")}</Button>
         </Link>
       ),
     },

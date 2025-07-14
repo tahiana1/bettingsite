@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Card, Form, Input, Layout, Space, Switch, Table, Tag } from "antd";
+import { Button, Card, Form, Input, Layout, message, Space, Switch, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuill } from "react-quilljs";
@@ -12,6 +12,9 @@ import { FILTER_QNAS } from "@/actions/qna";
 import { useQuery } from "@apollo/client";
 import "./index.css";
 import api from "@/api";
+import { useRouter } from "next/navigation";
+import { useAtom } from "jotai";
+import { userState } from "@/state/state";
 
 interface QnaItem {
     id: string;
@@ -34,6 +37,16 @@ const Qna = () => {
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);
     const [loadingCreate, setLoadingCreate] = useState(false);
+    const [profile] = useAtom(userState);
+    const router = useRouter();
+  
+    // Check if user is logged in
+    if (!profile?.userId) {
+      message.warning(t("partner/menu/pleaseLogin"));
+      router.push("/auth/signIn");
+      return;
+    }
+    
     const modules = {
         toolbar: [
           ["bold", "italic", "underline", "strike", "blockquote"],

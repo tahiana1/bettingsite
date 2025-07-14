@@ -71,124 +71,125 @@ interface DashboardResponse {
   }[];
 }
 
-const columns: TableProps<DataType>["columns"] = [
-  {
-    title: "Division",
-    dataIndex: "division",
-    key: "division"
-  },
-  {
-    title: "Number of Deposit",
-    dataIndex: "numberOfDeposit",
-    key: "numberOfDeposit",
-  },
-  {
-    title: "Number of Withdraw",
-    dataIndex: "numberOfWithdraw",
-    key: "numberOfWithdraw",
-  },
-  {
-    title: "Number of Settlement",
-    dataIndex: "numberOfSettlement",
-    key: "numberOfSettlement",
-  },
-  {
-    title: "Deposit/Withdraw",
-    dataIndex: "depositWithdraw",
-    key: "depositWithdraw",
-    render: (text: number) => {
-      return Number(text).toFixed(2)
-    }
-  },
-  {
-    title: "Number of Bets",
-    dataIndex: "numberOfBets",
-    key: "numberOfBets",
-  },
-  {
-    title: "Number of Win",
-    dataIndex: "numberOfWin",
-    key: "numberOfWin",
-  },
-  {
-    title: "Betting Winning",
-    dataIndex: "bettingWinning",
-    key: "bettingWinning",
-  },
-  {
-    title: "Number of Members",
-    dataIndex: "numberOfMembers",
-    key: "numberOfMembers",
-  },
-  {
-    title: "Number of Betting Users",
-    dataIndex: "numberOfBettingUsers",
-    key: "numberOfBettingUsers",
-  },
-  {
-    title: "Number of Visiters",
-    dataIndex: "numberOfVisiters",
-    key: "numberOfVisiters",
-  },
-];
-const paymentColumns: TableProps<PaymentDataType>["columns"] = [
-  {
-    title: "Number",
-    dataIndex: "number",
-    key: "number"
-  },
-  {
-    title: "Type",
-    dataIndex: "type",
-    key: "type"
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Allas",
-    key: "allas",
-    dataIndex: "allas",
-    render: (text: string) => {
-      return "-"
-    }
-  },
-  {
-    title: "Depositor",
-    key: "allas",
-    dataIndex: "allas",
-  },
-  {
-    title: "Before Amount",
-    key: "beforeAmount",
-    dataIndex: "beforeAmount",
-  },
-  {
-    title: "Processing Amount",
-    key: "processingAmount",
-    dataIndex: "processingAmount",
-  },
-  {
-    title: "After Amount",
-    key: "afterAmount",
-    dataIndex: "afterAmount",
-  },
-  {
-    title: "Application Date",
-    key: "applicationDate",
-    dataIndex: "applicationDate",
-  },
-  {
-    title: "Process Date",
-    key: "applicationDate",
-    dataIndex: "applicationDate",
-  }
-];
+
 
 const Dashboard: React.FC = () => {
   const t = useTranslations();
+  const columns: TableProps<DataType>["columns"] = [
+    {
+      title: t("admin/division"),
+      dataIndex: "division",
+      key: "division"
+    },
+    {
+      title: t("admin/numberOfDeposit"),
+      dataIndex: "numberOfDeposit",
+      key: "numberOfDeposit",
+    },
+    {
+      title: t("admin/numberOfWithdraw"),
+      dataIndex: "numberOfWithdraw",
+      key: "numberOfWithdraw",
+    },
+    {
+      title: t("admin/numberOfSettlement"),
+      dataIndex: "numberOfSettlement",
+      key: "numberOfSettlement",
+    },
+    {
+      title: t("admin/depositWithdraw"),
+      dataIndex: "depositWithdraw",
+      key: "depositWithdraw",
+      render: (text: number) => {
+        return Number(text).toFixed(2)
+      }
+    },
+    {
+      title: t("admin/numberOfBets"),
+      dataIndex: "numberOfBets",
+      key: "numberOfBets",
+    },
+    {
+      title: t("admin/numberOfWin"),
+      dataIndex: "numberOfWin",
+      key: "numberOfWin",
+    },
+    {
+      title: t("admin/bettingWinning"),
+      dataIndex: "bettingWinning",
+      key: "bettingWinning",
+    },
+    {
+      title: t("admin/numberOfMembers"),
+      dataIndex: "numberOfMembers",
+      key: "numberOfMembers",
+    },
+    {
+      title: t("admin/numberOfBettingUsers"),
+      dataIndex: "numberOfBettingUsers",
+      key: "numberOfBettingUsers",
+    },
+    {
+      title: t("admin/numberOfVisiters"),
+      dataIndex: "numberOfVisiters",
+      key: "numberOfVisiters",
+    },
+  ];
+  const paymentColumns: TableProps<PaymentDataType>["columns"] = [
+    {
+      title: t("admin/number"),
+      dataIndex: "number",
+      key: "number"
+    },
+    {
+      title: t("admin/type"),
+      dataIndex: "type",
+      key: "type"
+    },
+    {
+      title: t("admin/name"),
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: t("admin/allas"),
+      key: "allas",
+      dataIndex: "allas",
+      render: (text: string) => {
+        return "-"
+      }
+    },
+    {
+      title: t("admin/depositor"),
+      key: "allas",
+      dataIndex: "allas",
+    },
+    {
+      title: t("admin/beforeAmount"),
+      key: "beforeAmount",
+      dataIndex: "beforeAmount",
+    },
+    {
+      title: t("admin/processingAmount"),
+      key: "processingAmount",
+      dataIndex: "processingAmount",
+    },
+    {
+      title: t("admin/afterAmount"),
+      key: "afterAmount",
+      dataIndex: "afterAmount",
+    },
+    {
+      title: t("admin/applicationDate"),
+      key: "applicationDate",
+      dataIndex: "applicationDate",
+    },
+    {
+      title: t("admin/processDate"),
+      key: "applicationDate",
+      dataIndex: "applicationDate",
+    }
+  ];
   const [mount, setMount] = useState<boolean>(false);
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
 

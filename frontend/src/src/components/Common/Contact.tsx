@@ -4,27 +4,31 @@ import { BsTelegram } from "react-icons/bs";
 import { GiTalk } from "react-icons/gi";
 import Link from "next/link";
 import { BiPhoneCall } from "react-icons/bi";
-const data = [
-  {
-    title: "Telegram",
-    icon: <BsTelegram className="w-14" />,
-    href: "https://t.me/",
-    target: "_blank",
-  },
-  {
-    title: "Talk",
-    icon: <GiTalk />,
-    href: "tel:+111111111111",
-    target: "",
-  },
-  {
-    title: "Call Us",
-    icon: <BiPhoneCall />,
-    href: "tel:+111111111111",
-    target: "",
-  },
-];
-const ContactCard = () => (
+import { useTranslations } from "next-intl";
+
+const ContactCard = () => {
+  const t = useTranslations();
+  const data = [
+    {
+      title: t("telegram"),
+      icon: <BsTelegram className="w-14" />,
+      href: "https://t.me/",
+      target: "_blank",
+    },
+    {
+      title: t("talk"),
+      icon: <GiTalk />,
+      href: "tel:+111111111111",
+      target: "",
+    },
+    {
+      title: t("callUs"),
+      icon: <BiPhoneCall />,
+      href: "tel:+111111111111",
+      target: "",
+    },
+  ];
+  return (
   <List
     itemLayout="horizontal"
     dataSource={data}
@@ -42,5 +46,6 @@ const ContactCard = () => (
       </Link>
     )}
   />
-);
+  );
+};
 export default ContactCard;

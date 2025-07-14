@@ -18,6 +18,7 @@ import {
   Form,
   Descriptions,
   Checkbox,
+  message,
 } from "antd";
 import type { TableProps } from "antd";
 
@@ -54,7 +55,14 @@ const BettingLog: React.FC = () => {
       console.log(err);
     });
   }, []);
+  const [profile] = useAtom(userState);
 
+  // Check if user is logged in
+  if (!profile?.userId) {
+    message.warning(t("partner/menu/pleaseLogin"));
+    router.push("/auth/signIn");
+    return;
+  }
   const fetchBets = async (profile: any) => {
     const userid = Number(profile.userId);
     const response = await api("bets/get-betting", {

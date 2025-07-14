@@ -31,7 +31,7 @@ const FixtureCard: React.FC<{ data: any; title: any }> = ({ data, title }) => {
       const newRates = rates.filter((r) => r.id !== rate.id);
       setRates(newRates);
       if (newRates.length === 0) setShowBettingCart(false);
-      message.info("Bet removed from cart");
+      message.info(t("betRemovedFromCart"));
       return;
     }
     // Toggling on: replace any existing rate with this id
@@ -44,7 +44,7 @@ const FixtureCard: React.FC<{ data: any; title: any }> = ({ data, title }) => {
     const newRates = [...filteredRates, r];
     setRates(newRates);
     setShowBettingCart(true);
-    message.success("Bet added to cart");
+    message.success(t("betAddedToCart"));
   };
   return (
     <Card

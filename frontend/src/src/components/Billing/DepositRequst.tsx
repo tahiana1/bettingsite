@@ -245,17 +245,15 @@ const DepositRequest: React.FC = () => {
         <Alert
           description={
             <p>
-              * You must deposit under the name you entered when signing up for
-              processing
+              * {t("depositUnderName")}
               <br />
-              * Deposits maybe delayed during bank inspection times.
+              * {t("depositDelay")}
               <br />* <button 
                 className="text-blue-500 cursor-pointer border-1 border-blue-500 px-2"
                 onClick={showAccountModal}
               >
                 {t("accountInquiry")}
-              </button> You can check the account information below or through the
-              customer center.
+              </button> {t("depositCheck")}
             </p>
           }
           type="success"
