@@ -86,34 +86,99 @@ func GetDashboard(c *gin.Context) {
 
 	response.Stats = stats
 
-	// Get division summary
-	var divisions []models.DivisionSummary
+	// Get division summary for last 4 days, this month, and last month
+	var divisionSummaries []models.DivisionSummary
+
+	dates := []string{}
+	for i := 0; i < 4; i++ {
+		d := time.Now().AddDate(0, 0, -i).Format("2006-01-02")
+		dates = append(dates, d)
+	}
+
+	// Last 4 days
+	for _, d := range dates {
+		var summary models.DivisionSummary
+		if err := initializers.DB.Raw(`
+			SELECT
+				? as division,
+				COUNT(CASE WHEN t.type = 'deposit' THEN 1 END) as number_of_deposit,
+				COUNT(CASE WHEN t.type = 'withdrawal' THEN 1 END) as number_of_withdraw,
+				COUNT(CASE WHEN t.status = 'settled' THEN 1 END) as number_of_settlement,
+				COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END),0) as deposit_withdraw,
+				COUNT(CASE WHEN t.type = 'bet' THEN 1 END) as number_of_bets,
+				COUNT(CASE WHEN t.type = 'betSettlement' THEN 1 END) as number_of_win,
+				COALESCE(SUM(CASE 
+					WHEN t.type = 'bet' THEN t.amount 
+					WHEN t.type = 'betSettlement' THEN -t.amount 
+					ELSE 0 
+				END),0) as betting_winning,
+				COUNT(DISTINCT t.user_id) as number_of_members,
+				COUNT(DISTINCT CASE WHEN t.type = 'bet' THEN t.user_id END) as number_of_betting_users,
+				COUNT(DISTINCT u.id) as number_of_visiters
+			FROM transactions t
+			LEFT JOIN users u ON t.user_id = u.id
+			WHERE DATE(t.created_at AT TIME ZONE 'UTC') = ?
+		`, d, d).Scan(&summary).Error; err == nil {
+			divisionSummaries = append(divisionSummaries, summary)
+		}
+	}
+
+	// This month
+	var summaryThisMonth models.DivisionSummary
+	firstOfMonth := time.Now().Format("2006-01") + "-01"
 	if err := initializers.DB.Raw(`
-		SELECT 
-			u.type as division,
+		SELECT
+			'This month' as division,
 			COUNT(CASE WHEN t.type = 'deposit' THEN 1 END) as number_of_deposit,
 			COUNT(CASE WHEN t.type = 'withdrawal' THEN 1 END) as number_of_withdraw,
 			COUNT(CASE WHEN t.status = 'settled' THEN 1 END) as number_of_settlement,
-			SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END) as deposit_withdraw,
+			COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END),0) as deposit_withdraw,
 			COUNT(CASE WHEN t.type = 'bet' THEN 1 END) as number_of_bets,
 			COUNT(CASE WHEN t.type = 'betSettlement' THEN 1 END) as number_of_win,
-			SUM(CASE 
+			COALESCE(SUM(CASE 
 				WHEN t.type = 'bet' THEN t.amount 
 				WHEN t.type = 'betSettlement' THEN -t.amount 
 				ELSE 0 
-			END) as betting_winning,
+			END),0) as betting_winning,
 			COUNT(DISTINCT t.user_id) as number_of_members,
-			COUNT(DISTINCT CASE WHEN t.created_at >= ? AND t.type = 'bet' THEN t.user_id END) as number_of_betting_users,
-			COUNT(DISTINCT CASE WHEN u.updated_at >= ? THEN u.id END) as number_of_visiters
+			COUNT(DISTINCT CASE WHEN t.type = 'bet' THEN t.user_id END) as number_of_betting_users,
+			COUNT(DISTINCT u.id) as number_of_visiters
 		FROM transactions t
 		LEFT JOIN users u ON t.user_id = u.id
-		GROUP BY u.type
-	`, today, today).Scan(&divisions).Error; err != nil {
-		format_errors.InternalServerError(c, err)
-		return
+		WHERE t.created_at >= ? AND t.created_at < ?
+	`, firstOfMonth, time.Now().AddDate(0, 1, -time.Now().Day()+1).Format("2006-01-02")).Scan(&summaryThisMonth).Error; err == nil {
+		divisionSummaries = append(divisionSummaries, summaryThisMonth)
 	}
 
-	response.DivisionSummary = divisions
+	// Last month
+	var summaryLastMonth models.DivisionSummary
+	firstOfLastMonth := time.Now().AddDate(0, -1, -time.Now().Day()+1).Format("2006-01-02")
+	firstOfThisMonth := time.Now().Format("2006-01") + "-01"
+	if err := initializers.DB.Raw(`
+		SELECT
+			'Last month' as division,
+			COUNT(CASE WHEN t.type = 'deposit' THEN 1 END) as number_of_deposit,
+			COUNT(CASE WHEN t.type = 'withdrawal' THEN 1 END) as number_of_withdraw,
+			COUNT(CASE WHEN t.status = 'settled' THEN 1 END) as number_of_settlement,
+			COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END),0) as deposit_withdraw,
+			COUNT(CASE WHEN t.type = 'bet' THEN 1 END) as number_of_bets,
+			COUNT(CASE WHEN t.type = 'betSettlement' THEN 1 END) as number_of_win,
+			COALESCE(SUM(CASE 
+				WHEN t.type = 'bet' THEN t.amount 
+				WHEN t.type = 'betSettlement' THEN -t.amount 
+				ELSE 0 
+			END),0) as betting_winning,
+			COUNT(DISTINCT t.user_id) as number_of_members,
+			COUNT(DISTINCT CASE WHEN t.type = 'bet' THEN t.user_id END) as number_of_betting_users,
+			COUNT(DISTINCT u.id) as number_of_visiters
+		FROM transactions t
+		LEFT JOIN users u ON t.user_id = u.id
+		WHERE t.created_at >= ? AND t.created_at < ?
+	`, firstOfLastMonth, firstOfThisMonth).Scan(&summaryLastMonth).Error; err == nil {
+		divisionSummaries = append(divisionSummaries, summaryLastMonth)
+	}
+
+	response.DivisionSummary = divisionSummaries
 
 	// Get recent payments
 	var recentPayments []models.PaymentTransaction

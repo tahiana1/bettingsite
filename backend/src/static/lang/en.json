@@ -1436,5 +1436,8 @@
   "admin/applicationDate" : "Application Date",
   "admin/processDate" : "Process Date",
   "attendanceCheckPayment" : "Attendance Check Payment",
-  "pointConversation" : "Point Conversation"
+  "pointConversation" : "Point Conversation",
+  "Last 4 days" : "Last 4 days",
+  "Last month" : "Last month",
+  "This month" : "This month"
 }

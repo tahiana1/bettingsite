@@ -1439,5 +1439,9 @@
   "admin/afterAmount" : "之后金额",
   "admin/applicationDate" : "申请日期",
   "admin/processDate" : "处理日期",
-  "attendanceCheckPayment" : "出勤检查支付"
+  "attendanceCheckPayment" : "出勤检查支付",
+  "pointConversation" : "点数转换",
+  "Last 4 days" : "最近4天",
+  "Last month" : "上个月",
+  "This month" : "这个月"
 }

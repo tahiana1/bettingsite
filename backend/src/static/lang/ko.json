@@ -1441,5 +1441,9 @@
   "admin/afterAmount": "이후 금액",
   "admin/applicationDate": "신청일",
   "admin/processDate": "처리일",
-  "pointConversation": "포인트 대화"
+  "attendanceCheckPayment": "출석 체크 지급",
+  "pointConversation": "포인트 대화",
+  "Last 4 days": "최근 4일",
+  "Last month": "지난달",
+  "This month": "이번달"
 } 
