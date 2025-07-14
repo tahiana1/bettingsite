@@ -192,20 +192,14 @@ func GetBalance(c *gin.Context) {
 
 func AddBalance(c *gin.Context) {
 	username := c.Query("username")
-	amount := c.Query("amount")
-	amountFloat, err := strconv.ParseFloat(amount, 64)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Failed to parse amount",
-			"details": err.Error(),
+
+	// Validate required parameters
+	if username == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Username parameter is required",
 		})
 		return
 	}
-
-	// I need to check the profile's balance value that has same userid value = id value of users table that has userid = username on profile table is than amount
-	// if it is than amount then return error
-	// if it is not than amount then add the amount to the profile's balance
-	// return success response
 
 	// get the id value of users table that has userid = username
 	var user models.User
@@ -227,30 +221,24 @@ func AddBalance(c *gin.Context) {
 		return
 	}
 
-	// check if the profile's balance value is greater than amount
-	if float64(profile.Balance) < amountFloat {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Balance is not enough",
-			"details": "Balance is not enough",
+	// Check if profile has balance to transfer
+	if profile.Balance <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "No balance to transfer",
+			"details": "Profile balance is zero or negative",
 		})
 		return
 	}
 
-	// deduct the amount from the profile's balance
-	profile.Balance -= amountFloat
-	if err := initializers.DB.Save(&profile).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Failed to add balance",
-			"details": err.Error(),
-		})
-		return
-	}
+	// Store the amount to transfer
+	amountToTransfer := profile.Balance
 
+	// Call HonorLink API to add balance to casino account
 	reqURL := fmt.Sprintf("%s/user/add-balance", baseURL)
 
 	requestBody := map[string]string{
 		"username": username,
-		"amount":   strconv.FormatFloat(amountFloat, 'f', -1, 64),
+		"amount":   strconv.FormatFloat(amountToTransfer, 'f', -1, 64),
 	}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {
@@ -295,14 +283,27 @@ func AddBalance(c *gin.Context) {
 
 	if resp.StatusCode != 200 {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Failed to add balance",
+			"error":   "Failed to add balance to casino account",
 			"details": fmt.Sprintf("Status: %d, Response: %s", resp.StatusCode, string(body)),
 		})
 		return
 	}
 
+	// Set profile balance to 0 after successful transfer to casino
+	if err := initializers.DB.Model(&profile).Updates(map[string]interface{}{
+		"balance": 0,
+	}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to update profile balance",
+			"details": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Balance added successfully",
+		"message":           "Balance transferred to casino successfully",
+		"transferredAmount": amountToTransfer,
+		"newProfileBalance": 0,
 	})
 }
 
@@ -604,4 +605,214 @@ func requestGameLaunchLink(username, nickname string, gameConfig GameConfig, bea
 
 	// If no link found in response, return the raw response
 	return string(body), nil
+}
+
+func Withdraw(c *gin.Context) {
+	username := c.Query("username")
+
+	// Validate required parameters
+	if username == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Username parameter is required",
+		})
+		return
+	}
+
+	// get the id value of users table that has userid = username
+	var user models.User
+	if err := initializers.DB.Where("userid = ?", username).First(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get user",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// get the profile's balance value that has same userid value = id value of users table that has userid = username on profile table
+	var profile models.Profile
+	if err := initializers.DB.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get profile",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Get balance before withdrawal from HonorLink API
+	balanceBefore, err := getHonorLinkBalance(username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get balance before withdrawal",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Check if there's any balance to withdraw
+	if balanceBefore <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "No balance to withdraw",
+			"details": "Casino account balance is zero or negative",
+		})
+		return
+	}
+
+	// Call HonorLink API to withdraw all balance
+	reqURL := fmt.Sprintf("%s/user/sub-balance-all", baseURL)
+
+	requestBody := map[string]string{
+		"username": username,
+	}
+	jsonBody, err := json.Marshal(requestBody)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to marshal request body",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	req, err := http.NewRequest("POST", reqURL, bytes.NewBuffer(jsonBody))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create request",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to make request",
+			"details": err.Error(),
+		})
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to read response",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to withdraw balance from casino account",
+			"details": fmt.Sprintf("Status: %d, Response: %s", resp.StatusCode, string(body)),
+		})
+		return
+	}
+
+	// Get balance after withdrawal from HonorLink API
+	balanceAfter, err := getHonorLinkBalance(username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to get balance after withdrawal",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// Calculate withdrawn amount
+	withdrawnAmount := balanceBefore - balanceAfter
+
+	// Verify that the withdrawal was successful (balance should be 0 or close to 0)
+	if balanceAfter > 0.01 { // Allow for small floating point differences
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Withdrawal may not have been completed fully",
+			"details": fmt.Sprintf("Remaining balance: %f", balanceAfter),
+		})
+		return
+	}
+
+	// Add the withdrawn amount to the local profile balance
+	newBalance := profile.Balance + withdrawnAmount
+	if err := initializers.DB.Model(&profile).Updates(map[string]interface{}{
+		"balance": newBalance,
+	}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to update profile balance",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":            "Balance withdrawn from casino successfully",
+		"withdrawnAmount":    withdrawnAmount,
+		"newProfileBalance":  newBalance,
+		"casinoBalanceAfter": balanceAfter,
+	})
+}
+
+// getHonorLinkBalance retrieves the balance of a user from the HonorLink API
+func getHonorLinkBalance(username string) (float64, error) {
+	reqURL, err := url.Parse(fmt.Sprintf("%s/user", baseURL))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse URL: %w", err)
+	}
+
+	q := reqURL.Query()
+	q.Set("username", username)
+	reqURL.RawQuery = q.Encode()
+
+	req, err := http.NewRequest("GET", reqURL.String(), nil)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", "Bearer "+bearerToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return 0, fmt.Errorf("failed to make request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return 0, fmt.Errorf("failed to read response: %w", err)
+	}
+
+	if resp.StatusCode != 200 {
+		return 0, fmt.Errorf("failed to get balance, status: %d, response: %s", resp.StatusCode, string(body))
+	}
+
+	// Parse response to get balance
+	var response map[string]interface{}
+	if err := json.Unmarshal(body, &response); err != nil {
+		return 0, fmt.Errorf("failed to parse response: %w", err)
+	}
+
+	// Extract balance from response
+	balance, ok := response["balance"]
+	if !ok {
+		return 0, fmt.Errorf("balance not found in response: %s", string(body))
+	}
+
+	// Convert balance to float64
+	switch v := balance.(type) {
+	case float64:
+		return v, nil
+	case int:
+		return float64(v), nil
+	case string:
+		if f, err := strconv.ParseFloat(v, 64); err == nil {
+			return f, nil
+		}
+		return 0, fmt.Errorf("invalid balance format: %s", v)
+	default:
+		return 0, fmt.Errorf("unexpected balance type: %T", balance)
+	}
 }

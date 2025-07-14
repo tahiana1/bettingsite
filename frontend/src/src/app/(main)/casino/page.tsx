@@ -61,16 +61,17 @@ const Casino: React.FC = () => {
     const [addBalanceLoading, setAddBalanceLoading] = useState(false);
     const [popupWindow, setPopupWindow] = useState<Window | null>(null);
     const popupCheckInterval = useRef<NodeJS.Timeout | null>(null);
+    const [currentStatus, setCurrentStatus] = useState<any>(null);
     const popupGameName = useRef<string>('');
     const [profile] = useAtom(userState);
     const router = useRouter();
   
     // Check if user is logged in
-    if (!profile?.userId) {
-      message.warning(t("partner/menu/pleaseLogin"));
-      router.push("/auth/signIn");
-      return;
-    }       
+    // if (!profile?.userId) {
+    //   message.warning(t("partner/menu/pleaseLogin"));
+    //   router.push("/auth/signIn");  
+    //   return;
+    // }       
     useEffect(() => {
         api("user/me").then((res) => {
             setUserId(res.data.userid);
@@ -86,7 +87,7 @@ const Casino: React.FC = () => {
         }).catch((err) => {
           console.log(err);
         });
-    }, []);
+    }, [currentStatus]);
 
     // Cleanup popup check interval on component unmount
     useEffect(() => {
@@ -117,9 +118,9 @@ const Casino: React.FC = () => {
 
     const handlePopupOpen = (gameName: string) => {
         console.log(`🎮 Popup opened for game: ${gameName}`);
+
         message.success(`Opening ${gameName} game...`);
-        // You can add any logic here when popup opens
-        // For example, track analytics, show notifications, etc.
+        handleAddBalance();
     };
 
     const handlePopupClose = (gameName: string) => {
@@ -131,8 +132,17 @@ const Casino: React.FC = () => {
             clearInterval(popupCheckInterval.current);
             popupCheckInterval.current = null;
         }
-        // You can add any logic here when popup closes
-        // For example, refresh balance, show completion message, etc.
+        api("casino/withdraw", {
+            method: "GET",
+            params: {
+                username: userId
+            }
+        }).then((response) => {
+            console.log(response, 'response');
+            setCurrentStatus(2);
+        }).catch((err) => {
+            message.error(err.response.data.error);
+        });
     };
 
     const checkPopupClosed = (gameName: string) => {
@@ -209,13 +219,12 @@ const Casino: React.FC = () => {
         });
     }
 
-    const handleAddBalance = async (values: any) => {
+    const handleAddBalance = async () => {
         setAddBalanceLoading(true);
         api("casino/add-balance", {
             method: "GET",
             params: {
-                username: userId,
-                amount: values.amount
+                username: userId
             }
         }).then((response) => {     
             console.log(response, 'response');
@@ -223,8 +232,8 @@ const Casino: React.FC = () => {
             message.error(err.response.data.error);
         }).finally(() => {
             setAddBalanceLoading(false);
+            setCurrentStatus(1);
             handleAddBalanceModalCancel();
-            window.location.reload();
         });
     };
 
@@ -248,12 +257,12 @@ const Casino: React.FC = () => {
                     </div>
                     <div className="flex justify-end items-center gap-2 py-1 mb-1">
                         <div className="text-sm text-gray-500">{t("balance")}: <span className="text-blue-500">{balance}</span></div>
-                        <button 
+                        {/* <button 
                             className="bg-blue-500 text-white px-3 py-1 rounded-md cursor-pointer"
                             onClick={() => setIsAddBalanceModalOpen(true)}
                         >
                             {t("addBalance")}
-                        </button>
+                        </button> */}
                         {/* <button className="bg-red-500 text-white px-3 py-1 rounded-md cursor-pointer">{t("withdraw")}</button> */}
                     </div>
                 </div>
@@ -296,14 +305,14 @@ const Casino: React.FC = () => {
                             <span className="text-[25px] text-[yellow] font-bold">{provider.name}</span>
                         </div>
                         <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />
-                        <Image src={provider.img} alt={provider.name} className="opacity-100 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
+                        <Image src={provider.img} alt={provider.name} className="opacity-1 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
                     </div>
                 ))}
             </div>
         </Card>
 
         {/* Add Balance Modal */}
-        <Modal
+        {/* <Modal
             title={t("addBalance")}
             open={isAddBalanceModalOpen}
             onCancel={handleAddBalanceModalCancel}
@@ -344,7 +353,7 @@ const Casino: React.FC = () => {
                     </div>
                 </Form.Item>
             </Form>
-        </Modal>
+        </Modal> */}
     </Content>
   );
 };

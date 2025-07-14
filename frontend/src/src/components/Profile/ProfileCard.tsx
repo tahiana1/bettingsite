@@ -17,12 +17,23 @@ const ProfileCard: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   useEffect(() => {
-    api("user/me").then((res) => {
-      setProfile(res.data.profile);
-      fetchData(res.data.profile);
-    }).catch((err) => {
-      console.log(err);
-    });
+    const fetchProfileData = () => {
+      api("user/me").then((res) => {
+        setProfile(res.data.profile);
+        fetchData(res.data.profile);
+      }).catch((err) => {
+        console.log(err);
+      });
+    };
+
+    // Initial fetch
+    fetchProfileData();
+
+    // Set up interval to fetch every 5 seconds
+    const interval = setInterval(fetchProfileData, 5000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
   const fetchData = async (profile: any) => {
     const response = await api("notes/get-unread-notes-count", {
@@ -32,9 +43,6 @@ const ProfileCard: React.FC = () => {
       }
     });
     setUnreadNotesCount(response?.count);
-    setTimeout(() => {
-      fetchData(profile);
-    }, 10000);
   }
   const config = {
     title: "Would you like to logout?",
