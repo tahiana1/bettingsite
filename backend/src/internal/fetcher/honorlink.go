@@ -21,16 +21,17 @@ type User struct {
 }
 
 type HonorLinkTransaction struct {
-	ID        interface{} `json:"id"` // Can be string or number
-	UserID    string      `json:"userId"`
-	Username  string      `json:"username"`
-	Amount    float64     `json:"amount"`
-	Type      string      `json:"type"`
-	Status    string      `json:"status"`
-	User      User        `json:"user"`
-	Details   Details     `json:"details"`
-	CreatedAt time.Time   `json:"createdAt"`
-	UpdatedAt time.Time   `json:"updatedAt"`
+	ID            interface{} `json:"id"` // Can be string or number
+	UserID        string      `json:"userId"`
+	Username      string      `json:"username"`
+	Amount        float64     `json:"amount"`
+	Type          string      `json:"type"`
+	Status        string      `json:"status"`
+	User          User        `json:"user"`
+	Details       Details     `json:"details"`
+	CreatedAt     time.Time   `json:"createdAt"`
+	UpdatedAt     time.Time   `json:"updatedAt"`
+	BalanceBefore float64     `json:"before"`
 }
 
 type Details struct {
@@ -241,44 +242,32 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 	}
 
 	// Calculate balance before and after
-	// balanceBefore := profile.Balance
-	// var balanceAfter float64
+	var balanceBefore float64
+	var gameType string
+	balanceBefore = hlTransaction.BalanceBefore
+	if hlTransaction.Type == "bet" {
+		gameType = "bet"
+	} else if hlTransaction.Type == "win" {
+		gameType = "win"
+	}
 
-	// Map HonorLink transaction type to our system
-	// transactionType := "deposit"
-	// if hlTransaction.Type == "withdrawal" {
-	// 	transactionType = "withdrawal"
-	// }
+	//Create transaction record
+	transaction := models.Transaction{
+		UserID:        user.ID,
+		Amount:        hlTransaction.Amount,
+		Type:          gameType,
+		Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+		Explation:     hlTransaction.GetIDString(),
+		BalanceBefore: balanceBefore,
+		BalanceAfter:  balanceBefore + hlTransaction.Amount,
+		Status:        "success",
+	}
 
-	// if transactionType == "deposit" {
-	// 	balanceAfter = balanceBefore + hlTransaction.Amount
-	// } else if transactionType == "withdrawal" {
-	// 	// Check if user has sufficient balance
-	// 	if balanceBefore < hlTransaction.Amount {
-	// 		fmt.Printf("❌ Insufficient balance for withdrawal: user %d has %.2f, needs %.2f\n",
-	// 			user.ID, balanceBefore, hlTransaction.Amount)
-	// 		return
-	// 	}
-	// 	balanceAfter = balanceBefore - hlTransaction.Amount
-	// }
-
-	// Create transaction record
-	// transaction := models.Transaction{
-	// 	UserID:        user.ID,
-	// 	Amount:        hlTransaction.Amount,
-	// 	Type:          "HonorLink",
-	// 	Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-	// 	Explation:     hlTransaction.GetIDString(),
-	// 	BalanceBefore: balanceBefore,
-	// 	BalanceAfter:  balanceAfter,
-	// 	Status:        "success",
-	// }
-
-	// // Save transaction to database
-	// if err := initializers.DB.Create(&transaction).Error; err != nil {
-	// 	fmt.Printf("❌ Error creating transaction record: %v\n", err)
-	// 	return
-	// }
+	// Save transaction to database
+	if err := initializers.DB.Create(&transaction).Error; err != nil {
+		fmt.Printf("❌ Error creating transaction record: %v\n", err)
+		return
+	}
 
 	// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
 	// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
