@@ -36,14 +36,27 @@ const MemberTransferPage: React.FC = () => {
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
-        field: "transactions.type",
-        value: "T",
-        op: "eq",
-      },
-      {
-        field: "users.role",
-        value: "U",
-        op: "eq",
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "DepositCasino",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "WithdrawalCasino",
+                op: "eq",
+              },
+            ],
+          },
+          {
+            field: "users.role",
+            value: "U",
+            op: "eq",
+          },  
+        ],
       },
     ],
   });
@@ -155,6 +168,12 @@ const MemberTransferPage: React.FC = () => {
             )}
             {record.type === "betting/placingBet" && (
               <span>Betting Placement</span>
+            )}
+            {record.type === "DepositCasino" && (
+              <span>Deposit Casino</span>
+            )}
+            {record.type === "WithdrawalCasino" && (
+              <span>Withdrawal Casino</span>
             )}
           </div>
         );
@@ -465,15 +484,13 @@ const MemberTransferPage: React.FC = () => {
               message={
                 <span>
                   <span className="text-red-600">
-                    Description: Payment/recovery of distributor money
+                    {t("admin/description/distributorMoney")}
                   </span>{" "}
-                  is a process in which the distributor pays/recovers money to a
-                  subordinate, and{" "}
+                  {t("admin/description/distributorMoneyDesc")}
+                  {t("admin/description/distributorMoneyDesc2")}
                   <span className="text-red-600">
-                    payment/recovery of subordinate money
-                  </span>{" "}
-                  is a process in which the upper distributor pays/recovers
-                  money to the distributor.
+                    {t("admin/description/subordinateMoney")}
+                  </span>{" "}{t("admin/description/subordinateMoneyDesc")}
                 </span>
               }
               type="warning"

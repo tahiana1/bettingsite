@@ -34,9 +34,36 @@ const TotalTransferPage: React.FC = () => {
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
-        field: "users.role",
-        value: "A",
-        op: "eq",
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "DepositCasino",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "WithdrawalCasino",
+                op: "eq",
+              },
+            ],
+          },
+          {
+            or: [
+              {
+                field: "users.role",
+                value: "A",
+                op: "eq",
+              },  
+              {
+                field: "users.role",
+                value: "U",
+                op: "eq",
+              },
+            ],
+          },
+        ],
       },
     ],
   });
@@ -80,7 +107,7 @@ const TotalTransferPage: React.FC = () => {
       dataIndex: "userid",
       key: "userid",
       render: (_, record) => {
-        return <div className="flex items-center">
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
         </div>
@@ -134,6 +161,12 @@ const TotalTransferPage: React.FC = () => {
             {record.type === "betting/placingBet" && (
               <span>Betting Placement</span>
             )}
+            {record.type === "DepositCasino" && (
+              <span>Deposit Casino</span>
+            )}
+            {record.type === "WithdrawalCasino" && (
+              <span>Withdrawal Casino</span>
+            )}
           </div>
         );
       },
@@ -156,6 +189,10 @@ const TotalTransferPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
+
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
 
   const updateFilter = (field: string, v: string, op: string = "eq") => {
     let filters: { field: string; value: string; op: string }[] =

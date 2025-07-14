@@ -5,9 +5,8 @@ import {
   Layout,
   Space,
   Card,
-  Table, 
+  Table,
   Button,
-  Popconfirm,
   Input,
   DatePicker,
   Radio,
@@ -26,10 +25,10 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import {
   APPROVE_TRANSACTION,
-  BLOCK_TRANSACTION,
   FILTER_TRANSACTIONS,
+  CANCEL_TRANSACTION,
+  WAITING_TRANSACTION,
 } from "@/actions/transaction";
-import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
@@ -42,12 +41,34 @@ const MemberDWPage: React.FC = () => {
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
-        field: "users.role",
-        value: "U",
-        op: "eq",
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "deposit",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "withdrawal",
+                op: "eq",
+              },
+            ],
+          },
+          {
+            field: "users.role",
+            value: "U",
+            op: "eq",
+          },
+        ],
       },
     ],
   });
+
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
 
   const [modal, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
@@ -57,30 +78,49 @@ const MemberDWPage: React.FC = () => {
   const [range, setRange] = useState<any[]>([]);
 
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
-  const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
+  const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
+  const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
-  const onBlockTransaction = (transaction: Transaction) => {
-    blockTransaction({ variables: { id: transaction.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetch(tableOptions ?? undefined);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const onApproveTransaction = (transaction: Transaction) => {
     approveTransaction({ variables: { id: transaction.id } })
       .then((res) => {
-        console.log({ res });
         if (res.data?.success) {
+          refetch(tableOptions);  
         }
-        refetch();
       })
       .catch((err) => {
-        console.log({ err });
+        console.error('Error approving transaction:', err);
+      });
+  };
+
+  const onWaitingTransaction = (transaction: Transaction) => {
+    waitingTransaction({ variables: { id: transaction.id } })
+      .then((res) => {
+        if (res.data?.success) {
+          refetch(tableOptions);
+        }
+      })
+      .catch((err) => {
+        console.error('Error waiting transaction:', err);
+      });
+  };
+
+  const onCancelTransaction = (transaction: Transaction) => {
+    cancelTransaction({ variables: { id: transaction.id } })
+      .then((res) => {
+        if (res.data?.success) {
+          refetch(tableOptions);
+        }
+      })
+      .catch((err) => {
+        console.error('Error canceling transaction:', err);
       });
   };
   const onTransactionTypeChange = (v: string = "") => {
@@ -138,18 +178,10 @@ const MemberDWPage: React.FC = () => {
 
   const columns: TableProps<Transaction>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
-      fixed: "left",
-      render: (_, record) => {
-        return record.user.id;
-      },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      title: t("number"),
+      dataIndex: "id", 
+      key: "id",
+      render: (_, __, index) => index + 1
     },
     {
       title: t("root_dist"),
@@ -190,37 +222,40 @@ const MemberDWPage: React.FC = () => {
       ),
     },
     {
-      title: t("bank"),
-      dataIndex: "profile.bankName",
-      key: '"Profile"."bank_name"',
+      title: "Level",
+      dataIndex: "level",
+      key: "level",
+      fixed: "left",
+      render: (_, record) => {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
+        </div>
+      },
+    },
+    {
+      title: t("bankName"),
+      dataIndex: "profile.bankname",
+      key: "bankname",
       render: (_, record) => record.user?.profile?.bankName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
-      title: t("accountNumber"),
+      title: t("accountName"),
       dataIndex: "profile.accountNumber",
-      key: '"Profile"."account_number"',
+      key: "accountNumber",
       render: (_, record) => record.user?.profile?.accountNumber,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
-      title: t("holderName"),
-      dataIndex: "profile.holderName",
-      key: '"Profile"."holder_name"',
+      title: t("depositorName"),
+      dataIndex: "profile.depositorName",
+      key: "depositorName",
       render: (_, record) => record.user?.profile?.holderName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+    },
+    {
+      title: t("alliance"),
+      dataIndex: "profile.alliance",
+      key: "alliance",
+      render: (_, record) => <p>-</p>,
     },
     {
       title: t("amount"),
@@ -248,6 +283,12 @@ const MemberDWPage: React.FC = () => {
       key: "pointAfter",
     },
     {
+      title: t("point"),
+      dataIndex: "point",
+      key: "point",
+      render: () => 0,
+    },
+    {
       title: t("usdtDesc"),
       dataIndex: "usdtDesc",
       key: "usdtDesc",
@@ -256,11 +297,36 @@ const MemberDWPage: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      fixed: "right",
+      render: (_, record) => {
+        return <>
+          {record.status == "pending" && <Button
+            title={t("pending")}
+            variant="outlined"
+            onClick={() => onApproveTransaction(record)}
+            color="blue"
+          >
+            {t("pending")}
+          </Button>}
+          {record.status == "A" ? <button className="text-xs bg-[#1677ff] text-white px-2 py-1 rounded">{t("approve")}</button> : null}
+          {record.status == "B" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Blocked</button> : null}
+          {record.status == "C" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Canceled</button> : null}
+          {record.status == "W" ? <button className="text-xs bg-[orange] text-white px-2 py-1 rounded">Waiting</button> : null}
+        </>
+      }
     },
     {
       title: t("shortcut"),
       dataIndex: "shortcut",
+      width: 100,
       key: "shortcut",
+      render: (_, record) => (
+        record.type == "deposit" ? <div className="flex flex-column gap-1">
+          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
+        </div> : <div className="flex flex-column gap-1">
+          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
+        </div>
+      ),
     },
     {
       title: t("transactionAt"),
@@ -285,41 +351,37 @@ const MemberDWPage: React.FC = () => {
       key: "action",
       fixed: "right",
       render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={
-              record.status
-                ? () => onBlockTransaction(record)
-                : () => onApproveTransaction(record)
-            }
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
-          >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
+        <Space.Compact size="small" className="gap-1">
+          {(record.status == "pending" || record.status == "W") && <>
+            <Button
                 title={t("approve")}
                 variant="outlined"
+                onClick={() => onApproveTransaction(record)}
                 color="blue"
-                icon={<BsCardChecklist />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
+              >
+                {t("approve")}
+              </Button>
+                <Button
+                title={t("cancel")}
+                variant="outlined"
+                onClick={() => onCancelTransaction(record)}
+                color="red"
+              >
+                {t("cancel")}
+              </Button>
+              {
+                record.status != "W" && (
+                  <Button
+                    title={t("waiting")}
+                    variant="outlined"
+                    onClick={() => onWaitingTransaction(record)}
+                    color="orange"
+                  >
+                    {t("waiting")}
+                  </Button>
+                )
+              }
+            </>}
         </Space.Compact>
       ),
     },
@@ -361,9 +423,7 @@ const MemberDWPage: React.FC = () => {
     }
   };
 
-  const onMemberTypeChange = (v: string) => {
-    updateFilter("type", v, "eq");
-  };
+
 
   const onLevelChange = (v: string = "") => {
     updateFilter(`profiles.level`, v, "eq");
@@ -422,8 +482,7 @@ const MemberDWPage: React.FC = () => {
     filters = filters.filter(
       (f) =>
         !f.field.startsWith("transactions.profile.nickname") &&
-        !f.field.startsWith("transactions.profile.holderName") &&
-        !f.field.startsWith("transactions.profile.phone")
+        !f.field.startsWith("transactions.profile.holderName")
     );
 
     if (value) {
@@ -451,25 +510,28 @@ const MemberDWPage: React.FC = () => {
     // Create worksheet from transactions data
     const worksheet = XLSX.utils.json_to_sheet(
       transactions.map((transaction) => ({
-        [t("ID")]: transaction.user?.id,
+        [t("number")]: transaction.id,
         [t("root_dist")]: transaction.user?.root?.userid,
         [t("top_dist")]: transaction.user?.parent?.userid,
+        [t("level")]: `${transaction.user?.profile?.level} ${transaction.user?.profile?.name}`,
         [t("nickname")]: transaction.user?.profile?.nickname,
         [t("phone")]: transaction.user?.profile?.phone,
-        [t("bank")]: transaction.user?.profile?.bankName,
-        [t("accountNumber")]: transaction.user?.profile?.accountNumber,
-        [t("holderName")]: transaction.user?.profile?.holderName,
-        [t("amount")]: transaction.amount,
+        [t("bankName")]: transaction.user?.profile?.bankName,
+        [t("accountName")]: transaction.user?.profile?.accountNumber,
+        [t("depositorName")]: transaction.user?.profile?.holderName,
+        [t("alliance")]: "-",
         [t("balanceBefore")]: transaction.balanceBefore,
+        [t("amount")]: transaction.amount,
         [t("balanceAfter")]: transaction.balanceAfter,
         [t("pointBefore")]: transaction.pointBefore,
+        [t("point")]: 0,
         [t("pointAfter")]: transaction.pointAfter,
         [t("usdtDesc")]: transaction.usdtDesc,
-        [t("status")]: transaction.status,
         [t("shortcut")]: transaction.shortcut,
         [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
         [t("approvedAt")]: transaction.approvedAt ? f.dateTime(new Date(transaction.approvedAt)) : "",
         [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+        [t("status")]: transaction.status,
       }))
     );
 
@@ -491,9 +553,7 @@ const MemberDWPage: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    if (tableOptions) {
-      refetch(tableOptions ?? undefined);
-    }
+    refetch(tableOptions ?? undefined);
   }, [tableOptions]);
   return (
     <Layout>
@@ -581,31 +641,7 @@ const MemberDWPage: React.FC = () => {
                 onChange={(e) => onTransactionTypeChange(e.target.value)}
               />
 
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: t("firstDepositUponSignup"),
-                    value: "D",
-                  },
-                  {
-                    label: t("firstChargeEveryday"),
-                    value: "C",
-                  },
-                  {
-                    label: t("redeposit"),
-                    value: "R",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onMemberTypeChange(e.target.value)}
-              />
+
 
               <Radio.Group
                 size="small"

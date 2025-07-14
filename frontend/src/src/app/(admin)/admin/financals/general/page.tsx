@@ -38,7 +38,6 @@ import { isValidDate, parseTableOptions } from "@/lib";
 const GeneralDWPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [modal, contextHolder] = Modal.useModal();
   const [range, setRange] = useState<any[]>([]);
@@ -53,6 +52,45 @@ const GeneralDWPage: React.FC = () => {
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "deposit",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "withdrawal",
+                op: "eq",
+              },
+            ],
+          },
+          {
+            or: [
+              {
+                field: "users.role",
+                value: "A",
+                op: "eq",
+              },
+              {
+                field: "users.role",
+                value: "P",
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
   useEffect(() => {
     const interval = setInterval(() => {
       refetch(tableOptions ?? undefined);
@@ -191,7 +229,7 @@ const GeneralDWPage: React.FC = () => {
       fixed: "left",
       render: (_, record) => {
         // return (record.user?.profile?.level + " " + record.user?.profile?.name);
-        return <div className="flex items-center">
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
         </div>
@@ -286,9 +324,10 @@ const GeneralDWPage: React.FC = () => {
       width: 100,
       key: "shortcut",
       render: (_, record) => (
-        <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Money</p>
-          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">Bet</p>
+        record.type == "deposit" ? <div className="flex flex-column gap-1">
+          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
+        </div> : <div className="flex flex-column gap-1">
+          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
         </div>
       ),
     },
@@ -314,6 +353,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      fixed: "right",
       render: (_, record) => {
         return <>
           {record.status == "pending" && <Button

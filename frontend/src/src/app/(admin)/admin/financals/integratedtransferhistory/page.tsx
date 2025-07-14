@@ -32,7 +32,48 @@ import * as XLSX from 'xlsx';
 const IntegratedTransferPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>({});
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "DepositCasino",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "WithdrawalCasino",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "bet",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "win",
+                op: "eq",
+              },
+              // {
+              //   field: "transactions.type",
+              //   value: "deposit",
+              //   op: "eq",
+              // },
+              // {
+              //   field: "transactions.type",
+              //   value: "withdrawal",
+              //   op: "eq",
+              // },
+            ],
+          },
+        ],
+      },
+    ],
+  });
   const [range, setRange] = useState<any[]>([]);
 
   const [total, setTotal] = useState<number>(0);
@@ -51,6 +92,10 @@ const IntegratedTransferPage: React.FC = () => {
     value: i,
     label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
   }));
+
+  const popupWindow = (id: number) => { 
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
 
   const columns: TableProps<Transaction>["columns"] = [
     {
@@ -87,7 +132,7 @@ const IntegratedTransferPage: React.FC = () => {
       dataIndex: "userid",
       key: "userid",
       render: (_, record) => {
-        return <div className="flex items-center">
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
         </div>
@@ -121,25 +166,37 @@ const IntegratedTransferPage: React.FC = () => {
     },
     {
       title: t("explation"),
-      dataIndex: "explation",
+      dataIndex: "shortcut",
       key: "explation",
-      render: (_, record) => {
+      render: (text, record) => {
         return (
           <div>
             {record.type === "deposit" && (
-              <span>Deposit</span>
+              <span>{t("deposit")}</span>
             )}
             {record.type === "withdrawal" && (
-              <span>Withdrawal</span>
+              <span>{t("withdrawal")}</span>
             )}
             {record.type === "transfer" && (
-              <span>Transfer</span>
+              <span>{t("transfer")}</span>
             )}
             {record.type === "bettingSettlement" && (
-              <span>Betting Settlement</span>
+              <span>{t("bettingSettlement")}</span>
             )}
             {record.type === "betting/placingBet" && (
-              <span>Betting Placement</span>
+              <span>{t("bettingPlacement")}</span>
+            )}
+            {record.type === "DepositCasino" && (
+              <span>{t("depositCasino")}</span>
+            )}
+            {record.type === "WithdrawalCasino" && (
+              <span>{t("withdrawalCasino")}</span>
+            )}
+            {record.type === "bet" && (
+              <span>{t("casinoBet")}</span>
+            )}
+            {record.type === "win" && (
+              <span>{t("casinoWin")}</span>
             )}
           </div>
         );
