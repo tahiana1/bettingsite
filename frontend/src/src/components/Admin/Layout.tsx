@@ -848,28 +848,28 @@ export default function AdminRootLayout({
                       className="gap-0.5 text-center"
                     >
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:{info.registeredUsersCount || 0}</Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipDeposit")}:0
+                          {t("membershipDeposit")}:{info.numberOfDepositorsToday || 0}
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipWithdraw")}:0
+                          {t("membershipWithdraw")}:{info.numberOfWithdrawalToday || 0}
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membershipInquiry")}:0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("rollingTransition")}:0
+                          {t("rollingTransition")}:{info.rollingTotal || 0}
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag>
                       </Space.Compact>
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:{info.depositToday || 0}</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: {info.withdrawToday || 0}</Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("distributorInquiry")} :0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :{info.totalSettlement || 0}</Tag>
                       </Space.Compact>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
@@ -887,9 +887,9 @@ export default function AdminRootLayout({
                           {t("notificationMGM")}:0/0
                         </Tag>
                         <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("notificationSportsLive")}:0
+                          {t("notificationSportsLive")}:{info.sportsPendingBetting || 0}
                         </Tag>
-                        <Tag className="!me-0.5">{t("sportRebateList")}:0</Tag>
+                        <Tag className="!me-0.5">{t("sportRebateList")}:{info.sportsRebateBetting || 0}</Tag>
                       </Space.Compact>
                       <Space.Compact className="justify-center">
                         <Tag className="!me-0.5">
@@ -905,21 +905,21 @@ export default function AdminRootLayout({
                           {t("notificationTouch")}:0/0
                         </Tag>
                         <Tag className="!me-0.5">
-                          {t("interestedMemberBetting")}:0/0
+                          {t("interestedMemberBetting")}:{info.numberOfBettingMembersToday || 0}/{info.numberOfBetsToday || 0}
                         </Tag>
                       </Space.Compact>
                     </Space.Compact>
                     <Space.Compact className="justify-center items-center mr-3">
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:0/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:0/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
+                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
                     </Space.Compact>
                   </Flex>
                   <Flex
