@@ -204,7 +204,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 			}
 		}
 	} else {
-		fmt.Printf("   No transactions found in the specified time range\n")
+		fmt.Printf("   No transactions found in the specified time ran	 ge\n")
 	}
 
 	fmt.Printf("   Fetched at: %s\n", time.Now().Format("2006-01-02 15:04:05"))
@@ -241,49 +241,49 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 	}
 
 	// Calculate balance before and after
-	balanceBefore := profile.Balance
-	var balanceAfter float64
+	// balanceBefore := profile.Balance
+	// var balanceAfter float64
 
 	// Map HonorLink transaction type to our system
-	transactionType := "deposit"
-	if hlTransaction.Type == "withdrawal" {
-		transactionType = "withdrawal"
-	}
+	// transactionType := "deposit"
+	// if hlTransaction.Type == "withdrawal" {
+	// 	transactionType = "withdrawal"
+	// }
 
-	if transactionType == "deposit" {
-		balanceAfter = balanceBefore + hlTransaction.Amount
-	} else if transactionType == "withdrawal" {
-		// Check if user has sufficient balance
-		if balanceBefore < hlTransaction.Amount {
-			fmt.Printf("❌ Insufficient balance for withdrawal: user %d has %.2f, needs %.2f\n",
-				user.ID, balanceBefore, hlTransaction.Amount)
-			return
-		}
-		balanceAfter = balanceBefore - hlTransaction.Amount
-	}
+	// if transactionType == "deposit" {
+	// 	balanceAfter = balanceBefore + hlTransaction.Amount
+	// } else if transactionType == "withdrawal" {
+	// 	// Check if user has sufficient balance
+	// 	if balanceBefore < hlTransaction.Amount {
+	// 		fmt.Printf("❌ Insufficient balance for withdrawal: user %d has %.2f, needs %.2f\n",
+	// 			user.ID, balanceBefore, hlTransaction.Amount)
+	// 		return
+	// 	}
+	// 	balanceAfter = balanceBefore - hlTransaction.Amount
+	// }
 
 	// Create transaction record
-	transaction := models.Transaction{
-		UserID:        user.ID,
-		Amount:        hlTransaction.Amount,
-		Type:          "HonorLink",
-		Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-		Explation:     hlTransaction.GetIDString(),
-		BalanceBefore: balanceBefore,
-		BalanceAfter:  balanceAfter,
-		Status:        "success",
-	}
+	// transaction := models.Transaction{
+	// 	UserID:        user.ID,
+	// 	Amount:        hlTransaction.Amount,
+	// 	Type:          "HonorLink",
+	// 	Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+	// 	Explation:     hlTransaction.GetIDString(),
+	// 	BalanceBefore: balanceBefore,
+	// 	BalanceAfter:  balanceAfter,
+	// 	Status:        "success",
+	// }
 
-	// Save transaction to database
-	if err := initializers.DB.Create(&transaction).Error; err != nil {
-		fmt.Printf("❌ Error creating transaction record: %v\n", err)
-		return
-	}
+	// // Save transaction to database
+	// if err := initializers.DB.Create(&transaction).Error; err != nil {
+	// 	fmt.Printf("❌ Error creating transaction record: %v\n", err)
+	// 	return
+	// }
 
-	if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
-		fmt.Printf("❌ Error updating user balance: %v\n", err)
-		return
-	}
+	// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
+	// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
+	// 	return
+	// }
 
 	if hlTransaction.Amount < 0 && user.Live > 0 {
 		if hlTransaction.Type == "causer.agent.add_balance" {
@@ -304,13 +304,13 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 				fmt.Printf("❌ Error creating transaction record: %v\n", err)
 				return
 			}
-			if err := initializers.DB.Model(&profile).Update("roll", float64(profile.Roll)+rollingGoldAmount).Error; err != nil {
-				fmt.Printf("❌ Error updating user balance: %v\n", err)
-				return
-			}
+			// if err := initializers.DB.Model(&profile).Update("roll", float64(profile.Roll)+rollingGoldAmount).Error; err != nil {
+			// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
+			// 	return
+			// }
 		}
 	}
 
-	fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f, Type=%s\n",
-		hlTransaction.GetIDString(), user.ID, hlTransaction.Amount, transactionType)
+	fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f\n",
+		hlTransaction.GetIDString(), user.ID, hlTransaction.Amount)
 }

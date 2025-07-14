@@ -300,6 +300,26 @@ func AddBalance(c *gin.Context) {
 		return
 	}
 
+	//Add the deposited transaction to the transaction table
+	transaction := models.Transaction{
+		UserID:        user.ID,
+		Amount:        amountToTransfer,
+		Type:          "DepositCasino",
+		Shortcut:      "Casino",
+		Explation:     "DepositCasino",
+		BalanceBefore: 0,
+		BalanceAfter:  amountToTransfer,
+		Status:        "success",
+	}
+
+	if err := initializers.DB.Create(&transaction).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to add transaction",
+			"details": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message":           "Balance transferred to casino successfully",
 		"transferredAmount": amountToTransfer,
@@ -741,6 +761,26 @@ func Withdraw(c *gin.Context) {
 	}).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Failed to update profile balance",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	//Add the withdrawn transaction to the transaction table
+	transaction := models.Transaction{
+		UserID:        user.ID,
+		Amount:        withdrawnAmount,
+		Type:          "WithdrawalCasino",
+		Shortcut:      "Casino",
+		Explation:     "WithdrawalCasino",
+		BalanceBefore: float64(profile.Balance),
+		BalanceAfter:  newBalance,
+		Status:        "success",
+	}
+
+	if err := initializers.DB.Create(&transaction).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to add transaction",
 			"details": err.Error(),
 		})
 		return
