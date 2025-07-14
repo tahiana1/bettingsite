@@ -164,15 +164,15 @@ func (h *HonorLinkFetcher) ManualFetch() {
 
 func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	// Set time range to last 12 minutes
-	// end := time.Now()
-	// start := end.Add(-10 * 24 * time.Hour) // 14 days ago
-	// fmt.Println(start, end, "date")
-	// response, err := h.FetchTransactions(start, end, 1, 100)
-
 	end := time.Now()
-	start := end.Add(-2 * time.Minute)
+	start := end.Add(-10 * 24 * time.Hour) // 14 days ago
 	fmt.Println(start, end, "date")
 	response, err := h.FetchTransactions(start, end, 1, 100)
+
+	// end := time.Now()
+	// start := end.Add(-2 * time.Minute)
+	// fmt.Println(start, end, "date")
+	// response, err := h.FetchTransactions(start, end, 1, 100)
 	if err != nil {
 		fmt.Printf("❌ Error fetching HonorLink transactions: %v\n", err)
 		return
