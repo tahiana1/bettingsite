@@ -251,55 +251,57 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		gameType = "win"
 	}
 
-	//Create transaction record
-	transaction := models.Transaction{
-		UserID:        user.ID,
-		Amount:        hlTransaction.Amount,
-		Type:          gameType,
-		Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-		Explation:     hlTransaction.GetIDString(),
-		BalanceBefore: balanceBefore,
-		BalanceAfter:  balanceBefore + hlTransaction.Amount,
-		Status:        "success",
-	}
-
-	// Save transaction to database
-	if err := initializers.DB.Create(&transaction).Error; err != nil {
-		fmt.Printf("❌ Error creating transaction record: %v\n", err)
-		return
-	}
-
-	// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
-	// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
-	// 	return
-	// }
-
-	if hlTransaction.Amount < 0 && user.Live > 0 {
-		if hlTransaction.Type == "causer.agent.add_balance" {
-			return
-		} else {
-			rollingGoldAmount := math.Abs(hlTransaction.Amount * float64(user.Live) / 100)
-			transactionRolling := models.Transaction{
-				UserID:        user.ID,
-				Amount:        hlTransaction.Amount,
-				Type:          "Rolling",
-				Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-				Explation:     hlTransaction.GetIDString(),
-				BalanceBefore: float64(profile.Roll),
-				BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
-				Status:        "success",
-			}
-			if err := initializers.DB.Create(&transactionRolling).Error; err != nil {
-				fmt.Printf("❌ Error creating transaction record: %v\n", err)
-				return
-			}
-			// if err := initializers.DB.Model(&profile).Update("roll", float64(profile.Roll)+rollingGoldAmount).Error; err != nil {
-			// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
-			// 	return
-			// }
+	if hlTransaction.Type == "bet" || hlTransaction.Type == "win" {
+		//Create transaction record
+		transaction := models.Transaction{
+			UserID:        user.ID,
+			Amount:        hlTransaction.Amount,
+			Type:          gameType,
+			Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+			Explation:     hlTransaction.GetIDString(),
+			BalanceBefore: balanceBefore,
+			BalanceAfter:  balanceBefore + hlTransaction.Amount,
+			Status:        "success",
 		}
-	}
 
-	fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f\n",
-		hlTransaction.GetIDString(), user.ID, hlTransaction.Amount)
+		// Save transaction to database
+		if err := initializers.DB.Create(&transaction).Error; err != nil {
+			fmt.Printf("❌ Error creating transaction record: %v\n", err)
+			return
+		}
+
+		// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
+		// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
+		// 	return
+		// }
+
+		if hlTransaction.Amount < 0 && user.Live > 0 {
+			if hlTransaction.Type == "causer.agent.add_balance" {
+				return
+			} else {
+				rollingGoldAmount := math.Abs(hlTransaction.Amount * float64(user.Live) / 100)
+				transactionRolling := models.Transaction{
+					UserID:        user.ID,
+					Amount:        hlTransaction.Amount,
+					Type:          "Rolling",
+					Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+					Explation:     hlTransaction.GetIDString(),
+					BalanceBefore: float64(profile.Roll),
+					BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
+					Status:        "success",
+				}
+				if err := initializers.DB.Create(&transactionRolling).Error; err != nil {
+					fmt.Printf("❌ Error creating transaction record: %v\n", err)
+					return
+				}
+				// if err := initializers.DB.Model(&profile).Update("roll", float64(profile.Roll)+rollingGoldAmount).Error; err != nil {
+				// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
+				// 	return
+				// }
+			}
+		}
+
+		fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f\n",
+			hlTransaction.GetIDString(), user.ID, hlTransaction.Amount)
+	}
 }
