@@ -58,7 +58,7 @@ const TotalTransferPage: React.FC = () => {
               },  
               {
                 field: "users.role",
-                value: "U",
+                value: "P",
                 op: "eq",
               },
             ],
