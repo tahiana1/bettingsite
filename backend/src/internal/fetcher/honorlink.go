@@ -269,12 +269,12 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 			return
 		}
 
-		// if err := initializers.DB.Model(&profile).Update("balance", balanceAfter).Error; err != nil {
-		// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
-		// 	return
-		// }
-
 		rollingGoldAmount := math.Abs(hlTransaction.Amount * float64(user.Live) / 100)
+		rollValue := float64(profile.Roll) + rollingGoldAmount
+		if err := initializers.DB.Model(&profile).Update("roll", rollValue).Error; err != nil {
+			fmt.Printf("❌ Error updating user roll value: %v\n", err)
+			return
+		}
 		transactionRolling := models.Transaction{
 			UserID:        user.ID,
 			Amount:        hlTransaction.Amount,
