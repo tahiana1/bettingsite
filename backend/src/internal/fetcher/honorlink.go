@@ -164,15 +164,15 @@ func (h *HonorLinkFetcher) ManualFetch() {
 
 func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	// Set time range to last 12 minutes
-	// end := time.Now()
-	// start := end.Add(-10 * 24 * time.Hour) // 14 days ago
-	// fmt.Println(start, end, "date")
-	// response, err := h.FetchTransactions(start, end, 1, 100)
-
 	end := time.Now()
-	start := end.Add(-2 * time.Minute)
+	start := end.Add(-1 * 24 * time.Hour) // 14 days ago
 	fmt.Println(start, end, "date")
 	response, err := h.FetchTransactions(start, end, 1, 100)
+
+	// end := time.Now()
+	// start := end.Add(-2 * time.Minute)
+	// fmt.Println(start, end, "date")
+	// response, err := h.FetchTransactions(start, end, 1, 100)
 	if err != nil {
 		fmt.Printf("❌ Error fetching HonorLink transactions: %v\n", err)
 		return
@@ -275,30 +275,20 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		// 	return
 		// }
 
-		if hlTransaction.Amount < 0 && user.Live > 0 {
-			if hlTransaction.Type == "causer.agent.add_balance" {
-				return
-			} else {
-				rollingGoldAmount := math.Abs(hlTransaction.Amount * float64(user.Live) / 100)
-				transactionRolling := models.Transaction{
-					UserID:        user.ID,
-					Amount:        hlTransaction.Amount,
-					Type:          "Rolling",
-					Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-					Explation:     hlTransaction.GetIDString(),
-					BalanceBefore: float64(profile.Roll),
-					BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
-					Status:        "success",
-				}
-				if err := initializers.DB.Create(&transactionRolling).Error; err != nil {
-					fmt.Printf("❌ Error creating transaction record: %v\n", err)
-					return
-				}
-				// if err := initializers.DB.Model(&profile).Update("roll", float64(profile.Roll)+rollingGoldAmount).Error; err != nil {
-				// 	fmt.Printf("❌ Error updating user balance: %v\n", err)
-				// 	return
-				// }
-			}
+		rollingGoldAmount := math.Abs(hlTransaction.Amount * float64(user.Live) / 100)
+		transactionRolling := models.Transaction{
+			UserID:        user.ID,
+			Amount:        hlTransaction.Amount,
+			Type:          "Rolling",
+			Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+			Explation:     hlTransaction.GetIDString(),
+			BalanceBefore: float64(profile.Roll),
+			BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
+			Status:        "success",
+		}
+		if err := initializers.DB.Create(&transactionRolling).Error; err != nil {
+			fmt.Printf("❌ Error creating transaction record: %v\n", err)
+			return
 		}
 
 		fmt.Printf("✅ Successfully processed HonorLink transaction: ID=%s, User=%d, Amount=%.2f\n",
