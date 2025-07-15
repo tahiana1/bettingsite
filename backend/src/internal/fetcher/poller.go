@@ -18,7 +18,7 @@ type MatchOdds struct {
 }
 
 func StartPolling() {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(40 * time.Second)
 	go func() {
 		for range ticker.C {
 			// Fake fetch logic
