@@ -1445,5 +1445,14 @@
   "pointConversation": "포인트 대화",
   "Last 4 days": "최근 4일",
   "Last month": "지난달",
-  "This month": "이번달"
+  "This month": "이번달",
+  "HonorLink": "호모링크",
+  "HonorLinkBet": "호모링크 베팅",
+  "HonorLinkWin": "호모링크 당첨",
+  "casinoBet": "카지노 베팅",
+  "casinoWin": "카지노 당첨",
+  "betting": "베팅",
+  "bettingSettlement": "베팅 정산",
+  "bettingPlacement": "베팅 배치",
+  "transfer": "이체"
 } 
