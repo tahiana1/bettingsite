@@ -192,6 +192,11 @@ const IntegratedTransferPage: React.FC = () => {
             {record.type === "WithdrawalCasino" && (
               <span>{t("withdrawalCasino")}</span>
             )}
+            {
+              record.type === "Rolling" && (
+                <span>{t("rolling")}</span>
+              )
+            }
             {record.type === "bet" && (
               <span>{t("casinoBet")}</span>
             )}
