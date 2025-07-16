@@ -107,7 +107,7 @@ export default function AdminRootLayout({
   const data = [
     {
       label: t("honorLink"),
-      value: info.honorLinkBalance || 0,
+      value: info.honorLinkBalance + t("egg") || 0 + t("egg"),
       color: "cyan",
     },
     {
