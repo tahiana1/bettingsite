@@ -450,62 +450,6 @@ func checkUserExists(username string) (bool, error) {
 	}
 }
 
-func GetAgentBalanceValue() (float64, error) {
-	// Make request to HonorLink API
-	reqURL := fmt.Sprintf("%s/my-info", baseURL)
-
-	req, err := http.NewRequest("GET", reqURL, nil)
-	if err != nil {
-		return 0, fmt.Errorf("failed to create request: %w", err)
-	}
-
-	req.Header.Set("Authorization", "Bearer "+bearerToken)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return 0, fmt.Errorf("failed to make request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, fmt.Errorf("failed to read response: %w", err)
-	}
-
-	if resp.StatusCode != 200 {
-		return 0, fmt.Errorf("failed to get agent balance, status: %d, response: %s", resp.StatusCode, string(body))
-	}
-
-	// Parse response to get balance
-	var response map[string]interface{}
-	if err := json.Unmarshal(body, &response); err != nil {
-		return 0, fmt.Errorf("failed to parse response: %w", err)
-	}
-
-	// Extract balance from response
-	balance, ok := response["balance"]
-	if !ok {
-		return 0, fmt.Errorf("balance not found in response: %s", string(body))
-	}
-
-	// Convert balance to float64
-	switch v := balance.(type) {
-	case float64:
-		return v, nil
-	case int:
-		return float64(v), nil
-	case string:
-		if f, err := strconv.ParseFloat(v, 64); err == nil {
-			return f, nil
-		}
-		return 0, fmt.Errorf("invalid balance format: %s", v)
-	default:
-		return 0, fmt.Errorf("unexpected balance type: %T", balance)
-	}
-}
-
 // createUser creates a new user in the HonorLink API
 func createUser(username string) error {
 	reqURL := fmt.Sprintf("%s/user/create", baseURL)

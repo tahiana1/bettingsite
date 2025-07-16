@@ -4,7 +4,7 @@ WORKDIR /app
 
 EXPOSE 3000
 COPY package.json package-lock.json ./
-RUN npm ci -f
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 CMD ["npm", "run", "dev"]

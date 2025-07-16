@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	controllers "github.com/hotbrainy/go-betting/backend/api/controllers"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
@@ -362,7 +364,7 @@ func GetDashboard(c *gin.Context) {
 	// 11. Connected users (users who logged in today)
 	var connectedUsers int64
 	initializers.DB.Model(&models.User{}).
-		Where("DATE(last_login_at) = ?", today).
+		Where("DATE(updated_at) = ?", today).
 		Count(&connectedUsers)
 
 	// 12. Today's subscribers (new users registered today)
@@ -430,13 +432,78 @@ func GetDashboard(c *gin.Context) {
 
 	// 4.1. HonorLink balance
 	var honorLinkBalance float64 = 0
-	var err error
-	honorLinkBalance, err = controllers.GetAgentBalanceValue()
-	fmt.Printf("HonorLink balance: %v\n", honorLinkBalance)
+	const (
+		baseURL     = "https://api.honorlink.org/api"
+		bearerToken = "bZmLGdUGa123lKpTvxU9uFbDtCQUa0pdLzNfbxkn79f33cc4"
+	)
+
+	// Make request to HonorLink API with proper error handling
+	reqURL := fmt.Sprintf("%s/my-info", baseURL)
+
+	req, err := http.NewRequest("GET", reqURL, nil)
 	if err != nil {
-		fmt.Printf("Failed to get HonorLink balance: %v\n", err)
+		fmt.Printf("Failed to create request: %v\n", err)
 		honorLinkBalance = 0
+	} else {
+		req.Header.Set("Authorization", "Bearer "+bearerToken)
+		req.Header.Set("Content-Type", "application/json")
+
+		// Create HTTP client with timeout
+		client := &http.Client{
+			Timeout: 10 * time.Second,
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Printf("Failed to make request: %v\n", err)
+			honorLinkBalance = 0
+		} else {
+			defer resp.Body.Close()
+
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				fmt.Printf("Failed to read response: %v\n", err)
+				honorLinkBalance = 0
+			} else if resp.StatusCode != 200 {
+				fmt.Printf("Failed to get agent balance, status: %d, response: %s\n", resp.StatusCode, string(body))
+				honorLinkBalance = 0
+			} else {
+				// Parse response to get balance
+				var responseData map[string]interface{}
+				if err := json.Unmarshal(body, &responseData); err != nil {
+					fmt.Printf("Failed to parse response: %v\n", err)
+					honorLinkBalance = 0
+				} else {
+					// Safely extract balance from response with type checking
+					if balanceValue, exists := responseData["balance"]; exists {
+						switch v := balanceValue.(type) {
+						case float64:
+							honorLinkBalance = v
+						case int:
+							honorLinkBalance = float64(v)
+						case int64:
+							honorLinkBalance = float64(v)
+						case string:
+							if parsed, err := fmt.Sscanf(v, "%f", &honorLinkBalance); err != nil || parsed != 1 {
+								fmt.Printf("Failed to parse balance string: %v\n", err)
+								honorLinkBalance = 0
+							}
+						default:
+							fmt.Printf("Unexpected balance type: %T, value: %v\n", balanceValue, balanceValue)
+							honorLinkBalance = 0
+						}
+						fmt.Printf("HonorLink balance: %f\n", honorLinkBalance)
+
+					} else {
+						fmt.Printf("Balance field not found in response\n")
+						honorLinkBalance = 0
+					}
+				}
+			}
+		}
 	}
+
+	fmt.Println("honorLinkBalance", honorLinkBalance)
 
 	// Update stats with additional fields
 	stats.ConnectedUsers = connectedUsers
@@ -449,7 +516,8 @@ func GetDashboard(c *gin.Context) {
 	stats.NumberOfWithdrawalToday = numberOfWithdrawalToday
 	stats.NumberOfBettingMembersToday = numberOfBettingMembersToday
 	stats.NumberOfBetsToday = numberOfBetsToday
-	stats.HonorLinkBalance = &honorLinkBalance
+	stats.HonorLinkBalance = honorLinkBalance
+	response.Stats.HonorLinkBalance = honorLinkBalance
 
 	c.JSON(200, response)
 }

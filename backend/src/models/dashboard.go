@@ -15,19 +15,19 @@ type DashboardStats struct {
 	NumberOfVisiters     int     `json:"numberOfVisiters"`
 
 	// Additional fields for admin layout
-	DepositToday              float64  `json:"depositToday"`
-	WithdrawToday             float64  `json:"withdrawToday"`
-	TotalBalance              float64  `json:"totalBalance"`
-	TotalPoints               int64    `json:"totalPoints"`
-	TodayWinners              int64    `json:"todayWinners"`
-	BettingToday              float64  `json:"bettingToday"`
-	TotalLoss                 float64  `json:"totalLoss"`
-	TotalSalesLossToday       float64  `json:"totalSalesLossToday"`
-	TodaysDistributionRolling float64  `json:"todaysDistributionRolling"`
-	SportsPendingBetting      int64    `json:"sportsPendingBetting"`
-	SportsRebateBetting       int64    `json:"sportsRebateBetting"`
-	RollingTotal              float64  `json:"rollingTotal"`
-	HonorLinkBalance          *float64 `json:"honorLinkBalance"`
+	DepositToday              float64 `json:"depositToday"`
+	WithdrawToday             float64 `json:"withdrawToday"`
+	TotalBalance              float64 `json:"totalBalance"`
+	TotalPoints               int64   `json:"totalPoints"`
+	TodayWinners              int64   `json:"todayWinners"`
+	BettingToday              float64 `json:"bettingToday"`
+	TotalLoss                 float64 `json:"totalLoss"`
+	TotalSalesLossToday       float64 `json:"totalSalesLossToday"`
+	TodaysDistributionRolling float64 `json:"todaysDistributionRolling"`
+	SportsPendingBetting      int64   `json:"sportsPendingBetting"`
+	SportsRebateBetting       int64   `json:"sportsRebateBetting"`
+	RollingTotal              float64 `json:"rollingTotal"`
+	HonorLinkBalance          float64 `json:"honorLinkBalance"`
 
 	// Additional fields for admin header tags
 	ConnectedUsers              int64 `json:"connectedUsers"`
