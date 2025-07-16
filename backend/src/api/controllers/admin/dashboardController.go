@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	controllers "github.com/hotbrainy/go-betting/backend/api/controllers"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
@@ -427,6 +428,16 @@ func GetDashboard(c *gin.Context) {
 		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "betting/placingBet", today).
 		Count(&numberOfBetsToday)
 
+	// 4.1. HonorLink balance
+	var honorLinkBalance float64 = 0
+	var err error
+	honorLinkBalance, err = controllers.GetAgentBalanceValue()
+	fmt.Printf("HonorLink balance: %v\n", honorLinkBalance)
+	if err != nil {
+		fmt.Printf("Failed to get HonorLink balance: %v\n", err)
+		honorLinkBalance = 0
+	}
+
 	// Update stats with additional fields
 	stats.ConnectedUsers = connectedUsers
 	stats.TodaysSubscribers = todaysSubscribers
@@ -438,6 +449,7 @@ func GetDashboard(c *gin.Context) {
 	stats.NumberOfWithdrawalToday = numberOfWithdrawalToday
 	stats.NumberOfBettingMembersToday = numberOfBettingMembersToday
 	stats.NumberOfBetsToday = numberOfBetsToday
+	stats.HonorLinkBalance = &honorLinkBalance
 
 	c.JSON(200, response)
 }

@@ -86,6 +86,7 @@ export default function AdminRootLayout({
   useEffect(() => {
     setPathname(window.location.pathname);
     fetchInfo();
+    // fetchHonorLinkBalance();
   }, []);
 
   const fetchInfo = () => {
@@ -94,6 +95,7 @@ export default function AdminRootLayout({
     }).then((res) => {
       if (res) {
         setInfo(res.stats);
+        console.log(res.stats.honorLinkBalance, res.stats, "res.data");
         setTimeout(() => {
           fetchInfo();
         }, 3000);
@@ -101,10 +103,11 @@ export default function AdminRootLayout({
     });
   };
 
+
   const data = [
     {
       label: t("honorLink"),
-      value: 0,
+      value: info.honorLinkBalance || 0,
       color: "cyan",
     },
     {
