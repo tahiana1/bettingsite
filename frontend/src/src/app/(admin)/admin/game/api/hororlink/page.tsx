@@ -184,7 +184,7 @@ const GameAPIHororLinkPage: React.FC = () => {
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
-        <Card title={t("admin/menu/gameapi/hororlinksetting")}> 
+        <Card title={t("admin/menu/gameapi/honorlinksetting")}> 
           <div className="flex flex-row justify-between">
             <div className="gap-2 flex ">
               <Button

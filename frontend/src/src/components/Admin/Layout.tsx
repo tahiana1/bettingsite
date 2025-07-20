@@ -425,43 +425,59 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/api/hororlink",
-          label: t("admin/menu/gameapi/hororlink"),
+          key: "admin/game/api/honorlink",
+          label: t("admin/menu/gameapi/honorlink"),
         },
-        {
-          key: "admin/game/api/khan",
-          label: t("admin/menu/gameapi/khan"),
-        },
-        {
-          key: "admin/game/api/redfox",
-          label: t("admin/menu/gameapi/redfox"),
-        },
-        {
-          key: "admin/game/api/revolution",
-          label: t("admin/menu/gameapi/revolution"),
-        },
-        {
-          key: "admin/game/api/slotcity",
-          label: t("admin/menu/gameapi/slotcity"),
-        },
-        {
-          key: "admin/game/api/swix",
-          label: t("admin/menu/gameapi/swix"),
-        },
-        {
-          key: "admin/game/api/wildgames",
-          label: t("admin/menu/gameapi/wildgames"),
-        },
+        // {
+        //   key: "admin/game/api/khan",
+        //   label: t("admin/menu/gameapi/khan"),
+        // },
+        // {
+        //   key: "admin/game/api/redfox",
+        //   label: t("admin/menu/gameapi/redfox"),
+        // },
+        // {
+        //   key: "admin/game/api/revolution",
+        //   label: t("admin/menu/gameapi/revolution"),
+        // },
+        // {
+        //   key: "admin/game/api/slotcity",
+        //   label: t("admin/menu/gameapi/slotcity"),
+        // },
+        // {
+        //   key: "admin/game/api/swix",
+        //   label: t("admin/menu/gameapi/swix"),
+        // },
+        // {
+        //   key: "admin/game/api/wildgames",
+        //   label: t("admin/menu/gameapi/wildgames"),
+        // },
       ],
     },
     {
       key: "admin/game/mini",
-      label: t("admin/menu/mini"),
+      label: t("admin/menu/miniManagement"),
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/mini/setting",
-          label: t("admin/menu/mini"),
+          key: "admin/game/mini/miniManagement",
+          label: t("admin/menu/miniManagement"),
+        },
+        {
+          key: "admin/game/mini/miniGameUrlManagement",
+          label: t("admin/menu/miniGameUrlManagement"),
+        },
+        {
+          key: "admin/game/mini/miniGameApiManagement",
+          label: t("admin/menu/miniGameApiManagement"),
+        },
+        {
+          key: "admin/game/mini/settingsByMinigameType",
+          label: t("admin/menu/settingsByMinigameType"),
+        },
+        {
+          key: "admin/game/mini/miniInsuranceApiManagement",
+          label: t("admin/menu/miniInsuranceApiManagement"),
         },
       ],
     },
@@ -640,8 +656,16 @@ export default function AdminRootLayout({
       icon: <InboxOutlined />,
       children: [
         {
-          key: "admin/inbox/custom",
-          label: t("admin/menu/inbox"),
+          key: "admin/inbox/noteList",
+          label: t("admin/menu/noteList"),
+        },
+        {
+          key: "admin/inbox/groupMessageList",
+          label: t("admin/menu/groupMessageList"),
+        },
+        {
+          key: "admin/inbox/simpleNote",
+          label: t("admin/menu/simpleNote"),
         },
       ],
     },
@@ -651,8 +675,28 @@ export default function AdminRootLayout({
       icon: <InboxOutlined />,
       children: [
         {
-          key: "admin/statistical/custom",
-          label: t("admin/menu/statistical"),
+          key: "admin/statistical/headOfficeSettlementStatement",
+          label: t("admin/menu/headOfficeSettlementStatement"),
+        },
+        {
+          key: "admin/statistical/siteStatistics",
+          label: t("admin/menu/siteStatistics"),
+        },
+        {
+          key: "admin/statistical/generalDistributorDailyStatistics",
+          label: t("admin/menu/generalDistributorDailyStatistics"),
+        },
+        {
+          key: "admin/statistical/statisticsByDistributor",
+          label: t("admin/menu/statisticsByDistributor"),
+        },
+        {
+          key: "admin/statistical/attendanceStatistics",
+          label: t("admin/menu/attendanceStatistics"),
+        },
+        {
+          key: "admin/statistical/stepByStepStatistics",
+          label: t("admin/menu/stepByStepStatistics"),
         },
       ],
     },
