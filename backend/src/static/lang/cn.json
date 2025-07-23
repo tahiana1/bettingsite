@@ -1476,5 +1476,7 @@
   "admin/menu/stepByStepStatistics" : "按步骤统计",
   "admin/menu/noteList" : "笔记列表",
   "admin/menu/groupMessageList" : "群消息列表",
-  "admin/menu/simpleNote" : "简单笔记"
+  "admin/menu/simpleNote" : "简单笔记",
+  "user/slot" : "老虎机游戏",
+  "user/slot/description" : "超过1,000个主要老虎机游戏，保证公平和乐趣"
 }

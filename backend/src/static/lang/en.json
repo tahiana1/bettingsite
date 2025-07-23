@@ -1474,5 +1474,7 @@
   "admin/menu/stepByStepStatistics" : "Step by Step Statistics",
   "admin/menu/noteList" : "Note List",
   "admin/menu/groupMessageList" : "Group Message List",
-  "admin/menu/simpleNote" : "Simple Note"
+  "admin/menu/simpleNote" : "Simple Note",
+  "user/slot" : "Slot Game",
+  "user/slot/description" : "Over 1,000 major slot games with guaranteed fairness and fun"
 }

@@ -310,7 +310,7 @@ const Casino: React.FC = () => {
                         <div className="z-[3] absolute w-full top-1 justify-center flex">
                             <Image src={provider.logo} alt={provider.name} width={100} height={100} />
                         </div>
-                        <div className="z-[3] absolute max-h-[24px] overflow-hidden w-full justify-center flex top-[48px]">
+                        <div className="z-[3] absolute overflow-hidden w-full justify-center flex top-[40px]">
                             <span className="text-[25px] text-[yellow] font-bold">{provider.name}</span>
                         </div>
                         <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />

@@ -121,4 +121,9 @@ func GetV1Route(r *gin.RouterGroup) {
 		casinoRouter.GET("/add-balance", controllers.AddBalance)
 		casinoRouter.GET("/withdraw", controllers.Withdraw)
 	}
+
+	slotRouter := r.Group("/slot")
+	{
+		slotRouter.GET("/get-game-items", controllers.GetGameItems)
+	}
 }

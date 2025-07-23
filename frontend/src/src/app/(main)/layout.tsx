@@ -17,6 +17,7 @@ import { showBettingCartState, userState } from "@/state/state";
 import api from "@/api";
 import CasinoSidebar from "@/components/Casino/CasinoSidebar";
 import { useRouter , usePathname} from "next/navigation";
+import SlotSidebar from "@/components/Slot/SlotSidebar";
 /* 
 export const metadata: Metadata = {
   title: "Betting",
@@ -52,7 +53,16 @@ export default function RootLayout({
           collapsible
         >
           {
-            pathname === "/casino"  ?  (<CasinoSidebar />) : (<EventSidebar />)
+            pathname === "/casino"  ?  (<CasinoSidebar />) : null
+          }
+          {
+            pathname === "/slot" ? (<SlotSidebar />) : null
+          }
+          {
+            pathname === "/home" ? (<EventSidebar />) : null
+          }
+           {
+            pathname === "/" ? (<EventSidebar />) : null
           }
         </Splitter.Panel>
         <Splitter.Panel
