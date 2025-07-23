@@ -9,4 +9,5 @@ import (
 func GetSlotRoute(r *gin.RouterGroup) {
 	r.Use(middleware.RequireAuth)
 	r.GET("/get-game-items", controllers.GetGameItems)
+	r.GET("/get-game-launch-link", controllers.GetSlotLaunchLink)
 }

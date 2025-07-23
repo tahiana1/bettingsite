@@ -246,6 +246,47 @@ const SlotPage: React.FC = () => {
         });
     };
 
+    const getGameLaunchLink = (gameName: string, gameId: string) => {
+        api("slot/get-game-launch-link", {
+            method: "GET",
+            params: {
+                game_id: gameId,
+                vendor: gameName.toLowerCase(),
+                username: userId,
+                nickname: profile?.nickname
+            }
+        }).then((res) => {
+            const newWindow = window.open(res.data, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+            
+            if (newWindow) {
+                console.log('✅ Popup window opened successfully');
+                setPopupWindow(newWindow);
+                popupGameName.current = gameName; // Store the game name
+                handlePopupOpen(gameName);
+                
+                // Check if popup is closed every 2 seconds
+                popupCheckInterval.current = setInterval(() => {
+                    checkPopupClosed(gameName);
+                }, 2000);
+                
+                // Also try to add an onbeforeunload event listener to the popup
+                try {
+                    newWindow.onbeforeunload = () => {
+                        console.log(`🔄 Popup window unloading for ${gameName}`);
+                        handlePopupClose(gameName);
+                    };
+                } catch (error) {
+                    console.log('⚠️ Could not add onbeforeunload listener (cross-origin restriction)');
+                }
+            } else {
+                console.log('❌ Popup blocked by browser');
+                message.error('Popup blocked by browser. Please allow popups for this site.');
+            }
+        }).catch((err) => {
+            console.log(err, 'err');
+        });
+    }
+
     const checkPopupClosed = (gameName: string) => {
         try {
             if (popupWindow) {
@@ -349,7 +390,7 @@ const SlotPage: React.FC = () => {
                     return( <div
                         key={provider.name}
                         className="relative cursor-pointer w-[200px] border-1 border-black h-[220px]"
-                        // onClick={() => ProcessSlot(provider.id)}
+                        onClick={() => getGameLaunchLink(selectedGame, provider.id)}
                         >
                         {
                             loading && selectedGame === provider.name && <Spin className="flex z-[1000] justify-center items-center absolute top-[100px] left-0 w-full h-full" />

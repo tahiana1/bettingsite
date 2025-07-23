@@ -125,5 +125,6 @@ func GetV1Route(r *gin.RouterGroup) {
 	slotRouter := r.Group("/slot")
 	{
 		slotRouter.GET("/get-game-items", controllers.GetGameItems)
+		slotRouter.GET("/get-game-launch-link", controllers.GetSlotLaunchLink)
 	}
 }
