@@ -152,6 +152,27 @@ const BankPage: React.FC = () => {
       render: (v: number) => v,
     },
     {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      width: 50,
+      render: (v: boolean, record: Bank) => (
+        <Switch
+          checked={v}
+          onChange={(checked) => {
+            updateBank({
+              variables: {
+                id: record.id,
+                input: { status: checked },
+              },
+            }).then(() => {
+              refetch(tableOptions);
+            });
+          }}
+        />
+      ),
+    },
+    {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",

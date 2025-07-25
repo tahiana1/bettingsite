@@ -129,6 +129,10 @@ func (br *bankReader) CreateBank(ctx context.Context, updates model.NewBankInput
 	if updates.OrderNum != nil {
 		bank.OrderNum = *updates.OrderNum
 	}
+
+	if updates.Status != nil {
+		bank.Status = *updates.Status
+	}
 	fmt.Println(updates)
 
 	if err := br.db.Save(&bank).Error; err != nil {
@@ -159,6 +163,10 @@ func (br *bankReader) UpdateBank(ctx context.Context, nID uint, updates model.Up
 
 	if updates.OrderNum != nil {
 		bank.OrderNum = *updates.OrderNum
+	}
+
+	if updates.Status != nil {
+		bank.Status = *updates.Status
 	}
 
 	br.db.Save(bank)
