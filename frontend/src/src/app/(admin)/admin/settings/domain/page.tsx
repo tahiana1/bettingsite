@@ -14,6 +14,7 @@ import {
   Flex,
   Descriptions,
   Space,
+  message,
 } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -24,7 +25,7 @@ import { useMutation, useQuery } from "@apollo/client";
 
 const DomainSettingPage: React.FC = () => {
   const t = useTranslations();
-  const { data } = useQuery(GET_DOMAINS);
+  const { data, loading, error } = useQuery(GET_DOMAINS);
   const [updateDomain] = useMutation(UPDATE_DOMAIN);
   const [domains, setDomains] = useState<any[]>([]);
   const opt = [
@@ -95,17 +96,74 @@ const DomainSettingPage: React.FC = () => {
     label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
   }));
   const onSubmitSetting = (v: any) => {
+    console.log("Form values received:", v);
+    
     const { id, ...input } = v;
+    
+    console.log("Extracted ID:", id);
+    console.log("Extracted input:", input);
+
+    if (!id) {
+      console.error("No ID found in form values");
+      return;
+    }
+
+    // Ensure ID is a string as required by GraphQL
+    const domainId = String(id);
+    
+    // Clean up the input - remove any undefined values
+    const cleanInput = Object.fromEntries(
+      Object.entries(input).filter(([_, value]) => value !== undefined)
+    );
+
+    console.log("Cleaned input:", cleanInput);
+
     updateDomain({
       variables: {
-        id,
-        input,
+        id: domainId,
+        input: cleanInput,
       },
-    });
+    })
+      .then((result) => {
+        console.log("Update successful:", result);
+        message.success("Domain updated successfully!");
+      })
+      .catch((error) => {
+        console.error("Update failed:", error);
+        message.error(`Update failed: ${error.message || 'Unknown error'}`);
+      });
   };
   useEffect(() => {
-    setDomains(data?.response?.domains ?? []);
+    if (data?.response?.domains) {
+      console.log("Domains loaded:", data.response.domains);
+      setDomains(data.response.domains);
+    }
   }, [data]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+          <Card title={t("admin/menu/domainSetting")} loading={true}>
+            Loading domains...
+          </Card>
+        </Content>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+          <Card title={t("admin/menu/domainSetting")}>
+            <div>Error loading domains: {error.message}</div>
+          </Card>
+        </Content>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -113,9 +171,12 @@ const DomainSettingPage: React.FC = () => {
           <Radio.Group options={opt} optionType="button" buttonStyle="solid" />
           <Divider />
           <Flex wrap className="!w-full">
-            {domains.map((d, index) => (
+            {domains.length === 0 ? (
+              <div>No domains found.</div>
+            ) : (
+              domains.map((d, index) => (
               <Card
-                className="!w-1/2"
+                className="!w-1/3"
                 title={`${index + 1} - ${d.name}`}
                 type="inner"
                 key={`${index + 1}-${d.name}`}
@@ -195,25 +256,25 @@ const DomainSettingPage: React.FC = () => {
                             className="justify-between"
                           >
                             <Form.Item name="useTelegram" className="!p-0 !m-0">
-                              <Switch />
+                              <Switch value={d.useTelegram}/>
                             </Form.Item>
                             <Form.Item
                               name="useKakaoTalk"
                               className="!p-0 !m-0"
                             >
-                              <Switch />
+                              <Switch value={d.useKakaoTalk}/>
                             </Form.Item>
                             <Form.Item
                               name="useServiceCenter"
                               className="!p-0 !m-0"
                             >
-                              <Switch />
+                              <Switch value={d.useServiceCenter}/>
                             </Form.Item>
                             <Form.Item
                               name="useLiveDomain"
                               className="!p-0 !m-0"
                             >
-                              <Switch />
+                              <Switch value={d.useLiveDomain}/>
                             </Form.Item>
                           </Space>
                         ),
@@ -287,7 +348,8 @@ const DomainSettingPage: React.FC = () => {
                   </Form.Item>
                 </Form>
               </Card>
-            ))}
+              ))
+            )}
           </Flex>
         </Card>
       </Content>
