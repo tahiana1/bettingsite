@@ -181,6 +181,7 @@ export default function AdminRootLayout({
       value: info.sportsRebateBetting,
       color: "lightgreen",
     },
+
   ];
 
   const onLogout = () => {
@@ -392,6 +393,10 @@ export default function AdminRootLayout({
           key: "admin/settings/bank",
           label: t("admin/menu/bankSetting"),
         },
+        {
+          key: "admin/settings/level",
+          label: t("admin/menu/levelSetting"),
+        }
       ],
     },
     {

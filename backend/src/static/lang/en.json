@@ -1476,5 +1476,11 @@
   "admin/menu/groupMessageList" : "Group Message List",
   "admin/menu/simpleNote" : "Simple Note",
   "user/slot" : "Slot Game",
-  "user/slot/description" : "Over 1,000 major slot games with guaranteed fairness and fun"
+  "user/slot/description" : "Over 1,000 major slot games with guaranteed fairness and fun",
+  "admin/menu/levelSetting" : "Level",
+  "admin/menu/levelSettingTitle" : "Level Setting",
+  "levelVIP1" : "VIP 1",
+  "levelVIP2" : "VIP 2",
+  "levelPremium" : "Premium",
+  "level1Setting" : "Level 1 Setting"
 }

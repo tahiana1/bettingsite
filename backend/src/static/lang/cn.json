@@ -1478,5 +1478,10 @@
   "admin/menu/groupMessageList" : "群消息列表",
   "admin/menu/simpleNote" : "简单笔记",
   "user/slot" : "老虎机游戏",
-  "user/slot/description" : "超过1,000个主要老虎机游戏，保证公平和乐趣"
+  "user/slot/description" : "超过1,000个主要老虎机游戏，保证公平和乐趣",
+  "admin/menu/levelSetting" : "等级",
+  "admin/menu/levelSettingTitle" : "等级设置",
+  "levelVIP1" : "VIP1",
+  "levelVIP2" : "VIP2",
+  "levelPremium" : "高级"
 }
