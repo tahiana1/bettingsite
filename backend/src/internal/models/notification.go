@@ -18,9 +18,9 @@ type Notification struct {
 	Level        uint            `json:"level" gorm:"default:0"`
 	DomainID     *uint           `json:"domainId" gorm:"index"`
 	Domain       *Domain         `json:"domain" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	RegisterDate *time.Time      `json:"registerDate"`
+	RegisterDate time.Time       `json:"registerDate"`
 	Views        uint            `json:"views"`
-	CreatedAt    *time.Time      `json:"createdAt"`
-	UpdatedAt    *time.Time      `json:"updatedAt"`
+	CreatedAt    time.Time       `json:"createdAt"`
+	UpdatedAt    time.Time       `json:"updatedAt"`
 	DeletedAt    *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
 }
