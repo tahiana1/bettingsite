@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button, Card } from "antd";
+import { Button, Card, Form, Input, InputNumber } from "antd";
 import { useTranslations } from "next-intl";
 
 export default function LevelPage() {
@@ -30,7 +30,17 @@ export default function LevelPage() {
             headStyle={{ backgroundColor: 'black', color: 'white' }}
         >
             <div>
-                
+                <Form
+                    layout="vertical"
+                    onFinish={() => {}}
+                >
+                    <Form.Item label={t("level1Setting")} name="level1Setting">
+                        <label className="flex items-center gap-2">
+                            <div className="min-w-[100px]">{t("currency")}</div>
+                            <InputNumber min={0} max={1000000000} addonAfter={t("currency")} />
+                        </label>
+                    </Form.Item>
+                </Form>
             </div>
         </Card>
     </div>
