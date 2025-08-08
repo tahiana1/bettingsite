@@ -607,8 +607,12 @@ export default function AdminRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "admin/game/bettingstatus/sports",
-          label: t("admin/menu/bettingStatus"),
+          key: "admin/game/bettingstatus/casinoLive",
+          label: t("admin/menu/bettingStatus/casinoLive"),
+        },
+        {
+          key: "admin/game/bettingstatus/casinoSlot",
+          label: t("admin/menu/bettingStatus/casinoSlot"),
         },
       ],
     },

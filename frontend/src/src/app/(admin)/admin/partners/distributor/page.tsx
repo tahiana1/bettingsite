@@ -1357,10 +1357,10 @@ const PartnerPage: React.FC = () => {
                 <Form.Item>
                   <Radio.Group
                     buttonStyle="solid"
-                    className="w-full"
+                    className="w-full "
                     onChange={onAmountChange}
                   >
-                    <Space.Compact className="w-full flex flex-wrap gap-2">
+                    <Space.Compact className="w-full mt-4 flex flex-wrap gap-2">
                       <Radio.Button value={1000}>
                         {f.number(1000, { style: "currency", currency: "USD" })}
                       </Radio.Button>
