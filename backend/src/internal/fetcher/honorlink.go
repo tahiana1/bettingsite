@@ -41,6 +41,9 @@ type Details struct {
 type Game struct {
 	Vendor string `json:"vendor"`
 	Type   string `json:"type"`
+	Id     string `json:"id"`
+	Title  string `json:"title"`
+	Round  string `json:"round"`
 }
 
 // GetIDString returns the ID as a string, handling both string and numeric IDs
@@ -240,6 +243,25 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		return
 	}
 
+	//insert the bet history on CasinoBet table
+	if hlTransaction.Type == "bet" || hlTransaction.Type == "win" {
+		casinoBet := models.CasinoBet{
+			UserID:       user.ID,
+			Amount:       hlTransaction.Amount,
+			Type:         hlTransaction.Type,
+			GameName:     hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+			TransID:      hlTransaction.GetIDString(),
+			Details:      hlTransaction.Details,
+			BeforeAmount: hlTransaction.BalanceBefore,
+			AfterAmount:  hlTransaction.BalanceBefore + hlTransaction.Amount,
+			Status:       hlTransaction.Status,
+			BettingTime:  uint(hlTransaction.CreatedAt.Unix()),
+		}
+		if err := initializers.DB.Create(&casinoBet).Error; err != nil {
+			fmt.Printf("❌ Error creating casino bet record: %v\n", err)
+			return
+		}
+	}
 	// Calculate balance before and after
 	var balanceBefore float64
 	var gameType string

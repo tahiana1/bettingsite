@@ -130,6 +130,7 @@ func ConnectDB() {
 		models.SMSApi{},
 		models.Qna{},
 		models.GameAPI{},
+		models.CasinoBet{},
 	)
 
 	if err != nil {
