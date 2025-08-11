@@ -1649,5 +1649,8 @@
   "sameDayRepleishmentBonus%(afterWithdrawal)" : "同日充值奖励%(提款后)",
   "restrictionsApplyAfterWithdrawalOfSurpriseBonus" : "惊喜奖励提款后限制",
   "admin/game/bettingStatus/casinoLive" : "真人娱乐场",
-  "admin/game/bettingStatus/casinoSlot" : "老虎机游戏"
+  "admin/game/bettingStatus/casinoSlot" : "老虎机游戏",
+  "login" : "登录",
+  "joinUs" : "加入我们",
+  "playOnlineCasinoWinMoneyUnlimited" : "在线赌博 & 赢取无限金钱。"
 }

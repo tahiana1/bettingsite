@@ -1651,5 +1651,8 @@
   "sameDayRepleishmentBonus%(afterWithdrawal)" : "Same Day Repleishment Bonus % (After Withdrawal)",
   "restrictionsApplyAfterWithdrawalOfSurpriseBonus" : "Restrictions Apply After Withdrawal Of Surprise Bonus",
   "admin/menu/bettingStatus/casinoLive" : "Casino Live",
-  "admin/menu/bettingStatus/casinoSlot" : "Casino Slot"
+  "admin/menu/bettingStatus/casinoSlot" : "Casino Slot",
+  "login" : "Login",
+  "joinUs" : "Join Us",
+  "playOnlineCasinoWinMoneyUnlimited" : "Play Online Casino & Win Money Unlimited."
 }

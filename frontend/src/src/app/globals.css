@@ -15,4 +15,115 @@
 
 .animate-scroll:hover {
   animation-play-state: paused;
-} 
+}
+
+/* Header Buttons Styling */
+.header-button {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid;
+  letter-spacing: 0.5px;
+  text-wrap: nowrap;
+}
+
+.header-button.btn-login {
+	background: #FFFFFF00;
+	border: 1px solid #fce18f;
+	box-shadow: none;
+  color : #fce18f;
+  font-weight: 900;
+	transition: all 0.3s ease;
+}
+
+.header-button.btn-joinnow {
+	background: linear-gradient(180deg, #fce18f 0%, #774b03 100%);
+	box-shadow: 0px 0px 30px 0px rgba(255, 234, 159, 0.7);
+	transition: all 0.3s ease;
+  font-weight: 900;
+	border: #ffe991 solid 1px;
+}
+
+.header-button.btn-joinnow:hover,
+.header-button.btn-login:hover {
+	transition: all 0.3s ease;
+	background: linear-gradient(180deg, #774b03 0%, #fce18f 100%);
+	color: var(--primary-color);
+}
+
+.header-button.btn-login a{
+	color: #ffe991 !important;
+	font-weight: 900 !important;
+}
+
+.header-button.btn-login a:hover{
+	color: #ffffff !important;
+}
+
+.header-button.btn-joinnow a{
+	color: #fff;
+	font-weight: 900;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+}
+
+.language-switcher button {
+  padding: 0;
+  width: 40px;
+}
+.language-switcher button img {
+  width: 100%;
+}
+
+.nav-item-menu li:hover {
+  color : #fce18f;
+}
+
+.banner .banner-left h2{
+  font-size: 58px;
+	font-weight: 700;
+	text-transform: capitalize;
+	text-shadow: 3px 3px 0px rgba(148, 5, 141, 0.7);
+	color: white;
+	margin-bottom: 0;
+}
+
+.section-title {
+	font-size: 50px;
+  display: flex;
+  justify-content: center;
+	font-weight: 700;
+	text-transform: capitalize;
+	text-shadow: 3px 3px 0px rgba(148, 5, 141, 0.7);
+	color: white;
+	margin-bottom: 0;
+}
+
+.banner {
+	/* background: url('../image/hero-stripe.svg') no-repeat center center; */
+	background: url('../assets/img/main/hero-bg.png') no-repeat center center;
+
+	background-size: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.jackpot-section {
+  background-color: black;
+  background-image: url('../assets/img/main/jackpot-bg.png');
+  background-size: cover;
+	width: 100%;
+	height: 100%;
+}
+
+.bg-image-game-item {
+	background-image: url('../assets/img/main/game-box-body-bg.png');
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+.casino-game-grid-item {
+	border: solid 1px #ffd273;
+}

@@ -48,21 +48,16 @@ export default function RootLayout({
           algorithm: isDarkTheme ? theme.darkAlgorithm : theme.defaultAlgorithm,
         }}
       >
-        <LayoutContext.Provider
-          value={{ isDarkTheme, collapsed, setCollapsed }}
-        >
-          <WebSocketTracker />
+        <WebSocketTracker />
           <Head />
-          <Layout className="min-h-screen" hasSider={false}>
+          <Layout hasSider={false} style={{background: 'transparent'}}>
             <Content>{children}</Content>
-            {/* <Footer className="md:hidden !fixed bottom-0 w-full">Here is the footer</Footer> */}
           </Layout>
-        </LayoutContext.Provider>
       </ConfigProvider>
     </ApolloProvider>
   ) : (
     <div className="flex justify-center items-center h-screen">
-      <Image src={Loading} alt="Toto Admin" width={100} height={100} />
+      {/* <Image src={Loading} alt="Toto Admin" width={100} height={100} /> */}
     </div>
   );
 }

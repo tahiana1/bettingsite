@@ -12,6 +12,7 @@ import "@ant-design/v5-patch-for-react-19";
 import { ConfigProvider } from "antd";
 import JotaiContextProvider from "@/contexts/JotaiContextProvider";
 // import { AuthProvider } from "@/context/AuthContext";
+import "./globals.css";
 
 import zhCN from "antd/locale/zh_CN";
 import enUS from "antd/locale/en_US";
