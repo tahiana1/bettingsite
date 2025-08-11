@@ -17,6 +17,24 @@
   animation-play-state: paused;
 }
 
+@keyframes scrollVertical {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animate-scroll-vertical {
+  animation: scrollVertical 15s linear infinite;
+  display: block;
+}
+
+.animate-scroll-vertical:hover {
+  animation-play-state: paused;
+}
+
 /* Header Buttons Styling */
 .header-button {
   padding: 8px 20px;
@@ -92,8 +110,8 @@
 
 .section-title {
 	font-size: 50px;
-  display: flex;
-  justify-content: center;
+  	display: flex;
+  	justify-content: center;
 	font-weight: 700;
 	text-transform: capitalize;
 	text-shadow: 3px 3px 0px rgba(148, 5, 141, 0.7);
@@ -126,4 +144,23 @@
 
 .casino-game-grid-item {
 	border: solid 1px #ffd273;
+}
+
+.btn-contact {
+	border-radius: 10px;
+	background: linear-gradient( #f5b774,#2c1700) padding-box, linear-gradient(to bottom, #ffcf7c, #ffd66f36) border-box;
+	background-color: #695333;
+  	border: 2px solid transparent;
+	box-shadow:4px 2px 10px 2px rgba(243, 222, 128, 0.3);
+	transition: all 500ms;
+}
+
+.animate-spin {
+	animation: spin 1s linear infinite;
+}
+
+@media only screen and (max-width: 767px) {
+	.section-title {
+		font-size: 35px;
+	}
 }

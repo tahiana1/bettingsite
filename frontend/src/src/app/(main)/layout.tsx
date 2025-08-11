@@ -10,6 +10,8 @@ import { showBettingCartState, userState } from "@/state/state";
 import api from "@/api";
 import { useRouter , usePathname} from "next/navigation";
 import Image from "next/image";
+import BoardPage from "@/components/Board/BoardPage";
+import { useTranslations } from "next-intl";
 
 // Import ficon logos for carousel
 import btgLogo from "@/assets/img/ficon/btg.png";
@@ -51,6 +53,12 @@ import dreamgameFiconLogo from "@/assets/img/ficon/dreamgame.png";
 import evolutionFiconLogo from "@/assets/img/ficon/evolution.png";
 import pragmaticFiconLogo from "@/assets/img/ficon/pragmatic.png";
 import wmFiconLogo from "@/assets/img/ficon/wm.png";
+
+import LogoImage from "@/assets/img/logo.png"
+
+import PhoneImage from "@/assets/img/contact/phone.png"
+import TelegramImage from "@/assets/img/contact/telegram.png"
+import TalkImage from "@/assets/img/contact/kakao.png"
 
 // Logo Carousel Component
 interface LogoCarouselProps {
@@ -117,7 +125,7 @@ const LogoCarousel: React.FC<LogoCarouselProps> = ({ logos }) => {
               <Image
                 src={company.logo}
                 alt={`${company.name} logo`}
-                className="h-12 w-auto max-w-[120px]  object-contain filter brightness-90 contrast-110 hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="h-12 w-auto max-w-[120px] object-contain filter brightness-90 contrast-110 hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer"
                 width={120}
                 height={48}
               />
@@ -129,7 +137,7 @@ const LogoCarousel: React.FC<LogoCarouselProps> = ({ logos }) => {
               <Image
                 src={company.logo}
                 alt={`${company.name} logo`}
-                className="h-12 w-auto max-w-[120px]  object-contain filter brightness-90 contrast-110 hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer"
+                className="h-12 w-auto max-w-[120px] object-contain filter brightness-90 contrast-110 hover:brightness-110 hover:scale-105 transition-all duration-300 cursor-pointer"
                 width={120}
                 height={48}
               />
@@ -146,6 +154,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const t = useTranslations();
   const pathname = usePathname();
   const [showBettingCart] = useAtom(showBettingCartState);
   const [profile, setProfile] = useAtom<any>(userState);
@@ -164,7 +173,29 @@ export default function RootLayout({
       <div className="w-full my-10">
         <LogoCarousel logos={ficonLogos} />
       </div>
-      
+      <BoardPage />
+      <footer className="flex justify-center flex-col items-center mt-10">
+        <div>
+          <Image src={LogoImage} alt="logoImage" className="xl:w-[250px] w-[170px]"/>
+        </div>
+        <div className="flex justify-center items-center flex-col">
+          <h3 className="xl:text-[28px] text-[22px] font-bold my-5">{t("contactUs")}</h3>
+          <div className="flex items-center justify-center mt-5 gap-6">
+            <button className="btn-contact xl:px-14 xl:py-3 px-8 py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+              <Image src={PhoneImage} alt="phoneImage" width={40} height={40}/>
+            </button>
+            <button className="btn-contact xl:px-14 xl:py-3 px-8 py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+              <Image src={TelegramImage} alt="telegramImage" width={40} height={40}/>
+            </button>
+            <button className="btn-contact xl:px-14 xl:py-3 px-8   py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+              <Image src={TalkImage} alt="talkImage" width={40} height={40}/>
+            </button>
+          </div>
+        </div>
+        <div className="bg-[#000] py-4 mt-14 w-full justify-center flex">
+          <span className="text-[17px] text-center block text-white block">{t("copyright")}</span>
+        </div>
+      </footer>
     </Layout>
   );
 }

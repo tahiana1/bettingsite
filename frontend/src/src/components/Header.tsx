@@ -145,37 +145,37 @@ const Head = () => {
 
   return (
     <div>
-      <header className="py-4 navbar mx-auto flex justify-between items-center max-w-[1300px] mx-auto mx-[15px]">
-        <div>
+      <header className="py-4 navbar mx-auto flex justify-between 2xl:px-0 px-4 items-center max-w-[1300px] mx-auto mx-[15px]">
+        <div className="max-w-[120px]">
           <Link href='/'>
             <Image src={Logo} alt="logo" height={100} className="cursor-pointer"/>
           </Link>
         </div>
-        <div className="w-full flex nav-item-menu mr-[35px]">
+        <div className="w-full nav-item-menu mr-[35px] md:flex hidden">
           <ul className="flex gap-[25px] w-full justify-end">
             <li>  
-              <Link href="/deposit" className="font-bold">
+              <Link href="/deposit" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
                 <span>
                   {t(`deposit`)}
                 </span>
               </Link>
             </li>
             <li>
-              <Link href="/withdraw" className="font-bold">
+              <Link href="/withdraw" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
                 <span>
                   {t(`withdraw`)}
                 </span>
               </Link>
             </li>
             <li>
-              <Link href="/notice" className="font-bold">
+              <Link href="/notice" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
                 <span>
                   {t(`notice`)}
                 </span>
               </Link>
             </li>
             <li>
-              <Link href="/event" className="font-bold">
+              <Link href="/event" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
                 <span>
                   {t(`event`)}
                 </span>
@@ -183,44 +183,47 @@ const Head = () => {
             </li>
           </ul>
         </div>
-        <div className="mr-[35px] language-switcher">
-          <LangSwitcher locale={locale} />
+        <div className="flex items-center">
+          <div className="mr-[10px] md:mr-[35px] language-switcher">
+            <LangSwitcher locale={locale} />
+          </div>
+          <div className="flex gap-2 md:gap-4">
+            <button className="header-button btn-login max-h-[40px]">
+              <span>
+                {t(`login`)}
+              </span>
+            </button>
+            <button className="header-button btn-joinnow max-h-[40px]">
+              <span>
+                {t(`joinUs`)}
+              </span>
+            </button>
+          </div>
         </div>
-        <div className="flex gap-4">
-          <button className="header-button btn-login max-h-[40px]">
-            <span>
-              {t(`login`)}
-            </span>
-          </button>
-          <button className="header-button btn-joinnow max-h-[40px]">
-            <span>
-              {t(`joinUs`)}
-            </span>
-          </button>
-        </div>
+        
       </header>
-      <div className="banner flex min-h-[450px] border-b-[2px] border-[#fce18f]">
+      <div className="banner flex md:min-h-[450px] min-h-[400px] border-b-[2px] md:px-10 px-4 border-[#fce18f]">
         <div className="max-w-[1300px] mx-auto pb-[60px] mx-[15px] flex justify-between items-center">
-          <div className="banner-left w-[50%]">
+          <div className="banner-left w-[50%] md:flex hidden">
             <h2>{t(`playOnlineCasinoWinMoneyUnlimited`)}</h2>
           </div>
-          <div className="banner-right w-[50%] flex justify-center">
+          <div className="banner-right md:w-[50%] w-full flex justify-center">
             <Image src={BannerRight} alt="banner-right"/>
           </div>
         </div>
       </div>
-      <div className="jackpot-section mt-[-60px] max-w-[1350px] mx-auto flex items-center justify-between px-10 rounded-[20px] border-[2px] border-[#fce18f]">
-        <div className="flex items-center relative gap-6 w-full">
-          <div className="jackpot-image">
-            <Image src={Jackpot} alt="jackpot" className="w-[230px] flex absolute bottom-0 left-0" />
+      <div className="jackpot-section mt-[-60px] xl:max-w-[1350px] max-w-[90%] px-4 mx-auto flex items-center justify-between rounded-[20px] border-[2px] border-[#fce18f]">
+        <div className="flex items-center relative gap-6 md:py-0 py-3 w-full xl:flex-row flex-row-reverse">
+          <div className="jackpot-image xl:flex hidden">
+            <Image src={Jackpot} alt="jackpot" className="xl:w-[230px] w-[180px] flex absolute bottom-0 left-0" />
           </div>
-          <div className="jackpot-content text-center w-full justify-between ml-[250px] flex">
-            <div className="jackpot-label gap-0 my-auto">
-              <h5 className="text-[40px] my-0 font-semibold text-white uppercase">Progressive</h5>
-              <h5 className="text-[#fce18f] my-0 text-[40px] font-semibold uppercase">Jackpot</h5>
+          <div className="jackpot-content text-center w-full justify-between xl:ml-[250px] ml-0 xl:ml-[180px] xl:flex-row flex-row-reverse xl:flex">
+            <div className="jackpot-label my-auto xl:block flex xl:gap-0 gap-2 xl:justify-start justify-center">
+              <h5 className="xl:text-[40px] md:text-[30px] text-[25px] my-0 font-semibold text-white uppercase">{t(`progressive`)}</h5>
+              <h5 className="text-[#fce18f] my-0 xl:text-[40px] md:text-[30px] text-[25px] font-semibold uppercase">{t(`jackpot`)}</h5>
             </div>
             <div className="jackpot-amount">
-              <span className="text-[80px] font-bold text-white tracking-wider">
+              <span className="xl:text-[80px] md:text-[60px] text-[45px] font-bold text-white tracking-wider">
                 {formatJackpot(jackpotAmount)}
               </span>
             </div>
@@ -232,42 +235,42 @@ const Head = () => {
           {
             activeTab !== "casino" ? (
               <>
-                <Image src={casinoActiveIcon} alt="casinoActiveIcon" width={120} height={140}/>
+                <Image src={casinoActiveIcon} alt="casinoActiveIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]"/>
               </>
             ) : (
               <>
-                <Image src={casinoGameIcon} alt ="casinoGameIcon" width={120} height={140}/>
+                <Image src={casinoGameIcon} alt ="casinoGameIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]"/>
               </>
           )}
-          <h2 className="absolute top-6 w-[120px] text-center text-[#fce18f] text-[30px]">Casino</h2>
+          <h2 className="absolute md:top-6 top-4 md:w-[120px] w-[80px] text-center text-[#fce18f] md:text-[30px] text-[20px]">{t("casino")}</h2>
         </div>
         <div className="flex gap-4 relative cursor-pointer" onClick={() => setActiveTab("slot")}>
           {
             activeTab !== "slot" ? (
               <>
-                <Image src={slotActiveIcon} alt="slotActiveIcon" width={120} height={140} />
+                <Image src={slotActiveIcon} alt="slotActiveIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]" />
               </>
             ) : (
               <>
-                <Image src={slotGameIcon} alt="slotGameIcon" width={120} height={140}/>
+                <Image src={slotGameIcon} alt="slotGameIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]"/>
               </>
             )
           }
-          <h2 className="absolute top-6 w-[120px] text-center text-[#fce18f] text-[30px]">Slot</h2>
+          <h2 className="absolute md:top-6 top-4 md:w-[120px] w-[80px] text-center text-[#fce18f] md:text-[30px] text-[20px]">{t("slot")}</h2>
         </div>
         <div className="flex gap-4 relative cursor-pointer" onClick={() => setActiveTab("mini")}>
           {
             activeTab !== "mini" ? (
               <>
-                <Image src={miniActiveIcon} alt="miniActiveIcon" width={120} height={140}/>
+                <Image src={miniActiveIcon} alt="miniActiveIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]"/>
               </>
             ) : (
               <>
-                <Image src={miniGameIcon} alt="miniGameIcon" width={120} height={140}/>
+                <Image src={miniGameIcon} alt="miniGameIcon" className="md:w-[120px] w-[80px] md:h-[140px] h-[95px]"/>
               </>
             )
           }
-          <h2 className="absolute top-6 w-[120px] text-center text-[#fce18f] text-[30px]">Mini</h2>
+          <h2 className="absolute md:top-6 top-4 md:w-[120px] w-[80px] text-center text-[#fce18f] md:text-[30px] text-[20px]">{t("mini")}</h2>
         </div>
       </div> 
       {/* <Sidebar isDarkTheme={isDarkTheme} menu={menu} /> */}

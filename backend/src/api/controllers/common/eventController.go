@@ -19,9 +19,10 @@ func GetEvents(c *gin.Context) {
 	fmt.Println(today)
 	err := initializers.DB.
 		Model(&models.Event{}).
-		Where("show_from < ?", today).
-		Where("show_to > ?", today).
+		// Where("show_from < ?", today).
+		// Where("show_to > ?", today).
 		Where("status = ?", true).
+		Order("created_at DESC").
 		Find(&events).Error
 
 	if err != nil {

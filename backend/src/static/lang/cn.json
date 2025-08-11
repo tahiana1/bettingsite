@@ -1652,5 +1652,9 @@
   "admin/game/bettingStatus/casinoSlot" : "老虎机游戏",
   "login" : "登录",
   "joinUs" : "加入我们",
-  "playOnlineCasinoWinMoneyUnlimited" : "在线赌博 & 赢取无限金钱。"
+  "playOnlineCasinoWinMoneyUnlimited" : "在线赌博 & 赢取无限金钱。",
+  "progressive" : "累进",
+  "jackpot" : "奖池",
+  "copyright" : "版权所有 © 2025.公司名称 保留所有权利.TOTOCLUB",
+  "liveCasino" : "真人娱乐场"
 }

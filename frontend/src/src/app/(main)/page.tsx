@@ -56,21 +56,21 @@ const Index: React.FC = () => {
  
   return (
     <div className="mt-10">
-      <h1 className="section-title">Live Casino</h1>
+      <h1 className="section-title">{t("liveCasino")}</h1>
       
       {/* Casino Game Companies Grid */}
       <div className="mt-8">
-        <div className="casino-game-grid flex flex-wrap gap-8 justify-center">
+        <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
           {casinoCompanies.map((company, index) => (
             <div
               key={index}
-              className="casino-game-grid-item max-w-[300px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform"
+              className="casino-game-grid-item md:max-w-[300px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform"
             >
               <div className="w-full h-full relative">
                 <Image
                   src={company.logo}
                   alt={`${company.name} logo`}
-                  className="object-contain w-full opacity-10 rounded-t-lg border-b-1 border-[#ffd273]"
+                  className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
                 />
               </div>
               <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">

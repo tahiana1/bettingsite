@@ -23,6 +23,7 @@ func GetNotifications(c *gin.Context) {
 		// Where("show_from < ?", today).
 		// Where("show_to > ?", today).
 		Where("status = ?", true).
+		Order("created_at DESC").
 		Find(&notifications).Error
 
 	if err != nil {
