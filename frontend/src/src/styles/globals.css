@@ -174,6 +174,18 @@ body {
   width: 100%!important;
 }
 
+/* Custom styles for login card */
+.login-card.ant-card {
+  background-color: #160d0c !important;
+  border: 1px solid #3e2e23 !important;
+  border-radius: 8px !important;
+}
+
+.login-card .ant-card-body {
+  background-color: #160d0c !important;
+}
+
+
 /* Logo Carousel Animation */
 @keyframes infinite-scroll {
   from {
@@ -200,6 +212,41 @@ body {
   }
 }
 
+.custom-white-input{
+  font-size: 17px!important;
+  background-color: #ffffff!important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)!important;
+  color: #000000!important;
+  border: 1px solid #c9a972!important;
+}
+
+.custom-white-input::placeholder {
+  color: #333333!important;
+}
+.custom-white-input input::placeholder {
+  color: #333333!important;
+}
+
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.btn-modal-auth {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+  background-color: #dece8f;
+  background-image: linear-gradient(to right ,#4f3b2c, #e3b27f,#4b382a);
+  border: solid 1px #785c43;
+  padding: 10px 20px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 2px #1d160e;
+  font-family: noto-sans-bold;
+  position: relative;
+  z-index: 1;
+}
+
+.btn-modal-auth:hover {
+  background-color: #f5b774!important;
 }

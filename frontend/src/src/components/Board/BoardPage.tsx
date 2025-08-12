@@ -28,14 +28,14 @@ export default function BoardPage() {
                 <div className="flex flex-col border-2 rounded-[15px] border-[#d5b270] px-2 min-h-[360px] max-h-[360px] overflow-y-auto mt-4">
                     {
                         notificationData.map((data, index) => {
-                            return <tr key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
-                                <td className="text-xm flex items-center gap-1">
+                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
+                                <div className="text-xm flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="white" width="14" height="14" >
                                         <path d="M224.5 160C224.5 147.1 232.3 135.4 244.3 130.4C256.3 125.4 270 128.2 279.1 137.4L439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C269.9 511.9 256.2 514.6 244.2 509.6C232.2 504.6 224.5 492.9 224.5 480L224.5 160z"/>
                                     </svg>
-                                    {data.title}</td>
-                                <td className="text-xm">{dayjs(data.createdAt).format("YYYY-MM-DD HH:mm:ss")}</td>
-                            </tr>
+                                    {data.title}</div>
+                                <div className="text-xm">{dayjs(data.createdAt).format("YYYY-MM-DD HH:mm:ss")}</div>
+                            </div>
                         })
                     }
                 </div>
@@ -51,14 +51,14 @@ export default function BoardPage() {
                 <div className="flex flex-col border-2 rounded-[15px] border-[#d5b270] px-2 min-h-[360px] max-h-[360px] overflow-y-auto mt-4">
                     {
                         eventData?.map((data, index) => {
-                            return <tr key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
-                                <td className="text-xm flex items-center gap-1">
+                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
+                                <div className="text-xm flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="white" width="14" height="14" >
                                         <path d="M224.5 160C224.5 147.1 232.3 135.4 244.3 130.4C256.3 125.4 270 128.2 279.1 137.4L439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C269.9 511.9 256.2 514.6 244.2 509.6C232.2 504.6 224.5 492.9 224.5 480L224.5 160z"/>
                                     </svg>
-                                    {data.title}</td>
-                                <td className="text-xm">{dayjs(data.createdAt).format("YYYY-MM-DD HH:mm:ss")}</td>
-                            </tr>
+                                    {data.title}</div>
+                                <div className="text-xm">{dayjs(data.createdAt).format("YYYY-MM-DD HH:mm:ss")}</div>
+                            </div>
                         })
                     }
                 </div>

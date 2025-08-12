@@ -16,7 +16,11 @@ import { useTranslations } from "next-intl";
 import api from "@/api";
 import { useRouter } from "next/navigation";
 
-const SignUp = () => {
+interface SignUpProps {
+  onClose?: () => void;
+}
+
+const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const t = useTranslations();
   const [form] = Form.useForm();
   const router = useRouter();
@@ -48,6 +52,9 @@ const SignUp = () => {
           placement: "topRight",
         });
         // localStorage.setItem("token", result.token);
+        if (onClose) {
+          onClose(); // Close modal if signup is successful
+        }
         router.push("/");
       })
       .catch((err) => {

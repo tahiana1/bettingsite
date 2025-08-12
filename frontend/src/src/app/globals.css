@@ -159,6 +159,10 @@
 	animation: spin 1s linear infinite;
 }
 
+.modal-content .ant-modal-content {
+	padding: 0px!important;
+}
+
 @media only screen and (max-width: 767px) {
 	.section-title {
 		font-size: 35px;

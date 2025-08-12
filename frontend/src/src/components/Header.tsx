@@ -2,28 +2,24 @@
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
-import { Layout, Menu, Avatar, Button, theme, Dropdown, message } from "antd";
+import { Layout, theme, Modal } from "antd";
 import type { MenuProps } from "antd";
 
 import {
-  MoonOutlined,
-  SunOutlined,
   SettingOutlined,
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-
-import { useQuery } from "@apollo/client";
 
 import LangSwitcher from "./Common/LangSwitcher";
 import { useLocale, useTranslations } from "next-intl";
 import { currentTheme, userState } from "@/state/state";
 import { useAtom } from "jotai";
 import api from "@/api";
+import Login from "./Auth/Login";
+import SignUp from "./Auth/SignUp";
 import Logo from "@/assets/img/logo.png";
 import Image from "next/image";
-import { GET_USER_MENU } from "@/actions/menu";
-import Sidebar from "./Sidebar";
 import Link from "next/link";
 import BannerRight from "@/assets/img/main/home-hero-img.png";
 import Jackpot from "@/assets/img/main/progressive-jackpot-img.png";
@@ -50,6 +46,12 @@ const Head = () => {
   const [selectedkeys, setSelectedkeys] = useState<string[]>(["home"]);
 
   const [activeTab, setActiveTab] = useState<string>("casino");
+  
+  // Login modal state
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  
+  // Signup modal state
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
 
   // Real-time jackpot updater
   useEffect(() => {
@@ -119,6 +121,22 @@ const Head = () => {
     });
   };
 
+  const handleLoginClick = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
+  const handleSignupClick = () => {
+    setIsSignupModalOpen(true);
+  };
+
+  const handleCloseSignupModal = () => {
+    setIsSignupModalOpen(false);
+  };
+
   const profileItems: MenuProps["items"] = [
     {
       key: "profile",
@@ -144,7 +162,7 @@ const Head = () => {
   ];
 
   return (
-    <div>
+    <div className="header-container">
       <header className="py-4 navbar mx-auto flex justify-between 2xl:px-0 px-4 items-center max-w-[1300px] mx-auto mx-[15px]">
         <div className="max-w-[120px]">
           <Link href='/'>
@@ -188,12 +206,12 @@ const Head = () => {
             <LangSwitcher locale={locale} />
           </div>
           <div className="flex gap-2 md:gap-4">
-            <button className="header-button btn-login max-h-[40px]">
+            <button className="header-button btn-login max-h-[40px]" onClick={handleLoginClick}>
               <span>
                 {t(`login`)}
               </span>
             </button>
-            <button className="header-button btn-joinnow max-h-[40px]">
+            <button className="header-button btn-joinnow max-h-[40px]" onClick={handleSignupClick}>
               <span>
                 {t(`joinUs`)}
               </span>
@@ -274,6 +292,31 @@ const Head = () => {
         </div>
       </div> 
       {/* <Sidebar isDarkTheme={isDarkTheme} menu={menu} /> */}
+      
+      {/* Login Modal */}
+      <Modal
+        title={null}
+        open={isLoginModalOpen}
+        onCancel={handleCloseModal}
+        className="p-0 modal-content"
+        footer={null}
+        width={600}
+        centered
+      >
+        <Login onClose={handleCloseModal} />
+      </Modal>
+
+      {/* Signup Modal */}
+      <Modal
+        title={t("auth/register")}
+        open={isSignupModalOpen}
+        onCancel={handleCloseSignupModal}
+        footer={null}
+        width={800}
+        centered
+      >
+        <SignUp onClose={handleCloseSignupModal} />
+      </Modal>
     </div>
   );
 };
