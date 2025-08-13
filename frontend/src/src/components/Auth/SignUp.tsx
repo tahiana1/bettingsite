@@ -15,6 +15,8 @@ import {
 import { useTranslations } from "next-intl";
 import api from "@/api";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import modalImage from '@/assets/img/main/modal-head.png';
 
 interface SignUpProps {
   onClose?: () => void;
@@ -90,24 +92,50 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   };
 
   return (
-    <Card title={t("auth/register")}>
+    <Form
+      form={form}
+      className="pr-4"
+      layout="vertical"
+      labelWrap
+      name="register"
+      onFinish={onFinish}
+      initialValues={{
+        bank: "SB",
+      }}
+      scrollToFirstError
+      style={{ maxWidth: 600, width: "100%" }}
+    >
       {contextHolder}
-      <Form
-        form={form}
-        layout="vertical"
-        labelWrap
-        name="register"
-        onFinish={onFinish}
-        initialValues={{
-          bank: "SB",
+      <Card
+        title={
+          <>
+            <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("REGISTER")}</h2>
+            <p className="text-white text-[16px] font-[400] justify-center pb-6 flex">{t("auth/register")}</p>
+          </>
+        }
+        className="w-full login-card"
+        classNames={{
+          body: "px-2 py-2",
         }}
-        scrollToFirstError
+        styles={{
+          header: {
+            backgroundImage: `url(${modalImage.src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          },
+          body: {
+            backgroundColor: '#160d0c',
+            borderTop: 'none',
+            paddingTop: '40px',
+          }
+        }}
       >
         <Space.Compact className="w-full gap-2">
           <Form.Item
             className="w-full"
             name="userId"
-            label="UserID"
+            label={t("userid")}
             rules={[
               {
                 required: true,
@@ -118,12 +146,12 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               },
             ]}
           >
-            <Input className="w-full" />
+            <Input className="w-full custom-white-input" />
           </Form.Item>
           <Form.Item
             className="w-full"
             name="name"
-            label="Nickname"
+            label={t("nickname")}
             rules={[
               {
                 required: true,
@@ -131,14 +159,14 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               },
             ]}
           >
-            <Input />
+            <Input className="custom-white-input" />
           </Form.Item>
         </Space.Compact>
         <Space.Compact className="w-full gap-2">
           <Form.Item
             className="w-full"
             name="password"
-            label="Password"
+            label={t("password")}
             rules={[
               {
                 required: true,
@@ -146,12 +174,12 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
             ]}
             hasFeedback
           >
-            <Input.Password />
+            <Input.Password className="custom-white-input" />
           </Form.Item>
           <Form.Item
             className="w-full"
             name="confirm"
-            label="Password2"
+            label={t("password2")}
             dependencies={["password"]}
             hasFeedback
             rules={[
@@ -170,20 +198,21 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password className="custom-white-input" />
           </Form.Item>
         </Space.Compact>
         <Space.Compact className="w-full gap-2">
           <Form.Item
             className="w-full"
             name="account_number"
-            label="Saving Bank"
+            label={t("savingBank")}
             rules={[{ required: true }]}
           >
             <Space.Compact>
               <Form.Item
                 name="bank"
                 noStyle
+                className="w-full flex"
                 rules={[
                   {
                     required: true,
@@ -194,6 +223,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
                   // defaultValue="SB"
                   style={{ width: 120 }}
                   onChange={handleChange}
+                  className="select-white-input"
                   options={[
                     { value: "SB", label: "SB" },
                     { value: "CK", label: "CK" },
@@ -201,7 +231,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
                   ]}
                 />
               </Form.Item>
-              <Input />
+              <Input className="custom-white-input" />
             </Space.Compact>
           </Form.Item>
           <Form.Item
@@ -210,7 +240,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
             label="Holder Name"
             rules={[{ required: true }]}
           >
-            <Input />
+            <Input className="custom-white-input" />
           </Form.Item>
         </Space.Compact>
 
@@ -218,29 +248,29 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
           <Form.Item
             className="w-full"
             name="phone"
-            label="Phone Number"
+            label={t("phone")}
             rules={[{ required: true }]}
           >
-            <Input.Search enterButton={"SendSMS"} style={{ width: "100%" }} />
+            <Input.Search enterButton={"SendSMS"} style={{ width: "100%" }} className="custom-white-input" />
           </Form.Item>
           <Form.Item
             className="w-full"
             name="birthday"
-            label="Birthday"
+            label={t("birthday")}
             rules={[
               {
                 required: true,
               },
             ]}
           >
-            <DatePicker className="w-full" onChange={onDOBChange} />
+            <DatePicker className="w-full custom-white-input" onChange={onDOBChange} />
           </Form.Item>
         </Space.Compact>
         <Space.Compact className="w-full gap-2">
           <Form.Item
             className="w-full"
             name="securityPassword"
-            label="Security Pwd"
+            label={t("securityPwd")}
             rules={[
               {
                 required: true,
@@ -248,13 +278,13 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               },
             ]}
           >
-            <Input.Password />
+            <Input.Password className="custom-white-input" />
           </Form.Item>
 
           <Form.Item
             className="w-full"
             name="referral"
-            label="Referral"
+            label={t("referral")}
             rules={[
               {
                 required: true,
@@ -262,7 +292,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               },
             ]}
           >
-            <Input />
+            <Input className="custom-white-input" />
           </Form.Item>
         </Space.Compact>
 
@@ -289,7 +319,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
               },
             ]}
           >
-            <Input placeholder="TRC20/ERC20/UNI" />
+            <Input placeholder="TRC20/ERC20/UNI" className="custom-white-input" />
           </Form.Item>
         </Space.Compact>
         {/* <Form.Item
@@ -334,13 +364,18 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
             I have read the <a href="">agreement</a>
           </Checkbox>
         </Form.Item>
-        <Form.Item className="w-full text-center">
-          <Button type="primary" htmlType="submit">
-            Register
-          </Button>
-        </Form.Item>
-      </Form>
-    </Card>
+        <div className="flex gap-2 pt-3 w-[80%] mx-auto">
+          <Form.Item label={null} className="w-full">
+            <button
+              type="submit"
+              className="w-full btn-modal-auth cursor-pointer"
+            >
+              {t("auth/register")}
+            </button>
+          </Form.Item>
+        </div>
+      </Card>
+    </Form>
   );
 };
 export default SignUp;

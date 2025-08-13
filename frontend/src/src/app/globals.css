@@ -37,13 +37,9 @@
 
 /* Header Buttons Styling */
 .header-button {
-  padding: 8px 20px;
-  border-radius: 6px;
-  font-weight: 500;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid;
   letter-spacing: 0.5px;
   text-wrap: nowrap;
 }
@@ -52,8 +48,8 @@
 	background: #FFFFFF00;
 	border: 1px solid #fce18f;
 	box-shadow: none;
-  color : #fce18f;
-  font-weight: 900;
+	color : #fce18f;
+	font-weight: 900;
 	transition: all 0.3s ease;
 }
 
@@ -61,7 +57,7 @@
 	background: linear-gradient(180deg, #fce18f 0%, #774b03 100%);
 	box-shadow: 0px 0px 30px 0px rgba(255, 234, 159, 0.7);
 	transition: all 0.3s ease;
-  font-weight: 900;
+  	font-weight: 900;
 	border: #ffe991 solid 1px;
 }
 

@@ -220,11 +220,36 @@ body {
   border: 1px solid #c9a972!important;
 }
 
+.custom-white-select{
+  font-size: 17px!important;
+  background-color: #ffffff!important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)!important;
+  color: #000000!important;
+}
+
+
+.custom-white-input input {
+   font-size: 17px!important;
+  background-color: #ffffff!important;
+  /* box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)!important; */
+  color: #000000!important;
+  /* border: 1px solid #c9a972!important; */
+}
+
 .custom-white-input::placeholder {
   color: #333333!important;
 }
 .custom-white-input input::placeholder {
   color: #333333!important;
+}
+
+#register .ant-select-selector {
+  font-size: 17px!important;
+  background-color: #ffffff!important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)!important;
+  color: #000000!important;
+  border: 1px solid #c9a972!important;
+  padding: 19px 6px!important;
 }
 
 .animate-spin {
@@ -247,6 +272,83 @@ body {
   z-index: 1;
 }
 
+.btn-modal-effect {
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+  background-color: #dece8f;
+  background-image: linear-gradient(to right ,#4f3b2c, #e3b27f,#4b382a);
+  border: solid 1px #785c43;
+  padding: 5px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px #1d160e;
+  font-family: noto-sans-bold;
+  position: relative;
+  z-index: 1;
+}
+
 .btn-modal-auth:hover {
   background-color: #f5b774!important;
+}
+
+.select-white-input {
+  background-color: white!important;
+  
+}
+
+.btn-profile span {
+  color: #f6d47c!important;
+  font-weight: 900!important;
+}
+
+.profile-dropdown {
+  width: 150px!important;
+}
+
+/* Profile dropdown styling */
+.profile-dropdown .ant-dropdown-menu {
+  background-color: #2b2314 !important;
+  border: 1px solid #f6d47c;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* margin-top: 10px!important; */
+}
+
+.profile-dropdown .ant-dropdown-menu-item {
+  color: #f6d47c !important;
+  background-color: #2b2314 !important;
+  padding: 10px!important;
+  font-size: 14px!important;
+}
+
+.profile-dropdown .ant-dropdown-menu-item:hover {
+  background-color: #3d2f1c !important;
+  color: #ffffff !important;
+}
+
+.profile-dropdown .ant-dropdown-menu-item-icon {
+  color: #f6d47c !important;
+}
+
+.notificationIconClass svg {
+  color: black!important;
+  fill: black!important;
+}
+
+.recharge-select .ant-select-selector {
+  background-color: #ffffff!important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)!important;
+  color: #000000!important;
+  border: 1px solid #c9a972!important;
+  padding: 19px 6px!important;
+}
+
+.deposit-section .ant-card-actions {
+  background-color: #160d0c!important;
+}
+
+.deposit-section .ant-table-wrapper .ant-table-cell {
+  background-color: #281f1f!important;
 }

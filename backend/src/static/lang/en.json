@@ -1659,5 +1659,11 @@
   "jackpot" : "Jackpot",
   "copyright" : "Copyright © 2025.Company name All rights reserved.TOTOCLUB",
   "liveCasino" : "Live Casino",
-  "LOGIN" : "LOGIN"
+  "LOGIN" : "LOGIN",
+  "securityPwd" : "Security",
+  "savingBank" : "Saving Bank",
+  "QNA" : "QNA",
+  "goToPartner" : "Go To Partner",
+  "myPage" : "My Page",
+  "betHistory" : "Bet History"
 }
