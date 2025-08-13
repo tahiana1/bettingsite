@@ -352,3 +352,31 @@ body {
 .deposit-section .ant-table-wrapper .ant-table-cell {
   background-color: #281f1f!important;
 }
+
+.deposit-section .ant-table-row-expand-icon {
+  background-color: #281f1f!important;
+}
+
+.notice-section .ant-card-actions {
+  background-color: #160d0c!important;
+}
+
+.notice-section .ant-table-wrapper .ant-table-cell {
+  background-color: #281f1f!important;
+}
+
+.notice-section .ant-table-row-expand-icon {
+  background-color: #281f1f!important;
+}
+
+.event-section .ant-card-actions {
+  background-color: #160d0c!important;
+}
+
+.event-section .ant-table-wrapper .ant-table-cell {
+  background-color: #281f1f!important;
+}
+
+.event-section .ant-table-row-expand-icon {
+  background-color: #281f1f!important;
+}

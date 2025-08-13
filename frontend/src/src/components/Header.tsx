@@ -22,6 +22,9 @@ import api from "@/api";
 import Login from "./Auth/Login";
 import SignUp from "./Auth/SignUp";
 import DepositRequest from "./Billing/DepositRequst";
+import WithdrawRequest from "./Billing/WithdrawRequst";
+import Notice from '@/components/notice/page';
+import Event from '@/components/event/page';
 import Logo from "@/assets/img/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -72,6 +75,43 @@ const Head = () => {
   
   // Deposit modal state
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+
+  // Withdraw modal state
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+
+  // Notice modal state
+  const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
+
+  // Event modal state
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+
+  const checkoutModal = (modal: string) => {
+    if (modal === "withdraw") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      handleWithdrawClick();
+    } else if (modal === "deposit") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      handleDepositClick();
+    } else if (modal === "notice") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      handleNoticeClick();
+    } else if (modal === "event") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      handleEventClick();
+    }
+  };
 
   // Real-time jackpot updater
   useEffect(() => {
@@ -176,6 +216,30 @@ const Head = () => {
     setIsDepositModalOpen(false);
   };
 
+  const handleWithdrawClick = () => {
+    setIsWithdrawModalOpen(true);
+  };
+
+  const handleCloseWithdrawModal = () => {
+    setIsWithdrawModalOpen(false);
+  };
+
+  const handleNoticeClick = () => {
+    setIsNoticeModalOpen(true);
+  };
+
+  const handleCloseNoticeModal = () => {
+    setIsNoticeModalOpen(false);
+  };
+
+  const handleEventClick = () => {
+    setIsEventModalOpen(true);
+  };
+
+  const handleCloseEventModal = () => {
+    setIsEventModalOpen(false);
+  };
+
   const profileItems: MenuProps["items"] = [
     {
       key: "balance",
@@ -273,32 +337,31 @@ const Head = () => {
               </button>
             </li>
             <li>
-              <Link href="/withdraw" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
+              <button
+                onClick={handleWithdrawClick}
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
                 <span>
                   {t(`withdraw`)}
                 </span>
-              </Link>
+              </button>
             </li>
             <li>
-              <Link href="/point" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
-                <span>
-                  {t(`point`)}
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/notice" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
+              <button 
+                onClick={handleNoticeClick}
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
                 <span>
                   {t(`notice`)}
                 </span>
-              </Link>
+              </button>
             </li>
             <li>
-              <Link href="/event" className="font-bold text-white hover:text-[#fce18f] transition-all duration-300">
-                <span>
+              <button 
+                onClick={handleEventClick}
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                  <span>
                   {t(`event`)}
                 </span>
-              </Link>
+              </button>
             </li>
           </ul>
         </div>
@@ -470,7 +533,40 @@ const Head = () => {
         width={800}
         centered
       >
-        <DepositRequest />
+        <DepositRequest checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isWithdrawModalOpen}
+        onCancel={handleCloseWithdrawModal}
+        footer={null}
+        className="p-0 modal-content"
+        width={800}
+        centered
+      >
+        <WithdrawRequest checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isNoticeModalOpen}
+        onCancel={handleCloseNoticeModal}
+        footer={null}
+        className="p-0 modal-content"
+        width={800}
+        centered
+      >
+        <Notice checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isEventModalOpen}
+        onCancel={handleCloseEventModal}
+        footer={null}
+        className="p-0 modal-content"
+        width={800}
+        centered
+      >
+        <Event checkoutModal={checkoutModal} />
       </Modal>
     </div>
   );
