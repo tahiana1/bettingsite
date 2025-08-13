@@ -15,6 +15,9 @@ const Deposit: React.FC = () => {
   const t = useTranslations();
   const [profile, setProfile] = useState<any>(null);
   const router = useRouter();
+  const checkoutModal = (modal: string) => {
+    console.log(modal);
+  }
   useEffect(() => {
     api("user/me").then((res) => {
       setProfile(res.data.profile);
@@ -32,7 +35,7 @@ const Deposit: React.FC = () => {
         </Layout>
       ) : (
         <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
-          <WithdrawRequest />
+          <WithdrawRequest checkoutModal={() => {}} />
         </Content>
       )}
     </>

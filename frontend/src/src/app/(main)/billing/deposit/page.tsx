@@ -14,6 +14,9 @@ import Login from "@/components/Auth/Login";
 const Deposit: React.FC = () => {
   const t = useTranslations();
   const [profile, setProfile] = useState<any>(null);
+  const checkoutModal = (modal: string) => {
+    console.log(modal);
+  }
     const router = useRouter();
   
     // Check if user is logged in
@@ -33,7 +36,7 @@ const Deposit: React.FC = () => {
         </Layout>
       ) : (
         <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
-          <DepositRequest />
+          <DepositRequest checkoutModal={() => {}} />
         </Content>
       )}
     </>
