@@ -1664,5 +1664,11 @@
   "goToPartner" : "前往合作伙伴",
   "myPage" : "我的页面",
   "betHistory" : "投注历史",
-  "myQuestions" : "我的问题"
+  "myQuestions" : "我的问题",
+  "NOTES" : "笔记",
+  "PROFILE" : "个人资料",
+  "point/exchangeRequest" : "点数兑换请求",
+  "profile/withdrawAmount" : "提款金额",
+  "profile/applyWithdraw" : "申请提款",
+  "profile/rechargeBonus" : "充值奖励"
 }

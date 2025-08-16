@@ -9,6 +9,21 @@ import { GET_PROFILE, UPDATE_PROFILE } from "@/actions/profile";
 import Image from "next/image";
 import modalImage from '@/assets/img/main/modal-head.png';
 import { SiDepositphotos } from "react-icons/si";
+import { Progress } from "antd";
+
+import Level1 from "@/assets/img/level/lv1.png"
+import Level2 from "@/assets/img/level/lv2.png"
+import Level3 from "@/assets/img/level/lv3.png"
+import Level4 from "@/assets/img/level/lv4.png"
+import Level5 from "@/assets/img/level/lv5.png"
+import Level6 from "@/assets/img/level/lv6.png"
+import Level7 from "@/assets/img/level/lv7.png"
+import Level8 from "@/assets/img/level/lv8.png"
+import Level9 from "@/assets/img/level/lv9.png"
+import Level10 from "@/assets/img/level/lv10.png"
+import LevelVIP1 from "@/assets/img/level/Vip1.png"
+import LevelVIP2 from "@/assets/img/level/Vip2.png"
+import Prumium from "@/assets/img/level/premium.png"
 
 const tailFormItemLayout = {
   wrapperCol: {
@@ -113,6 +128,10 @@ const ProfilePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 512 512" fill="white" ><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32zM128 272c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"/></svg>
             {t("QNA")}
           </button>
+        </div>
+        <div className="mb-4">
+          <Image src={Level1} alt="level" width={100} />
+          <Progress percent={50} strokeColor="#ffc107" />
         </div>
           {user.id && data?.profile?.id ? (
             <>

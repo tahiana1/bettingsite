@@ -1666,5 +1666,11 @@
   "goToPartner" : "Go To Partner",
   "myPage" : "My Page",
   "betHistory" : "Bet History",
-  "myQuestions" : "My Questions"
+  "myQuestions" : "My Questions",
+  "NOTES" : "NOTES",
+  "PROFILE" : "PROFILE",
+  "point/exchangeRequest" : "Point Exchange Request",
+  "profile/withdrawAmount" : "Withdraw Amount",
+  "profile/applyWithdraw" : "Apply Withdraw",
+  "profile/rechargeBonus" : "Recharge Bonus"
 }

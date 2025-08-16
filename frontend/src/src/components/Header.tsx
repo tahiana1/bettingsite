@@ -53,7 +53,7 @@ import Level10 from "@/assets/img/level/lv10.png"
 import LevelVIP1 from "@/assets/img/level/Vip1.png"
 import LevelVIP2 from "@/assets/img/level/Vip2.png"
 import Prumium from "@/assets/img/level/premium.png"
-
+import PointPage from "./profile/point/page";
 const { Header } = Layout;
 
 const Head = () => {
@@ -101,6 +101,9 @@ const Head = () => {
   // BettingHistory modal state
   const [isBettingHisotryModalOpen, setIsBettingHistoryModalOpen] = useState(false);
 
+  // point modal state
+  const [isPointModalOpen, setIsPointModalOpen] = useState(false);
+
   const checkoutModal = (modal: string) => {
     if (modal === "withdraw") {
       setIsDepositModalOpen(false);
@@ -110,6 +113,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleWithdrawClick();
     } else if (modal === "deposit") {
       setIsWithdrawModalOpen(false);
@@ -119,6 +123,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleDepositClick();
     } else if (modal === "notice") {
       setIsWithdrawModalOpen(false);
@@ -128,6 +133,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleNoticeClick();
     } else if (modal === "event") {
       setIsWithdrawModalOpen(false);
@@ -137,6 +143,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleEventClick();
     } else if (modal === "profile") {
       setIsWithdrawModalOpen(false);
@@ -147,6 +154,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsQnaModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleProfileClick();
     } else if (modal === "letter") {
       setIsWithdrawModalOpen(false);
@@ -156,6 +164,7 @@ const Head = () => {
       setIsQnaModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleNoteClick();
     } else if (modal === "qna") {
       setIsWithdrawModalOpen(false);
@@ -166,6 +175,7 @@ const Head = () => {
       setIsProfileModalOpen(false);
       setIsNoteModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
       handleQnaClick();
     } else if (modal === "bettingHistory") {
       setIsWithdrawModalOpen(false);
@@ -175,7 +185,18 @@ const Head = () => {
       setIsQnaModalOpen(false);
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
+      setIsPointModalOpen(false);
       handleBettingHistoryClick();
+    } else if (modal === "point") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
+      handlePointClick();
     }
   };
 
@@ -338,6 +359,14 @@ const Head = () => {
     setIsBettingHistoryModalOpen(false);
   };
 
+  const handlePointClick = () => {
+    setIsPointModalOpen(true);
+  };
+
+  const handleClosePointModal = () => {
+    setIsPointModalOpen(false);
+  };
+
   const profileItems: MenuProps["items"] = [
     {
       key: "balance",
@@ -355,7 +384,7 @@ const Head = () => {
       label: profile?.point,
       onClick: (e: MenuInfo) => {
         console.log({ e });
-        handleQnaClick();
+        handlePointClick();
       },
     },
     {
@@ -446,6 +475,15 @@ const Head = () => {
                 className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
                 <span>
                   {t(`withdraw`)}
+                </span>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={handlePointClick}
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                <span>
+                  {t(`point`)}
                 </span>
               </button>
             </li>
@@ -737,6 +775,19 @@ const Head = () => {
         maskTransitionName=""
       >
         <BettingHistoryPage checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isPointModalOpen}
+        onCancel={handleClosePointModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <PointPage checkoutModal={checkoutModal} />
       </Modal>
     </div>
   );
