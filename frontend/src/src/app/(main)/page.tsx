@@ -234,9 +234,7 @@ const Index: React.FC = () => {
     { name: "7 Mojos", logo: mojosLogo },
     { name: "Hilton Casino", logo: hiltonLogo },
   ];
-
- 
- 
+  
   return (
     <>
       {!profile?.userId ? (

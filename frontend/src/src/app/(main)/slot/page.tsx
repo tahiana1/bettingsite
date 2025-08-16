@@ -1,10 +1,7 @@
 "use client";
 
-import { Button, Card, message, Spin, Modal, Form, InputNumber, Layout } from "antd";
+import { Button, message, Spin, Modal, Form, InputNumber, Layout } from "antd";
 import Image from "next/image";
-import { Content } from "antd/es/layout/layout";
-import CasinoLogo from "@/assets/img/casino/casino.png";
-import gameBG from "@/assets/img/casino/game_bg.png";
 import { useTranslations } from "next-intl";
 import api from "@/api";
 import { useEffect, useState, useRef } from "react";
@@ -13,140 +10,52 @@ import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
 
-// Slot provider main images (larger versions)
-import Boomerang from "@/assets/img/slot/boomerang (1).png";
-import Mancala from "@/assets/img/slot/mancala (1).png";
-import Caleta from "@/assets/img/slot/caleta (1).png";
-import Platipus from "@/assets/img/slot/platipus (1).png";
-import Booming from "@/assets/img/slot/booming (1).png";
-import BGaming from "@/assets/img/slot/bgaming (1).png";
-import Beefee from "@/assets/img/slot/beefee (1).png";
-import Spinomenal from "@/assets/img/slot/spinomenal (1).png";
-import Pariplay from "@/assets/img/slot/pariplay (1).png";
-import Novomatic from "@/assets/img/slot/novomatic (1).png";
-import EAGaming from "@/assets/img/slot/eagaming (1).png";
-import SevenSevenSevenSeven from "@/assets/img/slot/7777 (1).png";
-import PlatinaGaming from "@/assets/img/slot/platingaming (1).png";
-import SmartSoft from "@/assets/img/slot/smartsoft (1).png";
-import Fils from "@/assets/img/slot/fils (1).png";
-import RetroGaming from "@/assets/img/slot/retrogaming (1).png";
-import SevenMojos from "@/assets/img/slot/7mojos (1).png";
-import FourThePlay from "@/assets/img/slot/4theplay (1).png";
-import ReelPlay from "@/assets/img/slot/reelplay (1).png";
-import WorldMatch from "@/assets/img/slot/worldmatch (1).png";
-import Playtech from "@/assets/img/slot/playtech (1).png";
-import Skywind from "@/assets/img/slot/skywind (1).png";
-import GMW from "@/assets/img/slot/gmw (1).png";
-import NetGaming from "@/assets/img/slot/netgaming (1).png";
-import Naga from "@/assets/img/slot/naga (1).png";
-import BTG from "@/assets/img/slot/btg (1).png";
-import AvatarUX from "@/assets/img/slot/avatarux (1).png";
-import Aspect from "@/assets/img/slot/aspect (1).png";
-import ReelKingdom from "@/assets/img/slot/reelkingdom (1).png";
-import Wazdan from "@/assets/img/slot/wazdan (1).png";
-import GameArt from "@/assets/img/slot/gameart (1).png";
-import PlayStar from "@/assets/img/slot/playstar (1).png";
-import NetGame from "@/assets/img/slot/netgame (1).png";
-import SlotMill from "@/assets/img/slot/slotmill (1).png";
-import RedTiger from "@/assets/img/slot/redtiger (1).png";
-import PlayPearls from "@/assets/img/slot/playpearls (1).png";
-import Hacksaw from "@/assets/img/slot/hacksaw (1).png";
-import Dragon from "@/assets/img/slot/dragon (1).png";
-import Relax from "@/assets/img/slot/relax (1).png";
-import Mobilots from "@/assets/img/slot/mobilots (1).png";
-import RTGSlots from "@/assets/img/slot/rtg_slots (1).png";
-import Thunder from "@/assets/img/slot/thunder (1).png";
-import Elk from "@/assets/img/slot/elk (1).png";
-import RedRake from "@/assets/img/slot/redrake (1).png";
-import QuickSpin from "@/assets/img/slot/quickspin (1).png";
-import Fantasma from "@/assets/img/slot/fantasma (1).png";
-import Blueprint from "@/assets/img/slot/blueprint (1).png";
-import NoLimit from "@/assets/img/slot/nolimit (1).png";
-import OneXTwoGaming from "@/assets/img/slot/1x2gaming (1).png";
-import NetEnt from "@/assets/img/slot/netent (1).png";
-
-// Missing providers - Adding the 15 missing companies
-import Asian from "@/assets/img/slot/asian (1).png";
-import Booongo from "@/assets/img/slot/booongo (1).png";
-import CQ9 from "@/assets/img/slot/cq9 (1).png";
-import DreamTech from "@/assets/img/slot/dreamtech (1).png";
-import EvoPlay from "@/assets/img/slot/evoplay (1).png";
-import Genesis from "@/assets/img/slot/genesis (1).png";
-import Habanero from "@/assets/img/slot/habanero (1).png";
-import Micro from "@/assets/img/slot/micro (1).png";
-import PGSoft from "@/assets/img/slot/pgsoft (1).png";
-import PlaynGO from "@/assets/img/slot/playngo (1).png";
-import Pragmatic from "@/assets/img/slot/pragmatic.png";
-import TPG from "@/assets/img/slot/tpg (1).png";
-import TTG from "@/assets/img/slot/ttg (1).png";
-import Yggdrasil from "@/assets/img/slot/yggdrasil (1).png";
-
-// Slot provider logos (smaller versions)
-import BoomerangLogo from "@/assets/img/slot/boomerang.png";
+// Import slot provider logos using actual images from the directory
 import MancalaLogo from "@/assets/img/slot/mancala.png";
 import CaletaLogo from "@/assets/img/slot/caleta.png";
 import PlatipusLogo from "@/assets/img/slot/platipus.png";
 import BoomingLogo from "@/assets/img/slot/booming.png";
 import BGamingLogo from "@/assets/img/slot/bgaming.png";
-import BeefeeLogo from "@/assets/img/slot/beefee.png";
 import SpinomenalLogo from "@/assets/img/slot/spinomenal.png";
 import PariplayLogo from "@/assets/img/slot/pariplay.png";
 import NovomaticLogo from "@/assets/img/slot/novomatic.png";
 import EAGamingLogo from "@/assets/img/slot/eagaming.png";
 import SevenSevenSevenSevenLogo from "@/assets/img/slot/7777.png";
-import PlatinaGamingLogo from "@/assets/img/slot/platingaming.png";
 import SmartSoftLogo from "@/assets/img/slot/smartsoft.png";
 import FilsLogo from "@/assets/img/slot/fils.png";
-import RetroGamingLogo from "@/assets/img/slot/retrogaming.png";
 import SevenMojosLogo from "@/assets/img/slot/7mojos.png";
-import FourThePlayLogo from "@/assets/img/slot/4theplay.png";
-import ReelPlayLogo from "@/assets/img/slot/reelplay.png";
-import WorldMatchLogo from "@/assets/img/slot/worldmatch.png";
 import PlaytechLogo from "@/assets/img/slot/playtech.png";
 import SkywindLogo from "@/assets/img/slot/skywind.png";
-import GMWLogo from "@/assets/img/slot/gmw.png";
 import NetGamingLogo from "@/assets/img/slot/netgaming.png";
-import NagaLogo from "@/assets/img/slot/naga.png";
 import BTGLogo from "@/assets/img/slot/btg.png";
 import AvatarUXLogo from "@/assets/img/slot/avatarux.png";
-import AspectLogo from "@/assets/img/slot/aspect.png";
-import ReelKingdomLogo from "@/assets/img/slot/reelkingdom.png";
 import WazdanLogo from "@/assets/img/slot/wazdan.png";
 import GameArtLogo from "@/assets/img/slot/gameart.png";
 import PlayStarLogo from "@/assets/img/slot/playstar.png";
 import NetGameLogo from "@/assets/img/slot/netgame.png";
 import SlotMillLogo from "@/assets/img/slot/slotmill.png";
 import RedTigerLogo from "@/assets/img/slot/redtiger.png";
-import PlayPearlsLogo from "@/assets/img/slot/playpearls.png";
 import HacksawLogo from "@/assets/img/slot/hacksaw.png";
-import DragonLogo from "@/assets/img/slot/dragon.png";
 import RelaxLogo from "@/assets/img/slot/relax.png";
-import MobilotsLogo from "@/assets/img/slot/mobilots.png";
-import RTGSlotsLogo from "@/assets/img/slot/rtg_slots.png";
+import RTGSlotsLogo from "@/assets/img/slot/rtg.png";
 import ThunderLogo from "@/assets/img/slot/thunder.png";
-import ElkLogo from "@/assets/img/slot/elk.png";
 import RedRakeLogo from "@/assets/img/slot/redrake.png";
 import QuickSpinLogo from "@/assets/img/slot/quickspin.png";
 import FantasmaLogo from "@/assets/img/slot/fantasma.png";
 import BlueprintLogo from "@/assets/img/slot/blueprint.png";
 import NoLimitLogo from "@/assets/img/slot/nolimit.png";
-import OneXTwoGamingLogo from "@/assets/img/slot/1x2gaming.png";
+import OneXTwoGamingLogo from "@/assets/img/slot/1x2.png";
 import NetEntLogo from "@/assets/img/slot/netent.png";
-
-// Missing provider logos
 import AsianLogo from "@/assets/img/slot/asian.png";
 import BooOngoLogo from "@/assets/img/slot/booongo.png";
 import CQ9Logo from "@/assets/img/slot/cq9.png";
 import DreamTechLogo from "@/assets/img/slot/dreamtech.png";
 import EvoPlayLogo from "@/assets/img/slot/evoplay.png";
-import GenesisLogo from "@/assets/img/slot/genesis.png";
 import HabaneroLogo from "@/assets/img/slot/habanero.png";
 import MicroLogo from "@/assets/img/slot/micro.png";
 import PGSoftLogo from "@/assets/img/slot/pgsoft.png";
 import PlaynGOLogo from "@/assets/img/slot/playngo.png";
-import PragmaticLogo from "@/assets/img/slot/pragmatic_play_logo.png";
-import TPGLogo from "@/assets/img/slot/tpg.png";
-import TTGLogo from "@/assets/img/slot/ttg.png";
+import PragmaticLogo from "@/assets/img/slot/pragmatic.png";
 import YggdrasilLogo from "@/assets/img/slot/yggdrasil.png";
 
 const SlotPage: React.FC = () => {
@@ -165,6 +74,7 @@ const SlotPage: React.FC = () => {
     const [profile, setProfile] = useState<any>(null);
     const router = useRouter(); 
     const [selectedSlotItems, setSelectedSlotItems] = useState<any>([]);
+    const [searchTerm, setSearchTerm] = useState("");
     // Check if user is logged in
     useEffect(() => {
         api("user/me").then((res) => {
@@ -367,192 +277,215 @@ const SlotPage: React.FC = () => {
                 <Login />
             </Layout>
         ) : (
-            <Content className="p-4 overflow-y-auto h-[calc(100vh-40px)]">
-       
-        <Card
-            title={
-                <div className="flex justify-between flex-row w-full items-center gap-2 py-1 mb-1">  
-                    <div className="flex flex-row items-center gap-2">
-                        <div className="flex flex-col mt-1">
-                            <div className="text-2xl font-bold">{t("user/slot")}</div>
-                            <div className="text-sm text-gray-500">{t("user/slot/description")}</div>
-                        </div>
-                    </div>
-                    <div className="flex justify-end items-center gap-2 py-1 mb-1">
-                        <div className="text-sm text-gray-500">{t("balance")}: <span className="text-blue-500">{balance}</span></div>
+            <div className="mt-10 relative">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="section-title">{t("user/slot")}</h1>
+                    <div className="text-lg text-white">
+                        {t("balance")}: <span className="text-yellow-400 font-bold">{balance}</span>
                     </div>
                 </div>
-            }
-        >
-            <div className="flex flex-wrap w-full gap-3 justify-center">
-                {
-                selectedSlotItems?.map((provider: any, idx: any) => {
-                    return( <div
-                        key={provider.name}
-                        className="relative cursor-pointer w-[200px] border-1 border-black h-[220px]"
-                        onClick={() => getGameLaunchLink(selectedGame, provider.id)}
-                        >
-                        {
-                            loading && selectedGame === provider.name && <Spin className="flex z-[1000] justify-center items-center absolute top-[100px] left-0 w-full h-full" />
-                        }
-                        <div className="z-[3] w-full mt-1 justify-center flex">
-                            <img 
-                                src={provider.thumbnail} 
-                                alt={provider.name}
-                                width={180}
-                                height={140}
-                                className="object-contain"
-                                loading="lazy"
-                            />
+            {/* Slot Games Modal */}
+            {selectedSlotItems?.length > 0 && (
+                <Modal
+                    title={
+                        <div className="text-center">
+                            <div className="text-2xl font-bold text-yellow-400 mb-2">{selectedGame}</div>
+                            <div className="text-sm text-gray-400">슬롯소프트</div>
                         </div>
-                        <div className="z-[3] overflow-hidden w-full justify-center flex ">
-                            <span className="text-[17px] mt-1 text-[yellow] font-bold">{provider.title}</span>
-                        </div>
-                        {/* <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />
-                        <Image src={provider.img} alt={provider.name} className="opacity-100 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} /> */}
-                    </div> )
-                })
-                }
-            </div>
-            {
-                selectedSlotItems?.length == 0 && (
-                    <div className="flex flex-wrap w-full gap-3 justify-center">
-                        {[
-                            // { name: "Boomerang", img: Boomerang, logo: BoomerangLogo, id:"boomerang" },
-                            { name: "Mancala", img: Mancala, logo: MancalaLogo, id:'mancala' },
-                            { name: "Caleta", img: Caleta, logo: CaletaLogo, id: 'caletagaming' },
-                            { name: "Platipus", img: Platipus, logo: PlatipusLogo, id: 'platipus' },
-                            { name: "Booming", img: Booming, logo: BoomingLogo, id: "booming" },
-                            { name: "BGaming", img: BGaming, logo: BGamingLogo, id: "bgaming" },
-                            // { name: "Beefee", img: Beefee, logo: BeefeeLogo, id: "beefee" },
-                            { name: "Spinomenal", img: Spinomenal, logo: SpinomenalLogo, id: "spinomenal" },
-                            { name: "Pariplay", img: Pariplay, logo: PariplayLogo, id: "pariplay" },
-                            { name: "Novomatic", img: Novomatic, logo: NovomaticLogo, id: "novomatic" },
-                            { name: "EA Gaming", img: EAGaming, logo: EAGamingLogo, id: "eagaming" },
-                            { name: "7777 Gaming", img: SevenSevenSevenSeven, logo: SevenSevenSevenSevenLogo, id: "7777" },
-                            { name: "Platina Gaming", img: PlatinaGaming, logo: PlatinaGamingLogo, id: "platingaming" },
-                            { name: "SmartSoft", img: SmartSoft, logo: SmartSoftLogo, id: "smartsoft" },
-                            { name: "Fils", img: Fils, logo: FilsLogo, id: "fils" },
-                            { name: "Retro Gaming", img: RetroGaming, logo: RetroGamingLogo, id: "retrogames" },
-                            { name: "7 Mojos", img: SevenMojos, logo: SevenMojosLogo, id: "7-mojos" },
-                            // { name: "4ThePlay", img: FourThePlay, logo: FourThePlayLogo, id: "4theplay" },
-                            // { name: "ReelPlay", img: ReelPlay, logo: ReelPlayLogo, id: "reelplay" },
-                            // { name: "WorldMatch", img: WorldMatch, logo: WorldMatchLogo, id: "worldmatch" },
-                            { name: "Playtech", img: Playtech, logo: PlaytechLogo, id: "PlayTech" },
-                            { name: "Skywind", img: Skywind, logo: SkywindLogo, id: "Skywind Slot" },
-                            // { name: "GMW", img: GMW, logo: GMWLogo, id: "gmw" },
-                            { name: "NetGaming", img: NetGaming, logo: NetGamingLogo, id: "netgame" },
-                            // { name: "Naga", img: Naga, logo: NagaLogo, id: "naga" },
-                            { name: "Big Time Gaming", img: BTG, logo: BTGLogo, id: "BigTimeGaming" },
-                            { name: "AvatarUX", img: AvatarUX, logo: AvatarUXLogo, id: "AvatarUX" },
-                            // { name: "Aspect", img: Aspect, logo: AspectLogo, id: "aspect" },
-                            // { name: "Reel Kingdom", img: ReelKingdom, logo: ReelKingdomLogo, id: "reelkingdom" },
-                            { name: "Wazdan", img: Wazdan, logo: WazdanLogo, id: "wazdan" },
-                            { name: "GameArt", img: GameArt, logo: GameArtLogo, id: "GameArt" },
-                            { name: "PlayStar", img: PlayStar, logo: PlayStarLogo, id: "PlayStar" },
-                            { name: "NetGame", img: NetGame, logo: NetGameLogo, id: "netgame" },
-                            { name: "SlotMill", img: SlotMill, logo: SlotMillLogo, id: "slotmill" },
-                            { name: "Red Tiger", img: RedTiger, logo: RedTigerLogo, id: "redtiger" },
-                            // { name: "PlayPearls", img: PlayPearls, logo: PlayPearlsLogo, id: "playpearls" },
-                            { name: "Hacksaw Gaming", img: Hacksaw, logo: HacksawLogo, id: "Hacksaw" },
-                            // { name: "Dragon Gaming", img: Dragon, logo: DragonLogo, id: "dragon" },
-                            { name: "Relax Gaming", img: Relax, logo: RelaxLogo, id: "Relax Gaming" },
-                            // { name: "Mobilots", img: Mobilots, logo: MobilotsLogo, id: "mobilots" },
-                            { name: "RTG Slots", img: RTGSlots, logo: RTGSlotsLogo, id: "rtgslots" },
-                            { name: "Thunder", img: Thunder, logo: ThunderLogo, id: "Thunderkick" },
-                            // { name: "Elk Studios", img: Elk, logo: ElkLogo, id: "elk" },
-                            { name: "Red Rake", img: RedRake, logo: RedRakeLogo, id: "redrake" },
-                            { name: "QuickSpin", img: QuickSpin, logo: QuickSpinLogo, id: "quickspin" },
-                            { name: "Fantasma", img: Fantasma, logo: FantasmaLogo, id: "fantasma" },
-                            { name: "Blueprint", img: Blueprint, logo: BlueprintLogo, id: "Blueprint Gaming" },
-                            { name: "NoLimit City", img: NoLimit, logo: NoLimitLogo, id: "Nolimit City" },
-                            { name: "1X2 Gaming", img: OneXTwoGaming, logo: OneXTwoGamingLogo, id: "1x2 Gaming" },
-                            { name: "NetEnt", img: NetEnt, logo: NetEntLogo, id: "netent" },
-                            { name: "Asian", img: Asian, logo: AsianLogo, id: "Asia Gaming" },
-                            { name: "Booongo", img: Booongo, logo: BooOngoLogo, id: "Booongo" },
-                            { name: "CQ9", img: CQ9, logo: CQ9Logo, id: "CQ9" },
-                            { name: "DreamTech", img: DreamTech, logo: DreamTechLogo, id: "dreamtech" },
-                            { name: "EvoPlay", img: EvoPlay, logo: EvoPlayLogo, id: "evoplay" },
-                            // { name: "Genesis", img: Genesis, logo: GenesisLogo, id: "genesis" },
-                            { name: "Habanero", img: Habanero, logo: HabaneroLogo, id: "Habanero" },
-                            { name: "Micro", img: Micro, logo: MicroLogo, id: "MicroGaming" },
-                            { name: "PGSoft", img: PGSoft, logo: PGSoftLogo, id: "PG Soft" },
-                            { name: "PlaynGO", img: PlaynGO, logo: PlaynGOLogo, id: "playngo" },
-                            { name: "Pragmatic", img: Pragmatic, logo: PragmaticLogo, id: "PragmaticPlay" },
-                            // { name: "TPG", img: TPG, logo: TPGLogo, id: "tpg" },
-                            // { name: "TTG", img: TTG, logo: TTGLogo, id: "ttg" },
-                            { name: "Yggdrasil", img: Yggdrasil, logo: YggdrasilLogo, id: "Yggdrasil" }
-                        ].map((provider, idx) => (
-                            <div
-                                key={provider.name}
-                                className="relative cursor-pointer w-[200px] h-[200px]"
-                                onClick={() => ProcessSlot(provider.id)}
-                            >
-                                {
-                                    loading && selectedGame === provider.name && <Spin className="flex z-[1000] justify-center items-center absolute top-[100px] left-0 w-full h-full" />
-                                }
-                                <div className="z-[3] absolute w-full top-1 justify-center flex">
-                                    <Image src={provider.logo} alt={provider.name} width={100} height={100} />
-                                </div>
-                                <div className="z-[3] absolute overflow-hidden w-full justify-center flex top-[40px]">
-                                    <span className="text-[25px] text-[yellow] font-bold">{provider.name}</span>
-                                </div>
-                                <Image src={gameBG} alt="game" className="absolute z-[2] top-0 left-0 w-full h-full" width={200} height={200} />
-                                <Image src={provider.img} alt={provider.name} className="opacity-100 z-[1] absolute bottom-[10px] left-[0px]" width={200} height={190} />
-                            </div>
-                        ))}
-                    </div>
-                )
-            }
-           
-        </Card>
-
-        {/* Add Balance Modal */}
-        <Modal
-            title={t("addBalance")}
-            open={isAddBalanceModalOpen}
-            onCancel={handleAddBalanceModalCancel}
-            footer={null}
-        >
-            <Form
-                form={addBalanceForm}
-                layout="vertical"
-                onFinish={handleAddBalance}
-            >
-                <Form.Item
-                    name="amount"
-                    label={t("amount")}
-                    rules={[
-                        { required: true, message: "Please enter an amount" },
-                        { type: "number", min: 1, message: "Amount must be greater than 0" }
-                    ]}
+                    }
+                    open={selectedSlotItems?.length > 0}
+                    onCancel={() => {
+                        setSelectedSlotItems([]);
+                        setSearchTerm("");
+                    }}
+                    footer={null}
+                    width={1200}
+                    className="slot-games-modal"
+                    style={{
+                        background: 'linear-gradient(135deg, #2a1810, #1a0f0a)',
+                        borderRadius: '12px'
+                    }}
                 >
-                    <InputNumber
-                        style={{ width: "100%" }}
-                        placeholder="Enter amount to add"
-                        min={1}
-                        precision={2}
-                    />
-                </Form.Item>
-                <Form.Item>
-                    <div className="flex justify-end gap-2">
-                        <Button onClick={handleAddBalanceModalCancel}>
-                            {t("cancel")}
-                        </Button>
-                        <Button 
-                            type="primary" 
-                            htmlType="submit" 
-                            loading={addBalanceLoading}
-                        >
-                            {t("submit")}
-                        </Button>
+                    <div className="p-4" style={{ background: 'linear-gradient(135deg, #2a1810, #1a0f0a)' }}>
+                        <input 
+                            type="text" 
+                            placeholder="search"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full p-3 mb-6 border border-gray-600 rounded-lg text-white bg-gray-800 placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                        />
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-h-[60vh] overflow-y-auto">
+                            {selectedSlotItems
+                                ?.filter((game: any) => 
+                                    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+                                )
+                                .map((game: any, idx: any) => (
+                                <div
+                                    key={game.id}
+                                    className="relative cursor-pointer rounded-lg overflow-hidden hover:scale-105 transform transition-transform group border border-yellow-600"
+                                    onClick={() => getGameLaunchLink(selectedGame, game.id)}
+                                >
+                                    <div className="relative">
+                                        <img 
+                                            src={game.thumbnail} 
+                                            alt={game.title}
+                                            className="w-full h-32 object-cover"
+                                            loading="lazy"
+                                        />
+                                        {/* Loading Spinner */}
+                                        {loading && (
+                                            <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-10">
+                                                <Spin size="large" />
+                                            </div>
+                                        )}
+                                        {/* Play overlay */}
+                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
+                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <div className="w-12 h-12 bg-yellow-400 bg-opacity-80 rounded-full flex items-center justify-center">
+                                                    <div className="w-0 h-0 border-l-4 border-l-black border-t-2 border-t-transparent border-b-2 border-b-transparent ml-1"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="p-2 bg-gradient-to-b from-yellow-800 to-yellow-900">
+                                        <p className="text-white text-sm font-medium text-center truncate">
+                                            {game.title}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </Form.Item>
-            </Form>
-        </Modal>
-            </Content>
-        )}
+                </Modal>
+            )}
+            {/* Slot Providers Grid */}
+            <div className="mt-8">
+                <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
+                    {[
+                        { name: "Mancala", logo: MancalaLogo, id: 'mancala' },
+                        { name: "Caleta", logo: CaletaLogo, id: 'caletagaming' },
+                        { name: "Platipus", logo: PlatipusLogo, id: 'platipus' },
+                        { name: "Booming", logo: BoomingLogo, id: "booming" },
+                        { name: "BGaming", logo: BGamingLogo, id: "bgaming" },
+                        { name: "Spinomenal", logo: SpinomenalLogo, id: "spinomenal" },
+                        { name: "Pariplay", logo: PariplayLogo, id: "pariplay" },
+                        { name: "Novomatic", logo: NovomaticLogo, id: "novomatic" },
+                        { name: "EA Gaming", logo: EAGamingLogo, id: "eagaming" },
+                        { name: "7777 Gaming", logo: SevenSevenSevenSevenLogo, id: "7777" },
+                        { name: "SmartSoft", logo: SmartSoftLogo, id: "smartsoft" },
+                        { name: "Fils", logo: FilsLogo, id: "fils" },
+                        { name: "7 Mojos", logo: SevenMojosLogo, id: "7-mojos" },
+                        { name: "Playtech", logo: PlaytechLogo, id: "PlayTech" },
+                        { name: "Skywind", logo: SkywindLogo, id: "Skywind Slot" },
+                        { name: "NetGaming", logo: NetGamingLogo, id: "netgame" },
+                        { name: "Big Time Gaming", logo: BTGLogo, id: "BigTimeGaming" },
+                        { name: "AvatarUX", logo: AvatarUXLogo, id: "AvatarUX" },
+                        { name: "Wazdan", logo: WazdanLogo, id: "wazdan" },
+                        { name: "GameArt", logo: GameArtLogo, id: "GameArt" },
+                        { name: "PlayStar", logo: PlayStarLogo, id: "PlayStar" },
+                        { name: "NetGame", logo: NetGameLogo, id: "netgame" },
+                        { name: "SlotMill", logo: SlotMillLogo, id: "slotmill" },
+                        { name: "Red Tiger", logo: RedTigerLogo, id: "redtiger" },
+                        { name: "Hacksaw Gaming", logo: HacksawLogo, id: "Hacksaw" },
+                        { name: "Relax Gaming", logo: RelaxLogo, id: "Relax Gaming" },
+                        { name: "RTG Slots", logo: RTGSlotsLogo, id: "rtgslots" },
+                        { name: "Thunder", logo: ThunderLogo, id: "Thunderkick" },
+                        { name: "Red Rake", logo: RedRakeLogo, id: "redrake" },
+                        { name: "QuickSpin", logo: QuickSpinLogo, id: "quickspin" },
+                        { name: "Fantasma", logo: FantasmaLogo, id: "fantasma" },
+                        { name: "Blueprint", logo: BlueprintLogo, id: "Blueprint Gaming" },
+                        { name: "NoLimit City", logo: NoLimitLogo, id: "Nolimit City" },
+                        { name: "1X2 Gaming", logo: OneXTwoGamingLogo, id: "1x2 Gaming" },
+                        { name: "NetEnt", logo: NetEntLogo, id: "netent" },
+                        { name: "Asian", logo: AsianLogo, id: "Asia Gaming" },
+                        { name: "Booongo", logo: BooOngoLogo, id: "Booongo" },
+                        { name: "CQ9", logo: CQ9Logo, id: "CQ9" },
+                        { name: "DreamTech", logo: DreamTechLogo, id: "dreamtech" },
+                        { name: "EvoPlay", logo: EvoPlayLogo, id: "evoplay" },
+                        { name: "Habanero", logo: HabaneroLogo, id: "Habanero" },
+                        { name: "Micro", logo: MicroLogo, id: "MicroGaming" },
+                        { name: "PGSoft", logo: PGSoftLogo, id: "PG Soft" },
+                        { name: "PlaynGO", logo: PlaynGOLogo, id: "playngo" },
+                        { name: "Pragmatic", logo: PragmaticLogo, id: "PragmaticPlay" },
+                        { name: "Yggdrasil", logo: YggdrasilLogo, id: "Yggdrasil" }
+                    ].map((provider, idx) => (
+                        <div
+                            key={provider.name}
+                            className="casino-game-grid-item md:max-w-[300px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
+                            onClick={() => ProcessSlot(provider.id)}
+                        >
+                            <div className="w-full h-full relative">
+                                <Image
+                                    src={provider.logo}
+                                    alt={`${provider.name} logo`}
+                                    className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
+                                />
+                                {/* Loading Spinner */}
+                                {loading && selectedGame === provider.id && (
+                                    <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center rounded-t-lg z-10">
+                                        <Spin size="large" />
+                                    </div>
+                                )}
+                                {/* Play Now Overlay */}
+                                <div className="absolute inset-0 hover:bg-black-60 bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-lg">
+                                    <button className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105">
+                                        {t("playNow")}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">
+                                {provider.name}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
 
+            {/* Add Balance Modal */}
+            <Modal
+                title={t("addBalance")}
+                open={isAddBalanceModalOpen}
+                onCancel={handleAddBalanceModalCancel}
+                footer={null}
+            >
+                <Form
+                    form={addBalanceForm}
+                    layout="vertical"
+                    onFinish={handleAddBalance}
+                >
+                    <Form.Item
+                        name="amount"
+                        label={t("amount")}
+                        rules={[
+                            { required: true, message: "Please enter an amount" },
+                            { type: "number", min: 1, message: "Amount must be greater than 0" }
+                        ]}
+                    >
+                        <InputNumber
+                            style={{ width: "100%" }}
+                            placeholder="Enter amount to add"
+                            min={1}
+                            precision={2}
+                        />
+                    </Form.Item>
+                    <Form.Item>
+                        <div className="flex justify-end gap-2">
+                            <Button onClick={handleAddBalanceModalCancel}>
+                                {t("cancel")}
+                            </Button>
+                            <Button 
+                                type="primary" 
+                                htmlType="submit" 
+                                loading={addBalanceLoading}
+                            >
+                                {t("submit")}
+                            </Button>
+                        </div>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            </div>
+        )}
     </>
   );
 };
