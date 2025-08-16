@@ -85,6 +85,7 @@ body {
   z-index: 1;
   background-size: 100% auto;
   font-family: sans-serif;
+  overflow-x: hidden;
   background-color: #0b0600;
 
 }
@@ -616,4 +617,37 @@ body {
 
 .modal-content .ant-modal-close-x:hover {
   color: #ffffff !important;
+}
+
+/* Holdem Images Animation */
+@keyframes holdem-move-left {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(30px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes holdem-move-right {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-40px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.holdem-left-animation {
+  animation: holdem-move-left 6s ease-in-out infinite;
+}
+
+.holdem-right-animation {
+  animation: holdem-move-right 6s ease-in-out infinite;
 }

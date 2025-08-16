@@ -59,7 +59,8 @@ import LogoImage from "@/assets/img/logo.png"
 import PhoneImage from "@/assets/img/contact/phone.png"
 import TelegramImage from "@/assets/img/contact/telegram.png"
 import TalkImage from "@/assets/img/contact/kakao.png"
-
+import holdemRight from "@/assets/img/main/holdem-right.png";
+import holdemLeft from "@/assets/img/main/holdem-left.png";
 // Logo Carousel Component
 interface LogoCarouselProps {
   logos: Array<{ name: string; logo: any }>;
@@ -168,7 +169,16 @@ export default function RootLayout({
   return (
     <Layout>
       <DeviceTracker />
-      <div className="w-full max-w-[1300px] mx-auto mx-[15px]">{children}</div>
+      
+      <div className="relative">
+        <div>
+          <Image src={holdemRight} alt="holdemRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
+          <Image src={holdemLeft} alt="holdemLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
+        </div>
+        <div className="max-w-[1300px] w-full mx-auto mx-[15px]">
+          {children}
+        </div>
+      </div>
        {/* Logo Carousel Animation */}
       <div className="w-full my-10">
         <LogoCarousel logos={ficonLogos} />

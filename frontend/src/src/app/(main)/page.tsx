@@ -25,7 +25,6 @@ import taishanLogo from "@/assets/img/casinoGame/taishan.png";
 import vivoLogo from "@/assets/img/casinoGame/vivo.png";
 import wmLogo from "@/assets/img/casinoGame/wm.png";
 
-
 const Index: React.FC = () => {
   const t = useTranslations();
 
@@ -55,9 +54,8 @@ const Index: React.FC = () => {
  
  
   return (
-    <div className="mt-10">
+    <div className="mt-10 relative">
       <h1 className="section-title">{t("liveCasino")}</h1>
-      
       {/* Casino Game Companies Grid */}
       <div className="mt-8">
         <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
