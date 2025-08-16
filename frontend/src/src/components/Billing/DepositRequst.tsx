@@ -223,8 +223,8 @@ const DepositRequest: React.FC<{checkoutModal: (modal: string) => void}> = (prop
               <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("deposit")}</h2>
               <p className="text-white text-[14px] font-[400] justify-center pb-6 flex">{t("deposit")}</p>
               <div className="absolute bottom-2 right-0 flex gap-2">
-                <button className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
-                <button className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
+                <button onClick={() => props.checkoutModal('profile')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
+                <button onClick={() => props.checkoutModal('betHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
               </div>
             </div>
           }
@@ -393,7 +393,7 @@ const DepositRequest: React.FC<{checkoutModal: (modal: string) => void}> = (prop
         columns={columns}
         loading={false}
         dataSource={transactions}
-        className="w-full mt-4 bg-[#160d0c]"
+        className="w-full mt-4 bg-[#160d0c] px-6"
         size="small"
         scroll={{ x: "max-content" }}
         onChange={() => {}}

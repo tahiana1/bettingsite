@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import html2canvas from 'html2canvas-pro';
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
+import modalImage from '@/assets/img/main/modal-head.png';
 
 import {
   Layout,
@@ -33,7 +35,7 @@ import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
 
-const BettingLog: React.FC = () => {
+const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
@@ -368,90 +370,141 @@ const BettingLog: React.FC = () => {
   return (
     <>
       {!profile?.userId ? (
-        <Layout className="flex justify-center items-center h-[90vh]">
+        <div className="flex justify-center items-center h-[100vh] min-w-[400px] z-[100] bg-black">
           <Login />
-        </Layout>
+        </div>
        
       ) : (
-        <Layout className="p-3">
-          {contextHolder}
-          <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
+        <div className="flex justify-center items-center">
+          <div className="pr-4" style={{ maxWidth: 1200, width: "100%" }}>
+            {contextHolder}
             <Card
-              title={t("user/menu/betlog")}
+              title={
+                <>
+                  <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("BETTING LOG")}</h2>
+                  <p className="text-white text-[16px] font-[400] justify-center pb-6 flex">{t("user/menu/betlog")}</p>
+                </>
+              }
+              className="w-full login-card"
+              classNames={{
+                body: "px-6 py-6",
+              }}
+              styles={{
+                header: {
+                  backgroundImage: `url(${modalImage.src})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                },
+                body: {
+                  backgroundColor: '#160d0c',
+                  borderTop: 'none',
+                  padding: "0px 30px"
+                }
+              }}
             >
-              <Space className="mb-5" direction="vertical">
-                <Space wrap>
+              <div className="flex w-full mb-6 bg-gradient-to-r from-[#2a1810] to-[#3e2a1f] rounded-lg overflow-hidden border border-[#5d4a3a]">
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors"
+                  onClick={() => props.checkoutModal("profile")}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="currentColor" viewBox="0 0 512 512" ><path d="M238.6 58.1C248.4 48.9 263.6 48.9 273.4 58.1L345.6 125.0L345.6 115.2C345.6 101.0 357.0 89.6 371.2 89.6L396.8 89.6C411.0 89.6 422.4 101.0 422.4 115.2L422.4 196.4L452.6 224.5C460.3 231.7 462.9 242.8 459.0 252.6C455.2 262.3 446.0 268.8 435.2 268.8L422.4 268.8L422.4 409.6C422.4 438.6 399.4 461.6 370.4 461.6L141.6 461.6C112.6 461.6 89.6 438.6 89.6 409.6L89.6 268.8L76.8 268.8C66.0 268.8 56.8 262.3 53.0 252.6C49.1 242.8 51.7 231.7 59.4 224.5L238.6 58.1zM300.8 256.0C300.8 231.3 280.7 211.2 256.0 211.2C231.3 211.2 211.2 231.3 211.2 256.0C211.2 280.7 231.3 300.8 256.0 300.8C280.7 300.8 300.8 280.7 300.8 256.0zM166.4 396.8C166.4 403.8 172.2 409.6 179.2 409.6L332.8 409.6C339.8 409.6 345.6 403.8 345.6 396.8C345.6 361.4 317.4 332.8 282.0 332.8L230.4 332.8C195.0 332.8 166.4 361.4 166.4 396.8z"/></svg>
+                  {t("profile")}
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors"
+                  onClick={() => props.checkoutModal("letter")}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 512 512"  fill="white"  ><path d="M128 76.8C99.8 76.8 76.8 99.8 76.8 128L76.8 384C76.8 412.2 99.8 435.2 128 435.2L384 435.2C412.2 435.2 435.2 412.2 435.2 384L435.2 128C435.2 99.8 412.2 76.8 384 76.8L128 76.8zM244.1 265.5L163.5 217.1C157.4 213.4 153.6 206.8 153.6 199.6C153.6 188.3 162.7 179.2 174.0 179.2L337.9 179.2C349.2 179.2 358.3 188.3 358.3 199.6C358.3 206.8 354.5 213.4 348.4 217.1L267.9 265.5C264.3 267.7 260.3 268.8 256 268.8C251.7 268.8 247.7 267.7 244.1 265.5zM358.4 241.0L358.4 307.2C358.4 321.4 346.9 332.8 332.8 332.8L179.2 332.8C165.0 332.8 153.6 321.4 153.6 307.2L153.6 241.0L230.9 287.4C238.5 292.0 247.2 294.4 256 294.4C264.8 294.4 273.5 292.0 281.1 287.4L358.4 241.0z"/></svg>
+                  {t("letter")}
+                </button>
+                <button 
+                  className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors border-r border-[#5d4a3a]"
+                  onClick={() => props.checkoutModal("qna")}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 512 512" fill="white" ><path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32zM128 272c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32zm128 0c-17.7 0-32-14.3-32-32s14.3-32 32-32 32 14.3 32 32-14.3 32-32 32z"/></svg>
+                  {t("QNA")}
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 bg-[#4a3224] text-[#edd497] font-bold hover:bg-[#5a3a2a] transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 512 512" fill="currentColor"><path d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L274.7 256 217.4 313.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L320 301.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L365.3 256l57.4-57.4z"/></svg>
+                  {t("user/menu/betlog")}
+                </button>
+              </div>
+              <div className="mb-5">
+                <div className="flex flex-wrap gap-2 mb-4">
                   <Radio.Group
                     size="small"
                     optionType="button"
                     buttonStyle="solid"
-                    style={{ gap: '5px', display: 'flex', alignItems: 'center' }}
+                    className="flex flex-wrap gap-2"
                     options={[
                       {
                         label: t("overseasType"),
                         value: "D",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("domesticType"),
                         value: "W",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("inPlay"),
                         value: "AP",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("realTime"),
                         value: "AR",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("special"),
                         value: "TR",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("minigame"),
                         value: "SP",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("virtualGame"),
                         value: "LR",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("touchGame"),
                         value: "R",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("lotusGame"),
                         value: "E",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       },
                       {
                         label: t("mgmGames"),
                         value: "C",
-                        className: "w-24 flex text-center py-1"
+                        className: "!bg-[#3e2a1f] !border-[#5d4a3a] !text-white hover:!bg-[#4a3224] hover:!border-[#edd497]"
                       }
                     ]}
                     defaultValue={""}
                     onChange={(e) => onTransactionTypeChange(e.target.value)}
                   />
-                </Space>
-              </Space>
-              <div className="flex justify-end gap-1 mb-4">
-                <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mb-4">
+                <button className="btn-modal-auth px-4 py-2 text-sm">
                   {t("deleteAllHistory")}
                 </button>
-                <button onClick={() => handleCaptureAllImage()} className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer ">
+                <button onClick={() => handleCaptureAllImage()} className="btn-modal-auth px-4 py-2 text-sm">
                   {t("contactInquiry")}
                 </button>
                 <button 
-                  className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+                  className="btn-modal-auth px-4 py-2 text-sm"
                   onClick={() => handleCaptureAllNoticeImage()}
                 >
                   {t("writingInquiry")}
@@ -466,14 +519,19 @@ const BettingLog: React.FC = () => {
                           columns={columns}
                           // loading={loading}
                           dataSource={betGroup.bets}
-                          className="w-full text-center"
-                          style={{borderTop: "1px solid rgba(255,255,255,0.2)", borderLeft: "1px solid rgba(255,255,255,0.2)", borderRight: "1px solid rgba(255,255,255,0.2)"}}
+                          className="w-full text-center custom-dark-table"
+                          style={{
+                            borderTop: "1px solid #5d4a3a", 
+                            borderLeft: "1px solid #5d4a3a", 
+                            borderRight: "1px solid #5d4a3a",
+                            backgroundColor: '#2a1810'
+                          }}
                           size="small"
                           scroll={{ x: "max-content" }}
                           onChange={onChange}
                           pagination={false}
                         />
-                        <div className="flex items-center gap-2 mb-3 w-full py-1 px-1" style={{border: '1px solid rgba(255,255,255,0.2)'}}>
+                        <div className="flex items-center gap-2 mb-3 w-full py-2 px-3 bg-[#2a1810] border border-[#5d4a3a]">
                           <Checkbox 
                             checked={selectedBetGroups.includes(betGroup.placedAt)}
                             onChange={(e) => {
@@ -483,23 +541,24 @@ const BettingLog: React.FC = () => {
                                 setSelectedBetGroups(selectedBetGroups.filter(id => id !== betGroup.placedAt));
                               }
                             }}
+                            className="custom-checkbox"
                           />
-                          <p className="text-sm">{t("bettingAcceptanceTime")} {dayjs(betGroup.placedAt).format("YYYY-MM-DD HH:mm:ss")}</p>
+                          <p className="text-sm text-white">{t("bettingAcceptanceTime")} {dayjs(betGroup.placedAt).format("YYYY-MM-DD HH:mm:ss")}</p>
                         </div>
                       </div>
-                      <div className="flex justify-end gap-1 mb-6">
-                        <button className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer">
+                      <div className="flex justify-end gap-2 mb-6">
+                        <button className="btn-modal-auth px-3 py-1 text-sm">
                           {t("deleteHistory")}
                         </button>
                         <button 
-                          className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+                          className="btn-modal-auth px-3 py-1 text-sm"
                           onClick={() => handleCaptureImage(betGroup.placedAt)}
                           // disabled={selectedBetGroup !== betGroup.placedAt}
                         >
                           {t("contactInquiry")}
                         </button>
                         <button 
-                          className="bg-gradient-to-r from-[#49aa19] to-[#237804] px-3 py-1 rounded-md text-white font-bold cursor-pointer"
+                          className="btn-modal-auth px-3 py-1 text-sm"
                           onClick={() => handleCaptureNoticeImage(betGroup.placedAt)}
                         >
                           {t("writingInquiry")}
@@ -543,8 +602,8 @@ const BettingLog: React.FC = () => {
                 </Space>
               </Modal>
             </Card>
-          </Content>
-        </Layout>
+          </div>
+        </div>
       )}
     </>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, Table, Layout, TableProps } from "antd";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
@@ -71,8 +69,8 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
                         <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("event")}</h2>
                         <p className="text-white text-[14px] font-[400] justify-center pb-6 flex">{t("event")}</p>
                         <div className="absolute bottom-2 right-0 flex gap-2">
-                            <button className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
-                            <button className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
+                            <button onClick={() => props.checkoutModal?.('profile')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
+                            <button onClick={() => props.checkoutModal?.('betHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
                         </div>
                     </div>
                 }
@@ -139,7 +137,7 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
                     number: idx + 1,
                     key: event.id || idx,
                 }))}
-                className="w-full mt-4 bg-[#160d0c]"
+                className="w-full mt-4 bg-[#160d0c] px-2"
                 size="small"
                 scroll={{ x: "max-content" }}
                 onChange={onChange}

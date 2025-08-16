@@ -25,6 +25,10 @@ import DepositRequest from "./Billing/DepositRequst";
 import WithdrawRequest from "./Billing/WithdrawRequst";
 import Notice from '@/components/notice/page';
 import Event from '@/components/event/page';
+import ProfilePage from '@/components/profile/page';
+import QnaPage from "@/components/qna/page";
+import NotePage from "@/components/note/page";
+import BettingHistoryPage from "@/components/betlog/page";
 import Logo from "@/assets/img/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -85,31 +89,93 @@ const Head = () => {
   // Event modal state
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
+  // Profile modal state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  // Note modal state
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
+
+  // Qna modal state
+  const [isQnaModalOpen, setIsQnaModalOpen] = useState(false);
+
+  // BettingHistory modal state
+  const [isBettingHisotryModalOpen, setIsBettingHistoryModalOpen] = useState(false);
+
   const checkoutModal = (modal: string) => {
     if (modal === "withdraw") {
-      setIsWithdrawModalOpen(false);
       setIsDepositModalOpen(false);
       setIsNoticeModalOpen(false);
       setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
       handleWithdrawClick();
     } else if (modal === "deposit") {
       setIsWithdrawModalOpen(false);
-      setIsDepositModalOpen(false);
       setIsNoticeModalOpen(false);
       setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
       handleDepositClick();
     } else if (modal === "notice") {
       setIsWithdrawModalOpen(false);
       setIsDepositModalOpen(false);
-      setIsNoticeModalOpen(false);
       setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
       handleNoticeClick();
     } else if (modal === "event") {
       setIsWithdrawModalOpen(false);
       setIsDepositModalOpen(false);
       setIsNoticeModalOpen(false);
-      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
       handleEventClick();
+    } else if (modal === "profile") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
+      handleProfileClick();
+    } else if (modal === "letter") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
+      handleNoteClick();
+    } else if (modal === "qna") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
+      handleQnaClick();
+    } else if (modal === "bettingHistory") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      handleBettingHistoryClick();
     }
   };
 
@@ -240,6 +306,38 @@ const Head = () => {
     setIsEventModalOpen(false);
   };
 
+  const handleProfileClick = () => {
+    setIsProfileModalOpen(true);
+  };
+
+  const handleCloseProfileModal = () => {
+    setIsProfileModalOpen(false);
+  };
+
+  const handleNoteClick = () => {
+    setIsNoteModalOpen(true);
+  };
+
+  const handleCloseNoteModal = () => {
+    setIsNoteModalOpen(false);
+  };
+
+  const handleQnaClick = () => {
+    setIsQnaModalOpen(true);
+  };
+
+  const handleCloseQnaModal = () => {
+    setIsQnaModalOpen(false);
+  };
+
+  const handleBettingHistoryClick = () => {
+    setIsBettingHistoryModalOpen(true);
+  };
+
+  const handleCloseBettingHistoryModal = () => {
+    setIsBettingHistoryModalOpen(false);
+  };
+
   const profileItems: MenuProps["items"] = [
     {
       key: "balance",
@@ -248,6 +346,7 @@ const Head = () => {
       className: "flex items-center justify-between w-full",
       onClick: (e: MenuInfo) => {
         console.log({ e });
+        handleProfileClick();
       },
     },
     {
@@ -256,13 +355,17 @@ const Head = () => {
       label: profile?.point,
       onClick: (e: MenuInfo) => {
         console.log({ e });
+        handleQnaClick();
       },
     },
     {
       key: "qna",
       icon: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="#f4d171" width={20} height={20}><path d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM320 240C302.3 240 288 254.3 288 272C288 285.3 277.3 296 264 296C250.7 296 240 285.3 240 272C240 227.8 275.8 192 320 192C364.2 192 400 227.8 400 272C400 319.2 364 339.2 344 346.5L344 350.3C344 363.6 333.3 374.3 320 374.3C306.7 374.3 296 363.6 296 350.3L296 342.2C296 321.7 310.8 307 326.1 302C332.5 299.9 339.3 296.5 344.3 291.7C348.6 287.5 352 281.7 352 272.1C352 254.4 337.7 240.1 320 240.1zM288 432C288 414.3 302.3 400 320 400C337.7 400 352 414.3 352 432C352 449.7 337.7 464 320 464C302.3 464 288 449.7 288 432z"/></svg>,
       label: t('QNA'),
-      onClick: onLogout,
+      onClick: (e: MenuInfo) => {
+        console.log({ e });
+        handleQnaClick();
+      },
     },
     {
       key: "level",
@@ -289,6 +392,7 @@ const Head = () => {
       })(),
       onClick: (e: MenuInfo) => {
         console.log({ e });
+        handleProfileClick();
       },
     },
     {
@@ -403,7 +507,7 @@ const Head = () => {
           }
           {profile?.id >= 0 && (
             <div className="notification-container ml-4">
-              <Link href="/note" className="relative inline-block">
+              <button  onClick={() => handleNoteClick()} className="relative inline-block">
               <div className="bg-[#fce18f] rounded-[8px] h-[30px] w-[30px] flex items-center justify-center">
                 <div className="relative m-auto">
                     <MailOutlined 
@@ -419,7 +523,7 @@ const Head = () => {
                       </span>
                     </div>
                 </div>
-              </Link>
+              </button>
             </div>
           )}
         </div>
@@ -502,10 +606,12 @@ const Head = () => {
         title={null}
         open={isLoginModalOpen}
         onCancel={handleCloseModal}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         footer={null}
         width={600}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <Login onClose={handleCloseModal} />
       </Modal>
@@ -516,9 +622,11 @@ const Head = () => {
         open={isSignupModalOpen}
         onCancel={handleCloseSignupModal}
         footer={null}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         width={600}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <SignUp onClose={handleCloseSignupModal} />
       </Modal>
@@ -529,9 +637,11 @@ const Head = () => {
         open={isDepositModalOpen}
         onCancel={handleCloseDepositModal}
         footer={null}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         width={800}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <DepositRequest checkoutModal={checkoutModal} />
       </Modal>
@@ -540,9 +650,11 @@ const Head = () => {
         open={isWithdrawModalOpen}
         onCancel={handleCloseWithdrawModal}
         footer={null}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         width={800}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <WithdrawRequest checkoutModal={checkoutModal} />
       </Modal>
@@ -551,9 +663,11 @@ const Head = () => {
         open={isNoticeModalOpen}
         onCancel={handleCloseNoticeModal}
         footer={null}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         width={800}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <Notice checkoutModal={checkoutModal} />
       </Modal>
@@ -562,11 +676,67 @@ const Head = () => {
         open={isEventModalOpen}
         onCancel={handleCloseEventModal}
         footer={null}
-        className="p-0 modal-content"
+        className="p-0 modal-content modal-fade-in"
         width={800}
         centered
+        transitionName=""
+        maskTransitionName=""
       >
         <Event checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isProfileModalOpen}
+        onCancel={handleCloseProfileModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <ProfilePage checkoutModal={checkoutModal} />
+      </Modal>
+
+      <Modal
+        title={null}
+        open={isNoteModalOpen}
+        onCancel={handleCloseNoteModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <NotePage checkoutModal={checkoutModal} />
+      </Modal>
+
+      <Modal
+        title={null}
+        open={isQnaModalOpen}
+        onCancel={handleCloseQnaModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <QnaPage checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isBettingHisotryModalOpen}
+        onCancel={handleCloseBettingHistoryModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <BettingHistoryPage checkoutModal={checkoutModal} />
       </Modal>
     </div>
   );

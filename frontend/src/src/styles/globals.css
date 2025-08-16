@@ -293,6 +293,35 @@ body {
   background-color: #f5b774!important;
 }
 
+/* Custom dark table styling */
+.custom-dark-table .ant-table-thead > tr > th {
+  background-color: #3e2a1f !important;
+  color: white !important;
+  border-bottom: 1px solid #5d4a3a !important;
+  border-right: 1px solid #5d4a3a !important;
+}
+
+.custom-dark-table .ant-table-tbody > tr > td {
+  background-color: #2a1810 !important;
+  color: white !important;
+  border-bottom: 1px solid #5d4a3a !important;
+  border-right: 1px solid #5d4a3a !important;
+}
+
+.custom-dark-table .ant-table-tbody > tr:hover > td {
+  background-color: #4a3224 !important;
+}
+
+.custom-checkbox .ant-checkbox-inner {
+  background-color: #3e2a1f !important;
+  border-color: #5d4a3a !important;
+}
+
+.custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #edd497 !important;
+  border-color: #edd497 !important;
+}
+
 .select-white-input {
   background-color: white!important;
   
@@ -357,6 +386,18 @@ body {
   background-color: #281f1f!important;
 }
 
+.withdraw-section .ant-card-actions {
+  background-color: #160d0c!important;
+}
+
+.withdraw-section .ant-table-wrapper .ant-table-cell {
+  background-color: #281f1f!important;
+}
+
+.withdraw-section .ant-table-row-expand-icon {
+  background-color: #281f1f!important;
+}
+
 .notice-section .ant-card-actions {
   background-color: #160d0c!important;
 }
@@ -379,4 +420,200 @@ body {
 
 .event-section .ant-table-row-expand-icon {
   background-color: #281f1f!important;
+}
+
+/* Custom table styles for note page */
+.custom-table.ant-table {
+  background-color: transparent !important;
+}
+
+.custom-table .ant-table-header {
+  background-color: #2a1810 !important;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: #2a1810 !important;
+  color: #edd497 !important;
+  border-bottom: 1px solid #3e2e23 !important;
+  font-weight: 600 !important;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  background-color: #160d0c !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #3e2e23 !important;
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background-color: #2a1810 !important;
+}
+
+.custom-table .ant-pagination {
+  color: #ffffff !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item {
+  background-color: #2a1810 !important;
+  border-color: #3e2e23 !important;
+  color: #ffffff !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item:hover {
+  background-color: #3e2e23 !important;
+  border-color: #5d4a3a !important;
+}
+
+.custom-table .ant-pagination .ant-pagination-item-active {
+  background-color: #edd497 !important;
+  border-color: #edd497 !important;
+  color: #160d0c !important;
+}
+
+.custom-table .ant-table-row-expand-icon {
+  background-color: #2a1810 !important;
+  border-color: #3e2e23 !important;
+  color: #edd497 !important;
+}
+
+/* Quill Editor Dark Theme */
+.quill-editor-dark .ql-toolbar {
+  background-color: #2a1810 !important;
+  border-color: #3e2e23 !important;
+  border-bottom: 1px solid #3e2e23 !important;
+}
+
+.quill-editor-dark .ql-toolbar .ql-stroke {
+  stroke: #edd497 !important;
+}
+
+.quill-editor-dark .ql-toolbar .ql-fill {
+  fill: #edd497 !important;
+}
+
+.quill-editor-dark .ql-toolbar .ql-picker-label {
+  color: #edd497 !important;
+}
+
+.quill-editor-dark .ql-toolbar button:hover,
+.quill-editor-dark .ql-toolbar button:focus {
+  background-color: #3e2e23 !important;
+}
+
+.quill-editor-dark .ql-toolbar button.ql-active {
+  background-color: #5d4a3a !important;
+}
+
+.quill-editor-dark .ql-container {
+  background-color: #160d0c !important;
+  border-color: #3e2e23 !important;
+  color: #ffffff !important;
+}
+
+.quill-editor-dark .ql-editor {
+  background-color: #160d0c !important;
+  color: #ffffff !important;
+}
+
+.quill-editor-dark .ql-editor.ql-blank::before {
+  color: #666666 !important;
+}
+
+.quill-editor-dark .ql-picker-options {
+  background-color: #2a1810 !important;
+  border-color: #3e2e23 !important;
+}
+
+.quill-editor-dark .ql-picker-item {
+  color: #ffffff !important;
+}
+
+.quill-editor-dark .ql-picker-item:hover {
+  background-color: #3e2e23 !important;
+}
+
+/* Modal fade-in animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-20px);
+  }
+}
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Custom modal classes with animations */
+.modal-fade-in .ant-modal {
+  animation: modalFadeIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-fade-in .ant-modal-mask {
+  animation: overlayFadeIn 0.3s ease-in-out;
+}
+
+.modal-fade-out .ant-modal {
+  animation: modalFadeOut 0.3s ease-in-out;
+}
+
+.modal-fade-out .ant-modal-mask {
+  animation: overlayFadeOut 0.3s ease-in-out;
+}
+
+/* Enhanced modal content styling */
+.modal-content .ant-modal-content {
+  background-color: #160d0c !important;
+  border: 2px solid #f6d47c !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  overflow: hidden;
+}
+
+.modal-content .ant-modal-header {
+  background-color: #2a1810 !important;
+  border-bottom: 1px solid #f6d47c !important;
+  color: #f6d47c !important;
+}
+
+.modal-content .ant-modal-body {
+  background-color: #160d0c !important;
+  color: #ffffff !important;
+}
+
+.modal-content .ant-modal-close-x {
+  color: #f6d47c !important;
+  font-size: 18px !important;
+}
+
+.modal-content .ant-modal-close-x:hover {
+  color: #ffffff !important;
 }
