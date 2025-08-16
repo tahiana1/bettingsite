@@ -1672,5 +1672,6 @@
   "point/exchangeRequest" : "Point Exchange Request",
   "profile/withdrawAmount" : "Withdraw Amount",
   "profile/applyWithdraw" : "Apply Withdraw",
-  "profile/rechargeBonus" : "Recharge Bonus"
+  "profile/rechargeBonus" : "Recharge Bonus",
+  "playNow" : "Play Now"
 }

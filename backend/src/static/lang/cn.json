@@ -1670,5 +1670,6 @@
   "point/exchangeRequest" : "点数兑换请求",
   "profile/withdrawAmount" : "提款金额",
   "profile/applyWithdraw" : "申请提款",
-  "profile/rechargeBonus" : "充值奖励"
+  "profile/rechargeBonus" : "充值奖励",
+  "playNow" : "立即游玩"
 }
