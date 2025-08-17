@@ -595,7 +595,10 @@ const Head = () => {
         </div>
       </div>
       <div className="flex justify-center">
-        <div className="flex gap-4 relative cursor-pointer" onClick={() => setActiveTab("casino")}>
+        <div className="flex gap-4 relative cursor-pointer" onClick={() => {
+          setActiveTab("casino");
+          router.push("/");
+        }}>
           {
             activeTab !== "casino" ? (
               <>
@@ -608,7 +611,10 @@ const Head = () => {
           )}
           <h2 className="absolute md:top-6 top-4 md:w-[120px] w-[80px] text-center text-[#fce18f] md:text-[30px] text-[20px]">{t("casino")}</h2>
         </div>
-        <div className="flex gap-4 relative cursor-pointer" onClick={() => setActiveTab("slot")}>
+        <div className="flex gap-4 relative cursor-pointer" onClick={() => {
+          setActiveTab("slot");
+          router.push("/slot");
+        }}>
           {
             activeTab !== "slot" ? (
               <>
@@ -622,7 +628,10 @@ const Head = () => {
           }
           <h2 className="absolute md:top-6 top-4 md:w-[120px] w-[80px] text-center text-[#fce18f] md:text-[30px] text-[20px]">{t("slot")}</h2>
         </div>
-        <div className="flex gap-4 relative cursor-pointer" onClick={() => setActiveTab("mini")}>
+        <div className="flex gap-4 relative cursor-pointer" onClick={() => {
+          setActiveTab("mini");
+          router.push("/mini");
+        }}>
           {
             activeTab !== "mini" ? (
               <>

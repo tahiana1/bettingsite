@@ -237,56 +237,49 @@ const Index: React.FC = () => {
   
   return (
     <>
-      {!profile?.userId ? (
-        <Layout className="flex justify-center items-center h-[90vh]">
-          <Login />
-        </Layout>
-      ) : (
         <div className="mt-10 relative">
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-center items-center mb-4">
             <h1 className="section-title">{t("liveCasino")}</h1>
-            <div className="text-lg text-white">
+            {/* <div className="text-lg text-white">
               {t("balance")}: <span className="text-yellow-400 font-bold">{balance}</span>
+            </div> */}
+          </div>
+          {/* Casino Game Companies Grid */}
+          <div className="mt-8">
+            <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
+              {casinoCompanies.map((company, index) => (
+                <div
+                  key={index}
+                  className="casino-game-grid-item md:max-w-[300px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
+                  onClick={() => ProcessCasino(company.name)}
+                >
+                  <div className="w-full h-full relative">
+                    <Image
+                      src={company.logo}
+                      alt={`${company.name} logo`}
+                      className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
+                    />
+                    {/* Loading Spinner */}
+                    {loading && selectedGame === company.name && (
+                      <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center rounded-t-lg z-10">
+                        <Spin size="large" />
+                      </div>
+                    )}
+                    {/* Play Now Overlay */}
+                    <div className="absolute inset-0 hover:bg-black-60 bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-lg">
+                      <button className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105">
+                        {t("playNow")}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">
+                    {company.name}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-      {/* Casino Game Companies Grid */}
-      <div className="mt-8">
-        <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
-          {casinoCompanies.map((company, index) => (
-            <div
-              key={index}
-              className="casino-game-grid-item md:max-w-[300px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
-              onClick={() => ProcessCasino(company.name)}
-            >
-              <div className="w-full h-full relative">
-                <Image
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                  className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
-                />
-                {/* Loading Spinner */}
-                {loading && selectedGame === company.name && (
-                  <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center rounded-t-lg z-10">
-                    <Spin size="large" />
-                  </div>
-                )}
-                {/* Play Now Overlay */}
-                <div className="absolute inset-0 hover:bg-black-60 bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-lg">
-                  <button className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105">
-                    {t("playNow")}
-                  </button>
-                </div>
-              </div>
-              <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">
-                {company.name}
-              </div>
-            </div>
-          ))}
         </div>
-      </div>
-     
-        </div>
-      )}
     </>
   );
 };

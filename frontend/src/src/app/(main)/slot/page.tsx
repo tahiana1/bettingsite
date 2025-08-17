@@ -278,11 +278,11 @@ const SlotPage: React.FC = () => {
             </Layout>
         ) : (
             <div className="mt-10 relative">
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="section-title">{t("user/slot")}</h1>
-                    <div className="text-lg text-white">
+                <div className="flex justify-center items-center mb-4">
+                    <h1 className="section-title">{t("slot")}</h1>
+                    {/* <div className="text-lg text-white">
                         {t("balance")}: <span className="text-yellow-400 font-bold">{balance}</span>
-                    </div>
+                    </div> */}
                 </div>
             {/* Slot Games Modal */}
             {selectedSlotItems?.length > 0 && (
