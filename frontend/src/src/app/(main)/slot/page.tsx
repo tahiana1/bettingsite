@@ -4,7 +4,7 @@ import { Button, message, Spin, Modal, Form, InputNumber, Layout } from "antd";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import api from "@/api";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -75,6 +75,7 @@ const SlotPage: React.FC = () => {
     const router = useRouter(); 
     const [selectedSlotItems, setSelectedSlotItems] = useState<any>([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
     // Check if user is logged in
     useEffect(() => {
         api("user/me").then((res) => {
@@ -270,6 +271,102 @@ const SlotPage: React.FC = () => {
         addBalanceForm.resetFields();
     };
 
+    // Intersection Observer for lazy loading
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    
+    const createObserver = useCallback(() => {
+        if (observerRef.current) {
+            observerRef.current.disconnect();
+        }
+        
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const index = parseInt(entry.target.getAttribute('data-index') || '0');
+                        setVisibleItems(prev => new Set([...prev, index]));
+                    }
+                });
+            },
+            {
+                root: null,
+                rootMargin: '100px',
+                threshold: 0.1
+            }
+        );
+    }, []);
+
+    useEffect(() => {
+        createObserver();
+        return () => {
+            if (observerRef.current) {
+                observerRef.current.disconnect();
+            }
+        };
+    }, [createObserver]);
+
+    // Lazy loading component for slot provider items
+    const LazySlotProvider = ({ provider, index }: { provider: any, index: number }) => {
+        const elementRef = useRef<HTMLDivElement>(null);
+        const isVisible = visibleItems.has(index);
+
+        useEffect(() => {
+            const element = elementRef.current;
+            if (element && observerRef.current) {
+                observerRef.current.observe(element);
+            }
+            
+            return () => {
+                if (element && observerRef.current) {
+                    observerRef.current.unobserve(element);
+                }
+            };
+        }, []);
+
+        return (
+            <div
+                ref={elementRef}
+                data-index={index}
+                className="casino-game-grid-item md:max-w-[200px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
+                onClick={() => ProcessSlot(provider.id)}
+            >
+                <div className="w-full h-full relative">
+                    {isVisible ? (
+                        <Image
+                            src={provider.logo}
+                            alt={`${provider.name} logo`}
+                            className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
+                            loading="lazy"
+                        />
+                    ) : (
+                        <div className="w-full h-[150px] bg-gray-800 rounded-t-lg flex items-center justify-center">
+                            <div className="animate-pulse bg-gray-700 w-full h-full rounded-t-lg"></div>
+                        </div>
+                    )}
+                    
+                    {/* Loading Spinner */}
+                    {loading && selectedGame === provider.id && (
+                        <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center rounded-t-lg z-10">
+                            <Spin size="large" />
+                        </div>
+                    )}
+                    
+                    {/* Play Now Overlay */}
+                    {isVisible && (
+                        <div className="absolute inset-0 hover:bg-black-60 bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-lg">
+                            <button className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105">
+                                {t("playNow")}
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">
+                    {provider.name}
+                </div>
+            </div>
+        );
+    };
+
     return (
     <>
         {!profile?.userId ? (
@@ -290,7 +387,7 @@ const SlotPage: React.FC = () => {
                     title={
                         <div className="text-center">
                             <div className="text-2xl font-bold text-yellow-400 mb-2">{selectedGame}</div>
-                            <div className="text-sm text-gray-400">슬롯소프트</div>
+                            <div className="text-sm text-gray-400">{selectedGame}</div>
                         </div>
                     }
                     open={selectedSlotItems?.length > 0}
@@ -360,7 +457,7 @@ const SlotPage: React.FC = () => {
             )}
             {/* Slot Providers Grid */}
             <div className="mt-8">
-                <div className="casino-game-grid flex flex-wrap gap-4 md:gap-8 justify-center">
+                <div className="casino-game-grid grid grid-cols-6 gap-4 md:gap-6 justify-items-center">
                     {[
                         { name: "Mancala", logo: MancalaLogo, id: 'mancala' },
                         { name: "Caleta", logo: CaletaLogo, id: 'caletagaming' },
@@ -409,34 +506,11 @@ const SlotPage: React.FC = () => {
                         { name: "Pragmatic", logo: PragmaticLogo, id: "PragmaticPlay" },
                         { name: "Yggdrasil", logo: YggdrasilLogo, id: "Yggdrasil" }
                     ].map((provider, idx) => (
-                        <div
+                        <LazySlotProvider
                             key={provider.name}
-                            className="casino-game-grid-item md:max-w-[300px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
-                            onClick={() => ProcessSlot(provider.id)}
-                        >
-                            <div className="w-full h-full relative">
-                                <Image
-                                    src={provider.logo}
-                                    alt={`${provider.name} logo`}
-                                    className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
-                                />
-                                {/* Loading Spinner */}
-                                {loading && selectedGame === provider.id && (
-                                    <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center rounded-t-lg z-10">
-                                        <Spin size="large" />
-                                    </div>
-                                )}
-                                {/* Play Now Overlay */}
-                                <div className="absolute inset-0 hover:bg-black-60 bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-t-lg">
-                                    <button className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105">
-                                        {t("playNow")}
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="text-xl py-3 text-white font-bold text-center bg-image-game-item w-full">
-                                {provider.name}
-                            </div>
-                        </div>
+                            provider={provider}
+                            index={idx}
+                        />
                     ))}
                 </div>
             </div>
