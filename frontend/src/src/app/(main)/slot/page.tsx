@@ -334,12 +334,12 @@ const SlotPage: React.FC = () => {
                                         />
                                         {/* Loading Spinner */}
                                         {loading && (
-                                            <div className="absolute inset-0 bg-black bg-opacity-80 flex items-center justify-center z-10">
+                                            <div className="absolute inset-0 bg-opacity-80 flex items-center justify-center z-10">
                                                 <Spin size="large" />
                                             </div>
                                         )}
                                         {/* Play overlay */}
-                                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
                                             <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                 <div className="w-12 h-12 bg-yellow-400 bg-opacity-80 rounded-full flex items-center justify-center">
                                                     <div className="w-0 h-0 border-l-4 border-l-black border-t-2 border-t-transparent border-b-2 border-b-transparent ml-1"></div>
