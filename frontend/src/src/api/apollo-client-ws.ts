@@ -9,17 +9,18 @@ import { apolloWSURL } from ".";
 import { message as msg } from "antd";
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    graphQLErrors.forEach(({ message, locations, path /* extensions */ }) => {
+    graphQLErrors.forEach(({ message, locations, path, extensions }) => {
       console.error(
         `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
       );
+      
+      // Skip showing authentication error alerts
+      if (extensions?.code === "UNAUTHENTICATED") {
+        // Authentication errors are logged but not shown as alerts
+        return;
+      }
+      
       msg.error(`[GraphQL error]: ${message} `);
-
-      // Handle specific errors like UNAUTHENTICATED
-      // if (extensions?.code === "UNAUTHENTICATED") {
-      // For example, redirect to login
-      // window.location.href = "/login";
-      // }
     });
   }
 

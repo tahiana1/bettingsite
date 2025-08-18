@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Spin, message, Layout } from "antd";
+import { Spin, message, Layout, Modal } from "antd";
 import { useRouter } from "next/navigation";
 import Login from "@/components/Auth/Login";
 import api from "@/api";
@@ -41,6 +41,7 @@ const Index: React.FC = () => {
   const [currentStatus, setCurrentStatus] = useState<any>(null);
   const popupGameName = useRef<string>('');
   const [profile, setProfile] = useState<any>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // Check if user is logged in and get profile
   useEffect(() => {
@@ -159,6 +160,12 @@ const Index: React.FC = () => {
   };
 
   const ProcessCasino = (name: string) => {
+    // Check if user is authenticated
+    if (!profile?.id) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    
     setLoading(true);
     setSelectedGame(name);
     console.log(userId, 'userid')
@@ -234,6 +241,10 @@ const Index: React.FC = () => {
     { name: "7 Mojos", logo: mojosLogo },
     { name: "Hilton Casino", logo: hiltonLogo },
   ];
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
   
   return (
     <>
@@ -280,6 +291,21 @@ const Index: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Login Modal */}
+        <Modal
+          title={null}
+          open={isLoginModalOpen}
+          onCancel={handleCloseLoginModal}
+          className="p-0 modal-content modal-fade-in"
+          footer={null}
+          width={600}
+          centered
+          transitionName=""
+          maskTransitionName=""
+        >
+          <Login onClose={handleCloseLoginModal} />
+        </Modal>
     </>
   );
 };

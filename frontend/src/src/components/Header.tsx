@@ -276,6 +276,7 @@ const Head = () => {
     api("auth/logout", { method: "POST" }).then((res) => {
       console.log({res})
       localStorage.removeItem("token");
+      window.location.reload();
     });
   };
 
@@ -296,7 +297,11 @@ const Head = () => {
   };
 
   const handleDepositClick = () => {
-    setIsDepositModalOpen(true);
+    if (profile?.id) {
+      setIsDepositModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const handleCloseDepositModal = () => {
@@ -304,7 +309,11 @@ const Head = () => {
   };
 
   const handleWithdrawClick = () => {
-    setIsWithdrawModalOpen(true);
+    if (profile?.id) {
+      setIsWithdrawModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const handleCloseWithdrawModal = () => {
@@ -312,7 +321,11 @@ const Head = () => {
   };
 
   const handleNoticeClick = () => {
-    setIsNoticeModalOpen(true);
+    if (profile?.id) {
+      setIsNoticeModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const handleCloseNoticeModal = () => {
@@ -320,7 +333,11 @@ const Head = () => {
   };
 
   const handleEventClick = () => {
-    setIsEventModalOpen(true);
+    if (profile?.id) {
+      setIsEventModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const handleCloseEventModal = () => {
@@ -360,7 +377,11 @@ const Head = () => {
   };
 
   const handlePointClick = () => {
-    setIsPointModalOpen(true);
+    if (profile?.id) {
+      setIsPointModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
   };
 
   const handleClosePointModal = () => {

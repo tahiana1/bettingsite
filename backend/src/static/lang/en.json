@@ -1673,5 +1673,6 @@
   "profile/withdrawAmount" : "Withdraw Amount",
   "profile/applyWithdraw" : "Apply Withdraw",
   "profile/rechargeBonus" : "Recharge Bonus",
-  "playNow" : "Play Now"
+  "playNow" : "Play Now",
+  "noticeDetail" : "Notice Detail"
 }

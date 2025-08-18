@@ -7,11 +7,17 @@ import api from "@/api";
 import TransactionFeed from '@/components/Common/TransactionFeed';
 import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
+import { Modal } from "antd";
+import NoticeDetailModal from "./NoticeDetailModal";
 export default function BoardPage() {
     const t = useTranslations();
     const { data, loading, error } = useQuery(FILTER_NOTI);
     const [notificationData, setNotiticationData] = useState<any[]>([]);
     const [eventData, setEventData] = useState<any[]>([]);
+    const [selectedNotice, setSelectedNotice] = useState<any>(null);
+    const [isNoticeDetailModalOpen, setIsNoticeDetailModalOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState<any>(null);
+    const [isEventDetailModalOpen, setIsEventDetailModalOpen] = useState(false);
     useEffect(() => {
         api("common/notifications").then((result) => {
           setNotiticationData(result.data);
@@ -20,6 +26,26 @@ export default function BoardPage() {
           setEventData(result.data);
         });
     }, []);
+
+    const handleNoticeClick = (notice: any) => {
+        setSelectedNotice(notice);
+        setIsNoticeDetailModalOpen(true);
+    };
+
+    const handleCloseNoticeDetailModal = () => {
+        setIsNoticeDetailModalOpen(false);
+        setSelectedNotice(null);
+    };
+
+    const handleEventClick = (event: any) => {
+        setSelectedEvent(event);
+        setIsEventDetailModalOpen(true);
+    };
+
+    const handleCloseEventDetailModal = () => {
+        setIsEventDetailModalOpen(false);
+        setSelectedEvent(null);
+    };
   return (
     <div className="max-w-[1300px] md:px-0 px-4 mx-auto w-full">
         <div className="xl:flex justify-between w-full gap-5 min-h-[350px]">
@@ -28,7 +54,7 @@ export default function BoardPage() {
                 <div className="flex flex-col border-2 rounded-[15px] border-[#d5b270] px-2 min-h-[360px] max-h-[360px] overflow-y-auto mt-4">
                     {
                         notificationData.map((data, index) => {
-                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
+                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer" onClick={() => handleNoticeClick(data)}>
                                 <div className="text-xm flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="white" width="14" height="14" >
                                         <path d="M224.5 160C224.5 147.1 232.3 135.4 244.3 130.4C256.3 125.4 270 128.2 279.1 137.4L439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C269.9 511.9 256.2 514.6 244.2 509.6C232.2 504.6 224.5 492.9 224.5 480L224.5 160z"/>
@@ -51,7 +77,7 @@ export default function BoardPage() {
                 <div className="flex flex-col border-2 rounded-[15px] border-[#d5b270] px-2 min-h-[360px] max-h-[360px] overflow-y-auto mt-4">
                     {
                         eventData?.map((data, index) => {
-                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer">
+                            return <div key={index} className="flex py-4 items-center justify-between w-full border-b border-[#312807] hover:text-[#d5b270] cursor-pointer" onClick={() => handleEventClick(data)}>
                                 <div className="text-xm flex items-center gap-1">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" fill="white" width="14" height="14" >
                                         <path d="M224.5 160C224.5 147.1 232.3 135.4 244.3 130.4C256.3 125.4 270 128.2 279.1 137.4L439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C269.9 511.9 256.2 514.6 244.2 509.6C232.2 504.6 224.5 492.9 224.5 480L224.5 160z"/>
@@ -64,6 +90,34 @@ export default function BoardPage() {
                 </div>
             </div>
         </div>
+        
+        <Modal
+            title={null}
+            open={isNoticeDetailModalOpen}
+            onCancel={handleCloseNoticeDetailModal}
+            footer={null}
+            className="p-0 modal-content modal-fade-in"
+            width={800}
+            centered
+            transitionName=""
+            maskTransitionName=""
+        >
+            <NoticeDetailModal notice={selectedNotice} onClose={handleCloseNoticeDetailModal} type="notice" />
+        </Modal>
+
+        <Modal
+            title={null}
+            open={isEventDetailModalOpen}
+            onCancel={handleCloseEventDetailModal}
+            footer={null}
+            className="p-0 modal-content modal-fade-in"
+            width={800}
+            centered
+            transitionName=""
+            maskTransitionName=""
+        >
+            <NoticeDetailModal notice={selectedEvent} onClose={handleCloseEventDetailModal} type="event" />
+        </Modal>
     </div>
   )
 }

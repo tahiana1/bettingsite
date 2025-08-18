@@ -61,6 +61,9 @@ import TelegramImage from "@/assets/img/contact/telegram.png"
 import TalkImage from "@/assets/img/contact/kakao.png"
 import holdemRight from "@/assets/img/main/holdem-right.png";
 import holdemLeft from "@/assets/img/main/holdem-left.png";
+import slotLeft from "@/assets/img/main/slot-left.png";
+import slotRight from "@/assets/img/main/slot-right.png";
+
 // Logo Carousel Component
 interface LogoCarouselProps {
   logos: Array<{ name: string; logo: any }>;
@@ -171,10 +174,22 @@ export default function RootLayout({
       <DeviceTracker />
       
       <div className="relative">
-        <div>
-          <Image src={holdemRight} alt="holdemRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
-          <Image src={holdemLeft} alt="holdemLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
-        </div>
+        {
+          pathname === "/" && (
+            <div>
+              <Image src={holdemRight} alt="holdemRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
+              <Image src={holdemLeft} alt="holdemLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
+            </div> 
+          )
+        }
+        {
+          pathname === "/slot" && (
+            <div>
+              <Image src={slotRight} alt="slotRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
+              <Image src={slotLeft} alt="slotLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
+            </div>
+          )
+        }
         <div className="max-w-[1300px] w-full mx-auto mx-[15px]">
           {children}
         </div>

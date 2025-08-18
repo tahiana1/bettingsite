@@ -32,6 +32,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
         localStorage.setItem("token", result.token);
         if (onClose) {
           onClose(); // Close modal if login is successful
+          window.location.reload();
         }
         router.push("/");
       })
