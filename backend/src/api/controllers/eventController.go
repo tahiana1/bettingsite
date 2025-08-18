@@ -10,7 +10,7 @@ import (
 
 func GetEvent(c *gin.Context) {
 	var events []models.Event
-	if err := initializers.DB.Where("status = ?", true).Find(&events).Error; err != nil {
+	if err := initializers.DB.Where("status = ?", true).Order("created_at DESC").Find(&events).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
