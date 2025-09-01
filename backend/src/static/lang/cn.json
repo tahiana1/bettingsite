@@ -1679,5 +1679,6 @@
   "profile/applyPoint" : "申请点数",
   "profile/pointAmount" : "点数金额",
   "pointConversionSuccess" : "点数转换成功",
-  "pointConversionFailed" : "点数转换失败"
+  "pointConversionFailed" : "点数转换失败",
+  "miniGames" : "迷你游戏"
 }

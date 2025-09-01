@@ -279,7 +279,7 @@ const MiniPage: React.FC = () => {
         ) : (
             <div className="mt-10 relative">
                 <div className="flex justify-center items-center mb-4">
-                    <h1 className="section-title">{t("mini")}</h1>
+                    <h1 className="section-title">{t("miniGames")}</h1>
                     {/* <div className="text-lg text-white">
                         {t("balance")}: <span className="text-yellow-400 font-bold">{balance}</span>
                     </div> */}

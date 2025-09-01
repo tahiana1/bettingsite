@@ -166,10 +166,18 @@ func (h *HonorLinkFetcher) ManualFetch() {
 }
 
 func (h *HonorLinkFetcher) fetchAndLogTransactions() {
-	// Set time range to last 10 days
-	end := time.Now().Truncate(24 * time.Hour).Add(24*time.Hour - time.Second) // Today at 23:59:59
-	start := end.Add(-1 * 24 * time.Hour)                                      // 10 days ago
-	fmt.Println(start, end, "date-------------")
+	// Load Korean timezone (Asia/Seoul)
+	loc, err := time.LoadLocation("Asia/Seoul")
+	if err != nil {
+		fmt.Printf("❌ Error loading Korean timezone: %v, using UTC\n", err)
+		loc = time.UTC
+	}
+
+	// Set time range to last 10 days in Korean timezone
+	now := time.Now().In(loc)
+	end := now.Truncate(24 * time.Hour).Add(24*time.Hour - time.Second) // Today at 23:59:59 KST
+	start := end.Add(-1 * 24 * time.Hour)                               // 1 day ago in KST
+	fmt.Println(start, end, "date------------- (Korean Time)")
 	response, err := h.FetchTransactions(start, end, 1, 100)
 	// end := time.Now()
 	// start := end.Add(-2 * time.Minute)
@@ -182,7 +190,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 
 	// Log the results
 	fmt.Printf("✅ HonorLink API Response:\n")
-	fmt.Printf("   Time Range: %s to %s\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
+	fmt.Printf("   Time Range: %s to %s (Korean Time)\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Success: %t\n", response.Success)
 	fmt.Printf("   Total Transactions: %d\n", response.Total)
 	fmt.Printf("   Page: %d\n", response.Page)
@@ -210,7 +218,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 		fmt.Printf("   No transactions found in the specified time ran	 ge\n")
 	}
 
-	fmt.Printf("   Fetched at: %s\n", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Printf("   Fetched at: %s (Korean Time)\n", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 	fmt.Println("   " + strings.Repeat("-", 50))
 }
 

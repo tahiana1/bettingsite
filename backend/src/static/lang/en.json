@@ -1681,5 +1681,6 @@
   "profile/applyPoint" : "Apply Point",
   "profile/pointAmount" : "Point Amount",
   "pointConversionSuccess" : "Point Conversion Success",
-  "pointConversionFailed" : "Point Conversion Failed"
+  "pointConversionFailed" : "Point Conversion Failed",
+  "miniGames" : "Mini Games"
 }
