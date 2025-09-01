@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Button,
@@ -10,28 +10,136 @@ import {
   Select,
   Space,
   Layout,
+  Table,
+  Popconfirm,
+  message,
+  Tag,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
+import type { TableProps } from "antd";
 import { useTranslations, useFormatter } from "next-intl";
 import { useAtom } from "jotai";
 import { betAmount, userState } from "@/state/state";
 import { SiDepositphotos } from "react-icons/si";
+import { BiTrash } from "react-icons/bi";
+import { FilterDropdown } from "@refinedev/antd";
 import modalImage from '@/assets/img/main/modal-head.png';
+import api from "@/api";
+import dayjs from "dayjs";
 
 const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
   const t = useTranslations();
   const f = useFormatter();
 
   const [profile] = useAtom<any>(userState);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [timeoutState, setTimeoutState] = useState<boolean>(false);
+  const [balance, setBalance] = useState<number>(0);
+  const [pointProfile, setPointProfile] = useState<any>(null);
 
   const [amount, setAmount] = useAtom<number>(betAmount);
+
+  useEffect(() => {
+    api("user/me").then((res) => {
+      setPointProfile(res.data.profile);
+      const userid = String(res.data.profile.userId);
+      api("transactions/get", { 
+        method: "GET",
+        params: {
+          userid,
+          type: "point"
+        }
+      }).then((res) => {
+        setTransactions(res.data);
+        setBalance(res.balance);
+        setTimeout(() => {
+          setTimeoutState(!timeoutState);
+        }, 60000);
+      });
+      }).catch((err) => {
+        console.log(err);
+    });
+  }, [timeoutState]);
+
   const onAmountChange = (e: RadioChangeEvent) => {
     if (e.target.value == "max") {
-      setAmount(234353);
+      setAmount(1000000);
     } else {
       setAmount(parseInt(e.target.value));
     }
   };
+
+  const submitPointConversion = (amount: number) => {
+    if (amount <= 0) {
+      message.error(t("withdrawAmountError"));
+      return;
+    } else if (amount < 100) {
+      message.error(t("TheMinimumPointsToConvertIs100Points"));
+      return;
+    }
+    const userid = Number(pointProfile.userId);
+    api("transactions/create", {
+      method: "POST",
+      data: {
+        userId: userid,
+        amount: amount,
+        type: "point",
+        explation: "Point conversion to balance"
+      }
+    })
+    .then((res) => {
+      if (res.data.status) {
+        message.success(t("pointConversionSuccess"));
+        setTimeoutState(!timeoutState);
+        resetForm();
+      } else {
+        message.error(t("pointConversionFailed"));
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
+
+  const resetForm = () => {
+    setAmount(0);
+  }
+
+  const columns: TableProps<any>["columns"] = [
+    {
+      title: t("number"),
+      dataIndex: "id", 
+      key: "id",
+      render: (_, __, index) => index + 1
+    },
+    {
+      title: t("profile/pointAmount"),
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
+      title: t("applicationDate"),
+      dataIndex: "transactionAt", 
+      key: "transactionAt",
+      render: (_, record) => {
+        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+      }
+    },
+    {
+      title: t("situation"),
+      dataIndex: "status",
+      key: "status",
+      render: (_, record) => (
+        <Tag color={record.status === "A" ? "green" : "red"}>
+          {record.status === "pending" && "Pending"}
+          {record.status === "A" && "Approved"}
+          {record.status === "W" && "Waiting"}
+          {record.status === "C" && "Canceled"}
+          {record.status === "DL" && "Deleted"}
+        </Tag>
+      )
+    }
+  ];
 
   return (
     <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] deposit-section">
@@ -68,10 +176,13 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
         actions={[
           <Space key={"action"} direction="vertical" className="w-full">
             <button
+              onClick={() => {
+                submitPointConversion(amount);
+              }}
               key={"place"}
               className="w-1/2 btn-modal-effect"
             >
-              {t("profile/applyWithdraw")}
+              {t("profile/applyPoint")}
             </button>
           </Space>,
         ]}
@@ -122,11 +233,10 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
         <Alert
           description={
             <p>
-              * Please process a full moeny recovery before applying for
-              withdrawl.
+              * {t("PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl")}
               <br />
-              * When you convert points, they will be mobed to your balance.
-              <br />* The minimum points to convert is 100 points.
+              * {t("WhenYouConvertPoints,TheyWillBeMobedToYourBalance")}
+              <br />* {t("TheMinimumPointsToConvertIs100Points")}
             </p>
           }
           type="success"
@@ -145,7 +255,7 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
 
           <Form onFinish={() => {}} className="w-full">
             <Form.Item
-              label={t("profile/withdrawAmount")}
+              label={t("profile/pointAmount")}
               rules={[{ required: true }]}
               className="!w-full"
               labelCol={{span: 24}}
@@ -177,41 +287,52 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
                 <Space direction="vertical" className="w-full">
                   <Space.Compact className="w-full flex flex-wrap gap-2">
                     <Radio.Button value={1000} className="btn-modal-effect">
-                      {f.number(1000, { style: "currency", currency: "USD" })}
+                      {f.number(1000)}
                     </Radio.Button>
                     <Radio.Button value={5000} className="btn-modal-effect">
-                      {f.number(5000, { style: "currency", currency: "USD" })}
+                      {f.number(5000)}
                     </Radio.Button>
                     <Radio.Button value={10000} className="btn-modal-effect">
-                      {f.number(10000, { style: "currency", currency: "USD" })}
+                      {f.number(10000)}
                     </Radio.Button>
                     <Radio.Button value={50000} className="btn-modal-effect">
-                      {f.number(50000, { style: "currency", currency: "USD" })}
+                      {f.number(50000)}
                     </Radio.Button>
                     <Radio.Button value={100000} className="btn-modal-effect">
-                      {f.number(100000, { style: "currency", currency: "USD" })}
+                      {f.number(100000)}
                     </Radio.Button>
                     <Radio.Button value={500000} className="btn-modal-effect">
-                      {f.number(500000, { style: "currency", currency: "USD" })}
+                      {f.number(500000)}
                     </Radio.Button>
                     <Radio.Button value={"max"} className="btn-modal-effect">MAX</Radio.Button>
                   </Space.Compact>
                 </Space>
               </Radio.Group>
             </Form.Item>
-            <Form.Item
-              label={t("profile/rechargeBonus")}
-              labelCol={{span: 24}}
-              rules={[{ required: true }]}
-              className="!w-full bg-[#160d0c]"
-            >
-              <Space.Compact className="!w-full gap-2 recharge-select">
-                <Select className="custom-white-select" />
-              </Space.Compact>
-            </Form.Item>
           </Form>
         </List>
       </Card>
+      <Table<any>
+        columns={columns}
+        loading={false}
+        dataSource={transactions}
+        className="w-full mt-4 bg-[#160d0c] px-6 mb-4"
+        size="small"
+        scroll={{ x: "max-content" }}
+        onChange={() => {}}
+        pagination={{
+          showTotal(total, range) {
+            return t(`paginationLabel`, {
+              from: range[0],
+              to: range[1],
+              total: total,
+            });
+          },
+          total: 0,
+          showSizeChanger: true,
+          pageSizeOptions: [10, 20, 50],
+        }}
+      />
     </Layout.Content>
   );
 };

@@ -1674,5 +1674,10 @@
   "profile/applyWithdraw" : "Apply Withdraw",
   "profile/rechargeBonus" : "Recharge Bonus",
   "playNow" : "Play Now",
-  "noticeDetail" : "Notice Detail"
+  "noticeDetail" : "Notice Detail",
+  "PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl" : "Please process a full moeny recovery before applying for withdrawl",
+  "WhenYouConvertPoints,TheyWillBeMobedToYourBalance" : "When you convert points, they will be mobed to your balance.",
+  "TheMinimumPointsToConvertIs100Points" : "The minimum points to convert is 100 points.",
+  "profile/applyPoint" : "Apply Point",
+  "profile/pointAmount" : "Point Amount"
 }

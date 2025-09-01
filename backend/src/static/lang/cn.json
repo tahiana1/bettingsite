@@ -1671,5 +1671,11 @@
   "profile/withdrawAmount" : "提款金额",
   "profile/applyWithdraw" : "申请提款",
   "profile/rechargeBonus" : "充值奖励",
-  "playNow" : "立即游玩"
+  "playNow" : "立即游玩",
+  "noticeDetail" : "公告详情",
+  "PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl" : "请先处理完整的资金回收，再申请提款",
+  "WhenYouConvertPoints,TheyWillBeMobedToYourBalance" : "当您转换点数时，它们将被移动到您的余额。",
+  "TheMinimumPointsToConvertIs100Points" : "转换点数的最小点数为100点。",
+  "profile/applyPoint" : "申请点数",
+  "profile/pointAmount" : "点数金额"
 }

@@ -163,29 +163,7 @@ const DepositRequest: React.FC<{checkoutModal: (modal: string) => void}> = (prop
           {record.status === "DL" && "Deleted"}
         </Tag>
       )
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            // onConfirm={() => onDeleteNoti(record)}
-            description={t("deleteMessage")}
-          >
-            <Button
-              title={t("delete")}
-              // loading={loadingDelete}
-              variant="outlined"
-              color="danger"
-              icon={<BiTrash />}
-            />
-          </Popconfirm>
-        </Space.Compact>
-      ),
-    },
+    }
   ];
 
   const showAccountModal = () => {

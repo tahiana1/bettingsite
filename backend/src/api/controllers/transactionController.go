@@ -45,7 +45,7 @@ func CreateTransaction(c *gin.Context) {
 	var transactionInput struct {
 		UserId    uint    `json:"userId" binding:"required,min=1"`
 		Amount    float64 `json:"amount" binding:"required,min=1"`
-		Type      string  `json:"type" binding:"required,oneof=deposit withdrawal"`
+		Type      string  `json:"type" binding:"required,oneof=deposit withdrawal point"`
 		Explation string  `json:"explation" binding:"required,min=1"`
 	}
 

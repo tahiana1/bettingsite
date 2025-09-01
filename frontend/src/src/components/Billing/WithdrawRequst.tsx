@@ -141,28 +141,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
           {record.status === "DL" && "Deleted"}
       </Tag>
       )
-    },
-    {
-      title: t("action"),
-      key: "action",
-      fixed: "right",
-      render: (_, record) => (
-        <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            description={t("deleteMessage")}
-            onConfirm={() => handleDelete(record.id)}
-          >
-            <Button
-              title={t("delete")}
-              variant="outlined"
-              color="danger"
-              icon={<BiTrash />}
-            />
-          </Popconfirm>
-        </Space.Compact>
-      ),
-    },
+    }
   ];
 
   return (

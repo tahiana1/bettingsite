@@ -51,7 +51,7 @@ const PointConversion: React.FC = () => {
             key={"place"}
             className="w-1/2"
           >
-            {t("profile/applyWithdraw")}
+            {t("profile/applyPoint")}
           </Button>
         </Space>,
       ]}
@@ -59,11 +59,10 @@ const PointConversion: React.FC = () => {
       <Alert
         description={
           <p>
-            * Please process a full moeny recovery before applying for
-            withdrawl.
+            * {t("PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl")}
             <br />
-            * When you convert points, they will be mobed to your balance.
-            <br />* The minimum points to convert is 100 points.
+            * {t("WhenYouConvertPoints,TheyWillBeMobedToYourBalance")}
+            <br />* {t("TheMinimumPointsToConvertIs100Points")}
           </p>
         }
         type="success"
@@ -78,7 +77,7 @@ const PointConversion: React.FC = () => {
 
         <Form onFinish={() => {}} className="w-full">
           <Form.Item
-            label={t("profile/withdrawAmount")}
+            label={t("profile/pointAmount")}
             rules={[{ required: true }]}
             className="!w-full"
           >
@@ -99,7 +98,7 @@ const PointConversion: React.FC = () => {
             </Space.Compact>
           </Form.Item>
           <Form.Item
-            label={t("profile/rechargeAmount")}
+            label={t("profile/pointAmount")}
             rules={[{ required: true }]}
           >
             <Radio.Group
@@ -111,36 +110,27 @@ const PointConversion: React.FC = () => {
               <Space direction="vertical" className="w-full">
                 <Space.Compact className="w-full flex flex-wrap gap-2">
                   <Radio.Button value={1000}>
-                    {f.number(1000, { style: "currency", currency: "USD" })}
+                    {f.number(1000)}
                   </Radio.Button>
                   <Radio.Button value={5000}>
-                    {f.number(5000, { style: "currency", currency: "USD" })}
+                    {f.number(5000)}
                   </Radio.Button>
                   <Radio.Button value={10000}>
-                    {f.number(10000, { style: "currency", currency: "USD" })}
+                    {f.number(10000)}
                   </Radio.Button>
                   <Radio.Button value={50000}>
-                    {f.number(50000, { style: "currency", currency: "USD" })}
+                    {f.number(50000)}
                   </Radio.Button>
                   <Radio.Button value={100000}>
-                    {f.number(100000, { style: "currency", currency: "USD" })}
+                    {f.number(100000)}
                   </Radio.Button>
                   <Radio.Button value={500000}>
-                    {f.number(500000, { style: "currency", currency: "USD" })}
+                    {f.number(500000)}
                   </Radio.Button>
                   <Radio.Button value={"max"}>MAX</Radio.Button>
                 </Space.Compact>
               </Space>
             </Radio.Group>
-          </Form.Item>
-          <Form.Item
-            label={t("profile/rechargeBonus")}
-            rules={[{ required: true }]}
-            className="!w-full"
-          >
-            <Space.Compact className="!w-full gap-2">
-              <Select></Select>
-            </Space.Compact>
           </Form.Item>
         </Form>
       </List>
