@@ -13,7 +13,7 @@ import (
 // API configuration
 // const (
 // 	baseURL     = "https://api.honorlink.org/api"
-// 	bearerToken = "bZmLGdUGa123lKpTvxU9uFbDtCQUa0pdLzNfbxkn79f33cc4"
+// 	bearerToken = "srDiqct6lH61a0zHNKPUu0IwE0mg7Ht38sALu3oWb5bf8e9d"
 // )
 
 func GetGameItems(c *gin.Context) {
@@ -21,7 +21,7 @@ func GetGameItems(c *gin.Context) {
 	gameType := c.Query("type")
 
 	endpoint := fmt.Sprintf("https://api.honorlink.org/api/game-list?vendor=%s&type=%s", vendor, gameType)
-	bearerToken := "bZmLGdUGa123lKpTvxU9uFbDtCQUa0pdLzNfbxkn79f33cc4"
+	bearerToken := "srDiqct6lH61a0zHNKPUu0IwE0mg7Ht38sALu3oWb5bf8e9d"
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {

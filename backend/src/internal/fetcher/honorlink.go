@@ -79,7 +79,7 @@ type HonorLinkFetcher struct {
 func NewHonorLinkFetcher() *HonorLinkFetcher {
 	token := os.Getenv("HONORLINK_TOKEN")
 	if token == "" {
-		token = "bZmLGdUGa123lKpTvxU9uFbDtCQUa0pdLzNfbxkn79f33cc4" // fallback
+		token = "srDiqct6lH61a0zHNKPUu0IwE0mg7Ht38sALu3oWb5bf8e9d" // fallback
 	}
 
 	return &HonorLinkFetcher{

@@ -434,7 +434,7 @@ func GetDashboard(c *gin.Context) {
 	var honorLinkBalance float64 = 0
 	const (
 		baseURL     = "https://api.honorlink.org/api"
-		bearerToken = "bZmLGdUGa123lKpTvxU9uFbDtCQUa0pdLzNfbxkn79f33cc4"
+		bearerToken = "srDiqct6lH61a0zHNKPUu0IwE0mg7Ht38sALu3oWb5bf8e9d"
 	)
 
 	// Make request to HonorLink API with proper error handling
