@@ -316,7 +316,7 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
         columns={columns}
         loading={false}
         dataSource={transactions}
-        className="w-full mt-4 bg-[#160d0c] px-6 mb-4"
+        className="w-full mt-4 bg-[#160d0c] px-6"
         size="small"
         scroll={{ x: "max-content" }}
         onChange={() => {}}

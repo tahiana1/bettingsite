@@ -1677,5 +1677,7 @@
   "WhenYouConvertPoints,TheyWillBeMobedToYourBalance" : "当您转换点数时，它们将被移动到您的余额。",
   "TheMinimumPointsToConvertIs100Points" : "转换点数的最小点数为100点。",
   "profile/applyPoint" : "申请点数",
-  "profile/pointAmount" : "点数金额"
+  "profile/pointAmount" : "点数金额",
+  "pointConversionSuccess" : "点数转换成功",
+  "pointConversionFailed" : "点数转换失败"
 }

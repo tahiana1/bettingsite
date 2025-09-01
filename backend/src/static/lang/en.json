@@ -1679,5 +1679,7 @@
   "WhenYouConvertPoints,TheyWillBeMobedToYourBalance" : "When you convert points, they will be mobed to your balance.",
   "TheMinimumPointsToConvertIs100Points" : "The minimum points to convert is 100 points.",
   "profile/applyPoint" : "Apply Point",
-  "profile/pointAmount" : "Point Amount"
+  "profile/pointAmount" : "Point Amount",
+  "pointConversionSuccess" : "Point Conversion Success",
+  "pointConversionFailed" : "Point Conversion Failed"
 }

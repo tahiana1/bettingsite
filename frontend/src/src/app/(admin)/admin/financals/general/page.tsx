@@ -71,6 +71,11 @@ const GeneralDWPage: React.FC = () => {
                 value: "withdrawal",
                 op: "eq",
               },
+              {
+                field: "transactions.type",
+                value: "point",
+                op: "eq",
+              },
             ],
           },
           {
@@ -290,6 +295,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
+      render: (_, record) => record.type == "point" ? 0 : record.amount,
     },
     {
       title: t("balanceAfter"),
@@ -306,7 +312,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: () => 0,
+      render: (_, record) => record.type == "point" ? record.amount : 0,
     },
     {
       title: t("pointAfter"),
@@ -324,11 +330,23 @@ const GeneralDWPage: React.FC = () => {
       width: 100,
       key: "shortcut",
       render: (_, record) => (
-        record.type == "deposit" ? <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
-        </div> : <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
-        </div>
+        <>
+          {record.type == "deposit" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
+            </div>
+          )}
+          {record.type == "withdrawal" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
+            </div>
+          )}
+          {record.type == "point" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("point")}</p>
+            </div>
+          )}
+        </>
       ),
     },
     {
