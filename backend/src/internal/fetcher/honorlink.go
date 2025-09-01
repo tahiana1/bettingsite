@@ -176,7 +176,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	// Set time range to last 10 days in Korean timezone
 	now := time.Now().In(loc)
 	end := now.Truncate(24 * time.Hour).Add(24*time.Hour - time.Second) // Today at 23:59:59 KST
-	start := end.Add(-1 * 24 * time.Hour)                               // 1 day ago in KST
+	start := end.Add(-1 * 1 * time.Hour)                                // 1 day ago in KST
 	fmt.Println(start, end, "date------------- (Korean Time)")
 	response, err := h.FetchTransactions(start, end, 1, 100)
 	// end := time.Now()
