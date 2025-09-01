@@ -270,6 +270,7 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 			return
 		}
 	}
+
 	// Calculate balance before and after
 	var balanceBefore float64
 	var gameType string
