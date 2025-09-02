@@ -360,7 +360,7 @@ const MiniPage: React.FC = () => {
             )}
             {/* Slot Providers Grid */}
             <div className="mt-8">
-                <div className="casino-game-grid grid grid-cols-6 gap-4 md:gap-6 justify-items-center">
+                {/* <div className="casino-game-grid grid grid-cols-6 gap-4 md:gap-6 justify-items-center">
                     {[
                         { name: "Mancala", logo: MancalaLogo, id: 'mancala' },
                         { name: "Caleta", logo: CaletaLogo, id: 'caletagaming' },
@@ -438,7 +438,7 @@ const MiniPage: React.FC = () => {
                             </div>
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
 
             {/* Add Balance Modal */}

@@ -1685,5 +1685,7 @@
   "miniGames" : "Mini Games",
   "bettingLog" : "Betting Log",
   "beforeAmount" : "Before Amount",
-  "afterAmount" : "After Amount"
+  "afterAmount" : "After Amount",
+  "loading" : "Loading",
+  "win" : "Win"
 }

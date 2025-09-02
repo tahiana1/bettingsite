@@ -1683,5 +1683,7 @@
   "miniGames" : "迷你游戏",
   "bettingLog" : "投注记录",
   "beforeAmount" : "之前金额",
-  "afterAmount" : "之后金额"
+  "afterAmount" : "之后金额",
+  "loading" : "加载中",
+  "win" : "赢"
 }
