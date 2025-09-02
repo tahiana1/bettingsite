@@ -184,6 +184,7 @@ const Head = () => {
       setIsEventModalOpen(false);
       setIsQnaModalOpen(false);
       setIsNoteModalOpen(false);
+      setIsBettingHistoryModalOpen(true);
       setIsProfileModalOpen(false);
       setIsPointModalOpen(false);
       handleBettingHistoryClick();
@@ -450,6 +451,7 @@ const Head = () => {
       icon: <svg xmlns="http://www.w3.org/2000/svg" fill="#f4d171" width={20} height={20} viewBox="0 0 640 640"><path d="M224 144L224 112C224 85.5 245.5 64 272 64L368 64C394.5 64 416 85.5 416 112L416 144L608 144C625.7 144 640 158.3 640 176C640 193.7 625.7 208 608 208L32 208C14.3 208 0 193.7 0 176C0 158.3 14.3 144 32 144L224 144zM64 256L64 496C64 531.3 92.7 560 128 560L512 560C547.3 560 576 531.3 576 496L576 256L64 256zM192 352L192 416C192 433.7 206.3 448 224 448L256 448C273.7 448 288 433.7 288 416L288 352C288 334.3 273.7 320 256 320L224 320C206.3 320 192 334.3 192 352zM352 352L352 416C352 433.7 366.3 448 384 448L416 448C433.7 448 448 433.7 448 416L448 352C448 334.3 433.7 320 416 320L384 320C366.3 320 352 334.3 352 352z"/></svg>,
       label: t('bettingHistory'),
       onClick: (e: MenuInfo) => {
+        handleBettingHistoryClick();
         console.log({ e });
       },
     },

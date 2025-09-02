@@ -273,6 +273,22 @@ body {
   z-index: 1;
 }
 
+.btn-modal-action {
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+  background-color: #dece8f;
+  background-image: linear-gradient(to right ,#4f3b2c, #e3b27f,#4b382a);
+  border: solid 1px #785c43;
+  padding: 8px 16px;
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 2px #1d160e;
+  font-family: noto-sans-bold;
+  position: relative;
+  z-index: 1;
+}
+
 .btn-modal-effect {
   font-size: 16px !important;
   font-weight: 900 !important;

@@ -93,6 +93,39 @@ func GetBetting(c *gin.Context) {
 	})
 }
 
+func GetCasinoBetting(c *gin.Context) {
+	var input struct {
+		UserID uint `json:"user_id" binding:"required,min=1"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"validations": validations.FormatValidationErrors(errs),
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	var CasinoBet []models.CasinoBet
+	err := initializers.DB.Where("user_id = ?", input.UserID).Find(&CasinoBet).Error
+	if err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Casino Bet retrieved successfully",
+		"status":  true,
+		"data":    CasinoBet,
+	})
+}
+
 func CreateBetting(c *gin.Context) {
 	var betsInput []struct {
 		UserID    uint    `json:"user_id" binding:"required,min=1"`

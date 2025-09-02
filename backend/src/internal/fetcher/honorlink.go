@@ -175,8 +175,8 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 
 	// Set time range to last 10 days in Korean timezone
 	now := time.Now().In(loc)
-	end := now.Truncate(24 * time.Hour).Add(24*time.Hour - time.Second) // Today at 23:59:59 KST
-	start := end.Add(-1 * 1 * time.Hour)                                // 1 day ago in KST
+	end := now                           // Today at 23:59:59 KST
+	start := end.Add(-1 * 1 * time.Hour) // 1 day ago in KST
 	fmt.Println(start, end, "date------------- (Korean Time)")
 	response, err := h.FetchTransactions(start, end, 1, 100)
 	// end := time.Now()
@@ -193,9 +193,9 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	fmt.Printf("   Time Range: %s to %s (Korean Time)\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Success: %t\n", response.Success)
 	fmt.Printf("   Total Transactions: %d\n", response.Total)
-	fmt.Printf("   Page: %d\n", response.Page)
-	fmt.Printf("   Per Page: %d\n", response.PerPage)
-	fmt.Printf("   Transactions in this page: %d\n", len(response.Data))
+	fmt.Printf("   end: %d\n", now)
+	fmt.Printf("   start: %d\n", start)
+	fmt.Printf(" ✅✅✅  Transactions in this page: %d\n", len(response.Data))
 
 	if len(response.Data) > 0 {
 		fmt.Printf("   Sample transactions:\n")

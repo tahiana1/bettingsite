@@ -1680,5 +1680,8 @@
   "profile/pointAmount" : "点数金额",
   "pointConversionSuccess" : "点数转换成功",
   "pointConversionFailed" : "点数转换失败",
-  "miniGames" : "迷你游戏"
+  "miniGames" : "迷你游戏",
+  "bettingLog" : "投注记录",
+  "beforeAmount" : "之前金额",
+  "afterAmount" : "之后金额"
 }

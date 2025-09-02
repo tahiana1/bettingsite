@@ -41,6 +41,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
     const [loadingCreate, setLoadingCreate] = useState(false);
     const [profile, setProfile] = useState<any>(null);
     const router = useRouter();
+    const [hasCheckedForImage, setHasCheckedForImage] = useState(false);
     useEffect(() => {
         api("user/me").then((res) => {
             setProfile(res.data.profile);
@@ -128,21 +129,45 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
             const handleTextChange = () => handleQuillChange(quill, 'description');
             quill.on('text-change', handleTextChange);
 
-            // Check for captured image in localStorage
-            const capturedImage = localStorage.getItem('capturedBetImage');
-            if (capturedImage) {
-                // Insert the image into the editor
-                const range = quill.getSelection(true);
-                quill.insertEmbed(range.index, 'image', capturedImage);
-                // Clear the stored image
-                localStorage.removeItem('capturedBetImage');
-            }
-
             return () => {
                 quill.off('text-change', handleTextChange);
             };
         }
     }, [quill]);
+
+    // Separate effect to handle captured images when component mounts or when quill is ready
+    useEffect(() => {
+        if (quill && !hasCheckedForImage) {
+            // Check for captured image in localStorage
+            const capturedImage = localStorage.getItem('capturedBetImage');
+            if (capturedImage) {
+                // Wait a brief moment for the editor to be fully ready
+                setTimeout(() => {
+                    try {
+                        // Insert the image into the editor at the end
+                        const length = quill.getLength();
+                        quill.insertEmbed(length - 1, 'image', capturedImage);
+                        quill.insertText(length, '\n'); // Add a newline after the image
+                        // Clear the stored image
+                        localStorage.removeItem('capturedBetImage');
+                        setHasCheckedForImage(true);
+                    } catch (error) {
+                        console.error('Error inserting captured image:', error);
+                        // Clear the image even if insertion fails to prevent retries
+                        localStorage.removeItem('capturedBetImage');
+                        setHasCheckedForImage(true);
+                    }
+                }, 100);
+            } else {
+                setHasCheckedForImage(true);
+            }
+        }
+    }, [quill, hasCheckedForImage]);
+
+    // Reset the image check flag when component mounts (for modal reopening)
+    useEffect(() => {
+        setHasCheckedForImage(false);
+    }, []);
 
     useEffect(() => {
         api("user/me").then((res) => {
