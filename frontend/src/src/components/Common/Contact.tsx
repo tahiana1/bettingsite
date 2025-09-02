@@ -12,7 +12,7 @@ const ContactCard = () => {
     {
       title: t("telegram"),
       icon: <BsTelegram className="w-14" />,
-      href: "https://t.me/",
+      href: "https://t.me/Mariosoftdev",
       target: "_blank",
     },
     {
