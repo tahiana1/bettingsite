@@ -147,7 +147,7 @@ func (h *HonorLinkFetcher) StartPeriodicFetching() {
 	ticker := time.NewTicker(1 * time.Minute)
 
 	go func() {
-		fmt.Println("🚀 Starting HonorLink API polling every 2 minutes...")
+		fmt.Println("🚀 Starting HonorLink API polling every 1 minutes...")
 
 		// Initial fetch
 		h.fetchAndLogTransactions()
