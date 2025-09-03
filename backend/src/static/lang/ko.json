@@ -1701,5 +1701,6 @@
   "admin/menu/memberTransferHistory": "회원 이체 내역",
   "currentAnswer": "현재 답변",
   "viewQuestion": "질문 보기",
-  "replyToQuestion": "질문에 답변"
+  "replyToQuestion": "질문에 답변",
+  "reply": "답변"
 }

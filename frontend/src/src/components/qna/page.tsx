@@ -25,6 +25,9 @@ interface QnaItem {
     description: string;
     createdAt: string;
     status: string;
+    answerTitle?: string;
+    answer?: string;
+    repliedAt?: string;
     user?: {
         root?: {
             userid: string;
@@ -188,7 +191,10 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                     title: qna.questionTitle,
                     description: qna.question,
                     createdAt: qna.createdAt,
-                    status: qna.status
+                    status: qna.status,
+                    answerTitle: qna.answerTitle,
+                    answer: qna.answer,
+                    repliedAt: qna.repliedAt
                 })));
             }
         }).catch((err) => {
@@ -360,6 +366,36 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                                 pagination={{
                                     pageSize: 5,
                                     showSizeChanger: false,
+                                }}
+                                expandable={{
+                                    expandedRowRender: (record) => {
+                                        if (record.status === 'P' || !record.answer) {
+                                            return (
+                                                <div className="p-4 bg-[#2a1810] rounded-lg border border-[#5d4a3a] text-white">
+                                                    <p className="text-yellow-300 italic">{t("noReplyYet")}</p>
+                                                </div>
+                                            );
+                                        }
+                                        return (
+                                            <div className="p-4 bg-[#2a1810] rounded-lg border border-[#5d4a3a]">
+                                                <div className="mb-3">
+                                                    <h4 className="text-[#edd497] font-semibold text-lg mb-2">
+                                                        {record.answerTitle || t("reply")}
+                                                    </h4>
+                                                    <div 
+                                                        className="text-white leading-relaxed"
+                                                        dangerouslySetInnerHTML={{ __html: record.answer }}
+                                                    />
+                                                </div>
+                                                {record.repliedAt && (
+                                                    <div className="text-gray-400 text-sm pt-2 border-t border-[#5d4a3a]">
+                                                        {t("repliedAt")}: {dayjs(record.repliedAt).format("YYYY-MM-DD HH:mm:ss")}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    },
+                                    rowExpandable: () => true,
                                 }}
                             />
                         </div>

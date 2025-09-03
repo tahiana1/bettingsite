@@ -1693,5 +1693,6 @@
   "admin/menu/memberTransferHistory" : "Member Transfer History",
   "currentAnswer" : "Current Answer",
   "viewQuestion" : "View Question",
-  "replyToQuestion" : "Reply To Question"
+  "replyToQuestion" : "Reply To Question",
+  "reply" : "Reply"
 }
