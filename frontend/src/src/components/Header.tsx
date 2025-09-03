@@ -184,7 +184,6 @@ const Head = () => {
       setIsEventModalOpen(false);
       setIsQnaModalOpen(false);
       setIsNoteModalOpen(false);
-      setIsBettingHistoryModalOpen(true);
       setIsProfileModalOpen(false);
       setIsPointModalOpen(false);
       handleBettingHistoryClick();

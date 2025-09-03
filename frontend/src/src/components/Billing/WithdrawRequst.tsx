@@ -153,7 +153,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
               <p className="text-white text-[14px] font-[400] justify-center pb-6 flex">{t("withdraw")}</p>
               <div className="absolute bottom-2 right-0 flex gap-2">
               <button onClick={() => props.checkoutModal('profile')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
-              <button onClick={() => props.checkoutModal('betHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
+              <button onClick={() => props.checkoutModal('bettingHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
               </div>
             </div>
           }
