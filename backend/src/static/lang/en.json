@@ -1690,5 +1690,8 @@
   "win" : "Win",
   "insufficientPoint" : "Insufficient Point",
   "admin/menu/totalTransferHistory" : "Total Transfer History",
-  "admin/menu/memberTransferHistory" : "Member Transfer History"
+  "admin/menu/memberTransferHistory" : "Member Transfer History",
+  "currentAnswer" : "Current Answer",
+  "viewQuestion" : "View Question",
+  "replyToQuestion" : "Reply To Question"
 }

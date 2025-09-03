@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Form } from "antd";
 
 import {
@@ -30,6 +30,7 @@ import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
 import Quill from "quill";
 import { useQuill } from "react-quilljs";
+import "quill/dist/quill.snow.css";
 
 const SupportCenterPage: React.FC = () => {
   const [form] = Form.useForm();
@@ -41,6 +42,8 @@ const SupportCenterPage: React.FC = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [qnas, setQnas] = useState<any[]>([]);
+  const quillRef = useRef<HTMLDivElement>(null);
+  const quillInstanceRef = useRef<Quill | null>(null);
   const { loading, data, refetch } = useQuery(FILTER_QNAS, {
     variables: {
       orders: [
@@ -54,6 +57,13 @@ const SupportCenterPage: React.FC = () => {
 
   const [replyQna] = useMutation(REPLY_QNA);
   const [completeQna] = useMutation(COMPLETE_QNA);
+
+  const handleQuillChange = useCallback((editor: any, fieldName: string) => {
+    if (editor) {
+      const content = editor.root.innerHTML;
+      form.setFieldValue(fieldName, content);
+    }
+  }, [form]);
 
   const modules = {
     toolbar: [
@@ -78,33 +88,63 @@ const SupportCenterPage: React.FC = () => {
     "strike",
     "blockquote",
     "list",
-    // "bullet",
     "indent",
     "link",
     "image",
   ];
 
-  const { quill, quillRef } = useQuill({ modules, formats });
+  // Initialize Quill editor when modal opens
   useEffect(() => {
-    if (quill) {
-      const handleTextChange = () => handleQuillChange(quill, 'answer');
-      quill.on('text-change', handleTextChange);
-      return () => {
-        quill.off('text-change', handleTextChange);
+    if (modalOpen && quillRef.current && !quillInstanceRef.current) {
+      quillInstanceRef.current = new Quill(quillRef.current, {
+        modules,
+        formats,
+        theme: 'snow',
+        placeholder: 'Type your answer here...'
+      });
+
+      // Add text change handler
+      const handleTextChange = () => {
+        if (quillInstanceRef.current) {
+          const content = quillInstanceRef.current.root.innerHTML;
+          form.setFieldValue('answer', content);
+        }
       };
+
+      quillInstanceRef.current.on('text-change', handleTextChange);
     }
-  }, [quill]);
+  }, [modalOpen, modules, formats, form]);
+
+  // Effect to handle pre-populating the editor when opening reply modal
+  useEffect(() => {
+    if (modalOpen && selectedQuestion && quillInstanceRef.current) {
+      // Small delay to ensure editor is fully initialized
+      const timer = setTimeout(() => {
+        if (selectedQuestion.answer && quillInstanceRef.current) {
+          quillInstanceRef.current.root.innerHTML = selectedQuestion.answer;
+          form.setFieldValue('answer', selectedQuestion.answer);
+        } else if (quillInstanceRef.current) {
+          quillInstanceRef.current.setText('');
+          form.setFieldValue('answer', '');
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [modalOpen, selectedQuestion, form]);
+
+  // Cleanup effect for component unmount
+  useEffect(() => {
+    return () => {
+      if (quillInstanceRef.current) {
+        quillInstanceRef.current = null;
+      }
+    };
+  }, []);
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
-
-  const handleQuillChange = (editor: any, fieldName: string) => {
-    if (editor) {
-      const content = editor.root.innerHTML;
-      form.setFieldValue(fieldName, content);
-    }
-  };
 
   const onQnaStatusChange = (v: string = "") => {
     updateFilter("status", v, "eq");
@@ -301,8 +341,12 @@ const SupportCenterPage: React.FC = () => {
     setModalOpen(false);
     setSelectedQuestion(null);
     form.resetFields();
-    if (quill) {
-      quill.root.innerHTML = '';
+    
+    // Clean up the editor instance
+    if (quillInstanceRef.current) {
+      quillInstanceRef.current.setText('');
+      // Don't destroy the instance, just clear it - let the next modal opening recreate it fresh
+      quillInstanceRef.current = null;
     }
   };
 
@@ -319,11 +363,7 @@ const SupportCenterPage: React.FC = () => {
   const handleReplyQuestion = (record: any) => {
     setSelectedQuestion(record);
     setModalOpen(true);
-    // Pre-populate the editor if there's existing answer
-    if (record.answer && quill) {
-      quill.root.innerHTML = record.answer;
-      form.setFieldValue('answer', record.answer);
-    }
+    // The useEffect hook will handle pre-populating the editor
   };
 
   const handleCompleteQuestion = async (record: any) => {
@@ -582,7 +622,10 @@ const SupportCenterPage: React.FC = () => {
                 label={t("answerContent")}
                 rules={[{ required: true, message: t("required") }]}
               >
-                <div ref={quillRef}></div>
+                <div 
+                  ref={quillRef}
+                  style={{ minHeight: '200px', border: '1px solid #d9d9d9', borderRadius: '6px' }}
+                ></div>
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
