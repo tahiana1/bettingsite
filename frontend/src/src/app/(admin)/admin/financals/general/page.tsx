@@ -266,11 +266,6 @@ const GeneralDWPage: React.FC = () => {
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("phone"),
@@ -293,7 +288,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("accountName"),
       dataIndex: "profile.accountNumber",
       key: "accountNumber",
-      render: (_, record) => record.user?.profile?.accountNumber,
+      render: (_, record) => record.user?.profile?.name,
     },
     {
       title: t("depositorName"),
