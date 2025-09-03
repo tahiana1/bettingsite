@@ -1687,5 +1687,6 @@
   "beforeAmount" : "Before Amount",
   "afterAmount" : "After Amount",
   "loading" : "Loading",
-  "win" : "Win"
+  "win" : "Win",
+  "insufficientPoint" : "Insufficient Point"
 }

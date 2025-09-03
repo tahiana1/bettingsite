@@ -34,6 +34,7 @@ import {
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
+import api from "@/api";
 
 const GeneralDWPage: React.FC = () => {
   const t = useTranslations();
@@ -99,7 +100,7 @@ const GeneralDWPage: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       refetch(tableOptions ?? undefined);
-    }, 60000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
   // const onBlockTransaction = (transaction: Transaction) => {
@@ -115,7 +116,8 @@ const GeneralDWPage: React.FC = () => {
   // };
 
   const onApproveTransaction = (transaction: Transaction) => {
-    approveTransaction({ variables: { id: transaction.id } })
+    if (transaction.type == "deposit" || transaction.type == "withdrawal") {
+      approveTransaction({ variables: { id: transaction.id } })
       .then((res) => {
         if (res.data?.success) {
           refetch(tableOptions);  
@@ -124,6 +126,25 @@ const GeneralDWPage: React.FC = () => {
       .catch((err) => {
         console.error('Error approving transaction:', err);
       });
+    } else if (transaction.type == "point") {
+      refetch(tableOptions);  
+      api("admin/point/convert", {
+        method: "POST",
+        data: {
+          id: transaction.id,
+          amount: transaction.amount,
+          userId: transaction.user?.id
+        },
+      })
+      .then((res) => {
+        if (res.data?.success) {
+          refetch(tableOptions);  
+        }
+      })
+      .catch((err) => {
+        console.error('Error converting point:', err);
+      });
+    }
   };
 
   const onWaitingTransaction = (transaction: Transaction) => {
@@ -290,6 +311,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("balanceBefore"),
       dataIndex: "balanceBefore",
       key: "balanceBefore",
+      render: (_, record) => record.user?.profile?.balance,
     },
     {
       title: t("amount"),
@@ -301,12 +323,23 @@ const GeneralDWPage: React.FC = () => {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
+      render: (_, record) => {
+        if (record.type == "deposit" && record.status == "pending") {
+          return record.user?.profile?.balance + record.amount;
+        } else if (record.type == "withdrawal" && record.status == "pending") {
+          return record.user?.profile?.balance - record.amount;
+        } else if (record.type == "point" && record.status == "pending") {
+          return record.user?.profile?.balance;
+        }
+        return record.user?.profile?.balance;
+      },
     },
    
     {
       title: t("pointBefore"),
       dataIndex: "pointBefore",
       key: "pointBefore",
+      render: (_, record) => record.type == "point" ? record.user?.profile?.point : record.user?.profile?.point,
     },
     {
       title: t("point"),
@@ -318,6 +351,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("pointAfter"),
       dataIndex: "pointAfter",
       key: "pointAfter",
+      render: (_, record) => record.type == "point" ? record.user?.profile?.point - record.amount  : record.user?.profile?.point,
     },
     {
       title: t("usdtDesc"),

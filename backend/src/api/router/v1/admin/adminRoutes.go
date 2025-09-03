@@ -96,4 +96,9 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		dashboardRouter.GET("/get-data", controllers.GetDashboard)
 	}
 
+	pointRouter := r.Group("/point")
+	{
+		pointRouter.POST("/convert", controllers.ConvertPoint)
+	}
+
 }

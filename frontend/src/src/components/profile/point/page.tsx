@@ -70,6 +70,10 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
   };
 
   const submitPointConversion = (amount: number) => {
+    if (pointProfile.point < amount) {
+      message.error(t("insufficientPoint"));
+      return;
+    }
     if (amount <= 0) {
       message.error(t("withdrawAmountError"));
       return;

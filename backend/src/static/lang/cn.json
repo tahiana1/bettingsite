@@ -1685,5 +1685,6 @@
   "beforeAmount" : "之前金额",
   "afterAmount" : "之后金额",
   "loading" : "加载中",
-  "win" : "赢"
+  "win" : "赢",
+  "insufficientPoint" : "点数不足"
 }
