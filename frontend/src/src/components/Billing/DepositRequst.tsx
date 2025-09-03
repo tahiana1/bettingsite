@@ -57,7 +57,7 @@ const DepositRequest: React.FC<{checkoutModal: (modal: string) => void}> = (prop
         setBalance(res.balance);
         setTimeout(() => {
           setTimeoutState(!timeoutState);
-        }, 60000);
+        }, 6000);
       });
       }).catch((err) => {
         console.log(err);

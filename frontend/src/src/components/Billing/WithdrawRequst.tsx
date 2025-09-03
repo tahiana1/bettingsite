@@ -52,7 +52,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
         setBalance(res.balance);
         setTimeout(() => {
           setTimeoutState(!timeoutState);
-        }, 60000);
+        }, 6000);
       });
     }).catch((err) => {
       console.log(err);
