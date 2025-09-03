@@ -1686,5 +1686,7 @@
   "afterAmount" : "之后金额",
   "loading" : "加载中",
   "win" : "赢",
-  "insufficientPoint" : "点数不足"
+  "insufficientPoint" : "点数不足",
+  "admin/menu/totalTransferHistory" : "总转账记录",
+  "admin/menu/memberTransferHistory" : "会员转账记录"
 }

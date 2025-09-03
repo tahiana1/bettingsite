@@ -118,11 +118,6 @@ const TotalTransferPage: React.FC = () => {
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("amount"),
@@ -445,13 +440,13 @@ const TotalTransferPage: React.FC = () => {
                   onSearch={onSearch}
                 />
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
-            <Divider className="!p-0 !m-0" />
+            {/* <Divider className="!p-0 !m-0" />
             <Descriptions
               bordered
               layout="vertical"
@@ -505,7 +500,7 @@ const TotalTransferPage: React.FC = () => {
                 </span>
               }
               type="warning"
-            />
+            /> */}
           </Space>
 
           <Table<Transaction>

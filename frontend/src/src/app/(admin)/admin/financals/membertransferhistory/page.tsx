@@ -436,13 +436,13 @@ const MemberTransferPage: React.FC = () => {
                   onChange={onLevelChange}
                 />
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Button size="small" type="primary">
                   {t("download")}
                 </Button>
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
-            <Divider className="!p-0 !m-0" />
+            {/* <Divider className="!p-0 !m-0" />
             <Descriptions
               bordered
               layout="vertical"
@@ -494,7 +494,7 @@ const MemberTransferPage: React.FC = () => {
                 </span>
               }
               type="warning"
-            />
+            /> */}
           </Space>
 
           <Table<Transaction>

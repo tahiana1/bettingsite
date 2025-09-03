@@ -506,13 +506,13 @@ const IntegratedTransferPage: React.FC = () => {
                   onChange={onLevelChange}
                 />
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
-            <Divider className="!p-0 !m-0" />
+            {/* <Divider className="!p-0 !m-0" />
             <Descriptions
               bordered
               layout="vertical"
@@ -566,7 +566,7 @@ const IntegratedTransferPage: React.FC = () => {
                 </span>
               }
               type="warning"
-            />
+            /> */}
           </Space>
 
           <Table<Transaction>

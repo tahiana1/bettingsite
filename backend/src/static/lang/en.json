@@ -1688,5 +1688,7 @@
   "afterAmount" : "After Amount",
   "loading" : "Loading",
   "win" : "Win",
-  "insufficientPoint" : "Insufficient Point"
+  "insufficientPoint" : "Insufficient Point",
+  "admin/menu/totalTransferHistory" : "Total Transfer History",
+  "admin/menu/memberTransferHistory" : "Member Transfer History"
 }
