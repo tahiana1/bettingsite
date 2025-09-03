@@ -34,6 +34,7 @@ import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
 import * as XLSX from 'xlsx';
+import api from "@/api";
 
 const MemberDWPage: React.FC = () => {
   const t = useTranslations();
@@ -52,6 +53,11 @@ const MemberDWPage: React.FC = () => {
               {
                 field: "transactions.type",
                 value: "withdrawal",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "point",
                 op: "eq",
               },
             ],
@@ -89,15 +95,35 @@ const MemberDWPage: React.FC = () => {
   }, []);
 
   const onApproveTransaction = (transaction: Transaction) => {
-    approveTransaction({ variables: { id: transaction.id } })
+    if (transaction.type == "deposit" || transaction.type == "withdrawal") {
+      approveTransaction({ variables: { id: transaction.id } })
+        .then((res) => {
+          if (res.data?.success) {
+            refetch(tableOptions);  
+          }
+        })
+        .catch((err) => {
+          console.error('Error approving transaction:', err);
+        });
+    } else if (transaction.type == "point") {
+      refetch(tableOptions);  
+      api("admin/point/convert", {
+        method: "POST",
+        data: {
+          id: transaction.id,
+          amount: transaction.amount,
+          userId: transaction.user?.id
+        },
+      })
       .then((res) => {
         if (res.data?.success) {
           refetch(tableOptions);  
         }
       })
       .catch((err) => {
-        console.error('Error approving transaction:', err);
+        console.error('Error converting point:', err);
       });
+    }
   };
 
   const onWaitingTransaction = (transaction: Transaction) => {
@@ -243,7 +269,7 @@ const MemberDWPage: React.FC = () => {
       title: t("accountName"),
       dataIndex: "profile.accountNumber",
       key: "accountNumber",
-      render: (_, record) => record.user?.profile?.accountNumber,
+      render: (_, record) => record.user?.profile?.name,
     },
     {
       title: t("depositorName"),
@@ -258,35 +284,50 @@ const MemberDWPage: React.FC = () => {
       render: (_, record) => <p>-</p>,
     },
     {
-      title: t("amount"),
-      dataIndex: "amount",
-      key: "amount",
-    },
-    {
       title: t("balanceBefore"),
       dataIndex: "balanceBefore",
       key: "balanceBefore",
+      render: (_, record) => record.user?.profile?.balance,
+    },
+    {
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
+      render: (_, record) => record.type == "point" ? 0 : record.amount,
     },
     {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
+      render: (_, record) => {
+        if (record.type == "deposit" && record.status == "pending") {
+          return record.user?.profile?.balance + record.amount;
+        } else if (record.type == "withdrawal" && record.status == "pending") {
+          return record.user?.profile?.balance - record.amount;
+        } else if (record.type == "point" && record.status == "pending") {
+          return record.user?.profile?.balance;
+        }
+        return record.user?.profile?.balance;
+      },
     },
+   
     {
       title: t("pointBefore"),
       dataIndex: "pointBefore",
       key: "pointBefore",
-    },
-    {
-      title: t("pointAfter"),
-      dataIndex: "pointAfter",
-      key: "pointAfter",
+      render: (_, record) => record.type == "point" ? record.user?.profile?.point : record.user?.profile?.point,
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: () => 0,
+      render: (_, record) => record.type == "point" ? record.amount : 0,
+    },
+    {
+      title: t("pointAfter"),
+      dataIndex: "pointAfter",
+      key: "pointAfter",
+      render: (_, record) => record.type == "point" ? record.user?.profile?.point - record.amount  : record.user?.profile?.point,
     },
     {
       title: t("usdtDesc"),
@@ -294,38 +335,28 @@ const MemberDWPage: React.FC = () => {
       key: "usdtDesc",
     },
     {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      fixed: "right",
-      render: (_, record) => {
-        return <>
-          {record.status == "pending" && <Button
-            title={t("pending")}
-            variant="outlined"
-            onClick={() => onApproveTransaction(record)}
-            color="blue"
-          >
-            {t("pending")}
-          </Button>}
-          {record.status == "A" ? <button className="text-xs bg-[#1677ff] text-white px-2 py-1 rounded">{t("approve")}</button> : null}
-          {record.status == "B" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Blocked</button> : null}
-          {record.status == "C" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Canceled</button> : null}
-          {record.status == "W" ? <button className="text-xs bg-[orange] text-white px-2 py-1 rounded">Waiting</button> : null}
-        </>
-      }
-    },
-    {
       title: t("shortcut"),
       dataIndex: "shortcut",
       width: 100,
       key: "shortcut",
       render: (_, record) => (
-        record.type == "deposit" ? <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
-        </div> : <div className="flex flex-column gap-1">
-          <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
-        </div>
+        <>
+          {record.type == "deposit" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[red] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("deposit")}</p>
+            </div>
+          )}
+          {record.type == "withdrawal" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("withdrawal")}</p>
+            </div>
+          )}
+          {record.type == "point" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("point")}</p>
+            </div>
+          )}
+        </>
       ),
     },
     {
@@ -701,13 +732,13 @@ const MemberDWPage: React.FC = () => {
                   onChange={onLevelChange}
                 />
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
-            <Divider className="!p-0 !m-0" />
+            {/* <Divider className="!p-0 !m-0" />
             <Descriptions
               bordered
               layout="vertical"
@@ -761,7 +792,7 @@ const MemberDWPage: React.FC = () => {
                 </span>
               }
               type="warning"
-            />
+            /> */}
           </Space>
 
           <Table<Transaction>

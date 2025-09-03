@@ -597,7 +597,7 @@ const GeneralDWPage: React.FC = () => {
         [t("amount")]: transaction.amount,
         [t("balanceAfter")]: transaction.balanceAfter,
         [t("pointBefore")]: transaction.pointBefore,
-        [t("point")]: 0,
+        [t("point")]: transaction.type == "point" ? transaction.amount : 0,
         [t("pointAfter")]: transaction.pointAfter,
         [t("usdtDesc")]: transaction.usdtDesc,
         [t("shortcut")]: transaction.shortcut,
@@ -738,14 +738,14 @@ const GeneralDWPage: React.FC = () => {
                   onChange={onLevelChange}
                 />
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={handleDownload}>
                   {t("download")}
                 </Button>
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
-            <Divider className="!p-0 !m-0" />
-            <Descriptions
+            {/* <Divider className="!p-0 !m-0" /> */}
+            {/* <Descriptions
               bordered
               layout="vertical"
               column={6}
@@ -781,8 +781,8 @@ const GeneralDWPage: React.FC = () => {
                   children: total,
                 },
               ]}
-            />
-            <Alert
+            /> */}
+            {/* <Alert
               message={
                 <span>
                   <span className="text-red-600">
@@ -798,7 +798,7 @@ const GeneralDWPage: React.FC = () => {
                 </span>
               }
               type="warning"
-            />
+            /> */}
           </Space>
 
           <Table<Transaction>
