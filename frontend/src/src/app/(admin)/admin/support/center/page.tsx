@@ -190,7 +190,7 @@ const SupportCenterPage: React.FC = () => {
       render(_, record) {
         return record.user?.parent?.userid;
       },
-    },
+    }, 
     {
       title: t("userid"),
       dataIndex: "user.userid",
@@ -217,17 +217,11 @@ const SupportCenterPage: React.FC = () => {
       }
     },
     {
-      title: t("repliedAt"),
-      dataIndex: "repliedAt",
-      key: "repliedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
       title: t("status"),
       dataIndex: "status",
       key: "status",
       render: (text) => {
-        return text === "P" ? <Tag color="blue">{t("pending")}</Tag> : text === "F" ? <Tag color="green">{t("answered")}</Tag> : <Tag color="red">{t("checked")}</Tag>;
+        return text === "P" ? <Tag color="blue">{t("pending")}</Tag> : text == "F" || text == "A" ? <Tag color="green">{t("answered")}</Tag> : <Tag color="red">{t("checked")}</Tag>;
       }
     },
     {
@@ -261,7 +255,7 @@ const SupportCenterPage: React.FC = () => {
             {t("reply")}
           </button>
           {
-            record.status !== 'F' && (<button 
+            record.status !== 'F' && record.status !== 'A' && (<button 
               className={`bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50 ${
                 record.status === 'C' ? 'opacity-50 cursor-not-allowed' : ''
               }`}

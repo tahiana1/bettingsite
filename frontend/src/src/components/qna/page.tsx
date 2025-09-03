@@ -17,6 +17,7 @@ import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
 import modalImage from '@/assets/img/main/modal-head.png';
+import dayjs from "dayjs";
 
 interface QnaItem {
     id: string;
@@ -42,6 +43,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
     const [profile, setProfile] = useState<any>(null);
     const router = useRouter();
     const [hasCheckedForImage, setHasCheckedForImage] = useState(false);
+    
     useEffect(() => {
         api("user/me").then((res) => {
             setProfile(res.data.profile);
@@ -49,7 +51,6 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
             console.log(err);
         });
     }, []);
-    // Check if user is logged in
  
     const modules = {
         toolbar: [
@@ -83,8 +84,8 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
           dataIndex: "status",
           key: "status",
           render: (_, record) => (
-            <Tag color={record.status === "pending" || record.status === "P" ? "blue" : "green"}>
-              {record.status === "pending" || record.status === "P" ? t("pending") : t("answered")}
+            <Tag color={record.status == "P" ? "blue" : "green"}>
+              {record.status == "P" ? t("pending") : t("answered")}
             </Tag>
           ),
         },
@@ -92,22 +93,8 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
           title: t("applicationDate"),
           dataIndex: "createdAt",
           key: "createdAt",
-        },
-        {
-          title: t("action"),
-          key: "action",
-          fixed: "right",
           render: (_, record) => (
-            <Space.Compact size="small" className="gap-2">
-              <button
-                title={t("delete")}
-                className="text-red-500 cursor-pointer hover:text-red-400 font-medium px-2 py-1 rounded transition-colors flex items-center gap-1"
-                onClick={() => handleDelete(record.id)}
-              >
-                <BiTrash />
-                {t("delete")}
-              </button>
-            </Space.Compact>
+            <span>{dayjs(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>
           ),
         },
       ];
@@ -129,56 +116,64 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
             const handleTextChange = () => handleQuillChange(quill, 'description');
             quill.on('text-change', handleTextChange);
 
+            // Check for captured image in localStorage only once when quill is ready
+            if (!hasCheckedForImage) {
+                const capturedImage = localStorage.getItem('capturedBetImage');
+                if (capturedImage) {
+                    // Wait a brief moment for the editor to be fully ready
+                    setTimeout(() => {
+                        try {
+                            // Insert the image into the editor at the end
+                            const length = quill.getLength();
+                            quill.insertEmbed(length - 1, 'image', capturedImage);
+                            quill.insertText(length, '\n'); // Add a newline after the image
+                            // Clear the stored image
+                            localStorage.removeItem('capturedBetImage');
+                            setHasCheckedForImage(true);
+                        } catch (error) {
+                            console.error('Error inserting captured image:', error);
+                            // Clear the image even if insertion fails to prevent retries
+                            localStorage.removeItem('capturedBetImage');
+                            setHasCheckedForImage(true);
+                        }
+                    }, 100);
+                } else {
+                    setHasCheckedForImage(true);
+                }
+            }
+
             return () => {
                 quill.off('text-change', handleTextChange);
             };
         }
-    }, [quill]);
-
-    // Separate effect to handle captured images when component mounts or when quill is ready
-    useEffect(() => {
-        if (quill && !hasCheckedForImage) {
-            // Check for captured image in localStorage
-            const capturedImage = localStorage.getItem('capturedBetImage');
-            if (capturedImage) {
-                // Wait a brief moment for the editor to be fully ready
-                setTimeout(() => {
-                    try {
-                        // Insert the image into the editor at the end
-                        const length = quill.getLength();
-                        quill.insertEmbed(length - 1, 'image', capturedImage);
-                        quill.insertText(length, '\n'); // Add a newline after the image
-                        // Clear the stored image
-                        localStorage.removeItem('capturedBetImage');
-                        setHasCheckedForImage(true);
-                    } catch (error) {
-                        console.error('Error inserting captured image:', error);
-                        // Clear the image even if insertion fails to prevent retries
-                        localStorage.removeItem('capturedBetImage');
-                        setHasCheckedForImage(true);
-                    }
-                }, 100);
-            } else {
-                setHasCheckedForImage(true);
-            }
-        }
     }, [quill, hasCheckedForImage]);
 
-    // Reset the image check flag when component mounts (for modal reopening)
     useEffect(() => {
-        setHasCheckedForImage(false);
-    }, []);
+        // Only fetch QnAs if we don't already have profile data
+        if (!profile) {
+            api("user/me").then((res) => {
+                const user = res.data.profile;
+                setProfile(user);
+                fetchQnas(user);
+            }).catch((err) => {
+                console.error('Error fetching user:', err);
+            });
+        } else {
+            fetchQnas(profile);
+        }
+    }, [profile]);
 
+    // Set up interval to fetch QnAs every 5 seconds
     useEffect(() => {
-        api("user/me").then((res) => {
-            const user = res.data.profile;
-            fetchQnas(user);
-        }).catch((err) => {
-            console.error('Error fetching user:', err);
-        });
-        // Fetch QnAs when component mounts
-        
-    }, []);
+        if (!profile) return;
+
+        const interval = setInterval(() => {
+            fetchQnas(profile);
+        }, 5000); // 5000ms = 5 seconds
+
+        // Cleanup function to clear interval when component unmounts
+        return () => clearInterval(interval);
+    }, [profile]);
 
     const fetchQnas = async (user: any) => {
         api("qna/get-qna", {
@@ -236,7 +231,6 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
             });
 
             if (response.status) {
-                window.location.reload();
                 // Add to the list
                 setQnas(prevQnas => [{
                     id: response.data.id.toString(),
@@ -246,11 +240,18 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                     status: response.data.status
                 }, ...prevQnas]);
                 
-                // Reset form
+                // Reset form and editor content
                 form.resetFields();
                 if (quill) {
                     quill.setText('');
+                    // Manually clear the form field to ensure consistency
+                    form.setFieldValue('description', '');
                 }
+                
+                // Reload page to ensure fresh state
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
             } else {
                 throw new Error(response.message || 'Failed to create QnA');
             }
@@ -332,7 +333,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                                 label={<span className="text-white font-medium">{t("desc")}</span>}
                                 rules={[{ required: true, message: t("required") }]}
                             >
-                                <div ref={quillRef} className="quill-editor-dark"></div>
+                                <div ref={quillRef} className="quill-editor-dark" key="qna-editor"></div>
                             </Form.Item>
                             <div className="flex gap-2 pt-3 w-[80%] mx-auto">
                                 <Form.Item label={null} className="w-full">
