@@ -263,12 +263,15 @@ interface Qna {
   key: string;
   id: number;
   question: string;
+  questionTitle: string;
   answer: string;
+  answerTitle: string;
   userId: number;
   user: User;
   domainId: number;
   domain: Domain;
-  status: boolean;
+  status: string; // P = pending, A = answered, C = completed/checked
+  type: string;
   repliedAt: Date | string;
   createdAt: Date | string;
   updatedAt: Date | string;

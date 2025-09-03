@@ -21,8 +21,8 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useQuery } from "@apollo/client";
-import { FILTER_QNAS } from "@/actions/qna";
+import { useQuery, useMutation } from "@apollo/client";
+import { FILTER_QNAS, REPLY_QNA, COMPLETE_QNA } from "@/actions/qna";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
@@ -37,10 +37,23 @@ const SupportCenterPage: React.FC = () => {
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [qnas, setQnas] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_QNAS);
+  const { loading, data, refetch } = useQuery(FILTER_QNAS, {
+    variables: {
+      orders: [
+        {
+          field: "createdAt",
+          direction: "DESC"
+        }
+      ]
+    }
+  });
+
+  const [replyQna] = useMutation(REPLY_QNA);
+  const [completeQna] = useMutation(COMPLETE_QNA);
 
   const modules = {
     toolbar: [
@@ -82,6 +95,10 @@ const SupportCenterPage: React.FC = () => {
     }
   }, [quill]);
 
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+
   const handleQuillChange = (editor: any, fieldName: string) => {
     if (editor) {
       const content = editor.root.innerHTML;
@@ -117,7 +134,7 @@ const SupportCenterPage: React.FC = () => {
       dataIndex: "root.qnaid",
       key: "root.qnaid",
       render(_, record) {
-        return record.user?.root?.userid;
+        return record.user?.root?.userid
       },
     },
     {
@@ -138,51 +155,25 @@ const SupportCenterPage: React.FC = () => {
       title: t("userid"),
       dataIndex: "user.userid",
       key: '"User"."userid"',
-      render: (_, record) => record.user?.userid,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      render: (_, record) => <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
+        <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+        <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.userid}</p>
+      </div>
     },
     {
       title: t("nickname"),
       dataIndex: "user.profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
-      title: t("type"),
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: t("question"),
-      dataIndex: "question",
-      key: "question",
-      render: (text, record) => {
-        return text.length > 100 ? (
-          <div className="line-clamp-2 cursor-pointer" onClick={() => handleQuestionClick(record)}>
-            {text}
-          </div>
-        ) : (
-          <div className="cursor-pointer" onClick={() => handleQuestionClick(record)}>
-            {text}
-          </div>
-        );
-      }
-    },
-    {
-      title: t("status"),
-      dataIndex: "status",
-      key: "status",
-      render: (text) => {
-        return text === "P" ? <Tag color="blue">{t("pending")}</Tag> : text === "A" ? <Tag color="green">{t("answered")}</Tag> : <Tag color="red">{t("checked")}</Tag>;
+      title: t("title"),
+      dataIndex: "questionTitle",                                                                                                                                                                   
+      key: "questionTitle",
+      render: (text, record) => {                                                                             
+        return <div className="line-clamp-2 cursor-pointer">
+          {text}
+        </div>
       }
     },
     {
@@ -190,6 +181,14 @@ const SupportCenterPage: React.FC = () => {
       dataIndex: "repliedAt",
       key: "repliedAt",
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+    },
+    {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      render: (text) => {
+        return text === "P" ? <Tag color="blue">{t("pending")}</Tag> : text === "F" ? <Tag color="green">{t("answered")}</Tag> : <Tag color="red">{t("checked")}</Tag>;
+      }
     },
     {
       title: t("createdAt"),
@@ -208,37 +207,34 @@ const SupportCenterPage: React.FC = () => {
       key: "action",
       fixed: "right",
       render: (_, record) => (
-        <Space.Compact size="small">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={() => {}}
-            description={
-              record.status ? t("blockMessage") : t("approveMessage")
-            }
+        <Space.Compact size="small" className="gap-1">
+          <button 
+            className="bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50"
+            onClick={() => handleViewQuestion(record)}
           >
-            {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
-            ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<BsCardChecklist />}
-              />
-            )}
-          </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
+            {t("view")}
+          </button>
+          <button 
+            className="bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50"
+            onClick={() => handleReplyQuestion(record)}
+          >
+            {t("reply")}
+          </button>
+          {
+            record.status !== 'F' && (<button 
+              className={`bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50 ${
+                record.status === 'C' ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              onClick={() => {
+                if (record.status !== 'C') {
+                  handleCompleteQuestion(record);
+                }
+              }}
+            >
+              {record.status === 'F' ? t("completed") : t("complete")}
+            </button>)
+          }
+          
         </Space.Compact>
       ),
     },
@@ -305,12 +301,61 @@ const SupportCenterPage: React.FC = () => {
     setModalOpen(false);
     setSelectedQuestion(null);
     form.resetFields();
+    if (quill) {
+      quill.root.innerHTML = '';
+    }
+  };
+
+  const handleViewModalClose = () => {
+    setViewModalOpen(false);
+    setSelectedQuestion(null);
+  };
+
+  const handleViewQuestion = (record: any) => {
+    setSelectedQuestion(record);
+    setViewModalOpen(true);
+  };
+
+  const handleReplyQuestion = (record: any) => {
+    setSelectedQuestion(record);
+    setModalOpen(true);
+    // Pre-populate the editor if there's existing answer
+    if (record.answer && quill) {
+      quill.root.innerHTML = record.answer;
+      form.setFieldValue('answer', record.answer);
+    }
+  };
+
+  const handleCompleteQuestion = async (record: any) => {
+    try {
+      await completeQna({
+        variables: {
+          id: record.id.toString()
+        }
+      });
+      // Refetch data to update the table
+      refetch();
+    } catch (error) {
+      console.error('Error completing question:', error);
+    }
   };
 
   const handleReplySubmit = async (values: any) => {
-    // TODO: Implement reply submission
-    console.log('Reply submitted:', values);
-    handleModalClose();
+    try {
+      await replyQna({
+        variables: {
+          id: selectedQuestion.id.toString(),
+          input: {
+            answer: values.answer
+          }
+        }
+      });
+      handleModalClose();
+      // Refetch data to update the table
+      refetch();
+    } catch (error) {
+      console.error('Error submitting reply:', error);
+    }
   };
 
   useEffect(() => {
@@ -323,7 +368,16 @@ const SupportCenterPage: React.FC = () => {
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
+    const variables = {
+      ...tableOptions,
+      orders: [
+        {
+          field: "createdAt",
+          direction: "DESC"
+        }
+      ]
+    };
+    refetch(variables);
   }, [tableOptions]);
   return (
     <Layout>
@@ -450,21 +504,74 @@ const SupportCenterPage: React.FC = () => {
             }}
           />
 
+          {/* View Question Modal */}
           <Modal
-            title={t("question")}
+            title={t("viewQuestion")}
+            open={viewModalOpen}
+            onCancel={handleViewModalClose}
+            footer={[
+              <Button key="close" onClick={handleViewModalClose}>
+                {t("close")}
+              </Button>
+            ]}
+            width={800}
+          >
+            {selectedQuestion && (
+              <div className="space-y-4">
+                <div>
+                  <div className="font-semibold mb-2 text-lg">{t("title")}:</div>
+                  <div className="bg-gray-50 p-4 rounded border">
+                    {selectedQuestion.questionTitle}
+                  </div>
+                </div>
+                <div>
+                  <div className="font-semibold mb-2 text-lg">{t("content")}:</div>
+                  <div 
+                    className="bg-gray-50 p-4 rounded border min-h-[200px]"
+                    dangerouslySetInnerHTML={{ __html: selectedQuestion.question || '' }}
+                  />
+                </div>
+                {selectedQuestion.answer && (
+                  <div>
+                    <div className="font-semibold mb-2 text-lg">{t("currentAnswer")}:</div>
+                    <div 
+                      className="bg-blue-50 p-4 rounded border"
+                      dangerouslySetInnerHTML={{ __html: selectedQuestion.answer }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </Modal>
+
+          {/* Reply Question Modal */}
+          <Modal
+            title={t("replyToQuestion")}
             open={modalOpen}
             onCancel={handleModalClose}
             footer={null}
             width={800}
           >
-            <div className="mb-6">
-              {selectedQuestion?.answer && (
+            {selectedQuestion && (
+              <div className="mb-6">
                 <div className="mb-4">
-                  <div className="font-semibold mb-2">{t("answer")}:</div>
-                  <div className="bg-gray-50 p-4 rounded">{selectedQuestion?.answer}</div>
+                  <div className="font-semibold mb-2">{t("question")}:</div>
+                  <div className="bg-gray-50 p-4 rounded border">
+                    <div className="font-medium mb-2">{selectedQuestion.questionTitle}</div>
+                    <div dangerouslySetInnerHTML={{ __html: selectedQuestion.question || '' }} />
+                  </div>
                 </div>
-              )}
-            </div>
+                {selectedQuestion.answer && (
+                  <div className="mb-4">
+                    <div className="font-semibold mb-2">{t("currentAnswer")}:</div>
+                    <div 
+                      className="bg-blue-50 p-4 rounded border"
+                      dangerouslySetInnerHTML={{ __html: selectedQuestion.answer }}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
             <Form
               form={form}
               layout="vertical"
@@ -472,14 +579,7 @@ const SupportCenterPage: React.FC = () => {
             >
               <Form.Item
                 name="answer"
-                label={t("selectSample")}
-                rules={[{ required: true, message: t("required") }]}
-              >
-                <Select options={[]} />
-              </Form.Item>
-              <Form.Item
-                name={t("answerContent")}
-                label={t("answer")}
+                label={t("answerContent")}
                 rules={[{ required: true, message: t("required") }]}
               >
                 <div ref={quillRef}></div>

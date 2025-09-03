@@ -214,6 +214,21 @@ func (qr *qnaReader) ReplyQna(ctx context.Context, nID uint, updates model.Updat
 	return &qna, nil
 }
 
+// CompleteQna marks a qna as completed by setting status to 'F'
+func (qr *qnaReader) CompleteQna(ctx context.Context, nid uint) (bool, error) {
+	qna := &models.Qna{}
+	err := qr.db.Model(&models.Qna{}).First(&qna, nid).Error
+	if err != nil {
+		return false, err
+	}
+
+	qna.Status = "F"
+	if err := qr.db.Save(qna).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // DeleteQna deletes a qna by ID (soft delete if GORM soft delete is enabled)
 func (qr *qnaReader) DeleteQna(ctx context.Context, nid uint) (bool, error) {
 	n := &models.Qna{}

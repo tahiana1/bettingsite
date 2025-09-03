@@ -39,7 +39,7 @@ func (r *mutationResolver) DeleteQna(ctx context.Context, id uint) (bool, error)
 // CompleteQna is the resolver for the completeQNA field.
 func (r *mutationResolver) CompleteQna(ctx context.Context, id uint) (bool, error) {
 	ldr := loaders.For(ctx)
-	return ldr.QnaReader.DeleteQna(ctx, id)
+	return ldr.QnaReader.CompleteQna(ctx, id)
 }
 
 // GetQnas is the resolver for the getQnas field.

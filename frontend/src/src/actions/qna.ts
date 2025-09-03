@@ -116,6 +116,48 @@ export const UPDATE_QNA = gql`
   }
 `;
 
+export const REPLY_QNA = gql`
+  mutation ReplyQna($id: ID!, $input: UpdateQnaInput!) {
+    response: replyQna(id: $id, input: $input) {
+      id
+      user {
+        id
+        userid
+        profile {
+          id
+          level
+          nickname
+        }
+        rootId
+        root {
+          id
+          userid
+        }
+        parentId
+        parent {
+          id
+          userid
+        }
+      }
+      question
+      questionTitle
+      answer
+      answerTitle
+      status
+      repliedAt
+      createdAt
+      updatedAt
+      deletedAt
+    }
+  }
+`;
+
+export const COMPLETE_QNA = gql`
+  mutation CompleteQna($id: ID!) {
+    response: completeQna(id: $id)
+  }
+`;
+
 export const DELETE_QNA = gql`
   mutation DeleteQna($id: ID!) {
     response: deleteQna(id: $id)
