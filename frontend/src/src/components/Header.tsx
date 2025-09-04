@@ -54,6 +54,8 @@ import LevelVIP1 from "@/assets/img/level/Vip1.png"
 import LevelVIP2 from "@/assets/img/level/Vip2.png"
 import Prumium from "@/assets/img/level/premium.png"
 import PointPage from "./profile/point/page";
+import RollingPage from "./profile/rolling/page";
+
 const { Header } = Layout;
 
 const Head = () => {
@@ -104,6 +106,9 @@ const Head = () => {
   // point modal state
   const [isPointModalOpen, setIsPointModalOpen] = useState(false);
 
+  // rolling modal state
+  const [isRollingModalOpen, setIsRollingModalOpen] = useState(false);
+
   const checkoutModal = (modal: string) => {
     if (modal === "withdraw") {
       setIsDepositModalOpen(false);
@@ -114,6 +119,7 @@ const Head = () => {
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
       setIsPointModalOpen(false);
+      setIsRollingModalOpen(false);
       handleWithdrawClick();
     } else if (modal === "deposit") {
       setIsWithdrawModalOpen(false);
@@ -124,6 +130,7 @@ const Head = () => {
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
       setIsPointModalOpen(false);
+      setIsRollingModalOpen(false);
       handleDepositClick();
     } else if (modal === "notice") {
       setIsWithdrawModalOpen(false);
@@ -133,6 +140,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       setIsPointModalOpen(false);
       handleNoticeClick();
     } else if (modal === "event") {
@@ -143,6 +151,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       setIsPointModalOpen(false);
       handleEventClick();
     } else if (modal === "profile") {
@@ -154,6 +163,7 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsQnaModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       setIsPointModalOpen(false);
       handleProfileClick();
     } else if (modal === "letter") {
@@ -164,6 +174,7 @@ const Head = () => {
       setIsQnaModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       setIsPointModalOpen(false);
       handleNoteClick();
     } else if (modal === "qna") {
@@ -175,6 +186,7 @@ const Head = () => {
       setIsProfileModalOpen(false);
       setIsNoteModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       setIsPointModalOpen(false);
       handleQnaClick();
     } else if (modal === "bettingHistory") {
@@ -185,7 +197,8 @@ const Head = () => {
       setIsQnaModalOpen(false);
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
-      setIsPointModalOpen(false);
+      setIsPointModalOpen(false); 
+      setIsRollingModalOpen(false);
       handleBettingHistoryClick();
     } else if (modal === "point") {
       setIsWithdrawModalOpen(false);
@@ -196,7 +209,19 @@ const Head = () => {
       setIsNoteModalOpen(false);
       setIsProfileModalOpen(false);
       setIsBettingHistoryModalOpen(false);
+      setIsRollingModalOpen(false);
       handlePointClick();
+    } else if (modal == "rolling") {
+      setIsWithdrawModalOpen(false);
+      setIsDepositModalOpen(false);
+      setIsNoticeModalOpen(false);
+      setIsEventModalOpen(false);
+      setIsQnaModalOpen(false);
+      setIsNoteModalOpen(false);
+      setIsProfileModalOpen(false);
+      setIsBettingHistoryModalOpen(false);
+      setIsPointModalOpen(false);
+      handleRollingClick();
     }
   };
 
@@ -207,9 +232,7 @@ const Head = () => {
     }, 50); // Update every 50ms for smooth real-time effect
 
     return () => clearInterval(interval);
-  }, []);
-
-
+  }, []); 
 
   useEffect(() => {
     const path = pathname.split("/")[1];
@@ -387,6 +410,18 @@ const Head = () => {
   const handleClosePointModal = () => {
     setIsPointModalOpen(false);
   };
+
+  const handleRollingClick = () => {
+    if (profile?.id) {
+      setIsRollingModalOpen(true);
+    } else {
+      setIsLoginModalOpen(true);
+    }
+  }
+
+  const handleCloseRollingModal = () => {
+    setIsRollingModalOpen(false);
+  }
 
   const profileItems: MenuProps["items"] = [
     {
@@ -819,6 +854,19 @@ const Head = () => {
         maskTransitionName=""
       >
         <PointPage checkoutModal={checkoutModal} />
+      </Modal>
+      <Modal
+        title={null}
+        open={isRollingModalOpen}
+        onCancel={handleCloseRollingModal}
+        footer={null}
+        className="p-0 modal-content modal-fade-in"
+        width={800}
+        centered
+        transitionName=""
+        maskTransitionName=""
+      >
+        <RollingPage checkoutModal={checkoutModal} />
       </Modal>
     </div>
   );

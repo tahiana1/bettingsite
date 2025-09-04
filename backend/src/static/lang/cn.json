@@ -1692,5 +1692,6 @@
   "currentAnswer" : "当前答案",
   "viewQuestion" : "查看问题",
   "replyToQuestion" : "回复问题",
-  "reply" : "回复"
+  "reply" : "回复",
+  "rolling/exchangeRequest" : "滚动转换请求"
 }

@@ -1694,5 +1694,6 @@
   "currentAnswer" : "Current Answer",
   "viewQuestion" : "View Question",
   "replyToQuestion" : "Reply To Question",
-  "reply" : "Reply"
+  "reply" : "Reply",
+  "rolling/exchangeRequest" : "Rolling Conversion Request"
 }

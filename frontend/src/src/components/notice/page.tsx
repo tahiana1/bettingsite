@@ -132,6 +132,15 @@ const Notice: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                         {t("point")}
                     </button>
                     <button 
+                        className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors border-r border-[#5d4a3a]"
+                        onClick={() => props.checkoutModal("rolling")}
+                    >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
+                        {t("rolling")}
+                    </button>
+                    <button 
                         className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 bg-[#4a3224] text-[#edd497] font-bold border-r border-[#5d4a3a] hover:bg-[#5a3a2a] transition-colors"
                         onClick={() => { setSelectedItem(null); props.checkoutModal("notice") }}
                     >

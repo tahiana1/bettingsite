@@ -7,45 +7,45 @@ import {
   InputNumber,
   List,
   Radio,
-  Space,  
-  Table,
+  Select,
+  Space,
   Layout,
+  Table,
   Popconfirm,
   message,
   Tag,
 } from "antd";
 import type { RadioChangeEvent } from "antd";
+import type { TableProps } from "antd";
 import { useTranslations, useFormatter } from "next-intl";
 import { useAtom } from "jotai";
 import { betAmount, userState } from "@/state/state";
 import { SiDepositphotos } from "react-icons/si";
-import { BiTrash } from "react-icons/bi";
-import type { TableProps } from "antd";
-import { FilterDropdown } from "@refinedev/antd";
 import modalImage from '@/assets/img/main/modal-head.png';
 import api from "@/api";
 import dayjs from "dayjs";
 
-const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
+const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
   const t = useTranslations();
   const f = useFormatter();
-  const [amount, setAmount] = useAtom<number>(betAmount);
+
+  const [profile] = useAtom<any>(userState);
   const [transactions, setTransactions] = useState<any[]>([]);
   const [timeoutState, setTimeoutState] = useState<boolean>(false);
   const [balance, setBalance] = useState<number>(0);
-  const [profile, setProfile] = useState<any>(null);
-  const handleDelete = (id: number) => {
-    console.log('delete function not implemented');
-  };
+  const [pointProfile, setPointProfile] = useState<any>(null);
+
+  const [amount, setAmount] = useAtom<number>(betAmount);
+
   useEffect(() => {
     api("user/me").then((res) => {
-      setProfile(res.data.profile);
-      const userid = String(res.data.profile?.userId);
+      setPointProfile(res.data.profile);
+      const userid = String(res.data.profile.userId);
       api("transactions/get", { 
         method: "GET",
         params: {
           userid,
-          type: "withdrawal"
+          type: "point"
         }
       }).then((res) => {
         setTransactions(res.data);
@@ -54,36 +54,48 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
           setTimeoutState(!timeoutState);
         }, 6000);
       });
-    }).catch((err) => {
-      console.log(err);
-    });    
+      }).catch((err) => {
+        console.log(err);
+    });
   }, [timeoutState]);
 
-  const submitWithdraw = (amount: number) => {
+  const onAmountChange = (e: RadioChangeEvent) => {
+    if (e.target.value == "max") {
+      setAmount(1000000);
+    } else {
+      setAmount(parseInt(e.target.value));
+    }
+  };
+
+  const submitPointConversion = (amount: number) => {
+    if (pointProfile.point < amount) {
+      message.error(t("insufficientPoint"));
+      return;
+    }
     if (amount <= 0) {
       message.error(t("withdrawAmountError"));
       return;
-    }
-    if (amount < 10000) {
-      message.error(t("minimumWithdrawError"));
+    } else if (amount < 100) {
+      message.error(t("TheMinimumPointsToConvertIs100Points"));
       return;
     }
+    const userid = Number(pointProfile.userId);
     api("transactions/create", {
       method: "POST",
       data: {
-        userId: profile.userId,
+        userId: userid,
         amount: amount,
-        type: "withdrawal",
-        explation: "Withdrawal request"
+        type: "point",
+        explation: "Point conversion to balance"
       }
     })
     .then((res) => {
       if (res.data.status) {
-        message.success(t("withdrawSuccess"));
+        message.success(t("pointConversionSuccess"));
         setTimeoutState(!timeoutState);
         resetForm();
       } else {
-        message.error(t("withdrawFailed"));
+        message.error(t("pointConversionFailed"));
       }
     })
     .catch((err) => {
@@ -95,30 +107,17 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
     setAmount(0);
   }
 
-  const onAmountChange = (e: RadioChangeEvent) => {
-    if (e.target.value == "max") {
-      setAmount(profile.value);
-    } else {
-      setAmount(parseInt(e.target.value));
-    }
-  };
-
   const columns: TableProps<any>["columns"] = [
     {
       title: t("number"),
       dataIndex: "id", 
       key: "id",
-      render: (text, record, index) => index + 1
+      render: (_, __, index) => index + 1
     },
     {
-      title: t("withdrawAmount"),
+      title: t("profile/pointAmount"),
       dataIndex: "amount",
       key: "amount",
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <InputNumber min={0} className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("applicationDate"),
@@ -132,28 +131,28 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
       title: t("situation"),
       dataIndex: "status",
       key: "status",
-      render: (status, record) => (
+      render: (_, record) => (
         <Tag color={record.status === "A" ? "green" : "red"}>
           {record.status === "pending" && "Pending"}
           {record.status === "A" && "Approved"}
           {record.status === "W" && "Waiting"}
           {record.status === "C" && "Canceled"}
           {record.status === "DL" && "Deleted"}
-      </Tag>
+        </Tag>
       )
     }
   ];
 
   return (
-    <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] withdraw-section">
+    <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] deposit-section">
       <Card
         title={
             <div className="relative">
-              <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("withdraw")}</h2>
-              <p className="text-white text-[14px] font-[400] justify-center pb-6 flex">{t("withdraw")}</p>
+              <h2 className="text-[#edd497] text-[40px] justify-center flex pt-10 font-bold">{t("rolling/exchangeRequest")}</h2>
+              <p className="text-white text-[14px] font-[400] justify-center pb-6 flex">{t("rolling/exchangeRequest")}</p>
               <div className="absolute bottom-2 right-0 flex gap-2">
-              <button onClick={() => props.checkoutModal('profile')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
-              <button onClick={() => props.checkoutModal('bettingHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
+                <button onClick={() => props.checkoutModal('profile')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("myPage")}</button>
+                <button onClick={() => props.checkoutModal('betHistory')} className="text-white text-[14px] font-[400] btn-modal-effect justify-center py-2 flex ">{t("betHistory")}</button>
               </div>
             </div>
           }
@@ -179,11 +178,13 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
         actions={[
           <Space key={"action"} direction="vertical" className="w-full">
             <button
-              onClick={() => submitWithdraw(amount)}
+              onClick={() => {
+                submitPointConversion(amount);
+              }}
               key={"place"}
               className="w-1/2 btn-modal-effect"
             >
-              {t("billing/applyWithdraw")}
+              {t("profile/applyPoint")}
             </button>
           </Space>,
         ]}
@@ -196,7 +197,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
             {t("deposit")}
           </button>
           <button
-            className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 bg-[#4a3224] text-[#edd497] font-bold border-r border-[#5d4a3a] hover:bg-[#5a3a2a] transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors border-r border-[#5d4a3a]"
             onClick={() => props.checkoutModal("withdraw")}
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -212,7 +213,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
             {t("point")}
           </button>
           <button 
-            className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors border-r border-[#5d4a3a]"
+            className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 bg-[#4a3224] text-[#edd497] font-bold border-r border-[#5d4a3a] hover:bg-[#5a3a2a] transition-colors"
             onClick={() => props.checkoutModal("rolling")}
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -229,6 +230,7 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
             </svg>
             {t("notice")}
           </button>
+          
           <button 
             className="flex-1 flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-3 text-white hover:bg-[#2a1810] transition-colors"
             onClick={() => props.checkoutModal("event")}
@@ -242,9 +244,10 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
         <Alert
           description={
             <p>
-              * {t("withdrawMinimum")}
+              * {t("PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl")}
               <br />
-              * {t("withdrawOnly")}
+              * {t("WhenYouConvertPoints,TheyWillBeMobedToYourBalance")}
+              <br />* {t("TheMinimumPointsToConvertIs100Points")}
             </p>
           }
           type="success"
@@ -257,13 +260,13 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
           <List.Item className="flex gap-2 bg-[#160d0c]" style={{border: 'none'}}>
             <div className="w-full flex-3">{t("profile/balance")}</div>
             <div className="w-full text-red-500 flex-1 text-end">
-              {f.number(balance)}
+              {profile.value}
             </div>
           </List.Item>
 
           <Form onFinish={() => {}} className="w-full">
             <Form.Item
-              label={t("billing/withdrawAmount")}
+              label={t("profile/pointAmount")}
               rules={[{ required: true }]}
               className="!w-full"
               labelCol={{span: 24}}
@@ -345,4 +348,4 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
   );
 };
 
-export default WithdrawRequest;
+export default RollingPage;
