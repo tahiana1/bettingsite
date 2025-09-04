@@ -30,7 +30,7 @@ const RollingConversionPage: React.FC = () => {
     filters: [
       {
         field: "transactions.type",
-        value: "RollingCoversation",
+        value: "rollingExchange",
         op: "eq",
       },
     ],
@@ -107,32 +107,17 @@ const RollingConversionPage: React.FC = () => {
       ],
     },
     {
-      title: t("balance"),
-      children: [
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
-    },
-    {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
     },
-    {
-      title: t("approvedAt"),
-      dataIndex: "approvedAt",
-      key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
+    // {
+    //   title: t("approvedAt"),
+    //   dataIndex: "approvedAt",
+    //   key: "approvedAt",
+    //   render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+    // },
     {
       title: t("status"),
       dataIndex: "status",

@@ -30,7 +30,7 @@ const FullPointsHistoryPage: React.FC = () => {
     filters: [
       {
         field: "transactions.type",
-        value: "T",
+        value: "point",
         op: "eq",
       },
     ],
@@ -137,6 +137,9 @@ const FullPointsHistoryPage: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      render: (value) => {
+        return value == "A" ? t("Approved")  : t("pending");
+      },
     },
   ];
 
