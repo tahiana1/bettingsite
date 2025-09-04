@@ -1699,5 +1699,6 @@
   "profile/rollingAmount" : "Rolling Amount",
   "WhenYouConvertRolling,TheyWillBeMobedToYourBalance" : "When you convert rollings, they will be mobed to your balance.",
   "TheMinimumRollingToConvertIs100Rolling" : "The minimum rolling to convert is 100 rolling.",
-  "profile/applyRolling" : "Apply Rolling"
+  "profile/applyRolling" : "Apply Rolling",
+  "insufficientRolling" : "Insufficient Rolling"
 }

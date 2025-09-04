@@ -68,15 +68,15 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
   };
 
   const submitPointConversion = (amount: number) => {
-    if (pointProfile.point < amount) {
-      message.error(t("insufficientPoint"));
+    if (profile.roll < amount) {
+      message.error(t("insufficientRolling"));
       return;
     }
     if (amount <= 0) {
       message.error(t("withdrawAmountError"));
       return;
     } else if (amount < 100) {
-      message.error(t("TheMinimumPointsToConvertIs100Points"));
+      message.error(t("TheMinimumRollingToConvertIs100Rolling"));
       return;
     }
     const userid = Number(pointProfile.userId);
@@ -115,7 +115,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
       render: (_, __, index) => index + 1
     },
     {
-      title: t("profile/pointAmount"),
+      title: t("profile/rollingAmount"),
       dataIndex: "amount",
       key: "amount",
     },
