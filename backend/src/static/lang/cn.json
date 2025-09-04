@@ -1693,5 +1693,6 @@
   "viewQuestion" : "查看问题",
   "replyToQuestion" : "回复问题",
   "reply" : "回复",
-  "rolling/exchangeRequest" : "滚动转换请求"
+  "rolling/exchangeRequest" : "滚动转换请求",
+  "profile/rollingAmount" : "滚动金额"
 }

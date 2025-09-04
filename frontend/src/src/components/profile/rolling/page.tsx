@@ -40,6 +40,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
   useEffect(() => {
     api("user/me").then((res) => {
       setPointProfile(res.data.profile);
+      setBalance(res.data.profile.roll);
       const userid = String(res.data.profile.userId);
       api("transactions/get", { 
         method: "GET",
@@ -49,7 +50,6 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
         }
       }).then((res) => {
         setTransactions(res.data);
-        setBalance(res.balance);
         setTimeout(() => {
           setTimeoutState(!timeoutState);
         }, 6000);
@@ -260,13 +260,13 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
           <List.Item className="flex gap-2 bg-[#160d0c]" style={{border: 'none'}}>
             <div className="w-full flex-3">{t("profile/balance")}</div>
             <div className="w-full text-red-500 flex-1 text-end">
-              {profile.value}
+              {profile.roll}
             </div>
           </List.Item>
 
           <Form onFinish={() => {}} className="w-full">
             <Form.Item
-              label={t("profile/pointAmount")}
+              label={t("profile/rollingAmount")}
               rules={[{ required: true }]}
               className="!w-full"
               labelCol={{span: 24}}

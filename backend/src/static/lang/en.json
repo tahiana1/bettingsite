@@ -1695,5 +1695,6 @@
   "viewQuestion" : "View Question",
   "replyToQuestion" : "Reply To Question",
   "reply" : "Reply",
-  "rolling/exchangeRequest" : "Rolling Conversion Request"
+  "rolling/exchangeRequest" : "Rolling Conversion Request",
+  "profile/rollingAmount" : "Rolling Amount"
 }
