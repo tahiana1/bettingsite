@@ -46,7 +46,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
         method: "GET",
         params: {
           userid,
-          type: "point"
+          type: "rollingExchange"
         }
       }).then((res) => {
         setTransactions(res.data);
@@ -85,7 +85,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
       data: {
         userId: userid,
         amount: amount,
-        type: "point",
+        type: "rollingExchange",
         explation: "Point conversion to balance"
       }
     })
