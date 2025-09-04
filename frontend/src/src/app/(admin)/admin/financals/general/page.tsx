@@ -381,7 +381,7 @@ const GeneralDWPage: React.FC = () => {
     {
       title: t("shortcut"),
       dataIndex: "shortcut",
-      width: 100,
+      width: 150,
       key: "shortcut",
       render: (_, record) => (
         <>
@@ -397,12 +397,12 @@ const GeneralDWPage: React.FC = () => {
           )}
           {record.type == "point" && (
             <div className="flex flex-column gap-1">
-              <p className="text-xs bg-[yellow] text-[black] flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("point")}</p>
+              <p className="text-xs bg-[yellow] text-[black] flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("pointExchange")}</p>
             </div>
           )}
           {record.type == "rollingExchange" && (
             <div className="flex flex-column gap-1">
-              <p className="text-xs bg-[green] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("rolling")}</p>
+              <p className="text-xs bg-[green] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("rollingExchange")}</p>
             </div>
           )}
         </>
