@@ -184,7 +184,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
               key={"place"}
               className="w-1/2 btn-modal-effect"
             >
-              {t("profile/applyPoint")}
+              {t("profile/applyRolling")}
             </button>
           </Space>,
         ]}
@@ -246,8 +246,8 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
             <p>
               * {t("PleaseProcessAFullMoenyRecoveryBeforeApplyingForWithdrawl")}
               <br />
-              * {t("WhenYouConvertPoints,TheyWillBeMobedToYourBalance")}
-              <br />* {t("TheMinimumPointsToConvertIs100Points")}
+              * {t("WhenYouConvertRolling,TheyWillBeMobedToYourBalance")}
+              <br />* {t("TheMinimumRollingToConvertIs100Rolling")}
             </p>
           }
           type="success"

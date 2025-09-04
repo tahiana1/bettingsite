@@ -1696,5 +1696,8 @@
   "replyToQuestion" : "Reply To Question",
   "reply" : "Reply",
   "rolling/exchangeRequest" : "Rolling Conversion Request",
-  "profile/rollingAmount" : "Rolling Amount"
+  "profile/rollingAmount" : "Rolling Amount",
+  "WhenYouConvertRolling,TheyWillBeMobedToYourBalance" : "When you convert rollings, they will be mobed to your balance.",
+  "TheMinimumRollingToConvertIs100Rolling" : "The minimum rolling to convert is 100 rolling.",
+  "profile/applyRolling" : "Apply Rolling"
 }

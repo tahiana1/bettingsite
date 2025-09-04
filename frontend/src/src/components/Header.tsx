@@ -545,6 +545,15 @@ const Head = () => {
               </button>
             </li>
             <li>
+              <button
+                onClick={handleRollingClick}
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                <span>
+                  {t(`rolling`)}
+                </span>
+              </button>
+            </li>
+            <li>
               <button 
                 onClick={handleNoticeClick}
                 className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">

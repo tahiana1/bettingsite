@@ -1694,5 +1694,8 @@
   "replyToQuestion" : "回复问题",
   "reply" : "回复",
   "rolling/exchangeRequest" : "滚动转换请求",
-  "profile/rollingAmount" : "滚动金额"
+  "profile/rollingAmount" : "滚动金额",
+  "WhenYouConvertRolling,TheyWillBeMobedToYourBalance" : "当您转换滚动时，它们将被移动到您的余额。",
+  "TheMinimumRollingToConvertIs100Rolling" : "转换滚动的最小滚动为100滚动。",
+  "profile/applyRolling" : "申请滚动"
 }
