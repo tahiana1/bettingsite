@@ -77,6 +77,11 @@ const GeneralDWPage: React.FC = () => {
                 value: "point",
                 op: "eq",
               },
+              {
+                field: "transactions.type",
+                value: "rollingExchange",
+                op: "eq",
+              },
             ],
           },
           {
@@ -143,6 +148,24 @@ const GeneralDWPage: React.FC = () => {
       })
       .catch((err) => {
         console.error('Error converting point:', err);
+      });
+    } else if (transaction.type == "rollingExchange") {
+      refetch(tableOptions);  
+      api("admin/rolling/convert", {
+        method: "POST",
+        data: {
+          id: transaction.id,
+          amount: transaction.amount,
+          userId: transaction.user?.id
+        },
+      })
+      .then((res) => {
+        if (res.data?.success) {
+          refetch(tableOptions);  
+        }
+      })
+      .catch((err) => {
+        console.error('Error converting rollingExchange:', err);
       });
     }
   };
@@ -325,6 +348,8 @@ const GeneralDWPage: React.FC = () => {
           return record.user?.profile?.balance - record.amount;
         } else if (record.type == "point" && record.status == "pending") {
           return record.user?.profile?.balance;
+        } else if (record.type == "rollingExchange" && record.status == "pending") {
+          return record.user?.profile?.balance + record.amount;
         }
         return record.user?.profile?.balance;
       },
@@ -372,7 +397,12 @@ const GeneralDWPage: React.FC = () => {
           )}
           {record.type == "point" && (
             <div className="flex flex-column gap-1">
-              <p className="text-xs bg-[#1677ff] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("point")}</p>
+              <p className="text-xs bg-[yellow] text-[black] flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("point")}</p>
+            </div>
+          )}
+          {record.type == "rollingExchange" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[green] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("rolling")}</p>
             </div>
           )}
         </>
@@ -382,12 +412,6 @@ const GeneralDWPage: React.FC = () => {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("approvedAt"),
-      dataIndex: "profile.approvedAt",
-      key: "approvedAt",
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
     },
     {

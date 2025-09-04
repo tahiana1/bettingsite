@@ -101,4 +101,8 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		pointRouter.POST("/convert", controllers.ConvertPoint)
 	}
 
+	rollingRouter := r.Group("/rolling")
+	{
+		rollingRouter.POST("/convert", controllers.ConvertRolling)
+	}
 }
