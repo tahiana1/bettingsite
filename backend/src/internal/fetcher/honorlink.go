@@ -52,7 +52,8 @@ func (t *HonorLinkTransaction) GetIDString() string {
 	case string:
 		return v
 	case float64:
-		return strconv.FormatFloat(v, 'f', 0, 64)
+		// Use fmt.Sprintf with %.0f to avoid scientific notation for large numbers
+		return fmt.Sprintf("%.0f", v)
 	case int:
 		return strconv.Itoa(v)
 	case int64:
@@ -86,7 +87,7 @@ func NewHonorLinkFetcher() *HonorLinkFetcher {
 		BaseURL: "https://api.honorlink.org/api/transactions",
 		Token:   token,
 		Client: &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout: 600 * time.Second, // Increased timeout to 60 seconds
 		},
 	}
 }
@@ -112,9 +113,12 @@ func (h *HonorLinkFetcher) FetchTransactions(start, end time.Time, page, perPage
 		return nil, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	// Add authorization header
+	// Add authorization header and other headers for better connection
 	req.Header.Add("Authorization", "Bearer "+h.Token)
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("User-Agent", "HonorLink-Fetcher/1.0")
+	req.Header.Add("Accept", "application/json")
+	req.Header.Add("Connection", "keep-alive")
 
 	// Make request
 	resp, err := h.Client.Do(req)
@@ -144,12 +148,13 @@ func (h *HonorLinkFetcher) FetchTransactions(start, end time.Time, page, perPage
 }
 
 func (h *HonorLinkFetcher) StartPeriodicFetching() {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(2 * time.Minute) // Increased to 2 minutes to reduce API load
 
 	go func() {
-		fmt.Println("🚀 Starting HonorLink API polling every 1 minutes...")
+		fmt.Println("🚀 Starting HonorLink API polling every 2 minutes...")
 
-		// Initial fetch
+		// Initial fetch with a slight delay to allow system startup
+		time.Sleep(10 * time.Second)
 		h.fetchAndLogTransactions()
 
 		// Periodic fetching
@@ -173,18 +178,51 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 		loc = time.UTC
 	}
 
-	// Set time range to last 10 days in Korean timezone
+	// Set time range to last 2 hours in Korean timezone (reduced for better performance)
 	now := time.Now().In(loc)
-	end := now                           // Today at 23:59:59 KST
-	start := end.Add(-1 * 1 * time.Hour) // 1 day ago in KST
+	end := now                        // Current time KST
+	start := end.Add(-24 * time.Hour) // 2 hours ago in KST
 	fmt.Println(start, end, "date------------- (Korean Time)")
-	response, err := h.FetchTransactions(start, end, 1, 100)
-	// end := time.Now()
-	// start := end.Add(-2 * time.Minute)
-	// fmt.Println(start, end, "date")
-	// response, err := h.FetchTransactions(start, end, 1, 100)
+
+	// Retry logic for API calls with fallback time ranges
+	var response *HonorLinkResponse
+	maxRetries := 3
+	timeRanges := []time.Duration{2 * time.Hour, 1 * time.Hour, 30 * time.Minute}
+
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		// Use different time ranges for each retry
+		var currentStart time.Time
+		if attempt <= len(timeRanges) {
+			currentStart = end.Add(-timeRanges[attempt-1])
+		} else {
+			currentStart = start
+		}
+
+		timeRangeIndex := attempt - 1
+		if timeRangeIndex >= len(timeRanges) {
+			timeRangeIndex = len(timeRanges) - 1
+		}
+		fmt.Printf("🔄 Attempt %d/%d: Fetching %v of data...\n", attempt, maxRetries, timeRanges[timeRangeIndex])
+		response, err = h.FetchTransactions(currentStart, end, 1, 50) // Reduced perPage to 50
+		if err == nil {
+			// Update start time if we had to use a smaller range
+			if attempt > 1 {
+				start = currentStart
+			}
+			break // Success, exit retry loop
+		}
+
+		fmt.Printf("❌ Attempt %d/%d failed: %v\n", attempt, maxRetries, err)
+		if attempt < maxRetries {
+			// Wait before retrying (exponential backoff)
+			waitTime := time.Duration(attempt*attempt) * time.Second
+			fmt.Printf("⏳ Waiting %v before retry...\n", waitTime)
+			time.Sleep(waitTime)
+		}
+	}
+
 	if err != nil {
-		fmt.Printf("❌ Error fetching HonorLink transactions: %v\n", err)
+		fmt.Printf("❌ Failed to fetch HonorLink transactions after %d attempts: %v\n", maxRetries, err)
 		return
 	}
 
@@ -193,8 +231,8 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	fmt.Printf("   Time Range: %s to %s (Korean Time)\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Success: %t\n", response.Success)
 	fmt.Printf("   Total Transactions: %d\n", response.Total)
-	fmt.Printf("   end: %d\n", now)
-	fmt.Printf("   start: %d\n", start)
+	fmt.Printf("   end: %s\n", now.Format("2006-01-02 15:04:05"))
+	fmt.Printf("   start: %s\n", start.Format("2006-01-02 15:04:05"))
 	fmt.Printf(" ✅✅✅  Transactions in this page: %d\n", len(response.Data))
 
 	if len(response.Data) > 0 {
@@ -203,19 +241,20 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 			// if i >= 5 { // Show only first 5 transactions
 			// 	break
 			// }
-			// check transaction id is exist in transction table explation
+			// check transaction id is exist in transaction table explation
 			var transactionDB models.Transaction
-			if err := initializers.DB.Where("explation = ?", transaction.GetIDString()).First(&transactionDB).Error; err == nil {
-				fmt.Printf("❌ Transaction with explation %s already exists\n", transaction.GetIDString())
+			transactionIDStr := transaction.GetIDString()
+			if err := initializers.DB.Where("explation = ?", transactionIDStr).First(&transactionDB).Error; err == nil {
+				fmt.Printf("❌ Transaction with explation %s already exists\n", transactionIDStr)
 				continue
 			} else {
 				fmt.Printf("%d. ID: %s, UserID: %s, Username: '%s', Amount: %.2f, Type: %s, Status: %s\n",
-					i+1, transaction.GetIDString(), transaction.UserID, transaction.User.Username, transaction.Amount, transaction.Type, transaction.Status)
+					i+1, transactionIDStr, transaction.UserID, transaction.User.Username, transaction.Amount, transaction.Type, transaction.Status)
 				h.processTransaction(transaction)
 			}
 		}
 	} else {
-		fmt.Printf("   No transactions found in the specified time ran	 ge\n")
+		fmt.Printf("   No transactions found in the specified time range\n")
 	}
 
 	fmt.Printf("   Fetched at: %s (Korean Time)\n", time.Now().In(loc).Format("2006-01-02 15:04:05"))
@@ -253,21 +292,43 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 
 	//insert the bet history on CasinoBet table
 	if hlTransaction.Type == "bet" || hlTransaction.Type == "win" {
-		casinoBet := models.CasinoBet{
-			UserID:       user.ID,
-			Amount:       hlTransaction.Amount,
-			Type:         hlTransaction.Type,
-			GameName:     hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-			TransID:      hlTransaction.GetIDString(),
-			Details:      hlTransaction.Details,
-			BeforeAmount: hlTransaction.BalanceBefore,
-			AfterAmount:  hlTransaction.BalanceBefore + hlTransaction.Amount,
-			Status:       hlTransaction.Status,
-			BettingTime:  uint(hlTransaction.CreatedAt.Unix()),
+		// Convert Unix timestamp to proper uint - use a reasonable timestamp
+		var bettingTime uint
+		timestamp := hlTransaction.CreatedAt.Unix()
+
+		// Ensure timestamp is within reasonable bounds for uint
+		if timestamp < 0 {
+			bettingTime = uint(time.Now().Unix())
+		} else if timestamp > math.MaxInt32 {
+			// If timestamp is too large, use current time
+			bettingTime = uint(time.Now().Unix())
+		} else {
+			bettingTime = uint(timestamp)
 		}
-		if err := initializers.DB.Create(&casinoBet).Error; err != nil {
-			fmt.Printf("❌ Error creating casino bet record: %v\n", err)
-			return
+
+		// Check if casino bet already exists to avoid duplicates
+		var existingCasinoBet models.CasinoBet
+		if err := initializers.DB.Where("trans_id = ?", hlTransaction.GetIDString()).First(&existingCasinoBet).Error; err == nil {
+			fmt.Printf("❌ Casino bet with TransID %s already exists\n", hlTransaction.GetIDString())
+		} else {
+			casinoBet := models.CasinoBet{
+				UserID:        user.ID,
+				GameID:        0, // Set default GameID
+				Amount:        hlTransaction.Amount,
+				Type:          hlTransaction.Type,
+				GameName:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
+				TransID:       hlTransaction.GetIDString(),
+				Details:       hlTransaction.Details,
+				BeforeAmount:  hlTransaction.BalanceBefore,
+				AfterAmount:   hlTransaction.BalanceBefore + hlTransaction.Amount,
+				Status:        hlTransaction.Status,
+				BettingTime:   bettingTime,
+				WinningAmount: 0, // Set default WinningAmount
+			}
+			if err := initializers.DB.Create(&casinoBet).Error; err != nil {
+				fmt.Printf("❌ Error creating casino bet record: %v\n", err)
+				return
+			}
 		}
 	}
 
@@ -283,12 +344,13 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 
 	if hlTransaction.Type == "bet" || hlTransaction.Type == "win" {
 		//Create transaction record
+		transactionIDStr := hlTransaction.GetIDString()
 		transaction := models.Transaction{
 			UserID:        user.ID,
 			Amount:        hlTransaction.Amount,
 			Type:          gameType,
 			Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-			Explation:     hlTransaction.GetIDString(),
+			Explation:     transactionIDStr,
 			BalanceBefore: balanceBefore,
 			BalanceAfter:  balanceBefore + hlTransaction.Amount,
 			Status:        "success",
@@ -308,10 +370,10 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		}
 		transactionRolling := models.Transaction{
 			UserID:        user.ID,
-			Amount:        hlTransaction.Amount,
+			Amount:        rollingGoldAmount,
 			Type:          "Rolling",
 			Shortcut:      hlTransaction.Details.Game.Vendor + "|" + hlTransaction.Details.Game.Type,
-			Explation:     hlTransaction.GetIDString(),
+			Explation:     transactionIDStr + "_rolling",
 			BalanceBefore: float64(profile.Roll),
 			BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
 			Status:        "success",
