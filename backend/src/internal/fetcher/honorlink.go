@@ -87,7 +87,7 @@ func NewHonorLinkFetcher() *HonorLinkFetcher {
 		BaseURL: "https://api.honorlink.org/api/transactions",
 		Token:   token,
 		Client: &http.Client{
-			Timeout: 600 * time.Second, // Increased timeout to 60 seconds
+			Timeout: 35 * time.Second, // Increased timeout to 60 seconds
 		},
 	}
 }
@@ -171,23 +171,20 @@ func (h *HonorLinkFetcher) ManualFetch() {
 }
 
 func (h *HonorLinkFetcher) fetchAndLogTransactions() {
-	// Load Korean timezone (Asia/Seoul)
-	loc, err := time.LoadLocation("Asia/Seoul")
-	if err != nil {
-		fmt.Printf("❌ Error loading Korean timezone: %v, using UTC\n", err)
-		loc = time.UTC
-	}
+	// Use UTC timezone
+	loc := time.UTC
 
-	// Set time range to last 2 hours in Korean timezone (reduced for better performance)
+	// Set time range to last 3 minutes in UTC timezone
 	now := time.Now().In(loc)
-	end := now                        // Current time KST
-	start := end.Add(-24 * time.Hour) // 2 hours ago in KST
-	fmt.Println(start, end, "date------------- (Korean Time)")
+	end := now                         // Current time UTC
+	start := end.Add(-3 * time.Minute) // 3 minutes ago in UTC
+	fmt.Println(start, end, "date------------- (UTC Time)")
 
 	// Retry logic for API calls with fallback time ranges
 	var response *HonorLinkResponse
+	var err error
 	maxRetries := 3
-	timeRanges := []time.Duration{2 * time.Hour, 1 * time.Hour, 30 * time.Minute}
+	timeRanges := []time.Duration{3 * time.Minute}
 
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		// Use different time ranges for each retry
@@ -203,7 +200,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 			timeRangeIndex = len(timeRanges) - 1
 		}
 		fmt.Printf("🔄 Attempt %d/%d: Fetching %v of data...\n", attempt, maxRetries, timeRanges[timeRangeIndex])
-		response, err = h.FetchTransactions(currentStart, end, 1, 50) // Reduced perPage to 50
+		response, err = h.FetchTransactions(currentStart, end, 1, 1000) // Reduced perPage to 50
 		if err == nil {
 			// Update start time if we had to use a smaller range
 			if attempt > 1 {
@@ -228,7 +225,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 
 	// Log the results
 	fmt.Printf("✅ HonorLink API Response:\n")
-	fmt.Printf("   Time Range: %s to %s (Korean Time)\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
+	fmt.Printf("   Time Range: %s to %s (UTC Time)\n", start.Format("2006-01-02 15:04:05"), end.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Success: %t\n", response.Success)
 	fmt.Printf("   Total Transactions: %d\n", response.Total)
 	fmt.Printf("   end: %s\n", now.Format("2006-01-02 15:04:05"))
@@ -257,7 +254,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 		fmt.Printf("   No transactions found in the specified time range\n")
 	}
 
-	fmt.Printf("   Fetched at: %s (Korean Time)\n", time.Now().In(loc).Format("2006-01-02 15:04:05"))
+	fmt.Printf("   Fetched at: %s (UTC Time)\n", time.Now().In(loc).Format("2006-01-02 15:04:05"))
 	fmt.Println("   " + strings.Repeat("-", 50))
 }
 
