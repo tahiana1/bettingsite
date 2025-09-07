@@ -53,7 +53,7 @@ import { BiDiamond, BiSupport } from "react-icons/bi";
 
 import Image from "next/image";
 import Loading from "@/assets/img/loading.gif";
-import Logo from "@/assets/img/logo.png";
+import AdminLogo from "@/assets/img/Adminlogo.png"
 
 const { Header, Sider } = Layout;
 
@@ -198,7 +198,13 @@ export default function AdminRootLayout({
       label: (
         <List
           className="!text-white"
-          header={t("home")}
+          style={{
+            borderRadius: '10px',
+            border: '1px solid #09188962',
+            padding: '10px',
+            backgroundColor:'#002140'
+          }}
+          header={""}
           dataSource={data}
           renderItem={(item: any) => {
             return (
@@ -215,6 +221,16 @@ export default function AdminRootLayout({
     {
       key: "manage",
       label: t("admin/menu/administrations"),
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
       type: "group",
     },
     {
@@ -403,6 +419,16 @@ export default function AdminRootLayout({
       key: "game",
       label: t("admin/menu/game"),
       type: "group",
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
     },
     {
       key: "admin/game/casino",
@@ -620,6 +646,16 @@ export default function AdminRootLayout({
       key: "board",
       label: t("admin/menu/board"),
       type: "group",
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
     },
     {
       key: "admin/board",
@@ -847,6 +883,9 @@ export default function AdminRootLayout({
             {isAdmin ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
+                style={{
+                  borderTopRightRadius: '25px',
+                }}
                 breakpoint="md"
                 collapsedWidth="0"
                 collapsed={collapsed}
@@ -859,7 +898,12 @@ export default function AdminRootLayout({
               >
                 <Space
                   direction="vertical"
-                  className="w-full h-screen overflow-y-auto"
+                  className="w-full h-screen overflow-y-auto hide-scrollbar"
+                  style={{
+                    borderTopRightRadius: '25px',
+                    scrollbarWidth: 'none', /* Firefox */
+                    msOverflowStyle: 'none', /* IE and Edge */
+                  }}
                 >
                   <div
                     className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
@@ -868,9 +912,9 @@ export default function AdminRootLayout({
                       router.push("/admin");
                     }}
                   >
-                    <Image src={Logo} height={40} alt="Toto Admin" />
+                    <Image src={AdminLogo} height={50} className="mt-3" alt="Toto Admin" />
                   </div>
-
+                  <p className="text-white px-6 mt-3">{t("home")}</p>
                   <Menu
                     theme="dark"
                     mode="inline"
@@ -880,6 +924,9 @@ export default function AdminRootLayout({
                     onClick={onMenuClick}
                     defaultOpenKeys={selectedkeys}
                     className="!text-white"
+                    style={{
+                      marginTop: '-10px'
+                    }}
                   />
                 </Space>
               </Sider>
@@ -899,7 +946,7 @@ export default function AdminRootLayout({
                     className="!w-10 !h-10 !hidden lg:!block"
                   />
                   <Flex className="px-2 overflow-x-auto w-full">
-                    <Space.Compact
+                    <Space.Compact  
                       direction="vertical"
                       className="gap-0.5 text-center"
                     >
@@ -965,18 +1012,7 @@ export default function AdminRootLayout({
                         </Tag>
                       </Space.Compact>
                     </Space.Compact>
-                    <Space.Compact className="justify-center items-center mr-3">
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
-                      <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
-                    </Space.Compact>
+                   
                   </Flex>
                   <Flex
                     align="flex-end"
@@ -1007,24 +1043,42 @@ export default function AdminRootLayout({
                 </Header>
               ) : null}
               {isAdmin ? (
-                <Breadcrumb
-                  className="!p-2 shadow"
-                  items={[
-                    {
-                      title: (
-                        <Link
-                          href="/admin"
-                          className="flex justify-center items-center gap-2"
-                        >
-                          <HomeOutlined /> {t("home")}
-                        </Link>
-                      ),
-                    },
-                    ...(currentMenuItems?.map((c: any) => ({
-                      title: c.label,
-                    })) ?? []),
-                  ]}
-                />
+                <>
+                  <Breadcrumb
+                    className="!p-2 shadow flex justify-between w-full"
+                    items={[
+                      {
+                        title: (
+                          <Link
+                            href="/admin"
+                            className="flex justify-center items-center gap-2"
+                          >
+                            <HomeOutlined /> {t("home")}
+                          </Link>
+                        ),
+                      },
+                      {
+                        title: (
+                          <Space.Compact className="justify-center items-center mr-3 w-full">
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
+                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
+                          </Space.Compact>
+                        ),
+                      },
+                      ...(currentMenuItems?.map((c: any) => ({
+                        title: c.label,
+                      })) ?? []),
+                    ]}
+                  />
+                </>
               ) : null}
               <Content className="p-2">{children}</Content>
             </Layout>

@@ -10,6 +10,7 @@ type CasinoBet struct {
 	ID            uint            `json:"id" gorm:"primaryKey"`
 	Type          string          `json:"type" gorm:"size:100"`
 	UserID        uint            `json:"userId"`
+	User          *User           `json:"user" gorm:"foreignKey:UserID"`
 	GameID        uint            `json:"gameId"`
 	Amount        float64         `json:"amount"`
 	Status        string          `json:"status"`

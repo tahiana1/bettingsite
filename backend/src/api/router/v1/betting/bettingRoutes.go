@@ -7,10 +7,21 @@ import (
 )
 
 func GetBettingRoute(r *gin.RouterGroup) {
-	r.Use(middleware.RequireAuth)
+	authGroup := r.Group("/")
+	authGroup.Use(middleware.RequireAuth)
 	{
-		r.POST("/get-betting", controllers.GetBetting)
-		r.POST("/get-casinoBet", controllers.GetCasinoBetting)
-		r.POST("/create", controllers.CreateBetting)
+		authGroup.POST("/get-betting", controllers.GetBetting)
+		authGroup.POST("/get-casinoBet", controllers.GetCasinoBetting)
+		authGroup.POST("/create", controllers.CreateBetting)
 	}
+
+	// Admin-only endpoints
+	adminGroup := r.Group("/")
+	adminGroup.Use(middleware.RequireAdminAuth)
+	{
+		adminGroup.POST("/get-all-casinoBets", controllers.GetAllCasinoBetting)
+	}
+
+	// Test endpoint without auth (for debugging)
+	r.GET("/test-casinoBets", controllers.GetAllCasinoBettingTest)
 }

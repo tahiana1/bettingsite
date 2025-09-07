@@ -11,6 +11,7 @@ import (
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
+	"gorm.io/gorm"
 )
 
 func GetBetting(c *gin.Context) {
@@ -123,6 +124,99 @@ func GetCasinoBetting(c *gin.Context) {
 		"message": "Casino Bet retrieved successfully",
 		"status":  true,
 		"data":    CasinoBet,
+	})
+}
+
+func GetAllCasinoBetting(c *gin.Context) {
+	var input struct {
+		Limit          int    `json:"limit"`
+		Offset         int    `json:"offset"`
+		GameNameFilter string `json:"game_name_filter"`
+		Status         string `json:"status"`
+		DateFrom       string `json:"date_from"`
+		DateTo         string `json:"date_to"`
+	}
+
+	// Set default values
+	if err := c.ShouldBindJSON(&input); err != nil {
+		// Use default values if JSON is not provided
+		input.Limit = 25
+		input.Offset = 0
+	}
+
+	if input.Limit == 0 {
+		input.Limit = 25
+	}
+
+	// Build query with preloads
+	query := initializers.DB.Model(&models.CasinoBet{}).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Profile").Preload("Root").Preload("Parent")
+		})
+
+	// Apply filters
+	if input.GameNameFilter != "" {
+		if input.GameNameFilter == "slot" {
+			query = query.Where("casino_bets.game_name LIKE ?", "%slot%")
+		} else if input.GameNameFilter == "not_slot" {
+			query = query.Where("casino_bets.game_name NOT LIKE ?", "%slot%")
+		}
+	}
+
+	if input.Status != "" {
+		query = query.Where("casino_bets.status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		query = query.Where("casino_bets.created_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		query = query.Where("casino_bets.created_at <= ?", input.DateTo)
+	}
+
+	// Get total count for pagination
+	var total int64
+	if err := query.Count(&total).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated casino bets
+	var casinoBets []models.CasinoBet
+	if err := query.
+		Order("casino_bets.created_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&casinoBets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Casino Bets retrieved successfully",
+		"status":  true,
+		"data":    casinoBets,
+		"total":   total,
+	})
+}
+
+func GetAllCasinoBettingTest(c *gin.Context) {
+	// Simple test version without complex filtering
+	var casinoBets []models.CasinoBet
+	err := initializers.DB.Preload("User").Limit(10).Find(&casinoBets).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Casino Bets retrieved successfully",
+		"status":  true,
+		"data":    casinoBets,
+		"total":   len(casinoBets),
 	})
 }
 
