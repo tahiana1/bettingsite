@@ -82,6 +82,11 @@ const GeneralDWPage: React.FC = () => {
                 value: "rollingExchange",
                 op: "eq",
               },
+              {
+                field: "transactions.type",
+                value: "pointDeposit",
+                op: "eq",
+              },
             ],
           },
           {
@@ -335,7 +340,13 @@ const GeneralDWPage: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (_, record) => record.type == "point" ? 0 : record.amount,
+      render: (_, record) => {
+        
+        if (record.type == "pointDeposit") {
+          return record.amount;
+        }
+        return record.type == "point" && 0
+      },
     },
     {
       title: t("balanceAfter"),
@@ -365,13 +376,25 @@ const GeneralDWPage: React.FC = () => {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, record) => record.type == "point" ? record.amount : 0,
+      render: (_, record) => {
+        if (record.type == "pointDeposit") {
+          return record.amount;
+        }
+        return record.type == "point" ? record.amount : 0
+      },
     },
     {
       title: t("pointAfter"),
       dataIndex: "pointAfter",
       key: "pointAfter",
-      render: (_, record) => record.type == "point" ? record.user?.profile?.point - record.amount  : record.user?.profile?.point,
+      render: (_, record) => {
+        if (record.type == "point") {
+          return record.user?.profile?.point - record.amount;
+        } else if (record.type == "pointDeposit") {
+          return record.user?.profile?.point + record.amount;
+        }
+        return record.user?.profile?.point;
+      },
     },
     {
       title: t("usdtDesc"),
@@ -403,6 +426,11 @@ const GeneralDWPage: React.FC = () => {
           {record.type == "rollingExchange" && (
             <div className="flex flex-column gap-1">
               <p className="text-xs bg-[green] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("rollingExchange")}</p>
+            </div>
+          )}
+          {record.type == "pointDeposit" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[blue] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("pointDeposit")}</p>
             </div>
           )}
         </>

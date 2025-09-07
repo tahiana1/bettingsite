@@ -65,6 +65,11 @@ const MemberDWPage: React.FC = () => {
                 value: "rollingExchange",
                 op: "eq",
               },
+              {
+                field: "transactions.type",
+                value: "pointDeposit",
+                op: "eq",
+              },
             ],
           },
           {
@@ -316,7 +321,12 @@ const MemberDWPage: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (_, record) => record.type == "point" ? 0 : record.amount,
+      render: (_, record) => {
+        if (record.type == "pointDeposit") {
+          return record.amount;
+        }
+        return record.type == "point" && 0
+      },
     },
     {
       title: t("balanceAfter"),
@@ -346,7 +356,12 @@ const MemberDWPage: React.FC = () => {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, record) => record.type == "point" ? record.amount : 0,
+      render: (_, record) => {
+        if (record.type == "pointDeposit") {
+          return record.amount;
+        }
+        return record.type == "point" ? record.amount : 0
+      },
     },
     {
       title: t("pointAfter"),

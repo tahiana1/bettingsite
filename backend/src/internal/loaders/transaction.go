@@ -220,6 +220,61 @@ func (pr *transactionReader) ApproveTransaction(ctx context.Context, id uint) (b
 	// Update balance based on transaction type
 	if tr.Type == "deposit" {
 		profile.Balance += tr.Amount
+
+		// Calculate deposit bonus points (5% of deposit amount)
+		depositBonusPoints := tr.Amount * 0.05
+
+		// Check if this is user's first deposit for 10% bonus
+		var previousDepositCount int64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ? AND id != ?", tr.UserID, "deposit", "A", tr.ID).
+			Count(&previousDepositCount)
+
+		isFirstDeposit := previousDepositCount == 0
+
+		// Apply first deposit bonus (additional 5% for total 10%)
+		if isFirstDeposit {
+			depositBonusPoints += tr.Amount * 0.05 // Additional 5% for first deposit
+		}
+
+		// Store current points before update for transaction record
+		pointsBefore := float64(profile.Point)
+
+		// Add bonus points to profile
+		profile.Point += int32(depositBonusPoints)
+		pointsAfter := float64(profile.Point)
+
+		// Update the transaction record with point information
+		if err := initializers.DB.Model(&tr).Updates(map[string]interface{}{
+			"point_before": pointsBefore,
+			"point_after":  pointsAfter,
+		}).Error; err != nil {
+			return false, err
+		}
+
+		// Create a separate transaction record for the bonus points
+		bonusExplanation := "Deposit bonus points (5%)"
+		if isFirstDeposit {
+			bonusExplanation = "First deposit bonus points (10%)"
+		}
+
+		bonusTransaction := models.Transaction{
+			UserID:        tr.UserID,
+			Amount:        depositBonusPoints,
+			Type:          "pointDeposit",
+			Explation:     bonusExplanation,
+			BalanceBefore: profile.Balance,
+			BalanceAfter:  profile.Balance,
+			PointBefore:   pointsBefore,
+			PointAfter:    pointsAfter,
+			Shortcut:      "Deposit bonus points (5%)",
+			Status:        "A",
+		}
+
+		if err := initializers.DB.Create(&bonusTransaction).Error; err != nil {
+			return false, err
+		}
+
 	} else if tr.Type == "withdrawal" {
 		if profile.Balance < tr.Amount {
 			return false, fmt.Errorf("insufficient balance")
@@ -227,9 +282,10 @@ func (pr *transactionReader) ApproveTransaction(ctx context.Context, id uint) (b
 		profile.Balance -= tr.Amount
 	}
 
-	// Save updated profile with bank ID to satisfy foreign key constraint
+	// Save updated profile with balance and points
 	if err := initializers.DB.Model(&profile).Updates(map[string]interface{}{
 		"balance": profile.Balance,
+		"point":   profile.Point,
 	}).Error; err != nil {
 		return false, err
 	}

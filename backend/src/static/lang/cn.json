@@ -1701,5 +1701,6 @@
   "insufficientRolling" : "滚动不足",
   "pointExchange" : "积分兑换",
   "rollingExchange" : "滚动兑换",
-  "explation" : "说明"
+  "explation" : "说明",
+  "pointDeposit" : "积分存款"
 }

@@ -1703,5 +1703,6 @@
   "insufficientRolling" : "Insufficient Rolling",
   "pointExchange" : "Point Exchange",
   "rollingExchange" : "Rolling Exchange",
-  "explation" : "Explation"
+  "explation" : "Explation",
+  "pointDeposit" : "Point Deposit"
 }
