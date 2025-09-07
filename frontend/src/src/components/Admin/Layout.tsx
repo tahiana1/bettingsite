@@ -934,7 +934,7 @@ export default function AdminRootLayout({
             <Layout className="min-h-screen">
               {isAdmin ? (
                 <Header
-                  className="w-full !px-2 flex !h-10 items-center !leading-10"
+                  className="w-full !px-2 flex !h-12 items-center !leading-10"
                   style={{ background: isDarkTheme ? "" : colorBgContainer }}
                 >
                   <Button
@@ -950,69 +950,89 @@ export default function AdminRootLayout({
                       direction="vertical"
                       className="gap-0.5 text-center"
                     >
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:{info.registeredUsersCount || 0}</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipDeposit")}:{info.numberOfDepositorsToday || 0}
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipWithdraw")}:{info.numberOfWithdrawalToday || 0}
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipInquiry")}:0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("rollingTransition")}:{info.rollingTotal || 0}
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag>
-                      </Space.Compact>
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:{info.depositToday || 0}</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: {info.withdrawToday || 0}</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("distributorInquiry")} :0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :{info.totalSettlement || 0}</Tag>
-                      </Space.Compact>
+                      <table style={{ 
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        backgroundColor: '#ffffff',
+                        minWidth: '400px',
+                        borderCollapse: 'separate',
+                        borderSpacing: '0',
+                        marginRight: '10px',
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membership")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipDeposit")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipWithdraw")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("rollingTransition")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("nonMember")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalDeposit")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalWithdraw")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("distributorInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalSettlement")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ height: '18px' }}>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsersCount || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', color: '#ff6b35', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTotal || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px' }}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.withdrawToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.totalSettlement || 0}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">
-                          {t("notificationLive")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationMini")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationVirtual")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationMGM")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("notificationSportsLive")}:{info.sportsPendingBetting || 0}
-                        </Tag>
-                        <Tag className="!me-0.5">{t("sportRebateList")}:{info.sportsRebateBetting || 0}</Tag>
-                      </Space.Compact>
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">
-                          {t("notificationSlot")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("notificationSport")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationLotus")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationTouch")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("interestedMemberBetting")}:{info.numberOfBettingMembersToday || 0}/{info.numberOfBetsToday || 0}
-                        </Tag>
-                      </Space.Compact>
+                    <table style={{ 
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        backgroundColor: '#ffffff',
+                        minWidth: '400px',
+                        borderCollapse: 'separate',
+                        borderSpacing: '0',
+                        marginRight: '10px',
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLive")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMini ")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationVirtual")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMGM")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSportsLive")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("sportRebateList")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSlot")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSport")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLotus")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationTouch")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("interestedMemberBetting")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ height: '18px' }}>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', color: '#ff6b35', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{ 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px' }}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfBettingMembersToday || 0}/{info.numberOfBetsToday || 0}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </Space.Compact>
-                   
                   </Flex>
                   <Flex
                     align="flex-end"
