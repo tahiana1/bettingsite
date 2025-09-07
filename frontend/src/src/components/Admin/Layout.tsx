@@ -1045,7 +1045,7 @@ export default function AdminRootLayout({
               {isAdmin ? (
                 <>
                   <Breadcrumb
-                    className="!p-2 shadow flex justify-between w-full"
+                    className="!p-2 shadow flex justify-between w-full items-center breadcrumb-home"
                     items={[
                       {
                         title: (
@@ -1059,7 +1059,7 @@ export default function AdminRootLayout({
                       },
                       {
                         title: (
-                          <Space.Compact className="justify-center items-center mr-3 w-full">
+                          <Space.Compact className="justify-center items-center mr-3">
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
