@@ -1059,7 +1059,7 @@ export default function AdminRootLayout({
                       },
                       {
                         title: (
-                          <Space.Compact className="justify-center items-center mr-3">
+                          <Space.Compact className="justify-center items-center mr-3 header-admin-layout-tag">
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
                             <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>

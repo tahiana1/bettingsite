@@ -256,9 +256,9 @@ const Dashboard: React.FC = () => {
   };
 
   return mount ? (
-    <Layout>
-      <Card title={t("admin/todayStatistics")} className="!mb-2">
-        <Space wrap className="w-full justify-between">
+    <Layout className="">
+      <Card title={t("admin/todayStatistics")} className="!mb-2 home-admin-layout">
+        <Space wrap className="w-full justify-between today-home-statistics">
           <Statistic
             title={t("depositAmount")}
             value={dashboardData?.stats.depositAmount || 0}
@@ -297,7 +297,7 @@ const Dashboard: React.FC = () => {
           />
         </Space>
         <Divider />
-        <Space wrap className="w-full justify-between">
+        <Space wrap className="w-full justify-between today-home-statistics">
           <Statistic
             title={t("totalSettlement")}
             value={dashboardData?.stats.totalSettlement || 0}
@@ -339,16 +339,16 @@ const Dashboard: React.FC = () => {
       </Card>
       <Space.Compact className="w-full gap-2 flex justify-between">
         <Space direction="vertical" className="w-full flex-1">
-          <Card title={t("admin/todayDepositWithdraw")}>
+          <Card title={t("admin/todayDepositWithdraw")} className="home-admin-layout">
             <Column {...config1} />
           </Card>
-          <Card title={t("admin/betWinning")}>
+          <Card title={t("admin/betWinning")} className="home-admin-layout">
             <Column {...config2} />
           </Card>
         </Space>
         <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
           <Space wrap align="start" id="admin-dashboard-card" className="w-full flex flex-row justify-between" style={{flexWrap: "nowrap"}}>
-            <Card title={t("admin/membershipBalance")}>
+            <Card title={t("admin/membershipBalance")} className="!bg-[#00c689] !rounded-[10px] !text-white mini-card-admin">
               <div className="flex justify-between flex-row gap-4">
                 <div>
                   <p>{t("admin/membershipBalance")}</p>
@@ -360,19 +360,19 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
-            <Card title={t("admin/totalAmountOfDistribution")}>
+            <Card title={t("admin/totalAmountOfDistribution")} className=" !bg-[#3da5f4] !rounded-[10px] !text-white mini-card-admin">
               <p>{t("admin/totalPoints")}</p>
               <p>{dashboardData?.stats.totalSettlement || 0}</p>
             </Card>
-            <Card title={t("admin/totalLose")}>
+            <Card title={t("admin/totalLose")}  className=" !bg-[#f1536e] !rounded-[10px] !text-white mini-card-admin">
               <p>{t("admin/rollingTheTotal")}</p>
               <p>{((dashboardData?.stats.bettingAmount || 0) - (dashboardData?.stats.prizeAmount || 0))}</p>
             </Card>
-            <Card title={t("admin/bettingAmount")}>
+            <Card title={t("admin/bettingAmount")}  className=" !bg-[#fda006] !rounded-[10px] !text-white mini-card-admin">
               <p>{t("admin/prizeAmount")}</p>
               <p>{dashboardData?.stats.prizeAmount || 0}</p>
             </Card>
-            <Card title={t("admin/sportsGameCompany")}>
+            <Card title={t("admin/sportsGameCompany")}  className=" !bg-[#00c689] !rounded-[10px] !text-white mini-card-admin">
               <p>{t("admin/thisMonthIncoming")} : {dashboardData?.stats.totalDepositAmount || 0}</p>
               <p>{t("admin/thisMonthDeduction")} : {dashboardData?.stats.totalWithdrawAmount || 0}</p>
             </Card>
@@ -380,9 +380,7 @@ const Dashboard: React.FC = () => {
           <Space.Compact className="w-full flex">
             <Card
               title={t("admin/recentUserDepositsAndWithdrawals")}
-              classNames={{
-                body: "!p-0",
-              }}
+              className="home-admin-layout"
               style={{width: "100%"}}
             >
               <Table<PaymentDataType>
@@ -398,9 +396,7 @@ const Dashboard: React.FC = () => {
       <Space.Compact className="w-full flex mt-3">
         <Card
           title={t("admin/summary")}
-          classNames={{
-            body: "!p-0",
-          }}
+          className="home-admin-layout"
           style={{width: "100%"}}
         >
           <Table<DataType>
