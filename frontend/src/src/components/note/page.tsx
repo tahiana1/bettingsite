@@ -11,8 +11,9 @@ import modalImage from '@/assets/img/main/modal-head.png';
 
 const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
     const t = useTranslations();
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
     const [pagination, setPagination] = useState({
         pageSize: 10,
         current: 1,
@@ -48,19 +49,19 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
                 return openedTime < year2024 ? 'Not Read' : 'Read';
             },
         },
-        {
-            title: t("action"),
-            dataIndex: "action",
-            key: "action",
-            render: (_, record: any) => (
-                <button 
-                    className="text-red-500 cursor-pointer hover:text-red-400 font-medium px-2 py-1 rounded transition-colors" 
-                    onClick={() => handleDelete(record.userId)}
-                >
-                    {t("delete")}
-                </button>
-            ),  
-        }
+        // {
+        //     title: t("action"),
+        //     dataIndex: "action",
+        //     key: "action",
+        //     render: (_, record: any) => (
+        //         <button 
+        //             className="text-red-500 cursor-pointer hover:text-red-400 font-medium px-2 py-1 rounded transition-colors" 
+        //             onClick={() => handleDelete(record.userId)}
+        //         >
+        //             {t("delete")}
+        //         </button>
+        //     ),  
+        // }
     ]);
 
     const expandedRowRender = (record: any) => {
@@ -73,7 +74,12 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
     };
 
     const handleExpand = async (expanded: boolean, record: any) => {
+        const key = record.id || record.key;
+        
         if (expanded) {
+            // Add the row key to expanded rows
+            setExpandedRowKeys(prev => [...prev, key]);
+            
             try {
                 await api("notes/update-read-status", {
                     method: "POST",
@@ -81,15 +87,22 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
                         id: record.id
                     }
                 });
-                // Refresh the data after updating
-                api("user/me").then((res) => {
-                    fetchBets(res.data.profile);
-                }).catch((err) => {
-                    console.log(err);
-                });
+                
+                // Update the local data state to reflect the read status change
+                // without refetching all data (which would clear expanded rows)
+                setData(prevData => 
+                    prevData.map(item => 
+                        item.id === record.id 
+                            ? { ...item, openedAt: new Date().toISOString() }
+                            : item
+                    )
+                );
             } catch (error) {
                 console.error("Error updating note status:", error);
             }
+        } else {
+            // Remove the row key from expanded rows
+            setExpandedRowKeys(prev => prev.filter(k => k !== key));
         }
     };
 
@@ -134,7 +147,7 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
         });
         console.log(response, "response");
         console.log(response.data, "response.data");
-        setData(response.data); 
+        setData(response.data);
     };
 
    
@@ -199,8 +212,10 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
                         expandable={{
                             expandedRowRender,
                             rowExpandable: (record) => true,
-                            onExpand: handleExpand
+                            onExpand: handleExpand,
+                            expandedRowKeys: expandedRowKeys
                         }}
+                        rowKey={(record) => record.id || record.key}
                         className="custom-table"
                     />
                 </Card>
