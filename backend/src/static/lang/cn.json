@@ -1702,5 +1702,11 @@
   "pointExchange" : "积分兑换",
   "rollingExchange" : "滚动兑换",
   "explation" : "说明",
-  "pointDeposit" : "积分存款"
+  "pointDeposit" : "积分存款",
+  "blockName" : "块名称",
+  "blockId" : "块ID",
+  "blockBank" : "块银行",
+  "blockAccountNumber" : "块账号",
+  "blockCellNumber" : "块手机号",
+  "blockIP" : "块IP"
 }

@@ -33,11 +33,11 @@ import UserNoteList from "./pages/noteList";
         label: <span className="text-black">Black Search</span>,
         children: <UserBlackSearch />,
     },
-    {
-        key: "rollingSetting",
-        label: <span className="text-black">Rolling Setting</span>,
-        children: <UserRollingSetting />,
-    },
+    // {
+    //     key: "rollingSetting",
+    //     label: <span className="text-black">Rolling Setting</span>,
+    //     children: <UserRollingSetting />,
+    // },
     {
         key: "deposit&withdrawal",
         label: <span className="text-black">Deposit & Withdrawal</span>,
@@ -53,51 +53,51 @@ import UserNoteList from "./pages/noteList";
         label: <span className="text-black">Customer Service</span>,
         children: <UserCustomerService />,
     },
-    {
-        key: "accountInquiry",
-        label: <span className="text-black">Account Inquiry</span>,
-        children: <UserAccountInquiry />,
-    },
-    {
-        key: "subscriptionSetting",
-        label: <span className="text-black">Subscription Setting</span>,
-        children: <UserSubscriptionSetting />,
-    },
-    {
-        key: "directMemberList",
-        label: <span className="text-black">Direct Member List</span>,
-        children: <UserDirectMemberList />,
-    },
-    {
-        key: "recommendMemberList",
-        label: <span className="text-black">Recommend Member List</span>,
-        children: <UserRecommendMemberList />,
-    },
-    {
-        key: "submemberList",
-        label: <span className="text-black">Sub Member List</span>,
-        children: <UserSubMemberList />,
-    },
-    {
-        key: "integratedMoneyDetail",
-        label: <span className="text-black">Integrated Money Detail</span>,
-        children: <UserIntegratedMoneyDetail />,
-    },
+    // {
+    //     key: "accountInquiry",
+    //     label: <span className="text-black">Account Inquiry</span>,
+    //     children: <UserAccountInquiry />,
+    // },
+    // {
+    //     key: "subscriptionSetting",
+    //     label: <span className="text-black">Subscription Setting</span>,
+    //     children: <UserSubscriptionSetting />,
+    // },
+    // {
+    //     key: "directMemberList",
+    //     label: <span className="text-black">Direct Member List</span>,
+    //     children: <UserDirectMemberList />,
+    // },
+    // {
+    //     key: "recommendMemberList",
+    //     label: <span className="text-black">Recommend Member List</span>,
+    //     children: <UserRecommendMemberList />,
+    // },
+    // {
+    //     key: "submemberList",
+    //     label: <span className="text-black">Sub Member List</span>,
+    //     children: <UserSubMemberList />,
+    // },
+    // {
+    //     key: "integratedMoneyDetail",
+    //     label: <span className="text-black">Integrated Money Detail</span>,
+    //     children: <UserIntegratedMoneyDetail />,
+    // },
     {
         key: "pointDetail",
         label: <span className="text-black">Point Detail</span>,
         children: <UserPointDetail />,
     },
-    {
-        key: "couponDetail",
-        label: <span className="text-black">Coupon Detail</span>,
-        children: <UserCouponDetail />,
-    },
-    {
-        key: "losingHistory",
-        label: <span className="text-black">Losing History</span>,
-        children: <UserLosingHistory />,
-    },
+    // {
+    //     key: "couponDetail",
+    //     label: <span className="text-black">Coupon Detail</span>,
+    //     children: <UserCouponDetail />,
+    // },
+    // {
+    //     key: "losingHistory",
+    //     label: <span className="text-black">Losing History</span>,
+    //     children: <UserLosingHistory />,
+    // },
     {
         key: "rollingHistory",
         label: <span className="text-black">Rolling History</span>,
@@ -108,21 +108,21 @@ import UserNoteList from "./pages/noteList";
         label: <span className="text-black">Betting History</span>,
         children: <UserBettingHistory />,
     },
-    {
-        key: "activityHistory",
-        label: <span className="text-black">Activity History</span>,
-        children: <UserActivityHistory />,
-    },
-    {
-        key: "informationChangeHistory",
-        label: <span className="text-black">Information Change History</span>,
-        children: <UserInformationChangeHistory />,
-    },
-    {
-        key: "generalStatistics",
-        label: <span className="text-black">General Statistics</span>,
-        children: <UserGeneralStatistics />,
-    },
+    // {
+    //     key: "activityHistory",
+    //     label: <span className="text-black">Activity History</span>,
+    //     children: <UserActivityHistory />,
+    // },
+    // {
+    //     key: "informationChangeHistory",
+    //     label: <span className="text-black">Information Change History</span>,
+    //     children: <UserInformationChangeHistory />,
+    // },
+    // {
+    //     key: "generalStatistics",
+    //     label: <span className="text-black">General Statistics</span>,
+    //     children: <UserGeneralStatistics />,
+    // },
  ]
 
 const PopUpUser = () => {

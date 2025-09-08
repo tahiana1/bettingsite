@@ -20,6 +20,7 @@ func GetBettingRoute(r *gin.RouterGroup) {
 	adminGroup.Use(middleware.RequireAdminAuth)
 	{
 		adminGroup.POST("/get-all-casinoBets", controllers.GetAllCasinoBetting)
+		adminGroup.POST("/get-user-betting-history", controllers.GetUserBettingHistory)
 	}
 
 	// Test endpoint without auth (for debugging)

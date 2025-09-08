@@ -1704,5 +1704,11 @@
   "pointExchange" : "Point Exchange",
   "rollingExchange" : "Rolling Exchange",
   "explation" : "Explation",
-  "pointDeposit" : "Point Deposit"
+  "pointDeposit" : "Point Deposit",
+  "blockName" : "Block Name",
+  "blockId" : "Block ID",
+  "blockBank" : "Block Bank",
+  "blockAccountNumber" : "Block Account Number",
+  "blockCellNumber" : "Block Cell Number",
+  "blockIP" : "Block IP"
 }

@@ -381,3 +381,120 @@ func CreateBetting(c *gin.Context) {
 		"status": true,
 	})
 }
+
+func GetUserBettingHistory(c *gin.Context) {
+	var input struct {
+		UserID   uint   `json:"user_id" binding:"required,min=1"`
+		Limit    int    `json:"limit"`
+		Offset   int    `json:"offset"`
+		Status   string `json:"status"`
+		DateFrom string `json:"date_from"`
+		DateTo   string `json:"date_to"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"validations": validations.FormatValidationErrors(errs),
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Set default values
+	if input.Limit == 0 {
+		input.Limit = 25
+	}
+
+	// Build query for casino bets with preloads
+	casinoQuery := initializers.DB.Model(&models.CasinoBet{}).
+		Where("user_id = ?", input.UserID)
+
+	// Apply filters for casino bets
+	if input.Status != "" {
+		casinoQuery = casinoQuery.Where("status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		casinoQuery = casinoQuery.Where("created_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		casinoQuery = casinoQuery.Where("created_at <= ?", input.DateTo)
+	}
+
+	// Get total count for casino bets
+	var casinoTotal int64
+	if err := casinoQuery.Count(&casinoTotal).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated casino bets
+	var casinoBets []models.CasinoBet
+	if err := casinoQuery.
+		Order("created_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&casinoBets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build query for sports bets with preloads
+	sportsQuery := initializers.DB.Model(&models.Bet{}).
+		Preload("Fixture").
+		Preload("Fixture.HomeTeam").
+		Preload("Fixture.AwayTeam").
+		Preload("Fixture.League").
+		Preload("Market").
+		Where("user_id = ?", input.UserID)
+
+	// Apply filters for sports bets
+	if input.Status != "" {
+		sportsQuery = sportsQuery.Where("status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		sportsQuery = sportsQuery.Where("placed_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		sportsQuery = sportsQuery.Where("placed_at <= ?", input.DateTo)
+	}
+
+	// Get total count for sports bets
+	var sportsTotal int64
+	if err := sportsQuery.Count(&sportsTotal).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated sports bets
+	var sportsBets []models.Bet
+	if err := sportsQuery.
+		Order("placed_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&sportsBets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User betting history retrieved successfully",
+		"status":  true,
+		"data": gin.H{
+			"casinoBets":   casinoBets,
+			"sportsBets":   sportsBets,
+			"casinoTotal":  casinoTotal,
+			"sportsTotal":  sportsTotal,
+			"totalRecords": casinoTotal + sportsTotal,
+		},
+	})
+}
