@@ -164,15 +164,25 @@
 		font-size: 35px;
 	}
 }
-
+/* 
 .breadcrumb-home .ant-breadcrumb-separator {
 	display: none!important;
+} */
+
+.header-admin-layout-tag {
+	position: absolute!important;
+	right: 0px;
+	top: 54px;
+}
+
+.breadcrumb-home {
+	position: relative!important;
 }
 
 .breadcrumb-home ol {
-	display: flex!important;
+	/* display: flex!important;
 	justify-content: space-between!important;
-	width: 100%!important;
+	width: 100%!important; */
 }
 
 .breadcrumb-home ol li {
@@ -180,6 +190,7 @@
 	align-items: center!important;
 	justify-content: center!important;
 }
+
 .breadcrumb-home .ant-space-compact span {
 	margin: auto!important;
 }

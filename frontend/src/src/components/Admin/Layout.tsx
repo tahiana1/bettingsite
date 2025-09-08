@@ -1077,27 +1077,25 @@ export default function AdminRootLayout({
                           </Link>
                         ),
                       },
-                      {
-                        title: (
-                          <Space.Compact className="justify-center items-center mr-3 header-admin-layout-tag">
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
-                            <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
-                          </Space.Compact>
-                        ),
-                      },
                       ...(currentMenuItems?.map((c: any) => ({
                         title: c.label,
                       })) ?? []),
+            
                     ]}
+                    
                   />
+                  <Space.Compact className="justify-center items-center mr-3 header-admin-layout-tag">
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
+                  </Space.Compact>
                 </>
               ) : null}
               <Content className="p-2">{children}</Content>
