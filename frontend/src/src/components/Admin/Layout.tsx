@@ -373,18 +373,18 @@ export default function AdminRootLayout({
       label: t("admin/menu/settings"),
       icon: <SettingOutlined />,
       children: [
-        {
-          key: "admin/settings/site",
-          label: t("admin/menu/siteSetting"),
-        },
-        {
-          key: "admin/settings/global",
-          label: t("admin/menu/globalSetting"),
-        },
-        {
-          key: "admin/settings/design",
-          label: t("admin/menu/designSetting"),
-        },
+        // {
+        //   key: "admin/settings/site",
+        //   label: t("admin/menu/siteSetting"),
+        // },
+        // {
+        //   key: "admin/settings/global",
+        //   label: t("admin/menu/globalSetting"),
+        // },
+        // {
+        //   key: "admin/settings/design",
+        //   label: t("admin/menu/designSetting"),
+        // },
         {
           key: "admin/settings/menu",
           label: t("admin/menu/menuSetting"),
@@ -409,10 +409,10 @@ export default function AdminRootLayout({
           key: "admin/settings/bank",
           label: t("admin/menu/bankSetting"),
         },
-        {
-          key: "admin/settings/level",
-          label: t("admin/menu/levelSetting"),
-        }
+        // {
+        //   key: "admin/settings/level",
+        //   label: t("admin/menu/levelSetting"),
+        // }
       ],
     },
     {
@@ -430,25 +430,25 @@ export default function AdminRootLayout({
         backgroundColor:'#002140'
       },
     },
-    {
-      key: "admin/game/casino",
-      label: t("admin/menu/casino"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/casino/live",
-          label: t("admin/menu/casinoLive"),
-        },
-        {
-          key: "admin/game/casino/slot",
-          label: t("admin/menu/casinoSlot"),
-        },
-        {
-          key: "admin/game/casino/poker",
-          label: t("admin/menu/casinoPoker"),
-        },
-      ],
-    },
+    // {
+    //   key: "admin/game/casino",
+    //   label: t("admin/menu/casino"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/casino/live",
+    //       label: t("admin/menu/casinoLive"),
+    //     },
+    //     {
+    //       key: "admin/game/casino/slot",
+    //       label: t("admin/menu/casinoSlot"),
+    //     },
+    //     {
+    //       key: "admin/game/casino/poker",
+    //       label: t("admin/menu/casinoPoker"),
+    //     },
+    //   ],
+    // },
 
     {
       key: "admin/game/api",
@@ -485,148 +485,148 @@ export default function AdminRootLayout({
         // },
       ],
     },
-    {
-      key: "admin/game/mini",
-      label: t("admin/menu/miniManagement"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/mini/miniManagement",
-          label: t("admin/menu/miniManagement"),
-        },
-        {
-          key: "admin/game/mini/miniGameUrlManagement",
-          label: t("admin/menu/miniGameUrlManagement"),
-        },
-        {
-          key: "admin/game/mini/miniGameApiManagement",
-          label: t("admin/menu/miniGameApiManagement"),
-        },
-        {
-          key: "admin/game/mini/settingsByMinigameType",
-          label: t("admin/menu/settingsByMinigameType"),
-        },
-        {
-          key: "admin/game/mini/miniInsuranceApiManagement",
-          label: t("admin/menu/miniInsuranceApiManagement"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/sports",
-      label: t("admin/menu/sports"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/sports/settings",
-          label: t("admin/menu/sportsSettings"),
-        },
-        {
-          key: "admin/game/sports/betting",
-          label: t("admin/menu/sportsBettingInformation"),
-        },
-        {
-          key: "admin/game/sports/basic",
-          label: t("admin/menu/sportsBasic"),
-        },
-        {
-          key: "admin/game/sports/countryOrder",
-          label: t("admin/menu/sportsCountryOrder"),
-        },
-        {
-          key: "admin/game/sports/mainEvent",
-          label: t("admin/menu/mainEventSettings"),
-        },
-        {
-          key: "admin/game/sports/market",
-          label: t("admin/menu/marketSettings"),
-        },
-        {
-          key: "admin/game/sports/marketCombinedBetting",
-          label: t("admin/menu/marketCombinedBetting"),
-        },
-        {
-          key: "admin/game/sports/matchManagementAuto",
-          label: t("admin/menu/matchManagementAuto"),
-        },
-        {
-          key: "admin/game/sports/matchManagementLive",
-          label: t("admin/menu/matchManagementLive"),
-        },
-        {
-          key: "admin/game/sports/matchManagementManual",
-          label: t("admin/menu/matchManagementManual"),
-        },
-        {
-          key: "admin/game/sports/matchEndsAuto",
-          label: t("admin/menu/matchEndsAuto"),
-        },
-        {
-          key: "admin/game/sports/matchEndsLive",
-          label: t("admin/menu/matchEndsLive"),
-        },
-        {
-          key: "admin/game/sports/matchEndsManual",
-          label: t("admin/menu/matchEndsManual"),
-        },
-        {
-          key: "admin/game/sports/recalibrationBetting",
-          label: t("admin/menu/recalibrationBetting"),
-        },
-        {
-          key: "admin/game/sports/recalibrationMarket",
-          label: t("admin/menu/recalibrationMarket"),
-        },
-        {
-          key: "admin/game/sports/matchManagementChangeHistory",
-          label: t("admin/menu/matchManagementHistory"),
-        }
-      ],
-    },
-    {
-      key: "admin/game/virtual",
-      label: t("admin/menu/virtual"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/virtual/setting",
-          label: t("admin/menu/virtual"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/lotus",
-      label: t("admin/menu/lotus"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/lotus/setting",
-          label: t("admin/menu/lotus"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/mgm",
-      label: t("admin/menu/mgm"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/mgm/setting",
-          label: t("admin/menu/mgm"),
-        },
-      ],
-    },
-    {
-      key: "admin/game/touch",
-      label: t("admin/menu/touch"),
-      icon: <FaFootball />,
-      children: [
-        {
-          key: "admin/game/touch/setting",
-          label: t("admin/menu/touch"),
-        },
-      ],
-    },
+    // {
+    //   key: "admin/game/mini",
+    //   label: t("admin/menu/miniManagement"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/mini/miniManagement",
+    //       label: t("admin/menu/miniManagement"),
+    //     },
+    //     {
+    //       key: "admin/game/mini/miniGameUrlManagement",
+    //       label: t("admin/menu/miniGameUrlManagement"),
+    //     },
+    //     {
+    //       key: "admin/game/mini/miniGameApiManagement",
+    //       label: t("admin/menu/miniGameApiManagement"),
+    //     },
+    //     {
+    //       key: "admin/game/mini/settingsByMinigameType",
+    //       label: t("admin/menu/settingsByMinigameType"),
+    //     },
+    //     {
+    //       key: "admin/game/mini/miniInsuranceApiManagement",
+    //       label: t("admin/menu/miniInsuranceApiManagement"),
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: "admin/game/sports",
+    //   label: t("admin/menu/sports"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/sports/settings",
+    //       label: t("admin/menu/sportsSettings"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/betting",
+    //       label: t("admin/menu/sportsBettingInformation"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/basic",
+    //       label: t("admin/menu/sportsBasic"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/countryOrder",
+    //       label: t("admin/menu/sportsCountryOrder"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/mainEvent",
+    //       label: t("admin/menu/mainEventSettings"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/market",
+    //       label: t("admin/menu/marketSettings"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/marketCombinedBetting",
+    //       label: t("admin/menu/marketCombinedBetting"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchManagementAuto",
+    //       label: t("admin/menu/matchManagementAuto"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchManagementLive",
+    //       label: t("admin/menu/matchManagementLive"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchManagementManual",
+    //       label: t("admin/menu/matchManagementManual"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchEndsAuto",
+    //       label: t("admin/menu/matchEndsAuto"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchEndsLive",
+    //       label: t("admin/menu/matchEndsLive"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchEndsManual",
+    //       label: t("admin/menu/matchEndsManual"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/recalibrationBetting",
+    //       label: t("admin/menu/recalibrationBetting"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/recalibrationMarket",
+    //       label: t("admin/menu/recalibrationMarket"),
+    //     },
+    //     {
+    //       key: "admin/game/sports/matchManagementChangeHistory",
+    //       label: t("admin/menu/matchManagementHistory"),
+    //     }
+    //   ],
+    // },
+    // {
+    //   key: "admin/game/virtual",
+    //   label: t("admin/menu/virtual"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/virtual/setting",
+    //       label: t("admin/menu/virtual"),
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: "admin/game/lotus",
+    //   label: t("admin/menu/lotus"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/lotus/setting",
+    //       label: t("admin/menu/lotus"),
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: "admin/game/mgm",
+    //   label: t("admin/menu/mgm"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/mgm/setting",
+    //       label: t("admin/menu/mgm"),
+    //     },
+    //   ],
+    // },
+    // {
+    //   key: "admin/game/touch",
+    //   label: t("admin/menu/touch"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     {
+    //       key: "admin/game/touch/setting",
+    //       label: t("admin/menu/touch"),
+    //     },
+    //   ],
+    // },
     {
       key: "admin/game/bettingstatus",
       label: t("admin/menu/bettingStatus"),
@@ -689,10 +689,10 @@ export default function AdminRootLayout({
           key: "admin/support/center",
           label: t("admin/menu/customServiceCenter"),
         },
-        {
-          key: "admin/support/sample",
-          label: t("admin/menu/serviceCenterSample"),
-        },
+        // {
+        //   key: "admin/support/sample",
+        //   label: t("admin/menu/serviceCenterSample"),
+        // },
       ],
     },
     {
@@ -701,50 +701,50 @@ export default function AdminRootLayout({
       icon: <InboxOutlined />,
       children: [
         {
-          key: "admin/inbox/noteList",
+          key: "admin/inbox/custom",
           label: t("admin/menu/noteList"),
         },
         {
-          key: "admin/inbox/groupMessageList",
+          key: "admin/inbox/group",
           label: t("admin/menu/groupMessageList"),
         },
         {
-          key: "admin/inbox/simpleNote",
+          key: "admin/inbox/sample",
           label: t("admin/menu/simpleNote"),
         },
       ],
     },
-    {
-      key: "admin/statistical",
-      label: t("admin/menu/statistical"),
-      icon: <InboxOutlined />,
-      children: [
-        {
-          key: "admin/statistical/headOfficeSettlementStatement",
-          label: t("admin/menu/headOfficeSettlementStatement"),
-        },
-        {
-          key: "admin/statistical/siteStatistics",
-          label: t("admin/menu/siteStatistics"),
-        },
-        {
-          key: "admin/statistical/generalDistributorDailyStatistics",
-          label: t("admin/menu/generalDistributorDailyStatistics"),
-        },
-        {
-          key: "admin/statistical/statisticsByDistributor",
-          label: t("admin/menu/statisticsByDistributor"),
-        },
-        {
-          key: "admin/statistical/attendanceStatistics",
-          label: t("admin/menu/attendanceStatistics"),
-        },
-        {
-          key: "admin/statistical/stepByStepStatistics",
-          label: t("admin/menu/stepByStepStatistics"),
-        },
-      ],
-    },
+    // {
+    //   key: "admin/statistical",
+    //   label: t("admin/menu/statistical"),
+    //   icon: <InboxOutlined />,
+    //   children: [
+    //     {
+    //       key: "admin/statistical/headOfficeSettlementStatement",
+    //       label: t("admin/menu/headOfficeSettlementStatement"),
+    //     },
+    //     {
+    //       key: "admin/statistical/siteStatistics",
+    //       label: t("admin/menu/siteStatistics"),
+    //     },
+    //     {
+    //       key: "admin/statistical/generalDistributorDailyStatistics",
+    //       label: t("admin/menu/generalDistributorDailyStatistics"),
+    //     },
+    //     {
+    //       key: "admin/statistical/statisticsByDistributor",
+    //       label: t("admin/menu/statisticsByDistributor"),
+    //     },
+    //     {
+    //       key: "admin/statistical/attendanceStatistics",
+    //       label: t("admin/menu/attendanceStatistics"),
+    //     },
+    //     {
+    //       key: "admin/statistical/stepByStepStatistics",
+    //       label: t("admin/menu/stepByStepStatistics"),
+    //     },
+    //   ],
+    // },
   ];
 
   const profileItems: MenuProps["items"] = [
