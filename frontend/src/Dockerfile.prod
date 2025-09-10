@@ -20,7 +20,7 @@ RUN \
     else echo "Lock file not found." && exit 1; \
     fi
  
-RUN yarn install --network-timeout 999999999
+RUN yarn install --network-timeout 9999999999
 
 USER nextjs
 # Expose the Application Port 
