@@ -1005,7 +1005,7 @@ export default function AdminRootLayout({
                         <thead>
                           <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLive")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMini ")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMini")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationVirtual")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMGM")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSportsLive")}</th>
