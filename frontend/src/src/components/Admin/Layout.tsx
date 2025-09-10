@@ -83,6 +83,8 @@ export default function AdminRootLayout({
   const [pathname, setPathname] = useState<string>('');
   const [info, setInfo] = useState<any>({});
 
+
+
   useEffect(() => {
     setPathname(window.location.pathname);
     fetchInfo();
@@ -393,14 +395,14 @@ export default function AdminRootLayout({
           key: "admin/settings/domain",
           label: t("admin/menu/domainSetting"),
         },
-        {
-          key: "admin/settings/sms",
-          label: t("admin/menu/smsAPISetting"),
-        },
-        {
-          key: "admin/settings/alarm",
-          label: t("admin/menu/alarmSetting"),
-        },
+        // {
+        //   key: "admin/settings/sms",
+        //   label: t("admin/menu/smsAPISetting"),
+        // },
+        // {
+        //   key: "admin/settings/alarm",
+        //   label: t("admin/menu/alarmSetting"),
+        // },
         {
           key: "admin/settings/popup",
           label: t("admin/menu/popupSetting"),
@@ -455,10 +457,10 @@ export default function AdminRootLayout({
       label: t("admin/menu/gameapi"),
       icon: <FaFootball />,
       children: [
-        {
-          key: "admin/game/api/honorlink",
-          label: t("admin/menu/gameapi/honorlink"),
-        },
+        // {
+        //   key: "admin/game/api/honorlink",
+        //   label: t("admin/menu/gameapi/honorlink"),
+        // },
         // {
         //   key: "admin/game/api/khan",
         //   label: t("admin/menu/gameapi/khan"),
@@ -704,14 +706,14 @@ export default function AdminRootLayout({
           key: "admin/inbox/custom",
           label: t("admin/menu/noteList"),
         },
-        {
-          key: "admin/inbox/group",
-          label: t("admin/menu/groupMessageList"),
-        },
-        {
-          key: "admin/inbox/sample",
-          label: t("admin/menu/simpleNote"),
-        },
+        // {
+        //   key: "admin/inbox/group",
+        //   label: t("admin/menu/groupMessageList"),
+        // },
+        // {
+        //   key: "admin/inbox/sample",
+        //   label: t("admin/menu/simpleNote"),
+        // },
       ],
     },
     // {
@@ -880,6 +882,7 @@ export default function AdminRootLayout({
         >
           <Layout>
             <RouteTracker />
+            <audio src="/wav/alarm.wav" controls className="hidden"></audio>
             {isAdmin ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
@@ -967,25 +970,23 @@ export default function AdminRootLayout({
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipWithdraw")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipInquiry")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("rollingTransition")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("nonMember")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalDeposit")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalWithdraw")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("todayDeposit")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("todayWithdraw")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("distributorInquiry")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalSettlement")}</th>
+                            {/* <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalSettlement")}</th> */}
                           </tr>
                         </thead>
                         <tbody>
                           <tr style={{ height: '18px' }}>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsersCount || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', color: '#ff6b35', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTotal || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px' }}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsers}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/financals/memberdwhistory', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/financals/memberdwhistory', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/settlements/rollingconversionhistory', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTransition || 0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.withdrawToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.totalSettlement || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry}</td>
+                            {/* <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.totalSettlement || 0}</td> */}
                           </tr>
                         </tbody>
                       </table>
@@ -1022,7 +1023,7 @@ export default function AdminRootLayout({
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', color: '#ff6b35', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{ 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{ 0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px' }}>0</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer' }} onClick={() => window.open('/', '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
@@ -1085,16 +1086,16 @@ export default function AdminRootLayout({
                     
                   />
                   <Space.Compact className="justify-center items-center mr-3 header-admin-layout-tag">
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}/0</Tag>
-                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}/0</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("connectedUsers")}:{info.connectedUsers || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysSubscribers")}:{info.todaysSubscribers || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("todaysWithdrawal")}:{info.todaysWithdrawal || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("registeredUsers")}:{info.registeredUsersCount || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("firstDeposit")}:{info.firstDeposit || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfLoginFailures")}:{info.numberOfLoginFailures || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfDepositorsToday")}:{info.numberOfDepositorsToday || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfWithdrawalToday")}:{info.numberOfWithdrawalToday || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBettingMembersToday")}:{info.numberOfBettingMembersToday || 0}</Tag>
+                    <Tag style={{backgroundColor: 'white', border: '1px solid transparent'}} className="!me-0.5">{t("numberOfBetsToday")}:{info.numberOfBetsToday || 0}</Tag>
                   </Space.Compact>
                 </>
               ) : null}

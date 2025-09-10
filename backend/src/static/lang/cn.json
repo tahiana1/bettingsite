@@ -1708,5 +1708,7 @@
   "blockBank" : "块银行",
   "blockAccountNumber" : "块账号",
   "blockCellNumber" : "块手机号",
-  "blockIP" : "块IP"
+  "blockIP" : "块IP",
+  "todayDeposit" : "今日存款",
+  "todayWithdraw" : "今日提款"
 }

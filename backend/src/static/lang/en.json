@@ -1710,5 +1710,7 @@
   "blockBank" : "Block Bank",
   "blockAccountNumber" : "Block Account Number",
   "blockCellNumber" : "Block Cell Number",
-  "blockIP" : "Block IP"
+  "blockIP" : "Block IP",
+  "todayDeposit" : "Today Deposit",
+  "todayWithdraw" : "Today Withdraw"
 }

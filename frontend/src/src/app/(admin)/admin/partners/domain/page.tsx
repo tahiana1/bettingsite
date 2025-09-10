@@ -55,7 +55,9 @@ const PartnerDomainPage: React.FC = () => {
   const [domains, setDomains] = useState<any[]>([]);
 
   const { loading, data, refetch } = useQuery(GET_DOMAINS);
-
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
   const [updateDomain] = useMutation(UPDATE_DOMAIN);
   const [deleteDomain] = useMutation(DELETE_DOMAIN);
 
@@ -142,11 +144,14 @@ const PartnerDomainPage: React.FC = () => {
       render: (text) => text ?? "site",
     },
     {
-      title: t("distributor"),
+      title: t("userid"),
       dataIndex: "userId",
       key: "userId",
       render(_, record) {
-        return record.user?.userid;
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
+        {/* <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p> */}
+        <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.userid}</p>
+      </div>
       },
     },
     {

@@ -40,6 +40,8 @@ type DashboardStats struct {
 	NumberOfWithdrawalToday     int64 `json:"numberOfWithdrawalToday"`
 	NumberOfBettingMembersToday int64 `json:"numberOfBettingMembersToday"`
 	NumberOfBetsToday           int64 `json:"numberOfBetsToday"`
+	MembershipInquiry           int64 `json:"membershipInquiry"`
+	RollingTransition           int64 `json:"rollingTransition"`
 }
 
 type DivisionSummary struct {

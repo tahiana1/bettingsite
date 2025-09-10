@@ -313,7 +313,8 @@ const PartnerPage: React.FC = () => {
       title: t("nickname"),
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
-      render: (_, { profile }) => profile.nickname,
+      render: (_, { profile }) => 
+        profile.nickname,
       filterDropdown: (props) => (
         <FilterDropdown {...props}>
           <Input className="w-full" />

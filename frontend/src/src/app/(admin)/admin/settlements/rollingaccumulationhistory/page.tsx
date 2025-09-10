@@ -39,7 +39,9 @@ const RollingAccumulationPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
-
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: t("number"),
@@ -63,13 +65,15 @@ const RollingAccumulationPage: React.FC = () => {
       render: (text) => text ?? "-",
     },
     {
-      title: t("ID(Nickname)"),
-      dataIndex: ["user", "profile", "nickname"],
-      key: "nickname",
-      render: (text, record) => {
-        const userId = record.user?.userid || "-";
-        const nickname = record.user?.profile?.nickname || "-";
-        return `${userId} (${nickname})`;
+      title: t("userid"),
+      dataIndex: ["user", "userid"],
+      key: '"User"."userid"',
+      render(_, record) {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.userid}</p>
+        </div>
+         
       },
     },
     {

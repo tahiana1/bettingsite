@@ -47,6 +47,10 @@ const LogStatusPage: React.FC = () => {
       ],
     },
   });
+
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
   const onSearchLog = (v: string) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
@@ -112,7 +116,16 @@ const LogStatusPage: React.FC = () => {
       title: t("userid"),
       dataIndex: "user.userid",
       key: "user.userid",
-      render: (text, record) => text || record.user?.userid || "unknown",
+      render: (text, record) => {
+        if (record.user?.id) {
+          const userId = record.user.id;
+          return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(userId)}>
+            <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level || 'N/A'}</p>
+            <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{text || record.user?.userid || "unknown"}</p>
+          </div>
+        }
+        return text || record.user?.userid || "unknown";
+      },
     },
     {
       title: t("os"),

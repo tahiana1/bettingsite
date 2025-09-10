@@ -379,9 +379,9 @@ func GetDashboard(c *gin.Context) {
 		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "withdrawal", today).
 		Count(&todaysWithdrawal)
 
-	// 14. Total registered users count
+	// 14. Total registered users count (only pending users)
 	var registeredUsersCount int64
-	initializers.DB.Model(&models.User{}).Count(&registeredUsersCount)
+	initializers.DB.Model(&models.User{}).Where("status = ?", "A").Count(&registeredUsersCount)
 
 	// 15. First deposit count (users who made their first deposit today)
 	var firstDeposit int64
@@ -403,18 +403,16 @@ func GetDashboard(c *gin.Context) {
 	// This would need a login_attempts table or similar - for now set to 0
 	numberOfLoginFailures = 0
 
-	// 17. Number of depositors today
+	// 17. Number of unprocessed deposit requests
 	var numberOfDepositorsToday int64
 	initializers.DB.Model(&models.Transaction{}).
-		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "deposit", today).
-		Distinct("user_id").
+		Where("type = ? AND status = ?", "deposit", "pending").
 		Count(&numberOfDepositorsToday)
 
 	// 18. Number of withdrawal users today
 	var numberOfWithdrawalToday int64
 	initializers.DB.Model(&models.Transaction{}).
-		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "withdrawal", today).
-		Distinct("user_id").
+		Where("type = ? AND status = ?", "withdrawal", "pending").
 		Count(&numberOfWithdrawalToday)
 
 	// 19. Number of betting members today
@@ -429,6 +427,16 @@ func GetDashboard(c *gin.Context) {
 	initializers.DB.Model(&models.Transaction{}).
 		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "betting/placingBet", today).
 		Count(&numberOfBetsToday)
+
+	var membershipInquiry int64
+	initializers.DB.Model(&models.Qna{}).
+		Where("type = ? AND status = ?", "contact", "P").
+		Count(&membershipInquiry)
+
+	var rollingTransition int64
+	initializers.DB.Model(&models.Transaction{}).
+		Where("type = ? AND status = ?", "rollingExchange", "pending").
+		Count(&rollingTransition)
 
 	// 4.1. HonorLink balance
 	var honorLinkBalance float64 = 0
@@ -506,18 +514,19 @@ func GetDashboard(c *gin.Context) {
 	fmt.Println("honorLinkBalance", honorLinkBalance)
 
 	// Update stats with additional fields
-	stats.ConnectedUsers = connectedUsers
-	stats.TodaysSubscribers = todaysSubscribers
-	stats.TodaysWithdrawal = todaysWithdrawal
-	stats.RegisteredUsersCount = registeredUsersCount
-	stats.FirstDeposit = firstDeposit
-	stats.NumberOfLoginFailures = numberOfLoginFailures
-	stats.NumberOfDepositorsToday = numberOfDepositorsToday
-	stats.NumberOfWithdrawalToday = numberOfWithdrawalToday
-	stats.NumberOfBettingMembersToday = numberOfBettingMembersToday
-	stats.NumberOfBetsToday = numberOfBetsToday
-	stats.HonorLinkBalance = honorLinkBalance
+	response.Stats.ConnectedUsers = connectedUsers
+	response.Stats.TodaysSubscribers = todaysSubscribers
+	response.Stats.TodaysWithdrawal = todaysWithdrawal
+	response.Stats.RegisteredUsersCount = registeredUsersCount
+	response.Stats.FirstDeposit = firstDeposit
+	response.Stats.NumberOfLoginFailures = numberOfLoginFailures
+	response.Stats.NumberOfDepositorsToday = numberOfDepositorsToday
+	response.Stats.NumberOfWithdrawalToday = numberOfWithdrawalToday
+	response.Stats.NumberOfBettingMembersToday = numberOfBettingMembersToday
+	response.Stats.NumberOfBetsToday = numberOfBetsToday
 	response.Stats.HonorLinkBalance = honorLinkBalance
+	response.Stats.MembershipInquiry = membershipInquiry
+	response.Stats.RollingTransition = rollingTransition
 
 	c.JSON(200, response)
 }

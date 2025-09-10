@@ -30,7 +30,9 @@ import { USER_STATUS } from "@/constants";
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
-
+const popupWindow = (id: number) => {
+  window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+}
 const DistStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
@@ -42,10 +44,16 @@ const DistStatusPage: React.FC = () => {
 
   const columns: TableProps<User>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
+      title: t("userid"),
+      dataIndex: ["user", "userid"],
+      key: '"User"."userid"',
       fixed: "left",
+      render(_, record) {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record?.id)}>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record?.userid}</p>
+        </div> 
+      },
     },
     {
       title: t("site"),

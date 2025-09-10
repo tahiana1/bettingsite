@@ -46,6 +46,10 @@ const UserStatusPage: React.FC = () => {
   const { loading, error, data, refetch } = useQuery(CONNECTED_USERS);
   const [colorModal, setColorModal] = useState<boolean>(false);
 
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+
   const onDisconnect = (user: User) => {
     console.log({ user });
     /*  blockUser({ variables: { id: user.id } })
@@ -61,10 +65,16 @@ const UserStatusPage: React.FC = () => {
 
   const columns: TableProps<User>["columns"] = [
     {
-      title: "ID",
-      dataIndex: "userid",
-      key: "userid",
+      title: t("userid"),
+      dataIndex: ["user", "userid"],
+      key: '"User"."userid"',
       fixed: "left",
+      render(_, record) {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.id)}>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.userid}</p>
+        </div>
+      },
     },
     {
       title: t("site"),

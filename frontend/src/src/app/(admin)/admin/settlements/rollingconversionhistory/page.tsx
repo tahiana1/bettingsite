@@ -10,6 +10,7 @@ import {
   Input,
   DatePicker,
   Radio,
+  Tag,
 } from "antd";
 
 import { FilterDropdown } from "@refinedev/antd";
@@ -39,7 +40,9 @@ const RollingConversionPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
-
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
@@ -66,7 +69,11 @@ const RollingConversionPage: React.FC = () => {
       dataIndex: ["user", "userid"],
       key: '"User"."userid"',
       render(_, record) {
-        return record.user?.userid;
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.userid}</p>
+        </div>
+         
       },
     },
     {
@@ -122,6 +129,15 @@ const RollingConversionPage: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
+      render: (_, record) => {
+        return <Tag color={record.status === "A" ? "green" : "red"}>
+          {record.status === "pending" && "Pending"}
+          {record.status === "A" && "Approved"}
+          {record.status === "W" && "Waiting"}
+          {record.status === "C" && "Canceled"}
+          {record.status === "DL" && "Deleted"}
+        </Tag>
+      }
     },
   ];
 
