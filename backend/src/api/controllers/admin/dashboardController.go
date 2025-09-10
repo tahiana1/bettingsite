@@ -27,7 +27,6 @@ func GetDashboard(c *gin.Context) {
 
 	// Debug: Print today's date
 	fmt.Printf("Today's date for filtering: %s\n", today)
-
 	// First query for transaction statistics
 	if err := initializers.DB.Raw(`
 		WITH transaction_stats AS (
