@@ -39,7 +39,7 @@ jobs:
 
     - name: Install frontend dependencies
       working-directory: frontend/src
-      run: yarn install --network-timeout 99999999
+      run: yarn install
 
     - name: Build frontend
       working-directory: frontend/src
