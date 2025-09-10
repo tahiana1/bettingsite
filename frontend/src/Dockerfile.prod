@@ -14,17 +14,22 @@ RUN adduser --system --uid 1001 nextjs
 # Copy package files first for better layer caching
 COPY package.json yarn.lock* package-lock.json* ./
 
-# Install dependencies based on available lock file
+# Install dependencies with timeout and optimization flags
 RUN \
-    if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-    elif [ -f package-lock.json ]; then npm ci; \
-    else echo "Lock file not found." && exit 1; \
+    if [ -f yarn.lock ]; then \
+        yarn config set network-timeout 300000 && \
+        yarn config set network-concurrency 1 && \
+        yarn --frozen-lockfile --network-timeout 300000; \
+    elif [ -f package-lock.json ]; then \
+        npm ci --maxsockets 1 --prefer-offline; \
+    else \
+        echo "Lock file not found." && exit 1; \
     fi
 
 # Copy source code
 COPY . .
 
-# Build the application
+# Build the application with timeout
 RUN yarn build
 
 # Change ownership of the app directory to the nextjs user
