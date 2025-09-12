@@ -27,7 +27,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     ports:
-      - "3000:8080"
+      - "8080:8080"
     container_name: betting-backend
     depends_on:
       postgres:
