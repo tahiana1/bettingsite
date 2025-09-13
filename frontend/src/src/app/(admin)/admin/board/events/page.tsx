@@ -41,7 +41,7 @@ import {
 import { GET_DOMAINS } from "@/actions/domain";
 import type { UploadProps } from 'antd';
 import { message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined, EditOutlined } from '@ant-design/icons';
 import { uploadFile } from '@/lib/supabase/storage';
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
@@ -60,6 +60,8 @@ interface Event {
   status: boolean;
   mainImage?: string;
   imageUpload?: any;
+  category?: number;
+  createdDate?: string;
   'event-category'?: string;
   'register-date'?: any;
   'main-image'?: string;
@@ -95,11 +97,13 @@ const EventPage: React.FC = () => {
     // refetch: refetchDomain,
   } = useQuery(GET_DOMAINS);
 
-  const [updateEvent /* { loading: loadingUpdate } */] =
+  const [updateEvent, { loading: loadingUpdate }] =
     useMutation(UPDATE_EVENT);
   const [createEvent, { loading: loadingCreate }] = useMutation(CREATE_EVENT);
   const [deleteEvent, { loading: loadingDelete }] = useMutation(DELETE_EVENT);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
   const onLevelChange = (evt: Event, value: number) => {
@@ -171,6 +175,8 @@ const EventPage: React.FC = () => {
   ];
   const { quill, quillRef } = useQuill({ modules, formats });
   const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
+  const { quill: editQuill, quillRef: editQuillRef } = useQuill({ modules, formats });
+  const { quill: editQuillOther, quillRef: editQuillRefOther } = useQuill({ modules, formats });
   
 
   const handleQuillChange = (editor: any, fieldName: string) => {
@@ -200,8 +206,63 @@ const EventPage: React.FC = () => {
     }
   }, [quillOther]);
 
+  useEffect(() => {
+    if (editQuill) {
+      const handleTextChange = () => handleQuillChange(editQuill, 'description');
+      editQuill.on('text-change', handleTextChange);
+      return () => {
+        editQuill.off('text-change', handleTextChange);
+      };
+    }
+  }, [editQuill]);
+
+  useEffect(() => {
+    if (editQuillOther) {
+      const handleTextChange = () => handleQuillChange(editQuillOther, 'main-image');
+      editQuillOther.on('text-change', handleTextChange);
+      return () => {
+        editQuillOther.off('text-change', handleTextChange);
+      };
+    }
+  }, [editQuillOther]);
+
+  // Handle loading content into edit Quill editors when modal opens
+  useEffect(() => {
+    if (editOpen && currentEvent) {
+      console.log("Loading content into Quill editors:", {
+        description: currentEvent.description,
+        mainImage: currentEvent.mainImage
+      });
+      
+      // Use a timeout to ensure editors are fully initialized
+      const timer = setTimeout(() => {
+        if (editQuill && editQuillOther) {
+          // Clear existing content first
+          editQuill.setContents([]);
+          editQuillOther.setContents([]);
+          
+          // Load description content
+          if (currentEvent.description) {
+            editQuill.root.innerHTML = currentEvent.description;
+          }
+          // Load main image content
+          if (currentEvent.mainImage) {
+            editQuillOther.root.innerHTML = currentEvent.mainImage;
+          }
+        }
+      }, 200);
+
+      return () => clearTimeout(timer);
+    }
+  }, [editOpen, currentEvent, editQuill, editQuillOther]);
+
   const showModal = () => {
     setOpen(true);
+    // Reset form and set initial values
+    form.resetFields();
+    form.setFieldsValue({
+      author: 'admin'
+    });
   };
 
   const onStatusChange = (evt: Event, checked: boolean) => {
@@ -254,6 +315,130 @@ const EventPage: React.FC = () => {
 
   const onCancelNew = () => {
     setOpen(false);
+    form.resetFields();
+    // Clear Quill editors
+    if (quill) {
+      quill.setContents([]);
+    }
+    if (quillOther) {
+      quillOther.setContents([]);
+    }
+    // Reset uploaded image URL
+    setUploadedImageUrl(null);
+  };
+
+  const onEdit = (evt: Event) => {
+    console.log("Editing event: ", evt);
+    console.log("Event mainImage: ", evt.mainImage);
+    setCurrentEvent(evt);
+    setEditOpen(true);
+    
+    // Pre-populate form with current event data
+    form.setFieldsValue({
+      title: evt.title,
+      author: evt.author || 'admin',
+      description: evt.description,
+      'main-image': evt.mainImage,
+      'image-upload': evt.imageUpload,
+      'event-category': evt.category?.toString(),
+      'register-date': evt.createdDate ? dayjs(evt.createdDate) : null,
+      views: evt.views,
+      'event-period': evt.showFrom && evt.showTo ? [dayjs(evt.showFrom), dayjs(evt.showTo)] : null,
+    });
+    
+    // Load content into Quill editors immediately
+    setTimeout(() => {
+      if (editQuill && editQuillOther) {
+        // Clear existing content first
+        editQuill.setContents([]);
+        editQuillOther.setContents([]);
+        
+        // Load description content
+        if (evt.description) {
+          editQuill.root.innerHTML = evt.description;
+        }
+        // Load main image content
+        if (evt.mainImage) {
+          editQuillOther.root.innerHTML = evt.mainImage;
+        }
+      }
+    }, 100);
+  };
+
+  const onCancelEdit = () => {
+    setCurrentEvent(null);
+    setEditOpen(false);
+    form.resetFields();
+    // Clear Quill editors
+    if (editQuill) {
+      editQuill.setContents([]);
+    }
+    if (editQuillOther) {
+      editQuillOther.setContents([]);
+    }
+    // Reset uploaded image URL
+    setUploadedImageUrl(null);
+  };
+
+  const onUpdate = (values: any) => {
+    console.log("Updating event with values: ", values);
+    
+    // Get content from Quill editors
+    const descriptionContent = editQuill ? editQuill.root.innerHTML : values.description;
+    const mainImageContent = editQuillOther ? editQuillOther.root.innerHTML : values['main-image'];
+    
+    const updatedEvent = {
+      title: values.title,
+      type: 'event', // Set default type since it's required
+      description: descriptionContent,
+      showFrom: values['event-period'] ? dayjs(values['event-period'][0]).toISOString() : undefined,
+      showTo: values['event-period'] ? dayjs(values['event-period'][1]).toISOString() : undefined,
+      category: values['event-category'] ? parseInt(values['event-category']) : undefined,
+      views: values.views ? parseInt(values.views.toString()) : 0,
+      mainImage: mainImageContent,
+      imageUpload: values['image-upload'] || uploadedImageUrl,
+      createdDate: values['register-date'] ? dayjs(values['register-date']).toISOString() : dayjs().toISOString(),
+    };
+    
+    console.log("Final updated event data:", updatedEvent);
+    
+    updateEvent({
+      variables: { 
+        id: currentEvent?.id, 
+        input: updatedEvent 
+      },
+    }).then((res) => {
+      console.log("Update response:", res);
+      if (res.data?.response) {
+        evtAPI.success({
+          message: 'Event updated successfully',
+        });
+        // Close modal and reset form
+        setEditOpen(false);
+        setCurrentEvent(null);
+        form.resetFields();
+        // Clear Quill editors
+        if (editQuill) {
+          editQuill.setContents([]);
+        }
+        if (editQuillOther) {
+          editQuillOther.setContents([]);
+        }
+        // Reload the page after successful update
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        evtAPI.error({
+          message: 'Failed to update event',
+        });
+      }
+    }).catch((err) => {
+      console.error("Update error:", err);
+      evtAPI.error({
+        message: err.message || 'Failed to update event',
+      });
+    });
   };
 
   const onDeleteEvent = (evt: Event) => {
@@ -462,6 +647,12 @@ const EventPage: React.FC = () => {
       fixed: "right",
       render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
+          <Button
+            title={t("edit")}
+            variant="outlined"
+            icon={<EditOutlined />}
+            onClick={() => onEdit(record)}
+          />
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={() => onDeleteEvent(record)}
@@ -574,7 +765,7 @@ const EventPage: React.FC = () => {
                   initialValue="admin"
                   rules={[{ required: true, message: 'Please input the author!' }]}
                 >
-                  <Input value='admin' readOnly disabled /> 
+                  <Input readOnly disabled /> 
               </Form.Item>
               <Form.Item 
                   name="views" 
@@ -647,6 +838,104 @@ const EventPage: React.FC = () => {
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>
                   {t("submit")}
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+
+          <Modal
+            open={editOpen}
+            title={t("edit")}
+            footer={false}
+            onCancel={onCancelEdit}
+            width={700}
+          >
+            <Form
+              form={form}
+              labelCol={{ span: 6 }}
+              wrapperCol={{ span: 16 }}
+              name="editForm"
+              onFinish={onUpdate}
+            >
+              <Form.Item 
+                  name="author" 
+                  label={t("author")}
+                  initialValue="admin"
+                  rules={[{ required: true, message: 'Please input the author!' }]}
+                >
+                  <Input readOnly disabled /> 
+              </Form.Item>
+              <Form.Item 
+                  name="views" 
+                  label={t("views")}
+                  rules={[{ required: true, message: 'Please input the views!' }]}
+                >
+                <InputNumber min={0} />
+              </Form.Item>
+              <Form.Item name="event-period" label={t("event-period")} rules={[{ required: true, message: 'Please select a date!' }]}>
+                <DatePicker.RangePicker />
+              </Form.Item>
+              <Form.Item 
+                name="event-category" 
+                label={t("event-category")}
+                rules={[{ required: true, message: 'Please select a category!' }]}
+              >
+                  <Select
+                    showSearch
+                    style={{ width: 200 }}
+                    placeholder="Search Category"
+                    optionFilterProp="label"
+                    // onSearch={(value) => onSearchDomain([value])}
+                    loading={loadingDomain}
+                    options={[
+                      {
+                        label: "test",
+                        value: 1,
+                      },
+                    ]}
+                  />
+              </Form.Item>
+              
+              <Form.Item 
+                name="register-date" 
+                label={t("register-date")}
+                rules={[{ required: true, message: 'Please select a date!' }]}
+              >
+                  <DatePicker />
+                </Form.Item>
+              <Form.Item 
+                name="title" 
+                label={t("title")}
+                rules={[{ required: true, message: 'Please input the title!' }]}
+              >
+                 <Input />
+              </Form.Item>
+              <Form.Item 
+                name="image-upload" 
+                className="text-center"
+                rules={[{ required: true, message: 'Please upload an image!' }]}
+              >
+              <Upload {...props} fileList={[]}>
+                <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              </Upload>
+              </Form.Item>
+              <Form.Item 
+                name="description" 
+                label={t("desc")}
+                rules={[{ required: true, message: 'Please input the description!' }]}
+              >
+                <div ref={editQuillRef}></div>
+              </Form.Item>
+              <Form.Item 
+                name="main-image" 
+                label={t("main-image")}
+                rules={[{ required: true, message: 'Please input the main image!' }]}
+              >
+                <div ref={editQuillRefOther}></div>
+              </Form.Item>
+              <Form.Item>
+                <Button htmlType="submit" loading={loadingUpdate}>
+                  {t("update")}
                 </Button>
               </Form.Item>
             </Form>

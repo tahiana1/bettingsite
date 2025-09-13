@@ -32,6 +32,12 @@ input UpdateEventInput {
   showFrom: Time
   showTo: Time
   level: Uint
+  author: String
+  category: Uint
+  views: Uint
+  createdDate: Time
+  mainImage: String
+  imageUpload: String
 }
 
 input NewEventInput {

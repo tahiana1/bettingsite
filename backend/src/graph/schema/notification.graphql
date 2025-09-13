@@ -27,6 +27,11 @@ input UpdateNotificationInput {
   showFrom: Time
   showTo: Time
   level: Uint
+  mainImage: String
+  imageUpload: String
+  noticeType: String
+  registerDate: Time
+  views: Uint
 }
 
 input NewNotificationInput {

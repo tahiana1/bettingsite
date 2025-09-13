@@ -63,6 +63,8 @@ import holdemRight from "@/assets/img/main/holdem-right.png";
 import holdemLeft from "@/assets/img/main/holdem-left.png";
 import slotLeft from "@/assets/img/main/slot-left.png";
 import slotRight from "@/assets/img/main/slot-right.png";
+import miniLeft from "@/assets/img/main/mini-left.png";
+import miniRight from "@/assets/img/main/mini-right.png";
 
 // Logo Carousel Component
 interface LogoCarouselProps {
@@ -187,6 +189,14 @@ export default function RootLayout({
             <div>
               <Image src={slotRight} alt="slotRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
               <Image src={slotLeft} alt="slotLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
+            </div>
+          )
+        }
+        {
+          pathname === "/mini" && (
+            <div>
+              <Image src={miniRight} alt="miniRight" className="absolute md:top-5 top-[-70px] md:w-[450px] w-[150px] right-[-30px] md:right-[-80px] holdem-right-animation"/>
+              <Image src={miniLeft} alt="miniLeft" height={200} className="absolute md:w-[450px] w-[150px] md:top-5 top-[-70px] left-[-30px] md:left-[-90px] holdem-left-animation"/>
             </div>
           )
         }

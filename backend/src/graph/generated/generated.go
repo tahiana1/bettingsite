@@ -4898,6 +4898,12 @@ input UpdateEventInput {
   showFrom: Time
   showTo: Time
   level: Uint
+  author: String
+  category: Uint
+  views: Uint
+  createdDate: Time
+  mainImage: String
+  imageUpload: String
 }
 
 input NewEventInput {
@@ -5263,6 +5269,11 @@ input UpdateNotificationInput {
   showFrom: Time
   showTo: Time
   level: Uint
+  mainImage: String
+  imageUpload: String
+  noticeType: String
+  registerDate: Time
+  views: Uint
 }
 
 input NewNotificationInput {
@@ -41026,7 +41037,7 @@ func (ec *executionContext) unmarshalInputUpdateEventInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "type", "description", "status", "orderNum", "domainId", "showFrom", "showTo", "level"}
+	fieldsInOrder := [...]string{"title", "type", "description", "status", "orderNum", "domainId", "showFrom", "showTo", "level", "author", "category", "views", "createdDate", "mainImage", "imageUpload"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41096,6 +41107,48 @@ func (ec *executionContext) unmarshalInputUpdateEventInput(ctx context.Context, 
 				return it, err
 			}
 			it.Level = data
+		case "author":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("author"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Author = data
+		case "category":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("category"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Category = data
+		case "views":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("views"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Views = data
+		case "createdDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedDate = data
+		case "mainImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mainImage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MainImage = data
+		case "imageUpload":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUpload"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ImageUpload = data
 		}
 	}
 
@@ -41330,7 +41383,7 @@ func (ec *executionContext) unmarshalInputUpdateNotificationInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo", "level"}
+	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo", "level", "mainImage", "imageUpload", "noticeType", "registerDate", "views"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41386,6 +41439,41 @@ func (ec *executionContext) unmarshalInputUpdateNotificationInput(ctx context.Co
 				return it, err
 			}
 			it.Level = data
+		case "mainImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mainImage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MainImage = data
+		case "imageUpload":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUpload"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ImageUpload = data
+		case "noticeType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("noticeType"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NoticeType = data
+		case "registerDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("registerDate"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RegisterDate = data
+		case "views":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("views"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Views = data
 		}
 	}
 

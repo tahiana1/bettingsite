@@ -260,6 +260,27 @@ func (er *eventReader) UpdateEvent(ctx context.Context, nID uint, updates model.
 	if updates.OrderNum != nil {
 		event.OrderNum = *updates.OrderNum
 	}
+
+	if updates.Category != nil {
+		event.Category = updates.Category
+	}
+
+	if updates.Views != nil {
+		event.Views = updates.Views
+	}
+
+	if updates.CreatedDate != nil {
+		event.CreatedDate = updates.CreatedDate
+	}
+
+	if updates.MainImage != nil {
+		event.MainImage = updates.MainImage
+	}
+
+	if updates.ImageUpload != nil {
+		event.ImageUpload = updates.ImageUpload
+	}
+
 	er.db.Save(event)
 
 	return &event, nil

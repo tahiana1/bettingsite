@@ -78,11 +78,7 @@ const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ notice, onClose, 
 
                 {notice.mainImage && (
                     <div className="mt-4 border-t border-[#3e2e23] pt-4">
-                        <img 
-                            src={notice.mainImage} 
-                            alt={notice.title} 
-                            className="max-w-full h-auto rounded"
-                        />
+                        <div dangerouslySetInnerHTML={{ __html: notice.mainImage }} />
                     </div>
                 )}
             </div>

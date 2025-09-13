@@ -437,6 +437,12 @@ type UpdateEventInput struct {
 	ShowFrom    *time.Time `json:"showFrom,omitempty"`
 	ShowTo      *time.Time `json:"showTo,omitempty"`
 	Level       *uint      `json:"level,omitempty"`
+	Author      *string    `json:"author,omitempty"`
+	Category    *uint      `json:"category,omitempty"`
+	Views       *uint      `json:"views,omitempty"`
+	CreatedDate *time.Time `json:"createdDate,omitempty"`
+	MainImage   *string    `json:"mainImage,omitempty"`
+	ImageUpload *string    `json:"imageUpload,omitempty"`
 }
 
 type UpdateGameAPIInput struct {
@@ -472,13 +478,18 @@ type UpdateMenuInput struct {
 }
 
 type UpdateNotificationInput struct {
-	Title       *string    `json:"title,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	Status      *bool      `json:"status,omitempty"`
-	OrderNum    *uint      `json:"orderNum,omitempty"`
-	ShowFrom    *time.Time `json:"showFrom,omitempty"`
-	ShowTo      *time.Time `json:"showTo,omitempty"`
-	Level       *uint      `json:"level,omitempty"`
+	Title        *string    `json:"title,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	Status       *bool      `json:"status,omitempty"`
+	OrderNum     *uint      `json:"orderNum,omitempty"`
+	ShowFrom     *time.Time `json:"showFrom,omitempty"`
+	ShowTo       *time.Time `json:"showTo,omitempty"`
+	Level        *uint      `json:"level,omitempty"`
+	MainImage    *string    `json:"mainImage,omitempty"`
+	ImageUpload  *string    `json:"imageUpload,omitempty"`
+	NoticeType   *string    `json:"noticeType,omitempty"`
+	RegisterDate *time.Time `json:"registerDate,omitempty"`
+	Views        *uint      `json:"views,omitempty"`
 }
 
 type UpdateProfile struct {

@@ -172,6 +172,26 @@ func (nr *notificationReader) UpdateNotification(ctx context.Context, nID uint, 
 		notification.OrderNum = *updates.OrderNum
 	}
 
+	if updates.MainImage != nil {
+		notification.MainImage = *updates.MainImage
+	}
+
+	if updates.ImageUpload != nil {
+		notification.ImageUpload = *updates.ImageUpload
+	}
+
+	if updates.NoticeType != nil {
+		notification.NoticeType = *updates.NoticeType
+	}
+
+	if updates.RegisterDate != nil {
+		notification.RegisterDate = *updates.RegisterDate
+	}
+
+	if updates.Views != nil {
+		notification.Views = *updates.Views
+	}
+
 	nr.db.Save(notification)
 
 	return &notification, nil

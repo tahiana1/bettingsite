@@ -11,6 +11,8 @@ export const GET_TOP_EVENT = gql`
       showFrom
       showTo
       type
+      mainImage
+      imageUpload
       domainId
       domain {
         id
@@ -48,11 +50,13 @@ export const FILTER_EVENT = gql`
         status
         showFrom
         showTo
+        mainImage
         imageUpload
         category
         type
         views
         domainId
+        mainImage
         userId  
         user {
           id
@@ -97,6 +101,8 @@ export const UPDATE_EVENT = gql`
       orderNum
       description
       status
+      mainImage
+      imageUpload
       createdAt
       updatedAt
       deletedAt

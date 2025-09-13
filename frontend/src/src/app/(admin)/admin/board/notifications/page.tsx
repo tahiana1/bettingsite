@@ -29,7 +29,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { BiTrash } from "react-icons/bi";
 import { useQuill } from "react-quilljs";
 import { PiPlus } from "react-icons/pi";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, EditOutlined } from "@ant-design/icons";
 import { message } from 'antd';
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
@@ -67,6 +67,8 @@ const NotiPage: React.FC = () => {
   const [createNoti, { loading: loadingCreate }] = useMutation(CREATE_NOTI);
   const [deleteNoti, { loading: loadingDelete }] = useMutation(DELETE_NOTI);
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
 
   const onLevelChange = (evt: Noti, value: number) => {
     console.log(loadingUpdate, 'loadingUpdate');
@@ -129,6 +131,8 @@ const NotiPage: React.FC = () => {
   ];
   const { quill, quillRef } = useQuill({ modules, formats });
   const { quill: quillOther, quillRef: quillRefOther } = useQuill({ modules, formats });
+  const { quill: editQuill, quillRef: editQuillRef } = useQuill({ modules, formats });
+  const { quill: editQuillOther, quillRef: editQuillRefOther } = useQuill({ modules, formats });
 
   const showModal = () => {
     setOpen(true);
@@ -159,6 +163,40 @@ const NotiPage: React.FC = () => {
       };
     }
   }, [quillOther]);
+
+  useEffect(() => {
+    if (editQuill) {
+      const handleTextChange = () => handleQuillChange(editQuill, 'description');
+      editQuill.on('text-change', handleTextChange);
+      return () => {
+        editQuill.off('text-change', handleTextChange);
+      };
+    }
+  }, [editQuill]);
+
+  useEffect(() => {
+    if (editQuillOther) {
+      const handleTextChange = () => handleQuillChange(editQuillOther, 'main-image');
+      editQuillOther.on('text-change', handleTextChange);
+      return () => {
+        editQuillOther.off('text-change', handleTextChange);
+      };
+    }
+  }, [editQuillOther]);
+
+  // Handle loading content into edit Quill editors when modal opens
+  useEffect(() => {
+    if (editOpen && currentNoti && editQuill && editQuillOther) {
+      // Load description content
+      if (currentNoti.description) {
+        editQuill.root.innerHTML = currentNoti.description;
+      }
+      // Load main image content
+      if (currentNoti.mainImage) {
+        editQuillOther.root.innerHTML = currentNoti.mainImage;
+      }
+    }
+  }, [editOpen, currentNoti, editQuill, editQuillOther]);
 
   const props: UploadProps = {
     name: 'file',
@@ -250,16 +288,91 @@ const NotiPage: React.FC = () => {
       });
   };
 
-  // const onEdit = (noti: Noti) => {
-  //   console.log("Received values of form: ", noti);
-  //   setCurrentNoti(noti);
-  //   setEditOpen(true);
-  // };
+  const onEdit = (noti: Noti) => {
+    console.log("Editing notification: ", noti);
+    setCurrentNoti(noti);
+    setEditOpen(true);
+    // Pre-populate form with current notification data
+    form.setFieldsValue({
+      title: noti.title,
+      description: noti.description,
+      'main-image': noti.mainImage,
+      'image-upload': noti.imageUpload,
+      noticeType: noti.noticeType,
+      'register-date': noti.registerDate ? dayjs(noti.registerDate) : null,
+      views: noti.views,
+    });
+    
+    // Set content in Quill editors after a delay to ensure they're initialized
+    setTimeout(() => {
+      if (editQuill) {
+        // Clear existing content first
+        editQuill.setContents([]);
+        // Set the description content
+        if (noti.description) {
+          editQuill.root.innerHTML = noti.description;
+        }
+      }
+      if (editQuillOther) {
+        // Clear existing content first
+        editQuillOther.setContents([]);
+        // Set the main image content
+        if (noti.mainImage) {
+          editQuillOther.root.innerHTML = noti.mainImage;
+        }
+      }
+    }, 200);
+  };
 
-  // const onCancelEdit = () => {
-  //   setCurrentNoti(null);
-  //   setEditOpen(false);
-  // };
+  const onCancelEdit = () => {
+    setCurrentNoti(null);
+    setEditOpen(false);
+    form.resetFields();
+    // Clear Quill editors
+    if (editQuill) {
+      editQuill.setContents([]);
+    }
+    if (editQuillOther) {
+      editQuillOther.setContents([]);
+    }
+  };
+
+  const onUpdate = (values: any) => {
+    console.log("Updating notification with values: ", values);
+    const updatedNoti = {
+      title: values.title,
+      description: values.description,
+      mainImage: values['main-image'],
+      imageUpload: values['image-upload'] || uploadedImageUrl,
+      noticeType: values.noticeType,
+      registerDate: values['register-date'] ? dayjs(values['register-date']).toISOString() : dayjs().toISOString(),
+      views: values.views,
+    };
+    
+    updateNoti({
+      variables: { 
+        id: currentNoti?.id, 
+        input: updatedNoti 
+      },
+    }).then((res) => {
+      if (res.data?.success) {
+        notiAPI.success({
+          message: 'Notification updated successfully',
+        });
+      }
+      refetch(tableOptions);
+      setEditOpen(false);
+      setCurrentNoti(null);
+      form.resetFields();
+      // Reload the page after successful update
+      window.location.reload();
+    }).catch((err) => {
+      console.log({ err });
+      notiAPI.error({
+        message: err.message,
+      });
+    });
+  };
 
   const onCancelNew = () => {
     setOpen(false);
@@ -405,6 +518,12 @@ const NotiPage: React.FC = () => {
       fixed: "right",
       render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
+          <Button
+            title={t("edit")}
+            variant="outlined"
+            icon={<EditOutlined />}
+            onClick={() => onEdit(record)}
+          />
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={() => onDeleteNoti(record)}
@@ -563,6 +682,91 @@ const NotiPage: React.FC = () => {
               <Form.Item>
                 <Button htmlType="submit" loading={loadingCreate}>
                   {t("submit")}
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+
+          <Modal
+            open={editOpen}
+            title={t("edit")}
+            footer={false}
+            onCancel={onCancelEdit}
+          >
+            <Form
+              form={form}
+              name="editForm"
+              layout="vertical"
+              onFinish={onUpdate}
+            >
+              <Form.Item 
+                  name="author" 
+                  label={t("author")}
+                  initialValue="admin"
+                >
+                  <Input value='admin' readOnly disabled /> 
+              </Form.Item>
+              <Form.Item 
+                  name="views" 
+                  label={t("views")}
+                  rules={[{ required: true, message: 'Please input the views!' }]}
+              >
+                <InputNumber min={0} />
+              </Form.Item>
+              <Form.Item
+                  name="noticeType"
+                  label={t("notice-type")}
+                  rules={[{ required: true, message: 'Please select a notice type!' }]}
+                >
+                  <Select
+                    options={
+                      [
+                        { value: 'notice', label: t("notice-type") }, 
+                        { value: 'rules', label: t("gameRules") }
+                      ]
+                    }
+                  />
+              </Form.Item>
+              <Form.Item 
+                name="register-date" 
+                label={t("register-date")}
+                rules={[{ required: true, message: 'Please select a date!' }]}
+              >
+                <DatePicker />
+              </Form.Item>
+              <Form.Item 
+                name="title" 
+                label={t("title")}
+                rules={[{ required: true, message: 'Please input the title!' }]}
+              >
+                 <Input />
+              </Form.Item>
+              <Form.Item 
+                name="image-upload" 
+                className="text-center"
+                rules={[{ required: true, message: 'Please upload an image!' }]}
+              >
+                <Upload {...props} fileList={[]}>
+                  <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item 
+                name="description" 
+                label={t("desc")}
+                rules={[{ required: true, message: 'Please input the description!' }]}
+              >
+                <div ref={editQuillRef}></div>
+              </Form.Item>
+              <Form.Item 
+                name="main-image" 
+                label={t("main-image")}
+                rules={[{ required: true, message: 'Please input the main image!' }]}
+              >
+                <div ref={editQuillRefOther}></div>
+              </Form.Item>
+              <Form.Item>
+                <Button htmlType="submit" loading={loadingUpdate}>
+                  {t("update")}
                 </Button>
               </Form.Item>
             </Form>
