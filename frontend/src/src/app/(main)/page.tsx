@@ -184,7 +184,7 @@ const Index: React.FC = () => {
       }
     }).then((res) => {
       console.log('🎯 Game link received:', res.link);
-      const newWindow = window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+      const newWindow = window.open(res.link, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
       
       if (newWindow) {
         console.log('✅ Popup window opened successfully');

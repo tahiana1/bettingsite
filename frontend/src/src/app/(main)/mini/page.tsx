@@ -145,7 +145,7 @@ const MiniPage: React.FC = () => {
                                     className="bg-gradient-to-b cursor-pointer from-[#fce18f] to-[#774b03] text-white font-bold py-3 px-6 rounded-lg border border-[#ffe991] shadow-lg hover:from-[#774b03] hover:to-[#fce18f] transition-all duration-300 transform hover:scale-105"
                                     onClick={() => {
                                         if (company.name === "EOS 1min") {
-                                            window.open(`/eos1`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                            window.open(`/eos1`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
                                         } else {
                                             // Handle other games
                                             // setLoading(true);

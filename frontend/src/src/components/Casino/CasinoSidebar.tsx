@@ -51,7 +51,7 @@ const CasinoSidebar: React.FC = () => {
           }
       }).then((res) => {
           console.log(res.link);
-          window.open(res.link, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+          window.open(res.link, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
       }).catch((err) => {
           console.log(err);
       }).finally(() => {

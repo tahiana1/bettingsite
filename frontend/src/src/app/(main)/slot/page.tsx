@@ -166,7 +166,7 @@ const SlotPage: React.FC = () => {
                 nickname: profile?.nickname
             }
         }).then((res) => {
-            const newWindow = window.open(res.data, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+            const newWindow = window.open(res.data, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
             
             if (newWindow) {
                 console.log('✅ Popup window opened successfully');

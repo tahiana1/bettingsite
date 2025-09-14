@@ -49,7 +49,7 @@ const LogStatusPage: React.FC = () => {
   });
 
   const popupWindow = (id: number) => {
-    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=1200,height=800,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
   const onSearchLog = (v: string) => {
     let filters: { field: string; value: string; op: string }[] =
