@@ -378,6 +378,9 @@ func GetDashboard(c *gin.Context) {
 		Where("type = ? AND DATE(created_at AT TIME ZONE 'UTC') = ?", "withdrawal", today).
 		Count(&todaysWithdrawal)
 
+	var registeredUsers int64
+	initializers.DB.Model(&models.User{}).Where("status = ?", "P").Count(&registeredUsers)
+
 	// 14. Total registered users count (only pending users)
 	var registeredUsersCount int64
 	initializers.DB.Model(&models.User{}).Where("status = ?", "A").Count(&registeredUsersCount)
@@ -517,6 +520,7 @@ func GetDashboard(c *gin.Context) {
 	response.Stats.TodaysSubscribers = todaysSubscribers
 	response.Stats.TodaysWithdrawal = todaysWithdrawal
 	response.Stats.RegisteredUsersCount = registeredUsersCount
+	response.Stats.RegisteredUsers = int(registeredUsers)
 	response.Stats.FirstDeposit = firstDeposit
 	response.Stats.NumberOfLoginFailures = numberOfLoginFailures
 	response.Stats.NumberOfDepositorsToday = numberOfDepositorsToday
