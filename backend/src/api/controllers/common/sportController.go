@@ -12,7 +12,7 @@ import (
 	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 )
 
-// Get fetch the all sports
+// Get fetch the all sports}}}}
 func GetSports(c *gin.Context) {
 
 	today := time.Now().Truncate(24 * time.Hour)

@@ -50,18 +50,9 @@ const TotalTransferPage: React.FC = () => {
             ],
           },
           {
-            or: [
-              {
-                field: "users.role",
-                value: "A",
-                op: "eq",
-              },  
-              {
-                field: "users.role",
-                value: "P",
-                op: "eq",
-              },
-            ],
+            field: "users.role",
+            value: "U",
+            op: "eq",
           },
         ],
       },
