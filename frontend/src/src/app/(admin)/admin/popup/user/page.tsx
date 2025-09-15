@@ -1,3 +1,4 @@
+"use client";
 import { Tabs } from "antd";
 import UserBasicInformation from "./pages/basicInformation";
 import { Content } from "antd/es/layout/layout";
@@ -21,6 +22,7 @@ import UserBlackSearch from "./pages/blackSearch";
 import UserRollingSetting from "./pages/rollingSetting";
 import UserWithdrawDeposit from "./pages/withdrawDeposit";
 import UserNoteList from "./pages/noteList";
+import { useSearchParams } from "next/navigation";
 
  const tabs = [
     {
@@ -125,10 +127,23 @@ import UserNoteList from "./pages/noteList";
     // },
  ]
 
-const PopUpUser = () => {
+const PopUpUser: React.FC = () => {
+    const searchParams = useSearchParams();
+    const userid = searchParams.get('id') || "testuser";
+
+    const updatedTabs = tabs.map(tab => {
+        if (tab.key === "basicInformation") {
+            return {
+                ...tab,
+                children: <UserBasicInformation userid={userid} />
+            };
+        }
+        return tab;
+    });
+
     return (
         <Content className="w-full h-full bg-white p-3 bg-[white]">
-            <Tabs items={tabs} className={styles.customTabs} />
+            <Tabs items={updatedTabs} className={styles.customTabs} />
         </Content>
     )
 }

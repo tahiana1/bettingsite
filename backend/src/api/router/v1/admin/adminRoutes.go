@@ -105,4 +105,9 @@ func GetAdminRoute(r *gin.RouterGroup) {
 	{
 		rollingRouter.POST("/convert", controllers.ConvertRolling)
 	}
+
+	basicInfoRouter := r.Group("/basic-information")
+	{
+		basicInfoRouter.GET("/:userid", controllers.GetBasicInformation)
+	}
 }

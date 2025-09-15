@@ -113,7 +113,6 @@ func GetCategories(c *gin.Context) {
 func EditCategory(c *gin.Context) {
 	// Get the id from url
 	id := c.Param("id")
-
 	// Find the post
 	var category models.Category
 	result := initializers.DB.First(&category, id)

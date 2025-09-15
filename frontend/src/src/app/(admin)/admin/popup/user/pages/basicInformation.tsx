@@ -1,10 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Input, Layout, message, Select } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { ReloadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import { useTranslations } from "next-intl";
+import api from "@/api";
 // Mock API call function
 const mockApiCall = (field: string, value: string) => {
   return new Promise((resolve) => {
@@ -740,7 +741,11 @@ const MemoInput1Filed: React.FC<UserInfoFieldProps> = ({
 );
 
 
-const UserBasicInformation: React.FC = () => {
+interface UserBasicInformationProps {
+  userid?: string;
+}
+
+const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "testuser" }) => {
   const [fields, setFields] = useState({
     id: "",
     nickname: "",
@@ -842,6 +847,36 @@ const UserBasicInformation: React.FC = () => {
     adminNote: "",
     adminMemo2: "",
     xxx: "",
+    os: "",
+    device: "",
+    fingerPrint: "",
+    ip: "",
+    live: "",
+    slot: "",
+    hold: "",
+    entireLosing: "",
+    liveLosingBeDang: "",
+    slotLosingBeDang: "",
+    holdLosingBeDang: "",
+    losingMethod: "",
+    membershipDeposit: "",
+    membershipWithdrawal: "",
+    totalWithdrawal: "",
+    numberOfMembers: "",
+    rollingHoldings: "",
+    liveBetting: "",
+    liveWinning: "",
+    slotBetting: "",
+    slotJackpot: "",
+    rollingRate: "",
+    rollingTransition: "",
+    losingRate: "",
+    losingSettlement: "",
+    partnershipRolling: "",
+    partnershipMoneyInHand: "",
+    createdAt: "",
+    updatedAt: "",
+    currentIP: "",
   });
 
   const [loading, setLoading] = useState({
@@ -945,18 +980,201 @@ const UserBasicInformation: React.FC = () => {
     adminNote: false,
     adminMemo2: false,
     xxx: false,
+    os: false,
+    device: false,
+    fingerPrint: false,
+    ip: false,
+    live: false,
+    slot: false,
+    hold: false,
+    entireLosing: false,
+    liveLosingBeDang: false,
+    slotLosingBeDang: false,
+    holdLosingBeDang: false,
+    losingMethod: false,
+    membershipDeposit: false,
+    membershipWithdrawal: false,
+    totalWithdrawal: false,
+    numberOfMembers: false,
+    rollingHoldings: false,
+    liveBetting: false,
+    liveWinning: false,
+    slotBetting: false,
+    slotJackpot: false,
+    rollingRate: false,
+    rollingTransition: false,
+    losingRate: false,
+    losingSettlement: false,
+    partnershipRolling: false,
+    partnershipMoneyInHand: false,
+    createdAt: false,
+    updatedAt: false,
+    currentIP: false,
   });
 
   const t = useTranslations();
 
+  // Fetch user data from API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await api(`admin/basic-information/${userid}`, {
+          method: "GET",
+        });
+        
+        if (response) {
+          setFields({
+            id: response.id || "",
+            nickname: response.nickname || "",
+            password: "",
+            exchangePassword: response.exchangePassword || "",
+            allas: response.allas || "",
+            depositor: response.depositor || "",
+            bankName: response.bankName || "",
+            accountnumber: response.accountNumber || "",
+            cellphonecarrier: response.cellphoneCarrier || "",
+            cellphone: response.cellphone || "",
+            birthday: response.birthday || "",
+            affiliation: response.affiliation || "",
+            topDistributor: response.topDistributor || "",
+            recommender: response.recommender || "",
+            level: response.level || "",
+            memberType: response.memberType || "",
+            color: response.color || "",
+            onoff: response.onOff || "",
+            accountblock: response.accountBlock || "",
+            residentNumber: response.residentNumber || "",
+            useUSDT: response.useUSDT || "",
+            walletAddress: response.walletAddress || "",
+            lastDeposit: response.lastDeposit || "",
+            currencyExchangeRolling: response.currencyExchangeRolling || "",
+            currencyExchnageRollingBonus: response.currencyExchangeRollingBonus || "",
+            exchangeRollingBettingAmount: response.exchangeRollingBettingAmount || "",
+            currencyRollover: response.currencyRollover || "",
+            amountHold: response.amountHold || "",
+            amountHoldPayment: response.amountHoldPayment || "",
+            amountHoldCollect: response.amountHoldCollect || "",
+            coupon: response.coupon || "",
+            couponProcessing: response.couponProcessing || "",
+            totalLoss: response.totalLoss || "",
+            totalLossProcessing: response.totalLossProcessing || "",
+            rollingGold: response.rollingGold || "",
+            rollingGoldProcessing: response.rollingGoldProcessing || "",
+            sameIPCheck: response.sameIPCheck || "",
+            rollingPercenty: response.rollingPercenty || "",
+            slotcityPriorityUse: response.slotcityPriorityUse || "",
+            webLoginAvailable: response.webLoginAvailable || "",
+            changeOfDistributorProperties: response.changeOfDistributorProperties || "",
+            delegationOfAdminstrator: response.delegationOfAdminstrator || "",
+            signUpCode: response.signUpCode || "",
+            codeSignupAvailable: response.codeSignupAvailable || "",
+            displayMemberCode: response.displayMemberCode || "",
+            initialLevelOfAcquaintanceRegistration: response.initialLevelOfAcquaintanceRegistration || "",
+            memberPageAlarmSound: response.memberPageAlarmSound || "",
+            useAttendanceCheck: response.useAttendanceCheck || "",
+            useRoulette: response.useRoulette || "",
+            customerCenterInquiryAvailable: response.customerCenterInquiryAvailable || "",
+            createPost: response.createPost || "",
+            whiteCommentOnPost: response.whiteCommentOnPost || "",
+            pointsAwardedForThePost: response.pointsAwardedForThePost || "",
+            usingVirtualAccountApi: response.usingVirtualAccountApi || "",
+            usingOfWinningPoints: response.usingOfWinningPoints || "",
+            usePaybackPayment: response.usePaybackPayment || "",
+            useRefundLimit: response.useRefundLimit || "",
+            dailyFirstDepositBonusLimit: response.dailyFirstDepositBonusLimit || "",
+            signUpFirstDepositBonusLimit: response.signUpFirstDepositBonusLimit || "",
+            replenishmentBonusLimit: response.replenishmentBonusLimit || "",
+            surpriseBonusLimit: response.surpriseBonusLimit || "",
+            ignoreOption: response.ignoreOption || "",
+            rollingConversionAutomaticApproval: response.rollingConversionAutomaticApproval || "",
+            cutBettingHistory: response.cutBettingHistory || "",
+            maximumAmountOfBettingHistoryReduction: response.maximumAmountOfBettingHistoryReduction || "",
+            percentageReductionInBettingAmount: response.percentageReductionInBettingAmount || "",
+            waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted: response.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted || "",
+            waitingTimeForReApplicationAfterChargingIsCompleted: response.waitingTimeForReApplicationAfterChargingIsCompleted || "",
+            waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted: response.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted || "",
+            changeMemberProperties: response.changeMemberProperties || "",
+            distributor: response.distributor || "",
+            changeOfMemberProperties: response.changeOfMemberProperties || "",
+            displayOfAdministrator: response.displayOfAdministrator || "",
+            partnerButtonDisplay: response.partnerButtonDisplay || "",
+            partnerMultiAccessPossible: response.partnerMultiAccessPossible || "",
+            displayPartnerReductionDetail: response.displayPartnerReductionDetail || "",
+            displayPartnerRollingPaymentRecoveryHistory: response.displayPartnerRollingPaymentRecoveryHistory || "",
+            createSubDistributor: response.createSubDistributor || "",
+            createSubordinatorDirectMember: response.createSubordinatorDirectMember || "",
+            accessToSubDetails: response.accessToSubDetails || "",
+            accessToSubBankInformation: response.accessToSubBankInformation || "",
+            lowerConnectionCanBeKicked: response.lowerConnectionCanBeKicked || "",
+            subMoneyPayable: response.subMoneyPayable || "",
+            lowerMoneyRecoveryPossible: response.lowerMoneyRecoveryPossible || "",
+            lowerLosingChangePossible: response.lowerLosingChangePossible || "",
+            lowerRollingChangeable: response.lowerRollingChangeable || "",
+            referalBenefitsMember: response.referalBenefitsMember || "",
+            referalBenefitsMini: response.referalBenefitsMini || "",
+            referalBenefitsVirtual: response.referalBenefitsVirtual || "",
+            referalBenefitsSportsSinglePoles: response.referalBenefitsSportsSinglePoles || "",
+            referalBenefitsSports2Poles: response.referalBenefitsSports2Poles || "",
+            referalBenefitsSports3Poles: response.referalBenefitsSports3Poles || "",
+            referalBenefitsSports4Poles: response.referalBenefitsSports4Poles || "",
+            referalBenefitsSportsDapol: response.referalBenefitsSportsDapol || "",
+            sportsBettingAllowed: response.sportsBettingAllowed || "",
+            minimumFolderForSportsBetting: response.minimumFolderForSportsBetting || "",
+            accountMemo: response.accountMemo || "",
+            adminNote: response.adminNote || "",
+            adminMemo2: response.adminMemo2 || "",
+            xxx: response.xxx || "",
+            os: response.os || "",
+            device: response.device || "",
+            fingerPrint: response.fingerPrint || "",
+            ip: response.ip || "",
+            live: response.live || "",
+            slot: response.slot || "",
+            hold: response.hold || "",
+            entireLosing: response.entireLosing || "",
+            liveLosingBeDang: response.liveLosingBeDang || "",
+            slotLosingBeDang: response.slotLosingBeDang || "",
+            holdLosingBeDang: response.holdLosingBeDang || "",
+            losingMethod: response.losingMethod || "",
+            membershipDeposit: response.membershipDeposit || "",
+            membershipWithdrawal: response.membershipWithdrawal || "",
+            totalWithdrawal: response.totalWithdrawal || "",
+            numberOfMembers: response.numberOfMembers || "",
+            rollingHoldings: response.rollingHoldings || "",
+            liveBetting: response.liveBetting || "",
+            liveWinning: response.liveWinning || "",
+            slotBetting: response.slotBetting || "",
+            slotJackpot: response.slotJackpot || "",
+            rollingRate: response.rollingRate || "",
+            rollingTransition: response.rollingTransition || "",
+            losingRate: response.losingRate || "",
+            losingSettlement: response.losingSettlement || "",
+            partnershipRolling: response.partnershipRolling || "",
+            partnershipMoneyInHand: response.partnershipMoneyInHand || "",
+            createdAt: response.createdAt || "",
+            updatedAt: response.updatedAt || "",
+            currentIP: response.currentIP || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+        message.error("Failed to fetch user data");
+      }
+    };
+
+    if (userid) {
+      fetchUserData();
+    }
+  }, [userid]);     
+
   const handleChange = (field: keyof typeof fields) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFields((prev) => ({ ...prev, [field]: e.target.value }));
+    // setFields((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   const handleButtonClick = (field: keyof typeof fields) => async () => {
-    setLoading((prev) => ({ ...prev, [field]: true }));
+    // setLoading((prev) => ({ ...prev, [field]: true }));
     console.log(field, fields[field]);
     // try {
     //   // Replace mockApiCall with your real API call
@@ -1067,7 +1285,7 @@ const UserBasicInformation: React.FC = () => {
             <DateInfoField 
               label={t("birthday")}
               placeholder={t("birthday")}
-              value={fields.cellphone}
+              value={fields.birthday}
               onChange={handleChange("birthday")}
               buttonLabel="Change"
               onButtonClick={handleButtonClick("birthday")}
@@ -1212,18 +1430,43 @@ const UserBasicInformation: React.FC = () => {
                 buttonLabel="Change"
                 onButtonClick={handleButtonClick("currencyRollover")}
                 loading={loading.currencyRollover}
-            />  
+            />
+            <UserInfoStyle1Field
+              label="Live Rate"
+              placeholder="Live Game Rate"
+              value={fields.live}
+            />
+            <UserInfoStyle1Field
+              label="Slot Rate"
+              placeholder="Slot Game Rate"
+              value={fields.slot}
+            />
+            <UserInfoStyle1Field
+              label="Hold Amount"
+              placeholder="Hold Amount"
+              value={fields.hold}
+            />
+            <UserInfoStyle1Field
+              label="Total Deposit"
+              placeholder="Total Deposit"
+              value={fields.membershipDeposit}
+            />
+            <UserInfoStyle1Field
+              label="Total Withdrawal"
+              placeholder="Total Withdrawal"
+              value={fields.totalWithdrawal}
+            />
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle1Field
               label={t("amountHold")}
               placeholder={t("amountHold")}
-              value={"1000000"}
+              value={fields.amountHold}
             />
             <UserInfoStyle2Field
               label={t("handingOfBalance")}
               placeholder={t("handingOfBalance")}
-              value={""}
+              value={fields.amountHold}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
               onButtonClickCollect={handleButtonClick("amountHold")}
@@ -1232,12 +1475,12 @@ const UserBasicInformation: React.FC = () => {
             <UserInfoStyle1Field
               label={t("coupon(Quantity)")}
               placeholder={t("coupon(Quantity)")}
-              value={"1000000"}
+              value={fields.coupon}
             />
             <UserInfoStyle2Field
               label={t("couponProcessing")}
               placeholder={t("couponProcessing")}
-              value={""}
+              value={fields.couponProcessing}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
               onButtonClickCollect={handleButtonClick("amountHold")}
@@ -1246,12 +1489,12 @@ const UserBasicInformation: React.FC = () => {
             <UserInfoStyle1Field
               label={t("totalLoss")}
               placeholder={t("totalLoss")}
-              value={"1000000"}
+              value={fields.totalLoss}
             />
             <UserInfoStyle2Field
               label={t("totalLossProcessing")}
               placeholder={t("totalLossProcessing")}
-              value={""}
+              value={fields.totalLossProcessing}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
               onButtonClickCollect={handleButtonClick("amountHold")}
@@ -1260,12 +1503,12 @@ const UserBasicInformation: React.FC = () => {
              <UserInfoStyle1Field
               label={t("rollingGold")}
               placeholder={t("rollingGold")}
-              value={"1000000"}
+              value={fields.rollingGold}
             />
             <UserInfoStyle2Field
               label={t("rollingGoldProcessing")}
               placeholder={t("rollingGoldProcessing")}
-              value={""}
+              value={fields.rollingGoldProcessing}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
               onButtonClickCollect={handleButtonClick("amountHold")}
@@ -1300,10 +1543,20 @@ const UserBasicInformation: React.FC = () => {
               placeholder={t("frequentlyUsedGames")}
               value={""}
             />
+            <UserInfoStyle1Field
+              label="OS"
+              placeholder="Operating System"
+              value={fields.os}
+            />
+            <UserInfoStyle1Field
+              label="Device"
+              placeholder="Device Information"
+              value={fields.device}
+            />
              <UserInfoStyle1Field
               label={t("mostRecentIP")}
               placeholder={t("mostRecentIP")}
-              value={""}
+              value={fields.currentIP || ""}
             />
             <UserInfoStyle3Field
               label={t("recentlyConnectedDevice")}
