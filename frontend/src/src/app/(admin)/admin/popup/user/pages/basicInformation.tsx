@@ -4,7 +4,7 @@ import { Button, Input, Layout, message, Select } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import { ReloadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-
+import { useTranslations } from "next-intl";
 // Mock API call function
 const mockApiCall = (field: string, value: string) => {
   return new Promise((resolve) => {
@@ -947,6 +947,8 @@ const UserBasicInformation: React.FC = () => {
     xxx: false,
   });
 
+  const t = useTranslations();
+
   const handleChange = (field: keyof typeof fields) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -990,7 +992,7 @@ const UserBasicInformation: React.FC = () => {
         <div className="flex gap-20">
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoField
-              label="id"
+              label={t("id")}
               placeholder="id"
               value={fields.id}
               onChange={handleChange("id")}
@@ -999,7 +1001,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.id}
             />
             <UserInfoField
-              label="nickname"
+              label={t("nickname")}
               placeholder="Nickname"
               value={fields.nickname}
               onChange={handleChange("nickname")}
@@ -1008,16 +1010,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.nickname}
             />
             <UserInfoField
-              label="password"
-              placeholder="Password"
-              value={fields.password}
-              onChange={handleChange("password")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("password")}
-              loading={loading.password}
-            />
-            <UserInfoField
-              label="exchangePassword"
+              label={t("exchangePassword")}
               placeholder="Exchange Password"
               value={fields.exchangePassword}
               onChange={handleChange("exchangePassword")}
@@ -1026,8 +1019,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.exchangePassword}
             />
             <UserInfoField
-              label="allas"
-              placeholder="Allas"
+              label={t("allas")}
+              placeholder={t("allas")}
               value={fields.allas}
               onChange={handleChange("allas")}
               buttonLabel="Change"
@@ -1035,16 +1028,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.allas}
             />
             <UserInfoField
-              label="depositor"
-              placeholder="depositor"
-              value={fields.depositor}
-              onChange={handleChange("depositor")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("depositor")}
-              loading={loading.depositor}
-            />
-            <UserInfoField
-              label="bankName"
+              label={t("bankName")}
               placeholder="bankName"
               value={fields.bankName}
               onChange={handleChange("bankName")}
@@ -1053,8 +1037,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.bankName}
             />
             <UserInfoField
-              label="accountnumber"
-              placeholder="accountnumber"
+              label={t("accountnumber")}
+              placeholder={t("accountnumber")}
               value={fields.accountnumber}
               onChange={handleChange("accountnumber")}
               buttonLabel="Change"
@@ -1062,8 +1046,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.accountnumber}
             />
             <UserInfoField
-              label="cellphonecarrier"
-              placeholder="cellphonecarrier"
+              label={t("cellphonecarrier")}
+              placeholder={t("cellphonecarrier")}
               value={fields.cellphonecarrier}
               onChange={handleChange("cellphonecarrier")}
               buttonLabel="Change"
@@ -1071,8 +1055,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.cellphonecarrier}
             />
             <UserInfoField
-              label="cellphone"
-              placeholder="cellphone"
+              label={t("cellphone")}
+              placeholder={t("cellphone")}
               value={fields.cellphone}
               onChange={handleChange("cellphone")}
               buttonLabel="Change"
@@ -1081,8 +1065,8 @@ const UserBasicInformation: React.FC = () => {
             />
 
             <DateInfoField 
-              label="birthday"
-              placeholder="birthday"
+              label={t("birthday")}
+              placeholder={t("birthday")}
               value={fields.cellphone}
               onChange={handleChange("birthday")}
               buttonLabel="Change"
@@ -1091,8 +1075,8 @@ const UserBasicInformation: React.FC = () => {
             />
 
               <UserInfoField
-                  label="affiliation"
-                  placeholder="affiliation"
+                  label={t("affiliation")}
+                  placeholder={t("affiliation")}
                   value={fields.affiliation}
                   onChange={handleChange("affiliation")}
                   buttonLabel="Change"
@@ -1101,28 +1085,28 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <DisabledInfoField
-                  label="topDistributor"
-                  placeholder="topDistributor"
+                  label={t("topDistributor")}
+                  placeholder={t("topDistributor")}
                   value={fields.topDistributor}
                   onChange={handleChange("topDistributor")}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("topDistributor")}
                   loading={loading.topDistributor}
               />
-
+{/* 
               <UserInfoField 
-                  label="Resident registration number"
+                  label={t("residentRegistrationNumber")}
                   placeholder=""
                   value={fields.residentNumber}
                   onChange={handleChange("residentNumber")}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("residentNumber")}
                   loading={loading.residentNumber}
-              />
+              /> */}
 
               <LevelInfoField
-                  label="level"
-                  placeholder="level"
+                  label={t("level")}
+                  placeholder={t("level")}
                   value={fields.level}
                   onChange={handleChange("level")}
                   buttonLabel="Change"
@@ -1131,8 +1115,8 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <MemberTypeField
-                  label="memberType"
-                  placeholder="memberType"
+                  label={t("memberType")}
+                  placeholder={t("memberType")}
                   value={fields.memberType}
                   onChange={handleChange("memberType")}
                   buttonLabel="Change"
@@ -1141,8 +1125,8 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <ColorTypeField
-                  label="color"
-                  placeholder="color"
+                  label={t("color")}
+                  placeholder={t("color")}
                   value={fields.color}
                   onChange={handleChange("color")}
                   buttonLabel="Change"
@@ -1151,7 +1135,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <OnOffTypeField
-                  label="Account Block"
+                  label={t("accountBlock")}
                   placeholder="ON/OFF"
                   value={fields.onoff}
                   onChange={handleChange("onoff")}
@@ -1161,7 +1145,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <OnOffTypeField
-                  label="Use USDT"
+                  label={t("useUSDT")}
                   placeholder=""
                   value={fields.useUSDT}
                   onChange={handleChange("useUSDT")}
@@ -1171,7 +1155,7 @@ const UserBasicInformation: React.FC = () => {
               /> 
 
               <UserInfoField
-                  label="Wallet Address"
+                  label={t("walletAddress")}
                   placeholder=""
                   value={fields.walletAddress}
                   onChange={handleChange("walletAddress")}
@@ -1181,7 +1165,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <DisabledInfoField
-                  label="Last Deposit for currency exchange rolling"
+                  label={t("lastDepositForCurrencyExchangeRolling")}
                   placeholder=""
                   value={fields.lastDeposit}
                   onChange={handleChange("lastDeposit")}
@@ -1191,7 +1175,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <DisabledInfoField
-                  label="Currency exchange rolling"
+                  label={t("currencyExchangeRolling")}
                   placeholder=""
                   value={fields.currencyExchangeRolling}
                   onChange={handleChange("currencyExchangeRolling")}
@@ -1201,7 +1185,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
               <DisabledInfoField
-                  label="Currency exchange rolling bonus"
+                  label={t("currencyExchangeRollingBonus")}
                   placeholder=""  
                   value={fields.currencyExchnageRollingBonus}
                   onChange={handleChange("currencyExchnageRollingBonus")}
@@ -1211,7 +1195,7 @@ const UserBasicInformation: React.FC = () => {
               />  
 
               <DisabledInfoField
-                  label="Exchange rolling betting amount"
+                  label={t("exchangeRollingBettingAmount")}
                   placeholder=""
                   value={fields.exchangeRollingBettingAmount}
                   onChange={handleChange("exchangeRollingBettingAmount")}
@@ -1221,7 +1205,7 @@ const UserBasicInformation: React.FC = () => {
               />
 
             <DisabledCurrencyInfoField
-                label="Currency Rollover"   
+                label={t("currencyRollover")}   
                 placeholder=""  
                 value={fields.currencyRollover}
                 onChange={handleChange("currencyRollover")}
@@ -1232,13 +1216,13 @@ const UserBasicInformation: React.FC = () => {
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle1Field
-              label="Amount Hold"
-              placeholder="Amount Hold"
+              label={t("amountHold")}
+              placeholder={t("amountHold")}
               value={"1000000"}
             />
             <UserInfoStyle2Field
-              label="Handing of balance"
-              placeholder="Handing of balance"
+              label={t("handingOfBalance")}
+              placeholder={t("handingOfBalance")}
               value={""}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
@@ -1246,13 +1230,13 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.amountHold}
             />
             <UserInfoStyle1Field
-              label="Coupon (quantity)"
-              placeholder="Coupon (quantity)"
+              label={t("coupon(Quantity)")}
+              placeholder={t("coupon(Quantity)")}
               value={"1000000"}
             />
             <UserInfoStyle2Field
-              label="Coupon processing"
-              placeholder="Coupon processing"
+              label={t("couponProcessing")}
+              placeholder={t("couponProcessing")}
               value={""}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
@@ -1260,13 +1244,13 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.amountHold}
             />
             <UserInfoStyle1Field
-              label="Total loss"
-              placeholder="Total loss"
+              label={t("totalLoss")}
+              placeholder={t("totalLoss")}
               value={"1000000"}
             />
             <UserInfoStyle2Field
-              label="Total loss processing"
-              placeholder="Total loss processing"
+              label={t("totalLossProcessing")}
+              placeholder={t("totalLossProcessing")}
               value={""}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
@@ -1274,13 +1258,13 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.amountHold}
             />
              <UserInfoStyle1Field
-              label="Rolling gold"
-              placeholder="Rolling gold"
+              label={t("rollingGold")}
+              placeholder={t("rollingGold")}
               value={"1000000"}
             />
             <UserInfoStyle2Field
-              label="Rolling gold processing"
-              placeholder="Rolling gold processing"
+              label={t("rollingGoldProcessing")}
+              placeholder={t("rollingGoldProcessing")}
               value={""}
               onChange={handleChange("amountHold")}
               onButtonClickPayment={handleButtonClick("amountHold")}
@@ -1288,23 +1272,23 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.amountHold}
             />
             <UserInfoStyle1Field
-              label="Sign up path"
-              placeholder="Sign up path"
+              label={t("signUpPath")}
+              placeholder={t("signUpPath")}
               value={""}
             />
             <UserInfoStyle1Field
-              label="Subscribed domain"
-              placeholder="Subscribed domain"
+              label={t("subscribedDomain")}
+              placeholder={t("subscribedDomain")}
               value={""}
             />
             <UserInfoStyle1Field
-              label="Date of registered"
-              placeholder="Date of registered"
+              label={t("dateOfRegistered")}
+              placeholder={t("dateOfRegistered")}
               value={""}
             />
             <UserInfoStyle3Field
-              label="Same IP Check"
-              placeholder="Same IP Check"
+              label={t("sameIPCheck")}
+              placeholder={t("sameIPCheck")}
               value={""}
               buttonLabel="Same IP Check"
               onChange={handleChange("sameIPCheck")}
@@ -1312,18 +1296,18 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.sameIPCheck}
             />
             <UserInfoStyle1Field
-              label="Frequently used games"
-              placeholder="Frequently used game"
+              label={t("frequentlyUsedGames")}
+              placeholder={t("frequentlyUsedGames")}
               value={""}
             />
              <UserInfoStyle1Field
-              label="Most recent IP"
-              placeholder="Most recent IP"
+              label={t("mostRecentIP")}
+              placeholder={t("mostRecentIP")}
               value={""}
             />
             <UserInfoStyle3Field
-              label="Recently connected device"
-              placeholder="Recently connected device"
+              label={t("recentlyConnectedDevice")}
+              placeholder={t("recentlyConnectedDevice")}
               value={""}
               buttonLabel="Expulsion"
               onChange={handleChange("sameIPCheck")}
@@ -1331,7 +1315,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.sameIPCheck}
             />
             <DisabledRollingPercentyInfoField
-              label="Rolling%"   
+              label={t("rollingPercent")}   
               placeholder=""  
               value={fields.rollingPercenty}
               onChange={handleChange("rollingPercenty")}
@@ -1349,7 +1333,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.rollingPercenty}
             />  
             <SlotcityPriorityUseField
-              label="Slotcity Priority Use"   
+              label={t("slotcityPriorityUse")}   
               placeholder=""  
               value={fields.slotcityPriorityUse}
               onChange={handleChange("slotcityPriorityUse")}
@@ -1360,7 +1344,7 @@ const UserBasicInformation: React.FC = () => {
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
-              label="Web login available"   
+              label={t("webLoginAvailable")}   
               placeholder=""  
               type={distributorType}
               value={fields.webLoginAvailable}
@@ -1370,7 +1354,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.webLoginAvailable}
             />
             <UserInfoStyle5Field
-              label="Sign up code"   
+              label={t("signUpCode")}   
               placeholder="" 
               value={fields.signUpCode}
               onChange={handleChange("signUpCode")}
@@ -1379,7 +1363,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.signUpCode}
             />
             <UserInfoStyle4Field
-              label="Code signup available"   
+              label={t("codeSignUpAvailable")}   
               placeholder=""  
               type={codeSignupAvailableType}
               value={fields.codeSignupAvailable}
@@ -1389,7 +1373,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.codeSignupAvailable}
             />  
             <UserInfoStyle4Field
-              label="Display member code"   
+              label={t("displayMemberCode")}   
               placeholder=""  
               type={onoffType}
               value={fields.displayMemberCode}
@@ -1399,7 +1383,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.displayMemberCode}
             />  
             <UserInfoStyle6Field
-              label="Initial level of acquaintance registration"   
+              label={t("initialLevelOfAcquaintanceRegistration")}   
               placeholder=""  
               type={levelOption}
               value={fields.initialLevelOfAcquaintanceRegistration}
@@ -1409,7 +1393,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.initialLevelOfAcquaintanceRegistration}
             />
             <UserInfoStyle6Field
-              label="Member page alarm sound"   
+              label={t("memberPageAlarmSound")}   
               placeholder=""  
               type={onoffType}
               value={fields.memberPageAlarmSound}
@@ -1419,7 +1403,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.memberPageAlarmSound}
             />
             <UserInfoStyle4Field
-              label="Use attendance check"   
+              label={t("useAttendanceCheck")}   
               placeholder=""  
               type={onoffType}
               value={fields.useAttendanceCheck}
@@ -1429,7 +1413,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.useAttendanceCheck}
             />  
             <UserInfoStyle4Field
-              label="Use the roulette"   
+              label={t("useTheRoulette")}   
               placeholder=""  
               type={onoffType}
               value={fields.useRoulette}
@@ -1439,7 +1423,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.useRoulette}
             />  
             <UserInfoStyle4Field
-              label="Customer center inquiry available"   
+              label={t("customCenterInquiryAvailable")}   
               placeholder=""  
               type={onoffType}
               value={fields.customerCenterInquiryAvailable}
@@ -1449,7 +1433,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.customerCenterInquiryAvailable}
             />  
             <UserInfoStyle4Field
-              label="Create post"   
+              label={t("createPost")}   
               placeholder=""  
               type={onoffType}
               value={fields.createPost}
@@ -1459,7 +1443,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.createPost}
             />  
             <UserInfoStyle4Field
-              label="White a comment on the post"   
+              label={t("whiteACommentOnThePost")}   
               placeholder=""  
               type={onoffType}
               value={fields.whiteCommentOnPost}
@@ -1469,7 +1453,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.whiteCommentOnPost}
             />  
             <UserInfoStyle4Field
-              label="Points awarded for the post"   
+              label={t("pointsAwardedForThePost")}   
               placeholder=""  
               type={onoffType}
               value={fields.pointsAwardedForThePost}
@@ -1479,7 +1463,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.pointsAwardedForThePost}
             />  
             <UserInfoStyle6Field
-              label="Using virtualAccount api"   
+              label={t("usingVirtualAccountAPI")}   
               placeholder=""  
               type={onoffType}
               value={fields.usingVirtualAccountApi}
@@ -1489,7 +1473,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.usingVirtualAccountApi}
             /> 
             <UserInfoStyle6Field
-              label="Using of winning points"   
+              label={t("useOfWinningPoints")}   
               placeholder=""  
               type={onoffType}
               value={fields.usingOfWinningPoints}
@@ -1499,7 +1483,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.usingOfWinningPoints}
             />  
             <UserInfoStyle6Field
-              label="Use payback payment"   
+              label={t("usePaybackPayment")}   
               placeholder=""  
               type={onoffType}
               value={fields.usePaybackPayment}
@@ -1509,7 +1493,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.usePaybackPayment}
             />  
             <UserInfoStyle6Field
-              label="Use the refund limit"   
+              label={t("useRefundList")}   
               placeholder=""  
               type={onoffType}
               value={fields.useRefundLimit}
@@ -1519,7 +1503,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.useRefundLimit}
             />  
             <UserInfoStyle4Field
-              label="Daily first deposit bonus limit"   
+              label={t("dailyFirstDepositBonusLimit")}   
               placeholder=""  
               type={onoffType}
               value={fields.dailyFirstDepositBonusLimit}
@@ -1529,7 +1513,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.dailyFirstDepositBonusLimit}
             />  
             <UserInfoStyle4Field
-              label="SignUp first deposit bonus limit"   
+              label={t("signUpFirstDepositBonusLimit")}   
               placeholder=""  
               type={onoffType}
               value={fields.signUpFirstDepositBonusLimit}
@@ -1539,7 +1523,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.signUpFirstDepositBonusLimit}
             />  
             <UserInfoStyle4Field
-              label="Replenishment Bonus Limit"   
+              label={t("replenishmentBonusLimit")}   
               placeholder=""  
               type={onoffType}
               value={fields.replenishmentBonusLimit}
@@ -1549,7 +1533,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.replenishmentBonusLimit}
             />
             <UserInfoStyle4Field
-              label="Surprise Bonus Limit"   
+              label={t("surpriseBonusLimit")}   
               placeholder=""  
               type={onoffType}
               value={fields.surpriseBonusLimit}
@@ -1559,7 +1543,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.surpriseBonusLimit}
             />  
             <UserInfoStyle4Field
-              label="[Apply rolling to members only] Ignore option"   
+              label={t("[applyRollingToMembersOnly]ignoreOption")}   
               placeholder=""  
               type={onoffType}
               value={fields.ignoreOption}
@@ -1569,7 +1553,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.ignoreOption}
             />  
             <UserInfoStyle6Field
-              label="Rolling conversion automatic approval"   
+              label={t("rollingConversionAutomaticApproval")}   
               placeholder=""  
               type={onoffType}
               value={fields.rollingConversionAutomaticApproval}
@@ -1579,7 +1563,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.rollingConversionAutomaticApproval}
             />  
             <UserInfoStyle7Field
-              label="Cut betting history"   
+              label={t("cutBettingHistory")}   
               placeholder=""  
               type={cutBettingHistoryType}
               value={fields.cutBettingHistory}
@@ -1589,7 +1573,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.cutBettingHistory}
             />  
             <UserInfoStyle8Field
-              label="Cut betting history"   
+              label={t("cutBettingHistory")}   
               placeholder=""  
               type={cutBettingHistoryType}
               value={fields.cutBettingHistory}
@@ -1599,7 +1583,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.cutBettingHistory}
             />  
             <UserInfoStyle8Field
-              label="Maximum amount of betting history reduction"   
+              label={t("maximumAmountOfBettingHistoryReduction")}   
               placeholder=""  
               type={cutBettingHistoryType}
               value={fields.maximumAmountOfBettingHistoryReduction}
@@ -1609,7 +1593,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.maximumAmountOfBettingHistoryReduction}
             /> 
             <UserInfoStyle8Field
-              label="% reduction in betting amount"   
+              label={t("%reductionInBettingAmount")}   
               placeholder=""  
               type={cutBettingHistoryType}
               value={fields.percentageReductionInBettingAmount}
@@ -1619,7 +1603,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.percentageReductionInBettingAmount}
             /> 
             <UserInfoStyle4Field
-              label="Waiting time for re-application after currency exchange is completed"   
+              label={t("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}   
               placeholder=""  
               type={onoffType}
               value={fields.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
@@ -1629,7 +1613,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
             />
             <UserInfoStyle4Field
-              label="Waiting time for re-application after charging is completed"   
+              label={t("waitingTimeForReApplicationAfterChargingIsCompleted")}   
               placeholder=""  
               type={onoffType}
               value={fields.waitingTimeForReApplicationAfterChargingIsCompleted}
@@ -1639,7 +1623,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.waitingTimeForReApplicationAfterChargingIsCompleted}
             />
             <UserInfoStyle4Field
-              label="Waiting time for currency exchange request after charging is completed"   
+              label={t("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}   
               placeholder=""  
               type={onoffType}
               value={fields.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
@@ -1649,7 +1633,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
             />  
             <UserInfoStyle4Field
-              label="Change member properties"   
+              label={t("changeMemberProperties")}   
               placeholder=""  
               type={onoffType}
               value={fields.changeMemberProperties}
@@ -1662,7 +1646,7 @@ const UserBasicInformation: React.FC = () => {
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
-              label="Change of member properties"   
+              label={t("changeOfMemberProperties")}   
               placeholder=""  
               type={onoffType}
               value={fields.changeOfMemberProperties}
@@ -1672,7 +1656,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.changeOfMemberProperties}
             />  
             <UserInfoStyle4Field
-              label="Change of distributor properties"   
+              label={t("changeOfDistributorProperties")}   
               placeholder=""  
               type={onoffType}
               value={fields.changeOfDistributorProperties}
@@ -1682,7 +1666,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.changeOfDistributorProperties}
             />  
             <UserInfoStyle4Field
-              label="Delegation of Adminstrator"   
+              label={t("delegationOfAdminstrator")}   
               placeholder=""  
               type={onoffType}
               value={fields.delegationOfAdminstrator}
@@ -1692,7 +1676,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.delegationOfAdminstrator}
             /> 
             <UserInfoStyle4Field
-              label="Display of Administrator"   
+              label={t("displayOfAdminstrator")}   
               placeholder=""  
               type={onoffType}
               value={fields.displayOfAdministrator}
@@ -1702,7 +1686,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.displayOfAdministrator}
             />
             <UserInfoStyle4Field
-              label="Partner button display"   
+              label={t("partnerButtonDisplay")}   
               placeholder=""  
               type={onoffType}
               value={fields.partnerButtonDisplay}
@@ -1712,7 +1696,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.partnerButtonDisplay}
             /> 
             <UserInfoStyle4Field
-              label="Partner multi-access possible"   
+              label={t("partnerMultiAccessPossible")}   
               placeholder=""  
               type={onoffType}
               value={fields.partnerMultiAccessPossible}
@@ -1722,7 +1706,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.partnerMultiAccessPossible}
             /> 
             <UserInfoStyle4Field
-              label="Display partner reduction details"   
+              label={t("displayPartnerreductionDetails")}   
               placeholder=""  
               type={onoffType}
               value={fields.displayPartnerReductionDetail}
@@ -1732,7 +1716,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.displayPartnerReductionDetail}
             /> 
             <UserInfoStyle4Field
-              label="Display of Partner Rolling Payment/Recovery History"   
+              label={t("displayOfPartnerRollingPayment/RecoveryHistory")}   
               placeholder=""  
               type={onoffType}
               value={fields.displayPartnerRollingPaymentRecoveryHistory}
@@ -1742,7 +1726,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.displayPartnerRollingPaymentRecoveryHistory}
             /> 
             <UserInfoStyle6Field
-              label="Create a sub-distributor"   
+              label={t("createSubDistributor")}   
               placeholder=""  
               type={onoffType}
               value={fields.createSubDistributor}
@@ -1752,7 +1736,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.createSubDistributor}
             /> 
             <UserInfoStyle6Field
-              label="Create a subordinator direct member"   
+              label={t("createASuborDinatorDirectMember")}   
               placeholder=""  
               type={onoffType}
               value={fields.createSubordinatorDirectMember}
@@ -1762,7 +1746,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.createSubordinatorDirectMember}
             /> 
             <UserInfoStyle6Field
-              label="Access to sub-details"   
+              label={t("accessToSubDetails")}   
               placeholder=""  
               type={onoffType}
               value={fields.accessToSubDetails}
@@ -1772,7 +1756,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.accessToSubDetails}
             /> 
             <UserInfoStyle6Field
-              label="Access to sub-bank information"   
+              label={t("accessToSubBankInformation")}   
               placeholder=""  
               type={onoffType}
               value={fields.accessToSubBankInformation}
@@ -1782,7 +1766,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.accessToSubBankInformation}
             />
             <UserInfoStyle6Field
-              label="Lower connection can be kicked"   
+              label={t("lowerConnectionCanBeKicked")}   
               placeholder=""  
               type={onoffType}
               value={fields.lowerConnectionCanBeKicked}
@@ -1792,7 +1776,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.lowerConnectionCanBeKicked}
             />
             <UserInfoStyle6Field
-              label="Sub-money payable"   
+              label={t("subMoneyPayable")}   
               placeholder=""  
               type={onoffType}
               value={fields.subMoneyPayable}
@@ -1802,7 +1786,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.subMoneyPayable}
             />
             <UserInfoStyle6Field
-              label="Lower money recovery possible"   
+              label={t("lowerMoneyRecoveryPossible")}   
               placeholder=""  
               type={onoffType}
               value={fields.lowerMoneyRecoveryPossible}
@@ -1812,7 +1796,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.lowerMoneyRecoveryPossible}
             />
             <UserInfoStyle6Field
-              label="Lower losing change possible"   
+              label={t("lowerLosingChangePossible")}   
               placeholder=""  
               type={onoffType}
               value={fields.lowerLosingChangePossible}
@@ -1822,7 +1806,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.lowerLosingChangePossible}
             />
             <UserInfoStyle6Field
-              label="Lower rolling changeable"   
+              label={t("lowerRollingChangeable")}   
               placeholder=""  
               type={onoffType}
               value={fields.lowerRollingChangeable}
@@ -1832,7 +1816,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.lowerRollingChangeable}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Mini)"   
+              label={t("referalBenefits(Mini)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsMini}
@@ -1842,7 +1826,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsMini}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Virtual)"   
+              label={t("referalBenefits(Virtual)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsVirtual}
@@ -1852,7 +1836,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsVirtual}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Sports Single Poles)"   
+              label={t("referalBenefits(SportsSinglePoles)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsSportsSinglePoles}
@@ -1862,7 +1846,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsSportsSinglePoles}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Sports 2-Poles)"   
+              label={t("referalBenefits(Sports2Poles)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsSports2Poles}
@@ -1872,7 +1856,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsSports2Poles}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Sports 3-Poles)"   
+              label={t("referalBenefits(Sports3Poles)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsSports3Poles}
@@ -1882,7 +1866,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsSports3Poles}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Sports 4-Poles)"   
+              label={t("referalBenefits(Sports4Poles)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsSports4Poles}
@@ -1892,7 +1876,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.referalBenefitsSports4Poles}
             />
             <UserInfoStyle6Field
-              label="Referal Benefits (Sports Dapol)"   
+              label={t("referalBenefits(SportsDapol)")}   
               placeholder=""  
               type={onoffType}
               value={fields.referalBenefitsSportsDapol}
@@ -1903,7 +1887,7 @@ const UserBasicInformation: React.FC = () => {
             />
 
             <UserInfoStyle4Field
-              label="Sports betting allowed"   
+              label={t("sportsBettingAllowed")}   
               placeholder=""  
               type={onoffType}
               value={fields.sportsBettingAllowed}
@@ -1913,7 +1897,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.sportsBettingAllowed}
             />
             <UserInfoStyle4Field
-              label="Minimum folder for sports betting"   
+              label={t("minimumFolderForSportsBetting")}   
               placeholder=""  
               type={onoffType}
               value={fields.minimumFolderForSportsBetting}
@@ -1927,8 +1911,8 @@ const UserBasicInformation: React.FC = () => {
         <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">
             <MemoInputFiled 
-              label="Account memo"
-              placeholder="Account memo"
+              label={t("accountMemo")}
+              placeholder={t("accountMemo")}
               value={fields.accountMemo}
               onChange={handleChange("accountMemo")}
               buttonLabel="Change account memo"
@@ -1936,8 +1920,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.accountMemo}
             />
             <MemoInput1Filed 
-              label="Admin Note"
-              placeholder="Admin Note"
+              label={t("adminNote")}
+              placeholder={t("adminNote")}
               value={fields.adminNote}
               onChange={handleChange("adminNote")}
               buttonLabel="Change admin note"
@@ -1945,8 +1929,8 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.adminNote}
             />
             <MemoInput1Filed 
-              label="Admin Memo2"
-              placeholder="Admin Memo2"
+              label={t("adminMemo2")}
+              placeholder={t("adminMemo2")}
               value={fields.adminMemo2}
               onChange={handleChange("adminMemo2")}
               buttonLabel="Change admin memo2"
@@ -1958,7 +1942,7 @@ const UserBasicInformation: React.FC = () => {
         <div className="flex flex-col gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">
             <MemoInput1Filed 
-              label="Allowed IP address"
+              label={t("allowedIPAddress")}
               placeholder="xxx.xxx.xxx.xxx"
               value={fields.xxx}
               onChange={handleChange("xxx")}
