@@ -1017,7 +1017,7 @@ const UserBasicInformation: React.FC = () => {
               loading={loading.password}
             />
             <UserInfoField
-              label="exchange password"
+              label="exchangePassword"
               placeholder="Exchange Password"
               value={fields.exchangePassword}
               onChange={handleChange("exchangePassword")}
@@ -1158,16 +1158,6 @@ const UserBasicInformation: React.FC = () => {
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("onoff")}
                   loading={loading.onoff}
-              />
-
-              <UserInfoField
-                  label="Resident registration number"
-                  placeholder=""
-                  value={fields.residentNumber}
-                  onChange={handleChange("residentNumber")}
-                  buttonLabel="Change"
-                  onButtonClick={handleButtonClick("residentNumber")}
-                  loading={loading.residentNumber}
               />
 
               <OnOffTypeField
