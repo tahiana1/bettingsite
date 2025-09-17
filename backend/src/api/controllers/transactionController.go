@@ -85,6 +85,8 @@ func CreateTransaction(c *gin.Context) {
 			return
 		}
 		balanceAfter = balanceBefore - transactionInput.Amount
+	} else {
+		balanceAfter = balanceBefore
 	}
 
 	// Create transaction record
