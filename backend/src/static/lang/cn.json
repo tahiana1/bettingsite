@@ -1825,5 +1825,6 @@
   "accountMemo" : "账户备注",
   "adminNote" : "管理员备注",
   "adminMemo2" : "管理员备注2",
-  "allowedIPAddress" : "允许的IP地址"
+  "allowedIPAddress" : "允许的IP地址",
+  "pointAmount" : "点数金额"
 }

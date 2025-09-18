@@ -9,7 +9,7 @@ import modalImage from '@/assets/img/main/modal-head.png';
 interface NoticeDetailModalProps {
     notice: any;
     onClose: () => void;
-    type?: 'notice' | 'event';
+    type?: 'notice' | 'event'; 
 }
 
 const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({ notice, onClose, type = 'notice' }) => {

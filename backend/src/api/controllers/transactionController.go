@@ -73,9 +73,13 @@ func CreateTransaction(c *gin.Context) {
 	// Calculate balance before and after
 	balanceBefore := profile.Balance
 	var balanceAfter float64
+	var pointBefore float64
+	var pointAfter float64
 
 	if transactionInput.Type == "deposit" {
 		balanceAfter = balanceBefore + transactionInput.Amount
+		pointAfter = float64(profile.Point)
+		pointBefore = float64(profile.Point)
 	} else if transactionInput.Type == "withdrawal" {
 		// Check if user has sufficient balance
 		if balanceBefore < transactionInput.Amount {
@@ -85,8 +89,13 @@ func CreateTransaction(c *gin.Context) {
 			return
 		}
 		balanceAfter = balanceBefore - transactionInput.Amount
-	} else {
-		balanceAfter = balanceBefore
+		pointAfter = float64(profile.Point)
+		pointBefore = float64(profile.Point)
+	} else if transactionInput.Type == "point" {
+		pointBefore = float64(profile.Point)
+		pointAfter = pointBefore - transactionInput.Amount
+		balanceAfter = balanceBefore + transactionInput.Amount
+		balanceBefore = profile.Balance
 	}
 
 	// Create transaction record
@@ -97,6 +106,8 @@ func CreateTransaction(c *gin.Context) {
 		Explation:     transactionInput.Explation,
 		BalanceBefore: balanceBefore,
 		BalanceAfter:  balanceAfter,
+		PointBefore:   pointBefore,
+		PointAfter:    pointAfter,
 		Status:        "pending",
 	}
 

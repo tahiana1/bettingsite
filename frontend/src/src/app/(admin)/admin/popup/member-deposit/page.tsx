@@ -47,12 +47,6 @@ const MemberDeposit = () => {
                                     value: "point",
                                     op: "eq",
                                 },
-                                {
-                                    field: "transactions.type",
-                                    value: "rollingExchange",
-                                    op: "eq",
-                                },
-                                
                             ],
                         },
                         {
@@ -119,7 +113,7 @@ const MemberDeposit = () => {
             title: t("root_dist"),
             dataIndex: "root.transactionid",
             key: "root.transactionid",
-            width: 100,
+            width: 130,
             render(_, record, index) {
                 const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500'];
                 const colorClass = colors[index % colors.length];
@@ -130,7 +124,7 @@ const MemberDeposit = () => {
             title: t("top_dist"),
             dataIndex: "top_dist",
             key: "top_dist",
-            width: 100,
+            width: 130,
             render(_, record, index) {
                 const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500'];
                 const colorClass = colors[index % colors.length];
@@ -195,7 +189,15 @@ const MemberDeposit = () => {
             dataIndex: "amount",
             width: 130,
             key: "amount",
-            render: (_, record) => <p className="text-[red]">{record.amount}</p>,
+            render: (_, record) => {
+                if (record.type === "deposit") {
+                    return <p className="text-[red]">{record.amount}</p>;
+                }
+                if (record.type === "point") {
+                    return <p className="text-[black]">0</p>;
+                }
+                return null;
+            }
         },
         {
             title: t("balanceAfter"),
@@ -214,7 +216,15 @@ const MemberDeposit = () => {
             dataIndex: "amount",
             width: 130,
             key: "pointAmount",
-            render: (_, record) => <p className="text-[red]">{record.amount}</p>,
+            render: (_, record) => {
+                if (record.type === "deposit") {
+                    return <p className="text-[black]">0</p>;
+                }
+                if (record.type === "point") {
+                    return <p className="text-[red]">{record.amount}</p>;
+                }
+                return null;
+            }
         },
         {
             title: t("pointAfter"),
@@ -230,13 +240,10 @@ const MemberDeposit = () => {
             return (
                 <div>
                 {record.type === "deposit" && (
-                    <span>Deposit</span>
+                    <span>{t("deposit")}</span>
                 )}
                 {record.type === "point" && (
-                    <span>Point</span>
-                )}
-                {record.type === "rollingExchange" && (
-                    <span>rollExchange</span>
+                    <span>{t("point")}</span>
                 )}
                 </div>
             );
@@ -376,84 +383,34 @@ const MemberDeposit = () => {
                 >
                 <Space className="!w-full my-3" direction="vertical">
                     <Space className="!w-full justify-between">
-                    <Space>
-                        <DatePicker.RangePicker
-                        size="small"
-                        onChange={onRangerChange}
-                        />
-                        <Input.Search
-                        size="small"
-                        placeholder="ID,Nickname,Account Holder,Phone Number"
-                        suffix={
-                            <Button
-                            size="small"
-                            type="text"
-                            icon={<RxLetterCaseToggle />}
+                        <Space>
+                            <DatePicker.RangePicker
+                                size="small"
+                                onChange={onRangerChange}
+                                disabledDate={(current) => {
+                                    // Allow all dates - no restrictions
+                                    return false;
+                                }}
+                                showTime={{
+                                    format: 'HH:mm:ss',
+                                }}
+                                format="YYYY-MM-DD HH:mm:ss"
                             />
-                        }
-                        enterButton={t("search")}
-                        onSearch={onSearch}
-                        />
+                            <Input.Search
+                                size="small"
+                                placeholder="ID,Nickname,Account Holder,Phone Number"
+                                suffix={
+                                    <Button
+                                        size="small"
+                                        type="text"
+                                        icon={<RxLetterCaseToggle />}
+                                    />
+                                }
+                            enterButton={t("search")}
+                            onSearch={onSearch}
+                            />
+                        </Space>
                     </Space>
-                    {/* <Space.Compact className="gap-1">
-                        <Button size="small" type="primary">
-                        {t("download")}
-                        </Button>
-                    </Space.Compact> */}
-                    </Space>
-                    {/* <Divider className="!p-0 !m-0" />
-                    <Descriptions
-                    bordered
-                    layout="vertical"
-                    column={6}
-                    items={[
-                        {
-                        key: "1",
-                        label: t("depositToday"),
-                        children: "0",
-                        },
-                        {
-                        key: "2",
-                        label: t("withdrawlToday"),
-                        children: "0",
-                        },
-                        {
-                        key: "3",
-                        label: t("period"),
-                        children: "0",
-                        },
-                        {
-                        key: "4",
-                        label: t("deposit"),
-                        children: "0",
-                        },
-                        {
-                        key: "5",
-                        label: t("withdraw"),
-                        children: "0",
-                        },
-                        {
-                        key: "6",
-                        label: t("deposit") + "/" + t("withdraw"),
-                        children: "0",
-                        },
-                    ]}
-                    />
-                    <Alert
-                    message={
-                        <span>
-                        <span className="text-red-600">
-                            {t("admin/description/distributorMoney")}
-                        </span>{" "}
-                        {t("admin/description/distributorMoneyDesc")}
-                        {t("admin/description/distributorMoneyDesc2")}
-                        <span className="text-red-600">
-                            {t("admin/description/subordinateMoney")}
-                        </span>{" "}{t("admin/description/subordinateMoneyDesc")}
-                        </span>
-                    }
-                    type="warning"
-                    /> */}
                 </Space>
 
                 <Table<Transaction>
@@ -467,13 +424,12 @@ const MemberDeposit = () => {
                     pagination={{
                     showTotal(total, range) {
                         return t("paginationLabel", {
-                        from: range[0],
-                        to: range[1],
-                        total,
+                            from: range[0],
+                            to: range[1],
+                            total,
                         });
                     },
                     total: total,
-                    showSizeChanger: true,
                     defaultPageSize: 25,
                     pageSizeOptions: [25, 50, 100, 250, 500, 1000],
                     }}

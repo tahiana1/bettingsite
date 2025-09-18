@@ -1823,5 +1823,6 @@
   "accountMemo" : "Account Memo",
   "adminNote" : "Admin Note",
   "adminMemo2" : "Admin Memo2",
-  "allowedIPAddress" : "Allowed Ip Address"
+  "allowedIPAddress" : "Allowed Ip Address",
+  "pointAmount" : "Point Amount"
 }
