@@ -84,21 +84,7 @@ const MemberDeposit = () => {
     const [transactions, setTransactions] = useState<any[]>([]);
     const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
     const [colorModal, setColorModal] = useState<boolean>(false);
-    const [colorOption, setColorOptoin] = useState<any>("new");
     const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
-  
-    const labelRenderer = (props: any) =>
-      props.value.toString() == "100"
-        ? "Premium"
-        : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-          props.value;
-  
-    const levelOption = [
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-    ].map((i) => ({
-        value: i,
-        label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-    }));
   
     const columns: TableProps<Transaction>["columns"] = [
         {
@@ -413,112 +399,81 @@ const MemberDeposit = () => {
     useEffect(() => {
       refetch(tableOptions ?? undefined);
     }, [tableOptions]);
+
     return <div className="h-[100vh] bg-white">
-        <div className="bg-black py-2">
-            <PopupHeader title="depositRequest" />
-        </div>
-        <Layout>
-            <Content className="overflow-auto">
-                <Card
-                    title={null}
-                    classNames={{
-                        body: "px-5",
-                    }}
-                >
-                <Space className="!w-full my-3" direction="vertical">
-                    <Space className="!w-full justify-between">
-                        <Space>
-                            <DatePicker.RangePicker
-                                size="small"
-                                onChange={onRangerChange}
-                                disabledDate={(current) => {
-                                    // Allow all dates - no restrictions
-                                    return false;
-                                }}
-                                showTime={{
-                                    format: 'HH:mm:ss',
-                                }}
-                                format="YYYY-MM-DD HH:mm:ss"
-                            />
-                            <Input.Search
-                                size="small"
-                                placeholder={t("idNicknameAccountHolderPhoneNumber")}
-                                suffix={
-                                    <Button
-                                        size="small"
-                                        type="text"
-                                        icon={<RxLetterCaseToggle />}
-                                        onClick={() => setCaseSensitive(!caseSensitive)}
-                                        style={{
-                                            backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
-                                            color: caseSensitive ? 'white' : 'inherit'
-                                        }}
-                                        title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
-                                    />
-                                }
-                                enterButton={t("search")}
-                                onSearch={onSearch}
-                            />
+            <div className="bg-black py-2">
+                <PopupHeader title="depositRequest" />
+            </div>
+            <Layout>
+                <Content className="overflow-auto">
+                    <Card
+                        title={null}
+                        classNames={{
+                            body: "px-5",
+                        }}
+                    >
+                    <Space className="!w-full my-3" direction="vertical">
+                        <Space className="!w-full justify-between">
+                            <Space>
+                                <DatePicker.RangePicker
+                                    size="small"
+                                    onChange={onRangerChange}
+                                    disabledDate={(current) => {
+                                        // Allow all dates - no restrictions
+                                        return false;
+                                    }}
+                                    showTime={{
+                                        format: 'HH:mm:ss',
+                                    }}
+                                    format="YYYY-MM-DD HH:mm:ss"
+                                />
+                                <Input.Search
+                                    size="small"
+                                    placeholder={t("idNicknameAccountHolderPhoneNumber")}
+                                    suffix={
+                                        <Button
+                                            size="small"
+                                            type="text"
+                                            icon={<RxLetterCaseToggle />}
+                                            onClick={() => setCaseSensitive(!caseSensitive)}
+                                            style={{
+                                                backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                                                color: caseSensitive ? 'white' : 'inherit'
+                                            }}
+                                            title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
+                                        />
+                                    }
+                                    enterButton={t("search")}
+                                    onSearch={onSearch}
+                                />
+                            </Space>
                         </Space>
                     </Space>
-                </Space>
 
-                <Table<Transaction>
-                    columns={columns}
-                    loading={loading}
-                    dataSource={transactions ?? []}
-                    className="w-full"
-                    size="small"
-                    scroll={{ x: "max-content" }}
-                    onChange={onChange}
-                    pagination={{
-                    showTotal(total, range) {
-                        return t("paginationLabel", {
-                            from: range[0],
-                            to: range[1],
-                            total,
-                        });
-                    },
-                    total: total,
-                    defaultPageSize: 25,
-                    pageSizeOptions: [25, 50, 100, 250, 500, 1000],
-                    }}
-                />
-
-                <Modal
-                    open={colorModal}
-                    onCancel={() => setColorModal(false)}
-                    onOk={onChangeColors}
-                >
-                    <Space direction="vertical" className="gap-2">
-                    <Radio.Group
-                        onChange={(e) => setColorOptoin(e.target.value)}
-                        className="!flex !flex-col gap-2"
-                        defaultValue={"new"}
-                    >
-                        <Radio value={"new"}>New Search Criteria</Radio>
-                        {colorOption == "new" ? (
-                        <Form.Item>
-                            <Input />
-                        </Form.Item>
-                        ) : null}
-                        <Radio value={"list"}>
-                        Apply the member list search conditions as is:
-                        </Radio>
-                        {colorOption == "list" ? (
-                        <Form.Item>
-                            <Select />
-                        </Form.Item>
-                        ) : null}
-                    </Radio.Group>
-                    <Form.Item label="Change Color">
-                        <Select />
-                    </Form.Item>
-                    </Space>
-                </Modal>
+                    <Table<Transaction>
+                        columns={columns}
+                        loading={loading}
+                        dataSource={transactions ?? []}
+                        className="w-full"
+                        size="small"
+                        scroll={{ x: "max-content" }}
+                        onChange={onChange}
+                        pagination={{
+                        showTotal(total, range) {
+                            return t("paginationLabel", {
+                                from: range[0],
+                                to: range[1],
+                                total,
+                            });
+                        },
+                        total: total,
+                        defaultPageSize: 25,
+                        pageSizeOptions: [25, 50, 100, 250, 500, 1000],
+                        }}
+                    />              
                 </Card>
             </Content>
-            </Layout>
+        </Layout>
     </div>
 };
 
