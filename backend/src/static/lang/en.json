@@ -1824,5 +1824,8 @@
   "adminNote" : "Admin Note",
   "adminMemo2" : "Admin Memo2",
   "allowedIPAddress" : "Allowed Ip Address",
-  "pointAmount" : "Point Amount"
+  "pointAmount" : "Point Amount",
+  "idNicknameAccountHolderPhoneNumber" : "ID,Nickname,Account Holder,Phone Number",
+  "caseSensitiveOn" : "Case Sensitive On",
+  "caseSensitiveOff" : "Case Sensitive Off"
 }

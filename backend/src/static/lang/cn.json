@@ -1826,5 +1826,8 @@
   "adminNote" : "管理员备注",
   "adminMemo2" : "管理员备注2",
   "allowedIPAddress" : "允许的IP地址",
-  "pointAmount" : "点数金额"
+  "pointAmount" : "点数金额",
+  "idNicknameAccountHolderPhoneNumber" : "ID,昵称,账户持有人,手机号码",
+  "caseSensitiveOn" : "区分大小写开启",
+  "caseSensitiveOff" : "区分大小写关闭"
 }

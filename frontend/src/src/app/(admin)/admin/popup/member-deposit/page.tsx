@@ -85,6 +85,7 @@ const MemberDeposit = () => {
     const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
     const [colorModal, setColorModal] = useState<boolean>(false);
     const [colorOption, setColorOptoin] = useState<any>("new");
+    const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   
     const labelRenderer = (props: any) =>
       props.value.toString() == "100"
@@ -312,37 +313,80 @@ const MemberDeposit = () => {
     };
   
     const onSearch = (value: string) => {
-      let filters: { field: string; value: string; op: string }[] =
-        tableOptions?.filters ?? [];
+      let filters: any[] = tableOptions?.filters ?? [];
   
-      // Remove any existing search filters
-      filters = filters.filter(
-        (f) =>
-          !f.field.startsWith("transactions.profile.nickname") &&
-          !f.field.startsWith("transactions.profile.holderName") &&
-          !f.field.startsWith("transactions.profile.phone")
-      );
+      // Remove any existing search filters by finding and removing the search OR condition
+      filters = filters.filter((f) => {
+        if (f.and) {
+          // Remove search OR conditions from AND groups
+          f.and = f.and.filter((andItem: any) => {
+            if (andItem.or) {
+              // Check if this OR group contains search fields
+              const hasSearchFields = andItem.or.some((orItem: any) => 
+                orItem.field === "profiles.nickname" ||
+                orItem.field === "profiles.holder_name" ||
+                orItem.field === "profiles.phone" ||
+                orItem.field === "users.userid" ||
+                orItem.field === "profiles.name"
+              );
+              return !hasSearchFields;
+            }
+            return true;
+          });
+          return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+        }
+        return true;
+      });
   
       if (value) {
-        // Add new search filters
-        filters = [
-          ...filters,
-          {
-            field: "transactions.profile.nickname",
-            value: value,
-            op: "like",
-          },
-          {
-            field: "transactions.profile.phone",
-            value: value,
-            op: "like",
-          },
-          {
-            field: "transactions.profile.holderName",
-            value: value,
-            op: "like",
-          }
-        ];
+        // Determine the search operator based on case sensitivity
+        const searchOp = caseSensitive ? "like" : "ilike";
+        
+        // Create OR condition for multiple search fields
+        const searchOrCondition = {
+          or: [
+            {
+              field: "profiles.nickname",
+              value: value,
+              op: searchOp,
+            },
+            {
+              field: "profiles.phone",
+              value: value,
+              op: searchOp,
+            },
+            {
+              field: "profiles.holder_name",
+              value: value,
+              op: searchOp,
+            },
+            {
+              field: "users.userid",
+              value: value,
+              op: searchOp,
+            },
+            {
+              field: "profiles.name",
+              value: value,
+              op: searchOp,
+            }
+          ]
+        };
+
+        // Add the search condition to the first AND group
+        if (filters.length > 0 && filters[0].and) {
+          filters[0].and.push(searchOrCondition);
+        } else {
+          // Create a new AND group with the search condition
+          filters = [
+            {
+              and: [
+                ...(filters.length > 0 ? filters[0].and || [] : []),
+                searchOrCondition
+              ]
+            }
+          ];
+        }
       }
   
       setTableOptions({ ...tableOptions, filters });
@@ -398,16 +442,22 @@ const MemberDeposit = () => {
                             />
                             <Input.Search
                                 size="small"
-                                placeholder="ID,Nickname,Account Holder,Phone Number"
+                                placeholder={t("idNicknameAccountHolderPhoneNumber")}
                                 suffix={
                                     <Button
                                         size="small"
                                         type="text"
                                         icon={<RxLetterCaseToggle />}
+                                        onClick={() => setCaseSensitive(!caseSensitive)}
+                                        style={{
+                                            backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                                            color: caseSensitive ? 'white' : 'inherit'
+                                        }}
+                                        title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                                     />
                                 }
-                            enterButton={t("search")}
-                            onSearch={onSearch}
+                                enterButton={t("search")}
+                                onSearch={onSearch}
                             />
                         </Space>
                     </Space>
