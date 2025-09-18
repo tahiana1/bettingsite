@@ -1827,5 +1827,6 @@
   "pointAmount" : "Point Amount",
   "idNicknameAccountHolderPhoneNumber" : "ID,Nickname,Account Holder,Phone Number",
   "caseSensitiveOn" : "Case Sensitive On",
-  "caseSensitiveOff" : "Case Sensitive Off"
+  "caseSensitiveOff" : "Case Sensitive Off",
+  "settlementDetails" : "Settlement Details"
 }

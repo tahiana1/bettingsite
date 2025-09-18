@@ -419,7 +419,6 @@ const MemberDeposit = () => {
                                     size="small"
                                     onChange={onRangerChange}
                                     disabledDate={(current) => {
-                                        // Allow all dates - no restrictions
                                         return false;
                                     }}
                                     showTime={{
@@ -459,16 +458,16 @@ const MemberDeposit = () => {
                         scroll={{ x: "max-content" }}
                         onChange={onChange}
                         pagination={{
-                        showTotal(total, range) {
-                            return t("paginationLabel", {
-                                from: range[0],
-                                to: range[1],
-                                total,
-                            });
-                        },
-                        total: total,
-                        defaultPageSize: 25,
-                        pageSizeOptions: [25, 50, 100, 250, 500, 1000],
+                            showTotal(total, range) {
+                                return t("paginationLabel", {
+                                    from: range[0],
+                                    to: range[1],
+                                    total,
+                                });
+                            },
+                            total: total,
+                            defaultPageSize: 25,
+                            pageSizeOptions: [25, 50, 100, 250, 500, 1000],
                         }}
                     />              
                 </Card>
