@@ -20,7 +20,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS, GET_WEEK_LOSING_DATA } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import PopupHeader from "@/components/Admin/PopupHeader";
 import SettlementRequest from "@/app/(admin)/admin/settlements/losingdetail/page";
@@ -40,6 +40,8 @@ const TotalSettlement = () => {
   });
 
   const [searchFilters, setSearchFilters] = useState<any[]>([]);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
+  const [siteFilter, setSiteFilter] = useState<string>("");
 
   const [total, setTotal] = useState<number>(0);
   const [weeklyData, setWeeklyData] = useState<any[]>([]);
@@ -53,8 +55,23 @@ const TotalSettlement = () => {
         op: "lt",
       },
     ];
+    
+    // Add site filter if selected
+    if (siteFilter) {
+      baseFilters.push({
+        field: "site",
+        value: siteFilter as any,
+        op: "eq",
+      });
+    }
+    
     const tableFilters = tableOptions?.filters || [];
-    return [...baseFilters, ...tableFilters, ...searchFilters];
+    const allFilters = [...baseFilters, ...tableFilters, ...searchFilters];
+    
+    // Log filters for debugging
+    console.log('All filters:', allFilters);
+    
+    return allFilters;
   };
 
   const { loading, data, refetch } = useQuery(GET_WEEK_LOSING_DATA, {
@@ -208,60 +225,77 @@ const TotalSettlement = () => {
     // Remove existing date filters
     filters = filters.filter((f) => f.field !== "transactions.created_at");
     
-    if (dates?.at(0)) {
-      filters = [
-        ...filters,
-        {
-          field: "transactions.created_at",
-          value: dateStrings[0],
-          op: "gt",
-        },
-        {
-          field: "transactions.created_at",
-          value: dateStrings[1],
-          op: "lt",
-        },
-      ];
+    if (dates && dates[0] && dates[1]) {
+      // Add start date filter (greater than or equal to start date)
+      filters.push({
+        field: "transactions.created_at",
+        value: dateStrings[0],
+        op: "gte",
+      });
+      
+      // Add end date filter (less than or equal to end date)
+      filters.push({
+        field: "transactions.created_at",
+        value: dateStrings[1],
+        op: "lte",
+      });
     }
     
+    console.log({ filters });
     setSearchFilters(filters);
   };
 
   const onSearch = (value: string) => {
     let filters = [...searchFilters];
-    
-    // Remove existing search filters
-    filters = filters.filter((f) => 
-      !["nickname", "depositor", "alias", "distributorName"].includes(f.field)
-    );
-    
-    if (value.trim()) {
-      // Add search filters for multiple fields using ilike for case-insensitive search
-      const searchFiltersArray = [
-        {
-          field: "nickname",
-          value: `%${value.trim()}%`,
-          op: "ilike",
-        },
-        {
-          field: "depositor",
-          value: `%${value.trim()}%`,
-          op: "ilike",
-        },
-        {
-          field: "alias",
-          value: `%${value.trim()}%`,
-          op: "ilike",
-        },
-        {
-          field: "distributorName",
-          value: `%${value.trim()}%`,
-          op: "ilike",
-        },
-      ];
-      filters = [...filters, ...searchFiltersArray];
+
+    // Remove any existing search filters by finding and removing the search OR condition
+    filters = filters.filter((f) => {
+      if (f.or) {
+        // Check if this OR group contains search fields
+        const hasSearchFields = f.or.some((orItem: any) => 
+          orItem.field === "nickname" ||
+          orItem.field === "depositor" ||
+          orItem.field === "alias" ||
+          orItem.field === "distributorName"
+        );
+        return !hasSearchFields;
+      }
+      return true;
+    });
+
+    if (value && value.trim()) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "nickname",
+            value: `%${value.trim()}%`,
+            op: searchOp,
+          },
+          {
+            field: "depositor",
+            value: `%${value.trim()}%`,
+            op: searchOp,
+          },
+          {
+            field: "alias",
+            value: `%${value.trim()}%`,
+            op: searchOp,
+          },
+          {
+            field: "distributorName",
+            value: `%${value.trim()}%`,
+            op: searchOp,
+          }
+        ]
+      };
+
+      filters = [...filters, searchOrCondition];
     }
-    
+
     setSearchFilters(filters);
   };
 
@@ -280,7 +314,7 @@ const TotalSettlement = () => {
       orders: tableOptions?.orders || [],
       pagination: tableOptions?.pagination || { limit: 25, offset: 0 },
     });
-  }, [tableOptions, searchFilters, refetch]);
+  }, [tableOptions, searchFilters, siteFilter, refetch]);
     return <div>
         <div>
             <PopupHeader title="settlementDetails" />
@@ -288,12 +322,12 @@ const TotalSettlement = () => {
         <Layout>
             <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
                 <Card
-                    title={t("settlementDetails")}
+                title={t("settlementDetails")}
                     classNames={{
                         body: "px-5",
                     }}
                 >
-                <Space className="p-2 !w-full" direction="vertical">
+                {/* <Space className="p-2 !w-full" direction="vertical">
                     <Radio.Group
                     size="small"
                     optionType="button"
@@ -308,7 +342,8 @@ const TotalSettlement = () => {
                         value: "site",
                         },
                     ]}
-                    defaultValue={""}
+                    value={siteFilter}
+                    onChange={(e) => setSiteFilter(e.target.value)}
                     />
 
                     <Space className="!w-full justify-between">
@@ -316,15 +351,28 @@ const TotalSettlement = () => {
                         <DatePicker.RangePicker
                         size="small"
                         onChange={onRangerChange}
+                        disabledDate={(current) => {
+                            return false;
+                        }}
+                        showTime={{
+                            format: 'HH:mm:ss',
+                        }}
+                        format="YYYY-MM-DD HH:mm:ss"
                         />
                         <Input.Search
                         size="small"
-                        placeholder="ID,Nickname,Account Holder,Phone Number"
+                        placeholder={t("idNicknameAccountHolderPhoneNumber")}
                         suffix={
                             <Button
                             size="small"
                             type="text"
                             icon={<RxLetterCaseToggle />}
+                            onClick={() => setCaseSensitive(!caseSensitive)}
+                            style={{
+                                backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                                color: caseSensitive ? 'white' : 'inherit'
+                            }}
+                            title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                             />
                         }
                         enterButton={t("search")}
@@ -332,7 +380,7 @@ const TotalSettlement = () => {
                         />
                     </Space>
                     </Space>
-                </Space>
+                </Space> */}
 
                 <Table<any>
                     columns={columns}
