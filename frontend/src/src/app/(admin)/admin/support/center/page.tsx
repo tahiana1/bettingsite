@@ -487,7 +487,7 @@ const SupportCenterPage: React.FC = () => {
                 onChange={(e) => onQnaStatusChange(e.target.value)}
               />
             </Space>
-            <Space className="!w-full justify-between">
+            {/* <Space className="!w-full justify-between">
               <Space>
                 <Select
                   size="small"
@@ -512,7 +512,7 @@ const SupportCenterPage: React.FC = () => {
                   enterButton={t("search")}
                 />
               </Space>
-            </Space>
+            </Space> */}
           </Space>
 
           <Table<Qna>
