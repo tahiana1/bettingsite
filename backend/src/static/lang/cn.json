@@ -1830,5 +1830,10 @@
   "idNicknameAccountHolderPhoneNumber" : "ID,昵称,账户持有人,手机号码",
   "caseSensitiveOn" : "区分大小写开启",
   "caseSensitiveOff" : "区分大小写关闭",
-  "settlementDetails" : "结算详情"
+  "settlementDetails" : "结算详情",
+  "adminPayment" : "管理员支付",
+  "partnerPayment" : "合作伙伴支付",
+  "userPayment" : "用户支付",
+  "approvedPayment" : "已批准支付",
+  "canceledPayment" : "已取消支付"
 }

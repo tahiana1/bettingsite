@@ -419,7 +419,7 @@ const SupportCenterPage: React.FC = () => {
         <Card
           title={t("admin/menu/customServiceCenter")}
           classNames={{
-            body: "!p-0",
+            body: "px-4",
           }}
         >
           <Space className="p-2 !w-full" direction="vertical">

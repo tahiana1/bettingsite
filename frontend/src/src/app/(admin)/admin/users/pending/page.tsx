@@ -26,8 +26,6 @@ import { useMutation, useQuery } from "@apollo/client";
 import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
 import { BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
-import { RxLetterCaseToggle } from "react-icons/rx";
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { USER_STATUS } from "@/constants";
@@ -336,22 +334,23 @@ const PendingUserPage: React.FC = () => {
   const updateFilter = (field: string, v: string, op: string = "eq") => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
+    
+    // Remove existing filters for this field
+    filters = filters.filter((f) => f.field !== field);
+    
     if (v) {
-      const f = filters.filter((f) => f.field == field);
+      // Add the new filter
       filters = [
-        ...f,
+        ...filters,
         {
           field: field,
           value: v,
           op: op,
         },
       ];
-      setTableOptions({ ...tableOptions, filters });
-    } else {
-      const f = filters.filter((f) => f.field == field);
-
-      setTableOptions({ ...tableOptions, filters: f });
     }
+    
+    setTableOptions({ ...tableOptions, filters });
   };
 
   const onRangerChange = (
@@ -380,7 +379,49 @@ const PendingUserPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
   const onMemberStatusChange = (v: string) => {
-    updateFilter("status", v, "eq");
+    console.log('onMemberStatusChange called with:', v);
+    
+    if (v === "today") {
+      // Handle joined_today filter - filter by pending users created today
+      const today = dayjs();
+      const startOfDay = today.startOf('day');
+      const endOfDay = today.endOf('day');
+      
+      console.log('Today filter:', {
+        startOfDay: startOfDay.format('YYYY-MM-DD HH:mm:ss'),
+        endOfDay: endOfDay.format('YYYY-MM-DD HH:mm:ss')
+      });
+      
+      // Remove existing date filters
+      let filters: { field: string; value: string; op: string }[] = tableOptions?.filters ?? [];
+      filters = filters.filter((f) => f.field !== "users.created_at");
+      
+      // Add date range filter for today AND keep pending status filter
+      filters = [
+        ...filters,
+        {
+          field: "status",
+          value: "P",
+          op: "eq",
+        },
+        {
+          field: "users.created_at",
+          value: startOfDay.format('YYYY-MM-DD HH:mm:ss'),
+          op: "gte",
+        },
+        {
+          field: "users.created_at", 
+          value: endOfDay.format('YYYY-MM-DD HH:mm:ss'),
+          op: "lt",
+        },
+      ];
+      
+      console.log('Filters for today:', filters);
+      setTableOptions({ ...tableOptions, filters });
+    } else {
+      // Handle status filter (P for pending, etc.)
+      window.location.reload()
+    }
   };
 
   const onSearch = (value: string) => {
@@ -559,7 +600,7 @@ const PendingUserPage: React.FC = () => {
                   onSearch={onSearch}
                 /> */}
               </Space>
-              {/* <Space.Compact className="gap-1">
+              <Space.Compact className="gap-1">
                 <Radio.Group
                   size="small"
                   optionType="button"
@@ -567,17 +608,17 @@ const PendingUserPage: React.FC = () => {
                   options={[
                     {
                       label: t("waiting_approval"),
-                      value: "pending",
+                      value: "P",
                     },
                     {
                       label: t("joined_today"),
                       value: "today",
                     },
                   ]}
-                  defaultValue={""}
+                  defaultValue={"P"}
                   onChange={(e) => onMemberStatusChange(e.target.value)}
                 />
-              </Space.Compact> */}
+              </Space.Compact>
             </Space>
           </Space>
           <Table<User>

@@ -20,13 +20,17 @@ import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
+  APPROVE_TRANSACTION,
   FILTER_TRANSACTIONS,
+  CANCEL_TRANSACTION,
+  WAITING_TRANSACTION,
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
+import api from "@/api";
 
 const MemberDeposit = () => {
     const t = useTranslations();
@@ -70,7 +74,7 @@ const MemberDeposit = () => {
                         },
                         {
                             field: "transactions.status",
-                            value: "A",
+                            value: "pending",
                             op: "eq",
                         },
                 ],
@@ -80,11 +84,72 @@ const MemberDeposit = () => {
     const popupWindow = (id: number) => {
         window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
     }
+
+    const onApproveTransaction = (transaction: Transaction) => {
+        if (transaction.type == "deposit" || transaction.type == "withdrawal") {
+            approveTransaction({ variables: { id: transaction.id } })
+            .then((res) => {
+                if (res.data?.success) {
+                    refetch(tableOptions);  
+                }
+            })
+            .catch((err) => {
+                console.error('Error approving transaction:', err);
+            });
+        } else if (transaction.type == "point") {
+            refetch(tableOptions);  
+            api("admin/point/convert", {
+                method: "POST",
+                data: {
+                    id: transaction.id,
+                    amount: transaction.amount,
+                    userId: transaction.user?.id
+                },
+            })
+            .then((res) => {
+                if (res.data?.success) {
+                    refetch(tableOptions);  
+                }
+            })
+            .catch((err) => {
+                console.error('Error converting point:', err);
+            });
+        }
+    };
+
+    const onWaitingTransaction = (transaction: Transaction) => {
+        waitingTransaction({ variables: { id: transaction.id } })
+            .then((res) => {
+                if (res.data?.success) {
+                    refetch(tableOptions);
+                }
+            })
+            .catch((err) => {
+                console.error('Error waiting transaction:', err);
+            });
+    };
+
+    const onCancelTransaction = (transaction: Transaction) => {
+        cancelTransaction({ variables: { id: transaction.id } })
+            .then((res) => {
+                if (res.data?.success) {
+                    refetch(tableOptions);
+                }
+            })
+            .catch((err) => {
+                console.error('Error canceling transaction:', err);
+            });
+    };
     const [total, setTotal] = useState<number>(0);
     const [transactions, setTransactions] = useState<any[]>([]);
     const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
     const [colorModal, setColorModal] = useState<boolean>(false);
     const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
+    const [selectedFilter, setSelectedFilter] = useState<string>("entire");
+
+    const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
+    const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
+    const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
   
     const columns: TableProps<Transaction>["columns"] = [
         {
@@ -243,7 +308,47 @@ const MemberDeposit = () => {
             render: (_, record) => {
             return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
             }
-        }
+        },
+        {
+          title: t("action"),
+          key: "action",
+          fixed: "right",
+          width: 130,
+          render: (_, record) => (
+            <Space.Compact size="small" className="gap-1">
+              {(record.status == "pending" || record.status == "W") && <>
+                <Button
+                    title={t("approve")}
+                    variant="outlined"
+                    onClick={() => onApproveTransaction(record)}
+                    color="blue"
+                  >
+                    {t("approve")}
+                  </Button>
+                    <Button
+                    title={t("cancel")}
+                    variant="outlined"
+                    onClick={() => onCancelTransaction(record)}
+                    color="red"
+                  >
+                    {t("cancel")}
+                  </Button>
+                  {
+                    record.status != "W" && (
+                      <Button
+                        title={t("waiting")}
+                        variant="outlined"
+                        onClick={() => onWaitingTransaction(record)}
+                        color="orange"
+                      >
+                        {t("waiting")}
+                      </Button>
+                    )
+                  }
+                </>}
+            </Space.Compact>
+          ),
+        },
     ];
   
     const onChange: TableProps<Transaction>["onChange"] = (
@@ -382,6 +487,147 @@ const MemberDeposit = () => {
     const onLevelChange = (v: string = "") => {
       updateFilter(`profiles.level`, v, "eq");
     };
+
+    const onFilterChange = (value: string) => {
+      setSelectedFilter(value);
+      
+      // Base filters for deposit and point transactions
+      const baseFilters = {
+        and: [
+          {
+            or: [
+              {
+                field: "transactions.type",
+                value: "deposit",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "point",
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      };
+
+      // Add specific filters based on selection
+      switch (value) {
+        case "entire":
+          // Show all transactions (deposit and point) with all roles and statuses
+          setTableOptions({
+            ...tableOptions,
+            filters: [baseFilters],
+          });
+          break;
+          
+        case "admin":
+          // Filter for admin role
+          setTableOptions({
+            ...tableOptions,
+            filters: [
+              {
+                ...baseFilters,
+                and: [
+                  ...baseFilters.and,
+                  {
+                    field: "users.role",
+                    value: "A",
+                    op: "eq",
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+          
+        case "partner":
+          // Filter for partner role
+          setTableOptions({
+            ...tableOptions,
+            filters: [
+              {
+                ...baseFilters,
+                and: [
+                  ...baseFilters.and,
+                  {
+                    field: "users.role",
+                    value: "P",
+                    op: "eq",
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+          
+        case "user":
+          // Filter for user role
+          setTableOptions({
+            ...tableOptions,
+            filters: [
+              {
+                ...baseFilters,
+                and: [
+                  ...baseFilters.and,
+                  {
+                    field: "users.role",
+                    value: "U",
+                    op: "eq",
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+          
+        case "approved":
+          // Filter for approved status
+          setTableOptions({
+            ...tableOptions,
+            filters: [
+              {
+                ...baseFilters,
+                and: [
+                  ...baseFilters.and,
+                  {
+                    field: "transactions.status",
+                    value: "A",
+                    op: "eq",
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+          
+        case "canceled":
+          // Filter for canceled status
+          setTableOptions({
+            ...tableOptions,
+            filters: [
+              {
+                ...baseFilters,
+                and: [
+                  ...baseFilters.and,
+                  {
+                    field: "transactions.status",
+                    value: "C",
+                    op: "eq",
+                  },
+                ],
+              },
+            ],
+          });
+          break;
+          
+        default:
+          setTableOptions({
+            ...tableOptions,
+            filters: [baseFilters],
+          });
+      }
+    };
   
     const onChangeColors = async () => {
       setColorModal(false);
@@ -412,6 +658,23 @@ const MemberDeposit = () => {
                             body: "px-5",
                         }}
                     >
+                    <Space className="!w-full my-3" direction="vertical">
+                        <Space className="!w-full justify-between">
+                            <Radio.Group 
+                                value={selectedFilter}
+                                onChange={(e) => onFilterChange(e.target.value)}
+                                buttonStyle="solid"
+                                size="small"
+                            >
+                                <Radio.Button value="entire">{t("entire")}</Radio.Button>
+                                <Radio.Button value="admin">{t("adminPayment")}</Radio.Button>
+                                <Radio.Button value="partner">{t("partnerPayment")}</Radio.Button>
+                                <Radio.Button value="user">{t("userPayment")}</Radio.Button>
+                                <Radio.Button value="approved">{t("approvedPayment")}</Radio.Button>
+                                <Radio.Button value="canceled">{t("canceledPayment")}</Radio.Button>
+                            </Radio.Group>
+                        </Space>
+                    </Space>
                     <Space className="!w-full my-3" direction="vertical">
                         <Space className="!w-full justify-between">
                             <Space>

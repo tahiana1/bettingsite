@@ -1828,5 +1828,10 @@
   "idNicknameAccountHolderPhoneNumber" : "ID,Nickname,Account Holder,Phone Number",
   "caseSensitiveOn" : "Case Sensitive On",
   "caseSensitiveOff" : "Case Sensitive Off",
-  "settlementDetails" : "Settlement Details"
+  "settlementDetails" : "Settlement Details",
+  "adminPayment" : "Admin Payment",
+  "partnerPayment" : "Partner Payment",
+  "userPayment" : "User Payment",
+  "approvedPayment" : "Approved Payment",
+  "canceledPayment" : "Canceled Payment"
 }
