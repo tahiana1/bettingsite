@@ -646,6 +646,15 @@ const MemberDeposit = () => {
       refetch(tableOptions ?? undefined);
     }, [tableOptions]);
 
+    // Auto-refetch data every 5 seconds
+    useEffect(() => {
+      const interval = setInterval(() => {
+        refetch(tableOptions ?? undefined);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }, [tableOptions, refetch]);
+
     return <div className="h-[100vh] bg-white">
             <div className="bg-black py-2">
                 <PopupHeader title="depositRequest" />
