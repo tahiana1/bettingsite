@@ -68,6 +68,7 @@ const PendingUserPage: React.FC = () => {
     },
   });
   const [colorModal, setColorModal] = useState<boolean>(false);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
 
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
@@ -360,24 +361,107 @@ const PendingUserPage: React.FC = () => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
     const f = filters.filter((f) => f.field !== "users.created_at");
-
-    filters = [
-      ...f,
-      {
-        field: "users.created_at",
-        value: dateStrings[0],
-        op: "gt",
-      },
-      {
-        field: "users.created_at",
-        value: dateStrings[1],
-        op: "lt",
-      },
-    ];
+    if (dates?.at(0)) {
+      filters = [
+        ...f,
+        {
+          field: "users.created_at",
+          value: dateStrings[0],
+          op: "gt",
+        },
+        {
+          field: "users.created_at",
+          value: dateStrings[1],
+          op: "lt",
+        },
+      ];
+    }
+    console.log({ filters });
     setTableOptions({ ...tableOptions, filters });
   };
   const onMemberStatusChange = (v: string) => {
     updateFilter("status", v, "eq");
+  };
+
+  const onSearch = (value: string) => {
+    let filters: any[] = tableOptions?.filters ?? [];
+
+    // Remove any existing search filters by finding and removing the search OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove search OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains search fields
+            const hasSearchFields = andItem.or.some((orItem: any) => 
+              orItem.field === "profiles.nickname" ||
+              orItem.field === "profiles.holder_name" ||
+              orItem.field === "profiles.phone" ||
+              orItem.field === "users.userid" ||
+              orItem.field === "profiles.name"
+            );
+            return !hasSearchFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
+
+    if (value) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "profiles.nickname",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.phone",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.holder_name",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "users.userid",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.name",
+            value: value,
+            op: searchOp,
+          }
+        ]
+      };
+
+      // Add the search condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(searchOrCondition);
+      } else {
+        // Create a new AND group with the search condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              searchOrCondition
+            ]
+          }
+        ];
+      }
+    }
+
+    setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
   };
   const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
@@ -437,31 +521,45 @@ const PendingUserPage: React.FC = () => {
             />
             <Space className="!w-full justify-between">
               <Space>
-                <Select
+                {/* <Select
                   size="small"
                   placeholder="select dist"
                   className="min-w-28"
                   allowClear
-                />
+                /> */}
 
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
+                  disabledDate={(current) => {
+                    return false;
+                  }}
+                  showTime={{
+                    format: 'HH:mm:ss',
+                  }}
+                  format="YYYY-MM-DD HH:mm:ss"
                 />
-                <Input.Search
+                {/* <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
-                />
+                  onSearch={onSearch}
+                /> */}
               </Space>
-              <Space.Compact className="gap-1">
+              {/* <Space.Compact className="gap-1">
                 <Radio.Group
                   size="small"
                   optionType="button"
@@ -479,7 +577,7 @@ const PendingUserPage: React.FC = () => {
                   defaultValue={""}
                   onChange={(e) => onMemberStatusChange(e.target.value)}
                 />
-              </Space.Compact>
+              </Space.Compact> */}
             </Space>
           </Space>
           <Table<User>
