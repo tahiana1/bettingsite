@@ -33,6 +33,7 @@ type Loaders struct {
 	SMSApiLoader          *dataloadgen.Loader[uint, *models.SMSApi]
 	TransactionLoader     *dataloadgen.Loader[uint, *models.Transaction]
 	QnaLoader             *dataloadgen.Loader[uint, *models.Qna]
+	PopupLoader           *dataloadgen.Loader[uint, *models.Popup]
 	ProfileReader         *profileReader
 	UserReader            *userReader
 	NotificationReader    *notificationReader
@@ -48,6 +49,7 @@ type Loaders struct {
 	SMSApiReader          *smsApiReader
 	TransactionReader     *transactionReader
 	QnaReader             *qnaReader
+	PopupReader           *popupReader
 }
 
 func NewLoaders(db *gorm.DB) *Loaders {
@@ -66,11 +68,13 @@ func NewLoaders(db *gorm.DB) *Loaders {
 	smr := &smsApiReader{db: db}
 	tr := &transactionReader{db: db}
 	qr := &qnaReader{db: db}
+	popr := &popupReader{db: db}
 
 	return &Loaders{
 		ProfileLoader:         dataloadgen.NewLoader(pr.getProfiles, dataloadgen.WithWait(time.Millisecond)),
 		ProfileByUserIDLoader: dataloadgen.NewLoader(pr.getProfilesByUserID, dataloadgen.WithWait(time.Millisecond)),
 		UserLoader:            dataloadgen.NewLoader(ur.getUsers, dataloadgen.WithWait(time.Millisecond)),
+		PopupLoader:           dataloadgen.NewLoader(popr.getPopups, dataloadgen.WithWait(time.Millisecond)),
 		ProfileReader:         pr,
 		UserReader:            ur,
 		NotificationReader:    nr,
@@ -86,6 +90,7 @@ func NewLoaders(db *gorm.DB) *Loaders {
 		SMSApiReader:          smr,
 		TransactionReader:     tr,
 		QnaReader:             qr,
+		PopupReader:           popr,
 	}
 }
 

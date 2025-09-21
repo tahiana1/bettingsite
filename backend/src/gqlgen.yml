@@ -190,6 +190,10 @@ models:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Transaction
 
+  Popup:
+    model:
+    - github.com/hotbrainy/go-betting/backend/internal/models.Popup
+
   Notification:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Notification

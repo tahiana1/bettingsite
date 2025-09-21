@@ -202,6 +202,16 @@ type NewNotificationInput struct {
 	Views        *uint     `json:"views,omitempty"`
 }
 
+type NewPopupInput struct {
+	Title        string     `json:"title"`
+	Description  string     `json:"description"`
+	Status       *bool      `json:"status,omitempty"`
+	OrderNum     *uint      `json:"orderNum,omitempty"`
+	ShowFrom     *time.Time `json:"showFrom,omitempty"`
+	ShowTo       *time.Time `json:"showTo,omitempty"`
+	RegisterDate *time.Time `json:"registerDate,omitempty"`
+}
+
 type NewProfile struct {
 	UserID        uint       `json:"userId"`
 	Name          string     `json:"name"`
@@ -319,6 +329,11 @@ type Order struct {
 type Pagination struct {
 	Limit  *int32 `json:"limit,omitempty"`
 	Offset *int32 `json:"offset,omitempty"`
+}
+
+type PopupList struct {
+	Popups []*models.Popup `json:"popups"`
+	Total  int32           `json:"total"`
 }
 
 type QnaList struct {
@@ -490,6 +505,16 @@ type UpdateNotificationInput struct {
 	NoticeType   *string    `json:"noticeType,omitempty"`
 	RegisterDate *time.Time `json:"registerDate,omitempty"`
 	Views        *uint      `json:"views,omitempty"`
+}
+
+type UpdatePopupInput struct {
+	Title        *string    `json:"title,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	Status       *bool      `json:"status,omitempty"`
+	OrderNum     *uint      `json:"orderNum,omitempty"`
+	ShowFrom     *time.Time `json:"showFrom,omitempty"`
+	ShowTo       *time.Time `json:"showTo,omitempty"`
+	RegisterDate *time.Time `json:"registerDate,omitempty"`
 }
 
 type UpdateProfile struct {

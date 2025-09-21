@@ -1,0 +1,55 @@
+type Popup {
+  id: ID!
+  title: String!
+  description: String!
+  status: Boolean!
+  orderNum: Uint
+  registerDate: Time!
+  showFrom: Time!
+  showTo: Time!
+  createdAt: Time!
+  updatedAt: Time!
+  deletedAt: DeletedAt
+}
+
+input UpdatePopupInput {
+  title: String
+  description: String
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time
+  showTo: Time
+  registerDate: Time
+}
+
+input NewPopupInput {
+  title: String!
+  description: String!
+  status: Boolean
+  orderNum: Uint
+  showFrom: Time
+  showTo: Time
+  registerDate: Time
+}
+
+type PopupList {
+  popups: [Popup!]!
+  total: Int!
+}
+
+extend type Query {
+  popups: [Popup!]
+  getPopups(
+    filters: [Filter!]
+    orders: [Order!]
+    pagination: Pagination
+  ): PopupList! @hasRole(role: A)
+}
+
+extend type Mutation {
+  createPopup(input: NewPopupInput!): Popup!
+    @hasRole(role: A)
+  updatePopup(id: ID!, input: UpdatePopupInput!): Popup!
+    @hasRole(role: A)
+  deletePopup(id: ID!): Boolean! @hasRole(role: A)
+}

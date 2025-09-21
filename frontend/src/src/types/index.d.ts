@@ -300,3 +300,19 @@ interface Notification {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+interface Popup {
+  key?: string;
+  id: number;
+  title: string;
+  description: string;
+  orderNum: number;
+  status: boolean;
+  registerDate: string;
+  showFrom: string;
+  showTo: string;
+  duration?: (string | Date | dayjs.Dayjs)[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}

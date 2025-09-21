@@ -32,11 +32,11 @@ import dynamic from "next/dynamic";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
-  CREATE_NOTI,
-  FILTER_NOTI,
-  UPDATE_NOTI,
-  DELETE_NOTI,
-} from "@/actions/notification";
+  CREATE_POPUP,
+  FILTER_POPUP,
+  UPDATE_POPUP,
+  DELETE_POPUP,
+} from "@/actions/popup";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -161,18 +161,18 @@ const PopupPage: React.FC = () => {
   const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [total, setTotal] = useState<number>(0);
-  const [notis, setNotis] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(FILTER_NOTI);
+  const [popups, setPopups] = useState<any[]>([]);
+  const { loading, data, refetch } = useQuery(FILTER_POPUP);
 
   const [notiAPI, context] = notification.useNotification();
 
-  const [updateNoti, { loading: loadingUpdate }] = useMutation(UPDATE_NOTI);
-  const [createNoti, { loading: loadingCreate }] = useMutation(CREATE_NOTI);
-  const [deleteNoti, { loading: loadingDelete }] = useMutation(DELETE_NOTI);
+  const [updatePopup, { loading: loadingUpdate }] = useMutation(UPDATE_POPUP);
+  const [createPopup, { loading: loadingCreate }] = useMutation(CREATE_POPUP);
+  const [deletePopup, { loading: loadingDelete }] = useMutation(DELETE_POPUP);
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
 
-  const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
+  const [currentPopup, setCurrentPopup] = useState<Popup | null>(null);
   const [editorKey, setEditorKey] = useState(0);
   const [createEditorKey, setCreateEditorKey] = useState(0);
   const [createForm] = Form.useForm();
@@ -188,10 +188,10 @@ const PopupPage: React.FC = () => {
   };
 
 
-  const onStatusChange = (noti: Noti, checked: boolean) => {
-    updateNoti({
+  const onStatusChange = (popup: Popup, checked: boolean) => {
+    updatePopup({
       variables: {
-        id: noti.id,
+        id: popup.id,
         input: {
           status: checked,
         },
@@ -201,17 +201,17 @@ const PopupPage: React.FC = () => {
     });
   };
 
-  const onCreate = (noti: Noti) => {
-    console.log("Received values of form: ", noti);
-    const newNoti = {
-      title: noti.title,
-      orderNum: noti.orderNum,
+  const onCreate = (popup: Popup) => {
+    console.log("Received values of form: ", popup);
+    const newPopup = {
+      title: popup.title,
+      orderNum: popup.orderNum,
       description: createEditorContent,
-      showFrom: noti.duration ? noti.duration[0] : undefined,
-      showTo: noti.duration ? noti.duration[1] : undefined,
-      status: noti.status,
+      showFrom: popup.duration ? popup.duration[0] : undefined,
+      showTo: popup.duration ? popup.duration[1] : undefined,
+      status: popup.status,
     };
-    createNoti({ variables: { input: newNoti } })
+    createPopup({ variables: { input: newPopup } })
       .then((res) => {
         if (res.data?.success) {
         }
@@ -229,18 +229,18 @@ const PopupPage: React.FC = () => {
       });
   };
 
-  const onUpdate = (noti: Noti) => {
+  const onUpdate = (popup: Popup) => {
     const update = {
-      title: noti.title,
+      title: popup.title,
       description: editEditorContent,
-      showFrom: noti.duration ? noti.duration[0] : undefined,
-      showTo: noti.duration ? noti.duration[1] : undefined,
-      orderNum: noti.orderNum,
-      status: noti.status,
+      showFrom: popup.duration ? popup.duration[0] : undefined,
+      showTo: popup.duration ? popup.duration[1] : undefined,
+      orderNum: popup.orderNum,
+      status: popup.status,
     };
-    updateNoti({
+    updatePopup({
       variables: {
-        id: currentNoti!.id,
+        id: currentPopup!.id,
         input: update,
       },
     }).then(() => {
@@ -249,17 +249,17 @@ const PopupPage: React.FC = () => {
     });
   };
 
-  const onEdit = (noti: Noti) => {
-    console.log("Received values of form: ", noti);
-    noti.duration = [dayjs(noti.showFrom), dayjs(noti.showTo)];
-    setCurrentNoti(noti);
-    setEditEditorContent(noti.description || '');
+  const onEdit = (popup: Popup) => {
+    console.log("Received values of form: ", popup);
+    popup.duration = [dayjs(popup.showFrom), dayjs(popup.showTo)];
+    setCurrentPopup(popup);
+    setEditEditorContent(popup.description || '');
     setEditOpen(true);
     setEditorKey(prev => prev + 1); // Force re-render of editor
   };
 
   const onCancelEdit = () => {
-    setCurrentNoti(null);
+    setCurrentPopup(null);
     setEditOpen(false);
     setEditEditorContent('');
   };
@@ -271,8 +271,8 @@ const PopupPage: React.FC = () => {
     setCreateEditorKey(prev => prev + 1); // Force re-render for next open
   };
 
-  const onDeleteNoti = (noti: Noti) => {
-    deleteNoti({ variables: { id: noti.id } })
+  const onDeletePopup = (popup: Popup) => {
+    deletePopup({ variables: { id: popup.id } })
       .then((res) => {
         if (res.data?.success) {
         }
@@ -283,7 +283,7 @@ const PopupPage: React.FC = () => {
       });
   };
 
-  const onChange: TableProps<Noti>["onChange"] = (
+  const onChange: TableProps<Popup>["onChange"] = (
     pagination,
     filters,
     sorter,
@@ -291,12 +291,12 @@ const PopupPage: React.FC = () => {
   ) => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
-  const columns: TableProps<Noti>["columns"] = [
+  const columns: TableProps<Popup>["columns"] = [
     {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      render: (_text: any, _record: Noti, index: number) => {
+      render: (_text: any, _record: Popup, index: number) => {
         return index + 1;
       }
     },
@@ -368,9 +368,9 @@ const PopupPage: React.FC = () => {
             icon={<BiEdit />}
             onClick={() => onEdit(record)}
           />
-          <Popconfirm
+            <Popconfirm
             title={t("confirmSure")}
-            onConfirm={() => onDeleteNoti(record)}
+            onConfirm={() => onDeletePopup(record)}
             description={t("deleteMessage")}
           >
             <Button
@@ -386,8 +386,8 @@ const PopupPage: React.FC = () => {
     },
   ];
   useEffect(() => {
-    setNotis(
-      data?.response?.notifications?.map((u: any) => {
+    setPopups(
+      data?.response?.popups?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -422,10 +422,10 @@ const PopupPage: React.FC = () => {
           {loading ? (
             ""
           ) : (
-            <Table<Noti>
+            <Table<Popup>
               columns={columns}
               loading={loading}
-              dataSource={notis ?? []}
+              dataSource={popups ?? []}
               className="w-full"
               size="small"
               scroll={{ x: "max-content" }}
@@ -493,12 +493,12 @@ const PopupPage: React.FC = () => {
             footer={false}
             onCancel={onCancelEdit}
             destroyOnClose
-            key={currentNoti?.id || 'edit-modal'}
+            key={currentPopup?.id || 'edit-modal'}
           >
             <Form
               name="editForm"
               layout="vertical"
-              initialValues={currentNoti ?? {}}
+              initialValues={currentPopup ?? {}}
               onFinish={onUpdate}
             >
               <Form.Item name="title" label={t("title")}>
