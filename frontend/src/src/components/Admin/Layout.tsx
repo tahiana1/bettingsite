@@ -21,6 +21,8 @@ import {
 } from "antd";
 import { List, MenuProps } from "antd";
 
+import Loading from "@/assets/img/main/loader.png";
+
 import {
   MoonOutlined,
   SunOutlined,
@@ -52,7 +54,6 @@ import { SiDistrokid } from "react-icons/si";
 import { BiDiamond, BiSupport } from "react-icons/bi";
 
 import Image from "next/image";
-import Loading from "@/assets/img/loading.gif";
 import AdminLogo from "@/assets/img/Adminlogo.png"
 
 const { Header, Sider } = Layout;
@@ -1167,8 +1168,8 @@ export default function AdminRootLayout({
       </ConfigProvider>
     </ApolloProvider>
   ) : (
-    <div className="flex justify-center items-center h-screen">
-      <Image src={Loading} alt="Toto Admin" width={100} height={100} />
+    <div className="flex justify-center bg-[#0b0600] items-center h-screen">
+      <Image src={Loading} alt="Toto Admin" width={70} height={70} className="animate-spin" />
     </div>
   );
 }

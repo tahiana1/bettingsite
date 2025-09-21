@@ -25,6 +25,8 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
+import { useQuill } from "react-quilljs";
+import dynamic from "next/dynamic";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
@@ -39,6 +41,119 @@ import {
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
+
+// Separate Quill Editor Components
+const CreateQuillEditor: React.FC<{ onContentChange: (content: string) => void }> = ({ onContentChange }) => {
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "indent",
+    "link",
+    "image",
+  ];
+
+  const { quill, quillRef } = useQuill({ 
+    modules, 
+    formats, 
+    placeholder: 'Enter description...' 
+  });
+
+  useEffect(() => {
+    if (quill) {
+      const handleTextChange = () => {
+        onContentChange(quill.root.innerHTML);
+      };
+      quill.on('text-change', handleTextChange);
+      
+      return () => {
+        quill.off('text-change', handleTextChange);
+      };
+    }
+  }, [quill, onContentChange]);
+
+  return <div ref={quillRef} style={{ height: '200px' }} />;
+};
+
+const EditQuillEditor: React.FC<{ 
+  initialContent: string; 
+  onContentChange: (content: string) => void;
+  key: string;
+}> = ({ initialContent, onContentChange, key }) => {
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link", "image"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "indent",
+    "link",
+    "image",
+  ];
+
+  const { quill, quillRef } = useQuill({ 
+    modules, 
+    formats, 
+    placeholder: 'Enter description...' 
+  });
+
+  useEffect(() => {
+    if (quill && initialContent) {
+      quill.root.innerHTML = initialContent;
+    }
+  }, [quill, initialContent]);
+
+  useEffect(() => {
+    if (quill) {
+      const handleTextChange = () => {
+        onContentChange(quill.root.innerHTML);
+      };
+      quill.on('text-change', handleTextChange);
+      
+      return () => {
+        quill.off('text-change', handleTextChange);
+      };
+    }
+  }, [quill, onContentChange]);
+
+  return <div ref={quillRef} style={{ height: '200px' }} key={key} />;
+};
 
 const PopupPage: React.FC = () => {
   const t = useTranslations();
@@ -58,10 +173,20 @@ const PopupPage: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
 
   const [currentNoti, setCurrentNoti] = useState<Noti | null>(null);
+  const [editorKey, setEditorKey] = useState(0);
+  const [createEditorKey, setCreateEditorKey] = useState(0);
+  const [createForm] = Form.useForm();
+  const [createEditorContent, setCreateEditorContent] = useState<string>('');
+  const [editEditorContent, setEditEditorContent] = useState<string>('');
+
 
   const showModal = () => {
     setOpen(true);
+    setCreateEditorKey(prev => prev + 1); // Force re-render of create editor
+    setCreateEditorContent(''); // Clear editor content
+    createForm.resetFields();
   };
+
 
   const onStatusChange = (noti: Noti, checked: boolean) => {
     updateNoti({
@@ -81,7 +206,7 @@ const PopupPage: React.FC = () => {
     const newNoti = {
       title: noti.title,
       orderNum: noti.orderNum,
-      description: noti.description,
+      description: createEditorContent,
       showFrom: noti.duration ? noti.duration[0] : undefined,
       showTo: noti.duration ? noti.duration[1] : undefined,
       status: noti.status,
@@ -92,6 +217,9 @@ const PopupPage: React.FC = () => {
         }
         refetch();
         setOpen(false);
+        createForm.resetFields();
+        setCreateEditorContent('');
+        setCreateEditorKey(prev => prev + 1); // Force re-render for next open
       })
       .catch((err) => {
         console.log({ err });
@@ -104,7 +232,7 @@ const PopupPage: React.FC = () => {
   const onUpdate = (noti: Noti) => {
     const update = {
       title: noti.title,
-      description: noti.description,
+      description: editEditorContent,
       showFrom: noti.duration ? noti.duration[0] : undefined,
       showTo: noti.duration ? noti.duration[1] : undefined,
       orderNum: noti.orderNum,
@@ -125,16 +253,22 @@ const PopupPage: React.FC = () => {
     console.log("Received values of form: ", noti);
     noti.duration = [dayjs(noti.showFrom), dayjs(noti.showTo)];
     setCurrentNoti(noti);
+    setEditEditorContent(noti.description || '');
     setEditOpen(true);
+    setEditorKey(prev => prev + 1); // Force re-render of editor
   };
 
   const onCancelEdit = () => {
     setCurrentNoti(null);
     setEditOpen(false);
+    setEditEditorContent('');
   };
 
   const onCancelNew = () => {
     setOpen(false);
+    createForm.resetFields();
+    setCreateEditorContent('');
+    setCreateEditorKey(prev => prev + 1); // Force re-render for next open
   };
 
   const onDeleteNoti = (noti: Noti) => {
@@ -162,6 +296,9 @@ const PopupPage: React.FC = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
+      render: (_text: any, _record: Noti, index: number) => {
+        return index + 1;
+      }
     },
     {
       title: t("title"),
@@ -177,11 +314,15 @@ const PopupPage: React.FC = () => {
       title: t("desc"),
       dataIndex: "description",
       key: "description",
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      render: (text) => {
+        return (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: text
+            }}
+          />
+        );
+      }
     },
     {
       title: t("showFrom"),
@@ -309,18 +450,25 @@ const PopupPage: React.FC = () => {
             title={t("new")}
             footer={false}
             onCancel={onCancelNew}
+            destroyOnClose
+            key={`create-modal-${createEditorKey}`}
           >
             <Form
+              form={createForm}
               name="newForm"
               layout="vertical"
-              clearOnDestroy
               onFinish={onCreate}
             >
               <Form.Item name="title" label={t("title")}>
                 <Input />
               </Form.Item>
               <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
+                {open && (
+                  <CreateQuillEditor 
+                    key={`create-quill-${createEditorKey}`}
+                    onContentChange={setCreateEditorContent}
+                  />
+                )}
               </Form.Item>
               <Form.Item name="duration" label={t("duration")}>
                 <DatePicker.RangePicker />
@@ -345,6 +493,7 @@ const PopupPage: React.FC = () => {
             footer={false}
             onCancel={onCancelEdit}
             destroyOnClose
+            key={currentNoti?.id || 'edit-modal'}
           >
             <Form
               name="editForm"
@@ -356,7 +505,13 @@ const PopupPage: React.FC = () => {
                 <Input />
               </Form.Item>
               <Form.Item name="description" label={t("desc")}>
-                <Input.TextArea />
+                {editOpen && (
+                  <EditQuillEditor 
+                    key={`edit-quill-${editorKey}`}
+                    initialContent={editEditorContent}
+                    onContentChange={setEditEditorContent}
+                  />
+                )}
               </Form.Item>
               <Form.Item name="duration" label={t("duration")}>
                 <DatePicker.RangePicker />
