@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	popupControllers "github.com/hotbrainy/go-betting/backend/api/controllers"
 	controllers "github.com/hotbrainy/go-betting/backend/api/controllers/common"
 )
 
@@ -28,5 +29,11 @@ func GetCommonRoute(r *gin.RouterGroup) {
 	eventRouter := r.Group("/events")
 	{
 		eventRouter.GET("", controllers.GetEvents)
+	}
+
+	// popups routes
+	popupRouter := r.Group("/popups")
+	{
+		popupRouter.GET("", popupControllers.GetPopups)
 	}
 }

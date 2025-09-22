@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { ConfigProvider, Layout, theme, Modal, Checkbox } from "antd";
 
-import { ApolloProvider, useQuery } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import client from "@/api/apollo-client-ws";
 
 import { Content } from "antd/es/layout/layout";
@@ -13,7 +13,6 @@ import { useAtom } from "jotai";
 import Head from "./Header";
 import Loading from "@/assets/img/main/loader.png";
 import Image from "next/image";
-import { FILTER_POPUP } from "@/actions/popup";
 import { useTranslations } from "next-intl";
 
 function LayoutContent({
@@ -28,12 +27,8 @@ function LayoutContent({
   const [popupsData, setPopupsData] = useState([]);
   const [closedPopups, setClosedPopups] = useState<Set<number>>(new Set());
   const [dontShowAgainPopups, setDontShowAgainPopups] = useState<Set<number>>(new Set());
-  // Get current date for filtering 
-  const now = new Date().toISOString();
-
-  // Fetch popup data with filters
-  const { data: popupData, loading: popupLoading, error: popupError } = useQuery(FILTER_POPUP);
-  console.log(popupData, "data")
+  const [popupLoading, setPopupLoading] = useState(true);
+  const [popupError, setPopupError] = useState<Error | null>(null);
   useEffect(() => {
     setMount(true);
     
@@ -54,6 +49,28 @@ function LayoutContent({
       
       setDontShowAgainPopups(validDontShow);
     }
+
+    // Fetch popup data from REST API
+    const fetchPopups = async () => {
+      try {
+        setPopupLoading(true);
+        const response = await fetch('/api/v1/common/popups');
+        if (!response.ok) {
+          throw new Error('Failed to fetch popups');
+        }
+        const data = await response.json();
+        if (data.success && data.data) {
+          setPopupsData(data.data);
+        }
+      } catch (error) {
+        console.error('Error fetching popups:', error);
+        setPopupError(error as Error);
+      } finally {
+        setPopupLoading(false);
+      }
+    };
+
+    fetchPopups();
   }, []);
 
   useEffect(() => {
@@ -64,12 +81,6 @@ function LayoutContent({
     }
   }, [isDarkTheme]);
 
-  // Log popup data for debugging
-  useEffect(() => {
-    if (popupData?.response?.popups) {
-      setPopupsData(popupData?.response?.popups);
-    }
-  }, [popupData]);
 
   // Handler for close button (temporary hide - no persistence)
   const handleClosePopup = (popupIndex: number) => {
