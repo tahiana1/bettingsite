@@ -42,7 +42,6 @@ const GeneralDWPage: React.FC = () => {
 
   const [modal, contextHolder] = Modal.useModal();
   const [range, setRange] = useState<any[]>([]);
-
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
@@ -619,30 +618,62 @@ const GeneralDWPage: React.FC = () => {
     dateStrings: string[]
   ) => {
     setRange(dateStrings);
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
     
-    // Remove any existing date filters
-    filters = filters.filter((f) => f.field !== "transactions.created_at");
+    // Remove any existing date filters by finding and removing the date OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove date OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains date fields
+            const hasDateFields = andItem.or.some((orItem: any) => 
+              orItem.field === "transactions.created_at"
+            );
+            return !hasDateFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
     
     // Only add date filters if both dates are selected and valid
     if (dates?.[0] && dates?.[1]) {
       const startDate = dates[0].startOf('day').toISOString();
       const endDate = dates[1].endOf('day').toISOString();
       
-      filters = [
-        ...filters,
-        {
-          field: "transactions.created_at",
-          value: startDate,
-          op: "gte",
-        },
-        {
-          field: "transactions.created_at",
-          value: endDate,
-          op: "lte",
-        },
-      ];
+      // Create OR condition for date range
+      const dateOrCondition = {
+        or: [
+          {
+            field: "transactions.created_at",
+            value: startDate,
+            op: "gte",
+          },
+          {
+            field: "transactions.created_at",
+            value: endDate,
+            op: "lte",
+          },
+        ]
+      };
+
+      // Add the date condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(dateOrCondition);
+      } else {
+        // Create a new AND group with the date condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              dateOrCondition
+            ]
+          }
+        ];
+      }
     }
     
     setTableOptions({ ...tableOptions, filters });

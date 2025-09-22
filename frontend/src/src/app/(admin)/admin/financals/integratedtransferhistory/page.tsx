@@ -32,6 +32,7 @@ import * as XLSX from 'xlsx';
 const IntegratedTransferPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
@@ -243,6 +244,7 @@ const IntegratedTransferPage: React.FC = () => {
     setTableOptions({ ...tableOptions, filters });
   };
 
+
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
@@ -406,64 +408,20 @@ const IntegratedTransferPage: React.FC = () => {
                     value: "",
                   },
                   {
-                    label: t("depositApproval"),
-                    value: "DA",
+                    label: t("depositCasino"),
+                    value: "DepositCasino",
                   },
                   {
-                    label: t("canceledDeposit"),
-                    value: "CD",
+                    label: t("withdrawalCasino"),
+                    value: "WithdrawalCasino",
                   },
                   {
-                    label: t("deletedDeposit"),
-                    value: "DD",
+                    label: t("bet"),
+                    value: "bet",
                   },
                   {
-                    label: t("withdrawApproval"),
-                    value: "WA",
-                  },
-                  {
-                    label: t("canceledWithdraw"),
-                    value: "CW",
-                  },
-                  {
-                    label: t("deletedWithdraw"),
-                    value: "DW",
-                  },
-                  {
-                    label: t("pointConversion"),
-                    value: "PC",
-                  },
-                  {
-                    label: t("rollingTransition"),
-                    value: "RT",
-                  },
-                  {
-                    label: t("adminPay"),
-                    value: "AP",
-                  },
-                  {
-                    label: t("adminRecovery"),
-                    value: "AR",
-                  },
-                  {
-                    label: t("gameRecharge"),
-                    value: "GR",
-                  },
-                  {
-                    label: t("gameExchange"),
-                    value: "GE",
-                  },
-                  {
-                    label: t("wholeSalePayment"),
-                    value: "WSP",
-                  },
-                  {
-                    label: t("totalMoneyRecovery"),
-                    value: "TMR",
-                  },
-                  {
-                    label: t("settlementExchange"),
-                    value: "SAE",
+                    label: t("win"),
+                    value: "win",
                   },
                 ]}
                 defaultValue={""}
@@ -478,32 +436,22 @@ const IntegratedTransferPage: React.FC = () => {
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
                   onSearch={onSearch}
-                />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
                 />
               </Space>
               {/* <Space.Compact className="gap-1">

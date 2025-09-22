@@ -62,7 +62,8 @@ const TotalTransferPage: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
-
+  const [range, setRange] = useState<any[]>([]);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const columns: TableProps<Transaction>["columns"] = [
     {
       title: "ID",
@@ -201,60 +202,144 @@ const TotalTransferPage: React.FC = () => {
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
   ) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "transactions.created_at");
-    if (dates?.at(0)) {
-      filters = [
-        ...f,
-        {
-          field: "transactions.created_at",
-          value: dateStrings[0],
-          op: "gt",
-        },
-        {
-          field: "transactions.created_at",
-          value: dateStrings[1],
-          op: "lt",
-        },
-      ];
+    setRange(dateStrings);
+    let filters: any[] = tableOptions?.filters ?? [];
+    
+    // Remove any existing date filters by finding and removing the date OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove date OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains date fields
+            const hasDateFields = andItem.or.some((orItem: any) => 
+              orItem.field === "transactions.created_at"
+            );
+            return !hasDateFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
+    
+    // Only add date filters if both dates are selected and valid
+    if (dates?.[0] && dates?.[1]) {
+      const startDate = dates[0].startOf('day').toISOString();
+      const endDate = dates[1].endOf('day').toISOString();
+      
+      // Create OR condition for date range
+      const dateOrCondition = {
+        or: [
+          {
+            field: "transactions.created_at",
+            value: startDate,
+            op: "gte",
+          },
+          {
+            field: "transactions.created_at",
+            value: endDate,
+            op: "lte",
+          },
+        ]
+      };
+
+      // Add the date condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(dateOrCondition);
+      } else {
+        // Create a new AND group with the date condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              dateOrCondition
+            ]
+          }
+        ];
+      }
     }
-    console.log({ filters });
+    
     setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
   };
 
   const onSearch = (value: string) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
 
-    // Remove any existing search filters
-    filters = filters.filter(
-      (f) =>
-        !f.field.startsWith("transactions.profile.nickname") &&
-        !f.field.startsWith("transactions.profile.holderName") &&
-        !f.field.startsWith("transactions.profile.phone")
-    );
+    // Remove any existing search filters by finding and removing the search OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove search OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains search fields
+            const hasSearchFields = andItem.or.some((orItem: any) => 
+              orItem.field === "profiles.nickname" ||
+              orItem.field === "profiles.holder_name" ||
+              orItem.field === "profiles.phone" ||
+              orItem.field === "users.userid" ||
+              orItem.field === "profiles.name"
+            );
+            return !hasSearchFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
 
     if (value) {
-      // Add new search filters
-      filters = [
-        ...filters,
-        {
-          field: "transactions.profile.nickname",
-          value: value,
-          op: "like",
-        },
-        {
-          field: "transactions.profile.phone",
-          value: value,
-          op: "like",
-        },
-        {
-          field: "transactions.profile.holderName",
-          value: value,
-          op: "like",
-        }
-      ];
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "profiles.nickname",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.phone",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.holder_name",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "users.userid",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.name",
+            value: value,
+            op: searchOp,
+          }
+        ]
+      };
+
+      // Add the search condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(searchOrCondition);
+      } else {
+        // Create a new AND group with the search condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              searchOrCondition
+            ]
+          }
+        ];
+      }
     }
 
     setTableOptions({ ...tableOptions, filters });
@@ -347,64 +432,12 @@ const TotalTransferPage: React.FC = () => {
                     value: "",
                   },
                   {
-                    label: t("depositApproval"),
-                    value: "DA",
+                    label: t("depositCasino"),
+                    value: "DepositCasino",
                   },
                   {
-                    label: t("canceledDeposit"),
-                    value: "CD",
-                  },
-                  {
-                    label: t("deletedDeposit"),
-                    value: "DD",
-                  },
-                  {
-                    label: t("withdrawApproval"),
-                    value: "WA",
-                  },
-                  {
-                    label: t("canceledWithdraw"),
-                    value: "CW",
-                  },
-                  {
-                    label: t("deletedWithdraw"),
-                    value: "DW",
-                  },
-                  {
-                    label: t("pointConversion"),
-                    value: "PC",
-                  },
-                  {
-                    label: t("rollingTransition"),
-                    value: "RT",
-                  },
-                  {
-                    label: t("adminPay"),
-                    value: "AP",
-                  },
-                  {
-                    label: t("adminRecovery"),
-                    value: "AR",
-                  },
-                  {
-                    label: t("gameRecharge"),
-                    value: "GR",
-                  },
-                  {
-                    label: t("gameExchange"),
-                    value: "GE",
-                  },
-                  {
-                    label: t("wholeSalePayment"),
-                    value: "WSP",
-                  },
-                  {
-                    label: t("totalMoneyRecovery"),
-                    value: "TMR",
-                  },
-                  {
-                    label: t("settlementExchange"),
-                    value: "SAE",
+                    label: t("withdrawalCasino"),
+                    value: "WithdrawalCasino",
                   },
                 ]}
                 defaultValue={""}
@@ -412,19 +445,25 @@ const TotalTransferPage: React.FC = () => {
               />
             </Space>
             <Space className="!w-full justify-between">
-              <Space>
+            <Space>
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
