@@ -680,41 +680,17 @@ const MemberDWPage: React.FC = () => {
                     value: "withdrawal",
                   },
                   {
-                    label: t("adminPay"),
-                    value: "AP",
+                    label: t("rollingExchange"),
+                    value: "rollingExchange",
                   },
                   {
-                    label: t("adminRecovery"),
-                    value: "AR",
-                  },
-                  {
-                    label: t("totalRecovery"),
-                    value: "TR",
-                  },
-                  {
-                    label: t("subPay"),
-                    value: "SP",
-                  },
-                  {
-                    label: t("lowerRecover"),
-                    value: "LR",
-                  },
-                  {
-                    label: t("recharge"),
-                    value: "R",
-                  },
-                  {
-                    label: t("exchange"),
-                    value: "E",
+                    label: t("pointDeposit"),
+                    value: "pointDeposit",
                   },
                   {
                     label: t("canceled"),
                     value: "C",
-                  },
-                  {
-                    label: t("deleted"),
-                    value: "DL",
-                  },
+                  }
                 ]}
                 defaultValue={"entire"}
                 onChange={(e) => onTransactionTypeChange(e.target.value)}
@@ -762,22 +738,6 @@ const MemberDWPage: React.FC = () => {
                   }
                   enterButton={t("search")}
                   onSearch={onSearch}
-                />
-                <Select
-                  size="small"
-                  placeholder="By Color"
-                  className="min-w-28"
-                  allowClear
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
                 />
               </Space>
               {/* <Space.Compact className="gap-1">
