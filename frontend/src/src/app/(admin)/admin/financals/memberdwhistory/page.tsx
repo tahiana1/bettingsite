@@ -101,17 +101,24 @@ const MemberDWPage: React.FC = () => {
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
   const [range, setRange] = useState<any[]>([]);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
 
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
 
   useEffect(() => {
+    refetch(tableOptions ?? undefined);
+  }, [tableOptions]);
+
+  // Auto-refetch data every 5 seconds
+  useEffect(() => {
     const interval = setInterval(() => {
       refetch(tableOptions ?? undefined);
-    }, 60000);
+    }, 5000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [tableOptions, refetch]);
 
   const onApproveTransaction = (transaction: Transaction) => {
     if (transaction.type == "deposit" || transaction.type == "withdrawal") {
@@ -187,42 +194,114 @@ const MemberDWPage: React.FC = () => {
       });
   };
   const onTransactionTypeChange = (v: string = "") => {
-    console.log(v, 'v');
-    if (v == "entire") {
-      // Clear all transaction-related filters
-      let filters = tableOptions?.filters?.filter(
-        (f: any) => !f.field.startsWith('transactions.')
-      ) || [];
-      
-      setTableOptions({ ...tableOptions, filters });
-      refetch({
-        options: {
-          filter: {
-            shortcut: null,
-          },
+    // Base filters for all transaction types
+    const baseFilters = {
+      and: [
+        {
+          or: [
+            {
+              field: "transactions.type",
+              value: "deposit",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "withdrawal",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "point",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "rollingExchange",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "pointDeposit",
+              op: "eq",
+            },
+          ],
         },
+        {
+          or: [
+            {
+              field: "users.role",
+              value: "A",
+              op: "eq",
+            },
+            {
+              field: "users.role",
+              value: "P",
+              op: "eq",
+            },
+          ],
+        },
+      ],
+    };
+
+    if (v === "entire") {
+      // Show all transactions
+      setTableOptions({
+        ...tableOptions,
+        filters: [baseFilters],
+      });
+    } else if (v === "C") {
+      // Filter for canceled status
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.status",
+                value: "C",
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      });
+    } else if (v === "pending") {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.status",
+                value: "pending",
+                op: "eq",
+              },
+            ],
+          },
+        ],
       });
     } else {
-      // Clear existing transaction type and status filters
-      let filters = tableOptions?.filters?.filter(
-        (f: any) => !f.field.startsWith('transactions.')
-      ) || [];
-
-      if (v == "C") {
-        filters.push({
-          field: "transactions.status",
-          value: v,
-          op: "eq",
-        });
-      } else {
-        filters.push({
-          field: "transactions.type",
-          value: v,
-          op: "eq",
-        });
-      }
-
-      setTableOptions({ ...tableOptions, filters });
+      // Filter for specific transaction type
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.type",
+                value: v,
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      });
     }
   };
 
@@ -493,13 +572,68 @@ const MemberDWPage: React.FC = () => {
   };
 
   const onUSDTStatusChange = (v: string) => {
-    if (v == "true") {
-      updateFilter("usdt_desc", v, "is_not_null");
-    } else if (v == "false") {
-      updateFilter("usdt_desc", v, "is_null");
-    } else {
-      updateFilter("usdt_desc", v, "eq");
+    let filters: any[] = tableOptions?.filters ?? [];
+
+    // Remove any existing USDT filters
+    filters = filters.filter((f) => {
+      if (f.and) {
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.field === "transactions.usdt_desc") {
+            return false;
+          }
+          return true;
+        });
+        return f.and.length > 0;
+      }
+      return true;
+    });
+
+    if (v === "true") {
+      // Add USDT filter for not null
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push({
+          field: "transactions.usdt_desc",
+          value: null,
+          op: "is_not_null",
+        });
+      } else {
+        filters = [
+          {
+            and: [
+              {
+                field: "transactions.usdt_desc",
+                value: null,
+                op: "is_not_null",
+              },
+            ],
+          },
+        ];
+      }
+    } else if (v === "false") {
+      // Add USDT filter for null
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push({
+          field: "transactions.usdt_desc",
+          value: null,
+          op: "is_null",
+        });
+      } else {
+        filters = [
+          {
+            and: [
+              {
+                field: "transactions.usdt_desc",
+                value: null,
+                op: "is_null",
+              },
+            ],
+          },
+        ];
+      }
     }
+
+    setTableOptions({ ...tableOptions, filters });
+    refetch({ options: { filters } });
   };
 
 
@@ -523,30 +657,62 @@ const MemberDWPage: React.FC = () => {
     dateStrings: string[]
   ) => {
     setRange(dateStrings);
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
     
-    // Remove any existing date filters
-    filters = filters.filter((f) => f.field !== "transactions.created_at");
+    // Remove any existing date filters by finding and removing the date OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove date OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains date fields
+            const hasDateFields = andItem.or.some((orItem: any) => 
+              orItem.field === "transactions.created_at"
+            );
+            return !hasDateFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
     
     // Only add date filters if both dates are selected and valid
     if (dates?.[0] && dates?.[1]) {
       const startDate = dates[0].startOf('day').toISOString();
       const endDate = dates[1].endOf('day').toISOString();
       
-      filters = [
-        ...filters,
-        {
-          field: "transactions.created_at",
-          value: startDate,
-          op: "gte",
-        },
-        {
-          field: "transactions.created_at",
-          value: endDate,
-          op: "lte",
-        },
-      ];
+      // Create OR condition for date range
+      const dateOrCondition = {
+        or: [
+          {
+            field: "transactions.created_at",
+            value: startDate,
+            op: "gte",
+          },
+          {
+            field: "transactions.created_at",
+            value: endDate,
+            op: "lte",
+          },
+        ]
+      };
+
+      // Add the date condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(dateOrCondition);
+      } else {
+        // Create a new AND group with the date condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              dateOrCondition
+            ]
+          }
+        ];
+      }
     }
     
     setTableOptions({ ...tableOptions, filters });
@@ -554,31 +720,80 @@ const MemberDWPage: React.FC = () => {
   };
 
   const onSearch = (value: string) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
 
-    // Remove any existing search filters
-    filters = filters.filter(
-      (f) =>
-        !f.field.startsWith("transactions.profile.nickname") &&
-        !f.field.startsWith("transactions.profile.holderName")
-    );
+    // Remove any existing search filters by finding and removing the search OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove search OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains search fields
+            const hasSearchFields = andItem.or.some((orItem: any) => 
+              orItem.field === "profiles.nickname" ||
+              orItem.field === "profiles.holder_name" ||
+              orItem.field === "profiles.phone" ||
+              orItem.field === "users.userid" ||
+              orItem.field === "profiles.name"
+            );
+            return !hasSearchFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
 
     if (value) {
-      // Add new search filters
-      filters = [
-        ...filters,
-        {
-          field: "transactions.profile.nickname",
-          value: value,
-          op: "like",
-        },
-        {
-          field: "transactions.profile.phone",
-          value: value,
-          op: "like",
-        },
-      ];
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "profiles.nickname",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.phone",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.holder_name",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "users.userid",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.name",
+            value: value,
+            op: searchOp,
+          }
+        ]
+      };
+
+      // Add the search condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(searchOrCondition);
+      } else {
+        // Create a new AND group with the search condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              searchOrCondition
+            ]
+          }
+        ];
+      }
     }
 
     setTableOptions({ ...tableOptions, filters });
@@ -630,10 +845,6 @@ const MemberDWPage: React.FC = () => {
     );
     setTotal(data?.response?.total);
   }, [data]);
-
-  useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
   return (
     <Layout>
       {contextHolder}
@@ -688,36 +899,16 @@ const MemberDWPage: React.FC = () => {
                     value: "pointDeposit",
                   },
                   {
+                    label: t("pending"),
+                    value: "pending",
+                  },
+                  {
                     label: t("canceled"),
                     value: "C",
                   }
                 ]}
                 defaultValue={"entire"}
                 onChange={(e) => onTransactionTypeChange(e.target.value)}
-              />
-
-
-
-              <Radio.Group
-                size="small"
-                optionType="button"
-                buttonStyle="solid"
-                options={[
-                  {
-                    label: t("all"),
-                    value: "",
-                  },
-                  {
-                    label: "USDT O",
-                    value: "true",
-                  },
-                  {
-                    label: "USDT X",
-                    value: "false",
-                  },
-                ]}
-                defaultValue={""}
-                onChange={(e) => onUSDTStatusChange(e.target.value)}
               />
             </Space>
             <Space className="!w-full justify-between">
@@ -728,12 +919,18 @@ const MemberDWPage: React.FC = () => {
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
