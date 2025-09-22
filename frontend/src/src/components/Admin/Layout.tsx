@@ -1125,7 +1125,7 @@ export default function AdminRootLayout({
               {isAdmin ? (
                 <>
                   <Breadcrumb
-                    className="!p-2 shadow flex justify-between w-full items-center breadcrumb-home"
+                    className="!p-2 shadow flex w-full items-center breadcrumb-home"
                     items={[
                       {
                         title: (
