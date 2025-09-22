@@ -472,7 +472,12 @@ const PopupPage: React.FC = () => {
                 )}
               </Form.Item>
               <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
+                <DatePicker.RangePicker 
+                  showTime={{ format: 'HH:mm:ss' }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                  placeholder={[t("startDate"), t("endDate")]}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
               <Form.Item name="status" label={t("status")}>
                 <Switch />
@@ -515,7 +520,12 @@ const PopupPage: React.FC = () => {
                 )}
               </Form.Item>
               <Form.Item name="duration" label={t("duration")}>
-                <DatePicker.RangePicker />
+                <DatePicker.RangePicker 
+                  showTime={{ format: 'HH:mm:ss' }}
+                  format="YYYY-MM-DD HH:mm:ss"
+                  placeholder={[t("startDate"), t("endDate")]}
+                  style={{ width: '100%' }}
+                />
               </Form.Item>
               <Form.Item name="status" label={t("status")}>
                 <Switch />
