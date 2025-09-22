@@ -260,7 +260,7 @@
 /* Popup Window - Responsive sizing */
 .totoPopup-window {
 	/* background-image: url('../assets/img/popup-bg.png')!important; */
-	background: rgba(255, 255, 255, 0.9);
+	background: rgba(255, 255, 255, 1);
 	background-size: cover;
 	border: 1px solid #f6d47c;
 	background-repeat: no-repeat;
