@@ -314,6 +314,7 @@ const PopupPage: React.FC = () => {
       title: t("desc"),
       dataIndex: "description",
       key: "description",
+      width: 300,
       render: (text) => {
         return (
           <div
