@@ -8,7 +8,7 @@ import (
 
 type Popup struct {
 	ID           uint            `json:"id" gorm:"primaryKey"`
-	Title        string          `json:"title" gorm:"size:100;unique" validate:"required,min=2"`
+	Title        string          `json:"title" gorm:"size:100" validate:"required,min=2"`
 	Description  string          `json:"description" gorm:"type:text"`
 	OrderNum     uint            `json:"orderNum" gorm:"default:0"`
 	Status       bool            `json:"status"`

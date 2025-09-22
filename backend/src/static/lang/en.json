@@ -1833,5 +1833,6 @@
   "partnerPayment" : "Partner Payment",
   "userPayment" : "User Payment",
   "approvedPayment" : "Approved Payment",
-  "canceledPayment" : "Canceled Payment"
+  "canceledPayment" : "Canceled Payment",
+  "dontShowAgain": "Don't show again for the next 24 hours"
 }

@@ -180,9 +180,9 @@
 }
 
 .breadcrumb-home ol {
-	/* display: flex!important;
+	display: flex!important;
 	justify-content: space-between!important;
-	width: 100%!important; */
+	width: 100%!important;
 }
 
 .breadcrumb-home ol li {
@@ -243,4 +243,185 @@
     border: 1px solid #115599!important;
     color: #0a3a94!important;
     transition: all 0.3s ease!important;
+}
+
+/* Popup Container - Responsive positioning */
+.popup-container {
+	position: fixed;
+	top: 100px;
+	left: 10px;
+	z-index: 10000;
+	display: flex;
+	gap: 12px;
+	max-width: calc(100vw - 20px);
+	max-height: calc(100vh - 28px);
+	overflow-x: auto;
+}
+
+/* Popup Window - Responsive sizing */
+.totoPopup-window {
+	background-image: url('../assets/img/popup-bg.png')!important;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	z-index: 999999!important;
+	position: relative;
+	width: 400px;
+	min-width: 400px;
+	min-height: 600px;
+	max-height: 600px;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+	overflow-y: auto;
+}
+
+/* Popup Title - Responsive typography */
+.popup-title {
+	margin-top: 80px;
+	font-size: 2rem;
+	font-weight: 700;
+	color: white;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+	margin-bottom: 15px;
+	line-height: 1.2;
+}
+
+/* Popup Content - Responsive spacing */
+.popup-content {
+	margin-top: 10px;
+	color: white;
+	font-size: 14px;
+	line-height: 1.5;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* Popup Close Button - Responsive positioning */
+.popup-close-btn {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	background: rgba(0, 0, 0, 0.5);
+	border: none;
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	z-index: 10;
+}
+
+.popup-close-btn:hover {
+	background: rgba(0, 0, 0, 0.8);
+	transform: scale(1.1);
+}
+
+.popup-close-btn svg {
+	color: white;
+	width: 16px;
+	height: 16px;
+}
+
+/* Mobile Responsive Styles */
+@media only screen and (max-width: 768px) {
+	.popup-container {
+		top: 10px;
+		left: 5px;
+		right: 5px;
+		max-width: calc(100vw - 10px);
+		gap: 8px;
+	}
+	
+	.totoPopup-window {
+		width: 100%;
+		max-width: none;
+		min-height: 300px;
+		max-height: 500px;
+		padding: 15px;
+	}
+	
+	.popup-title {
+		margin-top: 60px;
+		font-size: 1.5rem;
+		margin-bottom: 10px;
+	}
+	
+	.popup-content {
+		font-size: 13px;
+		line-height: 1.4;
+	}
+	
+	.popup-close-btn {
+		top: 8px;
+		right: 8px;
+		width: 28px;
+		height: 28px;
+	}
+	
+	.popup-close-btn svg {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+/* Small Mobile Devices */
+@media only screen and (max-width: 480px) {
+	.popup-container {
+		top: 5px;
+		left: 5px;
+		right: 5px;
+		max-width: calc(100vw - 10px);
+		gap: 6px;
+	}
+	
+	.totoPopup-window {
+		min-height: 250px;
+		max-height: 400px;
+		padding: 12px;
+		border-radius: 8px;
+	}
+	
+	.popup-title {
+		margin-top: 50px;
+		font-size: 1.25rem;
+		margin-bottom: 8px;
+	}
+	
+	.popup-content {
+		font-size: 12px;
+		line-height: 1.3;
+	}
+	
+	.popup-close-btn {
+		top: 6px;
+		right: 6px;
+		width: 24px;
+		height: 24px;
+	}
+	
+	.popup-close-btn svg {
+		width: 12px;
+		height: 12px;
+	}
+}
+
+/* Landscape orientation on mobile */
+@media only screen and (max-height: 500px) and (orientation: landscape) {
+	.popup-container {
+		top: 5px;
+		max-height: calc(100vh - 10px);
+	}
+	
+	.totoPopup-window {
+		min-height: 200px;
+		max-height: calc(100vh - 20px);
+	}
+	
+	.popup-title {
+		margin-top: 30px;
+		font-size: 1.25rem;
+	}
 }

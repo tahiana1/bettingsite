@@ -1835,5 +1835,6 @@
   "partnerPayment" : "合作伙伴支付",
   "userPayment" : "用户支付",
   "approvedPayment" : "已批准支付",
-  "canceledPayment" : "已取消支付"
+  "canceledPayment" : "已取消支付",
+  "dontShowAgain": "24小时内不再显示"
 }
