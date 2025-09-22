@@ -47,7 +47,7 @@ const GeneralDWPage: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS);
   const [colorModal, setColorModal] = useState<boolean>(false);
-
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
   // const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
@@ -191,42 +191,114 @@ const GeneralDWPage: React.FC = () => {
       });
   };
   const onTransactionTypeChange = (v: string = "") => {
-    console.log(v, 'v');
-    if (v == "entire") {
-      // Clear all transaction-related filters
-      let filters = tableOptions?.filters?.filter(
-        (f: any) => !f.field.startsWith('transactions.')
-      ) || [];
-      
-      setTableOptions({ ...tableOptions, filters });
-      refetch({
-        options: {
-          filter: {
-            shortcut: null,
-          },
+    // Base filters for all transaction types
+    const baseFilters = {
+      and: [
+        {
+          or: [
+            {
+              field: "transactions.type",
+              value: "deposit",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "withdrawal",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "point",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "rollingExchange",
+              op: "eq",
+            },
+            {
+              field: "transactions.type",
+              value: "pointDeposit",
+              op: "eq",
+            },
+          ],
         },
+        {
+          or: [
+            {
+              field: "users.role",
+              value: "A",
+              op: "eq",
+            },
+            {
+              field: "users.role",
+              value: "P",
+              op: "eq",
+            },
+          ],
+        },
+      ],
+    };
+
+    if (v === "entire") {
+      // Show all transactions
+      setTableOptions({
+        ...tableOptions,
+        filters: [baseFilters],
+      });
+    } else if (v === "C") {
+      // Filter for canceled status
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.status",
+                value: "C",
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      });
+    } else if (v === "pending") {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.status",
+                value: "pending",
+                op: "eq",
+              },
+            ],
+          },
+        ],
       });
     } else {
-      // Clear existing transaction type and status filters
-      let filters = tableOptions?.filters?.filter(
-        (f: any) => !f.field.startsWith('transactions.')
-      ) || [];
-
-      if (v == "C") {
-        filters.push({
-          field: "transactions.status",
-          value: v,
-          op: "eq",
-        });
-      } else {
-        filters.push({
-          field: "transactions.type",
-          value: v,
-          op: "eq",
-        });
-      }
-
-      setTableOptions({ ...tableOptions, filters });
+      // Filter for specific transaction type
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          {
+            ...baseFilters,
+            and: [
+              ...baseFilters.and,
+              {
+                field: "transactions.type",
+                value: v,
+                op: "eq",
+              },
+            ],
+          },
+        ],
+      });
     }
   };
 
@@ -591,31 +663,80 @@ const GeneralDWPage: React.FC = () => {
   }, [tableOptions]);
 
   const onSearch = (value: string) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
 
-    // Remove any existing search filters
-    filters = filters.filter(
-      (f) =>
-        !f.field.startsWith("transactions.profile.nickname") &&
-        !f.field.startsWith("transactions.profile.holderName")
-    );
+    // Remove any existing search filters by finding and removing the search OR condition
+    filters = filters.filter((f) => {
+      if (f.and) {
+        // Remove search OR conditions from AND groups
+        f.and = f.and.filter((andItem: any) => {
+          if (andItem.or) {
+            // Check if this OR group contains search fields
+            const hasSearchFields = andItem.or.some((orItem: any) => 
+              orItem.field === "profiles.nickname" ||
+              orItem.field === "profiles.holder_name" ||
+              orItem.field === "profiles.phone" ||
+              orItem.field === "users.userid" ||
+              orItem.field === "profiles.name"
+            );
+            return !hasSearchFields;
+          }
+          return true;
+        });
+        return f.and.length > 0; // Keep the AND group only if it has remaining conditions
+      }
+      return true;
+    });
 
     if (value) {
-      // Add new search filters
-      filters = [
-        ...filters,
-        {
-          field: "transactions.profile.nickname",
-          value: value,
-          op: "like",
-        },
-        {
-          field: "transactions.profile.phone",
-          value: value,
-          op: "like",
-        },
-      ];
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "profiles.nickname",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.phone",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.holder_name",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "users.userid",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.name",
+            value: value,
+            op: searchOp,
+          }
+        ]
+      };
+
+      // Add the search condition to the first AND group
+      if (filters.length > 0 && filters[0].and) {
+        filters[0].and.push(searchOrCondition);
+      } else {
+        // Create a new AND group with the search condition
+        filters = [
+          {
+            and: [
+              ...(filters.length > 0 ? filters[0].and || [] : []),
+              searchOrCondition
+            ]
+          }
+        ];
+      }
     }
 
     setTableOptions({ ...tableOptions, filters });
@@ -713,6 +834,10 @@ const GeneralDWPage: React.FC = () => {
                     value: "pointDeposit",
                   },
                   {
+                    label: t("pending"),
+                    value: "pending",
+                  },
+                  {
                     label: t("canceled"),
                     value: "C",
                   }
@@ -722,19 +847,25 @@ const GeneralDWPage: React.FC = () => {
               />
             </Space>
             <Space className="!w-full justify-between">
-              <Space>
+            <Space>
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}

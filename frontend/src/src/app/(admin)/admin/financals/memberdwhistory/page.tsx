@@ -489,6 +489,11 @@ const MemberDWPage: React.FC = () => {
               <p className="text-xs bg-[green] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("rollingExchange")}</p>
             </div>
           )}
+          {record.type == "pointDeposit" && (
+            <div className="flex flex-column gap-1">
+              <p className="text-xs bg-[blue] text-white flex px-2 py-1 rounded justify-center align-center cursor-pointer">{t("pointDeposit")}</p>
+            </div>
+          )}
         </>
       ),
     },
@@ -503,6 +508,28 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+    },
+    {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      fixed: "right",
+      render: (_, record) => {
+        return <>
+          {record.status == "pending" && <Button
+            title={t("pending")}
+            variant="outlined"
+            onClick={() => onApproveTransaction(record)}
+            color="blue"
+          >
+            {t("pending")}
+          </Button>}
+          {record.status == "A" ? <button className="text-xs bg-[#1677ff] text-white px-2 py-1 rounded">{t("approve")}</button> : null}
+          {record.status == "B" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Blocked</button> : null}
+          {record.status == "C" ? <button className="text-xs bg-[#000] text-white px-2 py-1 rounded">Canceled</button> : null}
+          {record.status == "W" ? <button className="text-xs bg-[orange] text-white px-2 py-1 rounded">Waiting</button> : null}
+        </>
+      }
     },
     {
       title: t("action"),
