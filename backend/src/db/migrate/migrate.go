@@ -43,6 +43,7 @@ func main() {
 		models.Menu{},
 		models.Bank{},
 		models.CasinoBet{},
+		models.Popup{},
 	)
 
 	if err != nil {

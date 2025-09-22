@@ -131,6 +131,7 @@ func ConnectDB() {
 		models.Qna{},
 		models.GameAPI{},
 		models.CasinoBet{},
+		models.Popup{},
 	)
 
 	if err != nil {
