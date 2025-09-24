@@ -1836,5 +1836,12 @@
   "userPayment" : "用户支付",
   "approvedPayment" : "已批准支付",
   "canceledPayment" : "已取消支付",
-  "dontShowAgain": "24小时内不再显示"
+  "dontShowAgain": "24小时内不再显示",
+  "phoneNumber" : "电话号码",
+  "admin/menu/contactSetting" : "联系方式",
+  "configureContactInformationAndCommunicationChannelsForYourPlatform" : "配置联系方式和通信渠道",
+  "contactInformationGuidelines" : "联系方式指南",
+  "useInternationalFormatWithCountryCode" : "使用国际格式和国家代码",
+  "includeAtSymbolForUsernames" : "包含@符号用于用户名",
+  "enterYourKakaoTalkId" : "输入您的KakaoTalk ID"
 }

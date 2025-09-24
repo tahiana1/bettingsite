@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
 import Layout from "@/components/Layout";
@@ -164,13 +164,50 @@ export default function RootLayout({
   const pathname = usePathname();
   const [showBettingCart] = useAtom(showBettingCartState);
   const [profile, setProfile] = useAtom<any>(userState);
+  const [contactData, setContactData] = useState({
+    phone: "",
+    telegram: "",
+    kakaoTalk: ""
+  });
+
   useEffect(() => {
     api("user/me").then((res) => {
       setProfile(res.data.profile);
     }).catch((err) => {
       console.log(err);
     });
+
+    // Fetch contact data
+    api("contact-info").then((res) => {
+      if (res.success && res.data) {
+        setContactData({
+          phone: res.data.phone || "",
+          telegram: res.data.telegram || "",
+          kakaoTalk: res.data.kakaoTalk || ""
+        });
+      }
+    }).catch((err) => {
+      console.log("Error fetching contact data:", err);
+    });
   }, []);
+
+  const handleContactClick = (type: 'phone' | 'telegram' | 'kakaoTalk') => {
+    const contact = contactData[type];
+    if (!contact) return;
+
+    switch (type) {
+      case 'phone':
+        window.open(`tel:${contact}`, '_self');
+        break;
+      case 'telegram':
+        const telegramUrl = contact.startsWith('@') ? `https://t.me/${contact.slice(1)}` : `https://t.me/${contact}`;
+        window.open(telegramUrl, '_blank');
+        break;
+      case 'kakaoTalk':
+        window.open(`https://open.kakao.com/o/${contact}`, '_blank');
+        break;
+    }
+  };
   return (
     <Layout>
       <DeviceTracker />
@@ -216,13 +253,40 @@ export default function RootLayout({
         <div className="flex justify-center items-center flex-col">
           <h3 className="xl:text-[28px] text-[22px] font-bold my-5">{t("contactUs")}</h3>
           <div className="flex items-center justify-center mt-5 gap-6">
-            <button className="btn-contact xl:px-14 xl:py-3 px-8 py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+            <button 
+              className={`btn-contact xl:px-14 xl:py-3 px-8 py-2 transition-all duration-100 ${
+                contactData.phone 
+                  ? 'cursor-pointer hover:scale-105' 
+                  : 'cursor-not-allowed opacity-50'
+              }`}
+              onClick={() => handleContactClick('phone')}
+              disabled={!contactData.phone}
+              title={contactData.phone ? `Call ${contactData.phone}` : 'Phone number not available'}
+            >
               <Image src={PhoneImage} alt="phoneImage" width={40} height={40}/>
             </button>
-            <button className="btn-contact xl:px-14 xl:py-3 px-8 py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+            <button 
+              className={`btn-contact xl:px-14 xl:py-3 px-8 py-2 transition-all duration-100 ${
+                contactData.telegram 
+                  ? 'cursor-pointer hover:scale-105' 
+                  : 'cursor-not-allowed opacity-50'
+              }`}
+              onClick={() => handleContactClick('telegram')}
+              disabled={!contactData.telegram}
+              title={contactData.telegram ? `Message ${contactData.telegram}` : 'Telegram not available'}
+            >
               <Image src={TelegramImage} alt="telegramImage" width={40} height={40}/>
             </button>
-            <button className="btn-contact xl:px-14 xl:py-3 px-8   py-2 cursor-pointer hover:scale-105 transition-all duration-100">
+            <button 
+              className={`btn-contact xl:px-14 xl:py-3 px-8 py-2 transition-all duration-100 ${
+                contactData.kakaoTalk 
+                  ? 'cursor-pointer hover:scale-105' 
+                  : 'cursor-not-allowed opacity-50'
+              }`}
+              onClick={() => handleContactClick('kakaoTalk')}
+              disabled={!contactData.kakaoTalk}
+              title={contactData.kakaoTalk ? `KakaoTalk ${contactData.kakaoTalk}` : 'KakaoTalk not available'}
+            >
               <Image src={TalkImage} alt="talkImage" width={40} height={40}/>
             </button>
           </div>

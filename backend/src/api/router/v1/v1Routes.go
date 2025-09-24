@@ -24,6 +24,9 @@ func GetV1Route(r *gin.RouterGroup) {
 	})
 	r.GET("/lang/:locale", controllers.GetLang)
 
+	// Public contact info endpoint
+	r.GET("/contact-info", controllers.GetPublicContactInfo)
+
 	r.Use(middleware.LogAuth)
 
 	r.GET("/ws/info", controllers.Info)

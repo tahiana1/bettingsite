@@ -1834,5 +1834,13 @@
   "userPayment" : "User Payment",
   "approvedPayment" : "Approved Payment",
   "canceledPayment" : "Canceled Payment",
-  "dontShowAgain": "Don't show again for the next 24 hours"
+  "dontShowAgain": "Don't show again for the next 24 hours",
+  "contactEmail" : "Contact Email",
+  "phoneNumber" : "Phone Number",
+  "admin/menu/contactSetting" : "Contacts",
+  "configureContactInformationAndCommunicationChannelsForYourPlatform" : "Configure contact information and communication channels for your platform",
+  "contactInformationGuidelines" : "Contact Information Guidelines",
+  "useInternationalFormatWithCountryCode" : "Use international format with country code",
+  "includeAtSymbolForUsernames" : "Include @ symbol for usernames",
+  "enterYourKakaoTalkId" : "Enter your KakaoTalk ID"
 }

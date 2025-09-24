@@ -132,6 +132,7 @@ func ConnectDB() {
 		models.GameAPI{},
 		models.CasinoBet{},
 		models.Popup{},
+		models.Contact{},
 	)
 
 	if err != nil {

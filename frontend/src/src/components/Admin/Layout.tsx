@@ -454,6 +454,10 @@ export default function AdminRootLayout({
           key: "admin/settings/domain",
           label: t("admin/menu/domainSetting"),
         },
+        {
+          key: "admin/settings/contact",
+          label: t("admin/menu/contactSetting"),
+        },
         // {
         //   key: "admin/settings/sms",
         //   label: t("admin/menu/smsAPISetting"),
