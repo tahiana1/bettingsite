@@ -116,28 +116,28 @@ type UserInfoFieldStyle7Props = {
 }
 
 const levelOption = [
-    {label: "Level 1", value: "1"},
-    {label: "Level 2", value: "2"},
-    {label: "Level 3", value: "3"},
-    {label: "Level 4", value: "4"},
-    {label: "Level 5", value: "5"},
-    {label: "Level 6", value: "6"},
-    {label: "Level 7", value: "7"},
-    {label: "Level 8", value: "8"},
-    {label: "Level 9", value: "9"},
-    {label: "Level 10", value: "10"},
-    {label: "Level 11", value: "11"},
-    {label: "Level 12", value: "12"},
-    {label: "VIP 1", value: "13"},
-    {label: "VIP 2", value: "14"},
-    {label: "Premium", value: "15"},
+    {label: "Level 1", value: 1},
+    {label: "Level 2", value: 2},
+    {label: "Level 3", value: 3},
+    {label: "Level 4", value: 4},
+    {label: "Level 5", value: 5},
+    {label: "Level 6", value: 6},
+    {label: "Level 7", value: 7},
+    {label: "Level 8", value: 8},
+    {label: "Level 9", value: 9},
+    {label: "Level 10", value: 10},
+    {label: "Level 11", value: 11},
+    {label: "Level 12", value: 12},
+    {label: "VIP 1", value: 13},
+    {label: "VIP 2", value: 14},
+    {label: "Premium", value: 15},
 ]
 
 const memberType = [
-    {label: 'Genearl Member', value: '1'},
-    {label: 'Test Member', value: '2'},
-    {label: 'Interested Member', value: '3'},
-    {label: 'Working Member', value: '4'},
+    {label: 'Genearl Member', value: 'G'},
+    {label: 'Test Member', value: 'T'},
+    {label: 'Interested Member', value: 'I'},
+    {label: 'Working Member', value: 'W'},
 ]
 
 const onoffType = [
@@ -632,7 +632,7 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     <div className="flex flex-column gap-2 justify-start items-center">
       <div className="text-xm w-[150px]">{label}</div>
       <div className="flex flex-row gap-2 w-[250px]">
-        <Select placeholder={placeholder} onChange={onChange} options={levelOption} className="w-full"/>
+        <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={levelOption} className="w-full"/>
         <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
           {buttonLabel}
         </Button>
@@ -672,7 +672,7 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     <div className="flex flex-column gap-2 justify-start items-center">
       <div className="text-xm w-[150px]">{label}</div>
       <div className="flex flex-row gap-2 w-[250px]">
-        <Select placeholder={placeholder} onChange={onChange} options={memberType} className="w-full"/>
+        <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={memberType} className="w-full"/>
         <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
           {buttonLabel}
         </Button>
@@ -1527,7 +1527,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle1Field
               label={t("dateOfRegistered")}
               placeholder={t("dateOfRegistered")}
-              value={""}
+              value={fields.createdAt}
             />
             <UserInfoStyle3Field
               label={t("sameIPCheck")}

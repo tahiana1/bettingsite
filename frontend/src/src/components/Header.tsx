@@ -109,6 +109,13 @@ const Head = () => {
   // rolling modal state
   const [isRollingModalOpen, setIsRollingModalOpen] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    const newState = !isMenuOpen
+    setIsMenuOpen(newState);
+  }
+
   const checkoutModal = (modal: string) => {
     if (modal === "withdraw") {
       setIsDepositModalOpen(false);
@@ -320,6 +327,7 @@ const Head = () => {
   };
 
   const handleDepositClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsDepositModalOpen(true);
     } else {
@@ -332,6 +340,7 @@ const Head = () => {
   };
 
   const handleWithdrawClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsWithdrawModalOpen(true);
     } else {
@@ -344,6 +353,7 @@ const Head = () => {
   };
 
   const handleNoticeClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsNoticeModalOpen(true);
     } else {
@@ -356,6 +366,7 @@ const Head = () => {
   };
 
   const handleEventClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsEventModalOpen(true);
     } else {
@@ -400,6 +411,7 @@ const Head = () => {
   };
 
   const handlePointClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsPointModalOpen(true);
     } else {
@@ -412,6 +424,7 @@ const Head = () => {
   };
 
   const handleRollingClick = () => {
+    setIsMenuOpen(false);
     if (profile?.id) {
       setIsRollingModalOpen(true);
     } else {
@@ -529,7 +542,7 @@ const Head = () => {
             <li>
               <button
                 onClick={handleWithdrawClick}
-                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer hover:scale-105">
                 <span>
                   {t(`withdraw`)}
                 </span>
@@ -538,7 +551,7 @@ const Head = () => {
             <li>
               <button
                 onClick={handlePointClick}
-                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer hover:scale-105">
                 <span>
                   {t(`point`)}
                 </span>
@@ -547,7 +560,7 @@ const Head = () => {
             <li>
               <button
                 onClick={handleRollingClick}
-                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer hover:scale-105">
                 <span>
                   {t(`rolling`)}
                 </span>
@@ -556,7 +569,7 @@ const Head = () => {
             <li>
               <button 
                 onClick={handleNoticeClick}
-                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer hover:scale-105">
                 <span>
                   {t(`notice`)}
                 </span>
@@ -565,7 +578,7 @@ const Head = () => {
             <li>
               <button 
                 onClick={handleEventClick}
-                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer">
+                className="font-bold text-white hover:text-[#fce18f] transition-all duration-300 bg-transparent border-none cursor-pointer hover:scale-105">
                   <span>
                   {t(`event`)}
                 </span>
@@ -573,6 +586,101 @@ const Head = () => {
             </li>
           </ul>
         </div>
+
+        {/**mobile nabvar */}
+        <div 
+          className={`z-9999 mobile-navbar-overlay fixed top-0 right-[0] w-full h-full bg-black bg-opacity-50 md:hidden transition-all duration-300 ${
+            isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+          }`}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              toggleMenu();
+            }
+          }}
+        >
+          <div className={`mobile-navbar-panel absolute top-0 left-0 w-full h-full bg-[#23160b] shadow-2xl transform transition-all duration-300 ${
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}>
+            <div className="p-6">
+              <div className="flex justify-center items-center mb-8 relative">
+                <Image src={Logo} alt="logo" height={60} className="cursor-pointer"/>
+                <button
+                  onClick={toggleMenu}
+                  className="absolute right-0 text-white hover:text-[#fce18f] cursor-pointer transition-colors duration-300"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+              
+              <ul className="space-y-4">
+                <li>
+                  <button
+                    onClick={handleDepositClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`deposit`)}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleWithdrawClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`withdraw`)}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handlePointClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`point`)}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleRollingClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`rolling`)}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleNoticeClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`notice`)}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={handleEventClick}
+                    className="w-full text-center cursor-pointer py-3 px-4 text-white hover:text-[#fce18f] boder-1 border-[transparent] hover:border-[#fce18f] hover:border-1 hover:bg-[#2a2a2a] rounded-lg transition-all duration-300 font-bold"
+                  >
+                    {t(`event`)}
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <button
+          className="left-menu md:hidden cursor-pointer text-white focus:outline-none transition-all duration-300 hover:scale-110 fixed top-27 left-0 z-[5000] bg-[#21150b] border-[#fce18f] border-t-1 border-r-1 border-b-1 hover:bg-[#2a2a2a] p-3 shadow-lg"
+          onClick={(e) => {
+
+            e.preventDefault();
+            toggleMenu();
+          }}
+        >
+          {/* Hamburger icon (three lines) */}
+          <svg xmlns="http://www.w3.org/2000/svg" className={`transition-all duration-500 h-6 w-6 ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+
         <div className="flex items-center">
           <div className="mr-[10px] md:mr-[35px] language-switcher">
             <LangSwitcher locale={locale} />

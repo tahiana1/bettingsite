@@ -26,7 +26,7 @@ type BasicInformationResponse struct {
 	Affiliation                                                   string `json:"affiliation"`
 	TopDistributor                                                string `json:"topDistributor"`
 	Recommender                                                   string `json:"recommender"`
-	Level                                                         string `json:"level"`
+	Level                                                         int32  `json:"level"`
 	MemberType                                                    string `json:"memberType"`
 	Color                                                         string `json:"color"`
 	OnOff                                                         string `json:"onOff"`
@@ -182,7 +182,7 @@ func GetBasicInformation(c *gin.Context) {
 		Affiliation:      "", // Not available in current model
 		TopDistributor:   user.Profile.Referral,
 		Recommender:      user.Profile.Referral,
-		Level:            strconv.Itoa(int(user.Profile.Level)),
+		Level:            user.Profile.Level,
 		MemberType:       user.Type,
 		Color:            "",          // Not available in current model
 		OnOff:            user.Status, // Map status to OnOff

@@ -31,7 +31,7 @@ type Profile struct {
 	Roll    float64 `json:"roll" gorm:"default:0"`
 	Point   int32   `json:"point"  gorm:"default:0"`
 	Comp    int32   `json:"comp" gorm:"default:0"`
-	Level   int32   `json:"level" gorm:"default:0"`
+	Level   int32   `json:"level" gorm:"default:1"`
 	Coupon  int32   `json:"coupon" gorm:"default:0"`
 
 	Favorites string `json:"favorites"`
