@@ -1103,12 +1103,12 @@ export default function AdminRootLayout({
                     justify="space-between"
                     className="gap-2 items-center"
                   >
-                    <LangSwitcher locale={locale} />
+                    <LangSwitcher locale={locale}/>
                     <Button
                       type="text"
-                      icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
+                      icon={isDarkTheme ? <SunOutlined /> : ""}
                       onClick={onThemeChange}
-                      className="!w-10 !h-10"
+                      className="!w-10 !h-10 !hidden"
                     />
                     <Dropdown
                       className="flex gap-2 items-center"
