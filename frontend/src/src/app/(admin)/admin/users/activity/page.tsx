@@ -52,57 +52,82 @@ const LogStatusPage: React.FC = () => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
   const onSearchLog = (v: string) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "ip");
+    let filters: any[] = tableOptions?.filters ?? [];
+    // Remove existing search filters (both ip and phone)
+    const f = filters.filter((f) => f.field !== "ip" && f.field !== "phone" && !f.or);
 
     filters = [...f];
-    setTableOptions({
-      ...tableOptions,
-      filters: [
-        ...filters,
-        {
-          or: [
-            {
-              field: "ip",
-              value: v,
-              op: "ilike",
-            },
-            {
-              field: "phone",
-              value: v,
-              op: "ilike",
-            },
-          ],
-        },
-      ],
-    });
+    if (v && v.trim()) {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          ...filters,
+          {
+            or: [
+              {
+                field: "ip",
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: "phone",
+                value: v.trim(),
+                op: "ilike",
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      setTableOptions({
+        ...tableOptions,
+        filters: filters,
+      });
+    }
   };
   const onRangerChange = (
     dates: (Dayjs | null)[] | null,
     dateStrings: string[]
   ) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
-    const f = filters.filter((f) => f.field !== "created_at");
-    if (dates?.at(0)) {
-      filters = [
-        ...f,
+    let filters: any[] = tableOptions?.filters ?? [];
+    
+    // Remove any existing date filters by filtering out date-related conditions
+    filters = filters.filter((f) => {
+      if (f.field === "logs.created_at") {
+        return false; // Remove direct date field filters
+      }
+      if (f.or) {
+        // Remove OR groups that contain date fields
+        const hasDateFields = f.or.some((orItem: any) => 
+          orItem.field === "logs.created_at"
+        );
+        return !hasDateFields;
+      }
+      return true;
+    });
+    
+    // Only add date filters if both dates are selected and valid
+    if (dates?.[0] && dates?.[1]) {
+      const startDate = dates[0].startOf('day').toISOString();
+      const endDate = dates[1].endOf('day').toISOString();
+      
+      // Add date range filters as separate conditions
+      filters.push(
         {
-          field: "created_at",
-          value: dateStrings[0],
-          op: "gt",
+          field: "logs.created_at",
+          value: startDate,
+          op: "gte",
         },
         {
-          field: "created_at",
-          value: dateStrings[1],
-          op: "lt",
-        },
-      ];
-    } else {
-      filters = f;
+          field: "logs.created_at",
+          value: endDate,
+          op: "lte",
+        }
+      );
     }
+    
     setTableOptions({ ...tableOptions, filters });
+    refetch({ variables: { filters } });
   };
 
   const columns: TableProps<Log>["columns"] = [
@@ -228,22 +253,31 @@ const LogStatusPage: React.FC = () => {
     },
   ];
   const onFilterStatusChange = (v: string) => {
-    let filters: { field: string; value: string; op: string }[] =
-      tableOptions?.filters ?? [];
+    let filters: any[] = tableOptions?.filters ?? [];
     const f = filters.filter((f) => f.field !== "status");
 
     filters = [...f];
-    setTableOptions({
-      ...tableOptions,
-      filters: [
+    if (v) {
+      const newFilters = [
         ...filters,
         {
           field: "status",
           value: v,
           op: "ilike",
         },
-      ],
-    });
+      ];
+      console.log('Status filter applied:', { status: v, filters: newFilters });
+      setTableOptions({
+        ...tableOptions,
+        filters: newFilters,
+      });
+    } else {
+      console.log('Status filter removed:', { filters });
+      setTableOptions({
+        ...tableOptions,
+        filters: filters,
+      });
+    }
   };
   const onChange: TableProps<Log>["onChange"] = (
     pagination,
@@ -338,8 +372,8 @@ const LogStatusPage: React.FC = () => {
                     value: "success",
                   },
                   {
-                    label: t("failure"),
-                    value: "fail",
+                    label: t("error"),
+                    value: "error",
                   },
                 ]}
                 defaultValue={""}

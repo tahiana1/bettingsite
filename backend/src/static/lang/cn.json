@@ -1843,5 +1843,6 @@
   "contactInformationGuidelines" : "联系方式指南",
   "useInternationalFormatWithCountryCode" : "使用国际格式和国家代码",
   "includeAtSymbolForUsernames" : "包含@符号用于用户名",
-  "enterYourKakaoTalkId" : "输入您的KakaoTalk ID"
+  "enterYourKakaoTalkId" : "输入您的KakaoTalk ID",
+  "error" : "错误"
 }
