@@ -310,7 +310,7 @@ const RollingAccumulationPage: React.FC = () => {
             />
             
 
-            <Radio.Group
+            {/* <Radio.Group
               size="small"
               optionType="button"
               buttonStyle="solid"
@@ -337,7 +337,7 @@ const RollingAccumulationPage: React.FC = () => {
                 }
               ]}
               defaultValue={""}
-            />
+            /> */}
           
             <Space className="!w-full">
               <Space>

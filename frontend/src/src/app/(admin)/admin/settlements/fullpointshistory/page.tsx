@@ -242,7 +242,7 @@ const FullPointsHistoryPage: React.FC = () => {
               defaultValue={""}
             />
 
-            <Radio.Group
+            {/* <Radio.Group
               size="small"
               optionType="button"
               buttonStyle="solid"
@@ -309,7 +309,7 @@ const FullPointsHistoryPage: React.FC = () => {
                 },
               ]}
               defaultValue={""}
-            />
+            /> */}
 
             <Space className="!w-full justify-between">
               <Space>

@@ -307,22 +307,22 @@ export default function AdminRootLayout({
           key: "admin/settlements/fullpointshistory",
           label: t(`admin/menu/settlements/fullpointshistory`),
         },
-        {
-          key: "admin/settlements/fullcoupondetail",
-          label: t(`admin/menu/settlements/fullcoupondetail`),
-        },
+        // {
+        //   key: "admin/settlements/fullcoupondetail",
+        //   label: t(`admin/menu/settlements/fullcoupondetail`),
+        // },
         {
           key: "admin/settlements/rollingaccumulationhistory",
           label: t(`admin/menu/settlements/rollingaccumulationhistory`),
         },
-        {
-          key: "admin/settlements/losingaccumulationhistory",
-          label: t(`admin/menu/settlements/losingaccumulationhistory`),
-        },
-        {
-          key: "admin/settlements/losingdetail",
-          label: t(`admin/menu/settlements/losingdetail`),
-        },
+        // {
+        //   key: "admin/settlements/losingaccumulationhistory",
+        //   label: t(`admin/menu/settlements/losingaccumulationhistory`),
+        // },
+        // {
+        //   key: "admin/settlements/losingdetail",
+        //   label: t(`admin/menu/settlements/losingdetail`),
+        // },
         {
           key: "admin/settlements/distributorstatistics",
           label: t(`admin/menu/settlements/distributorStatistics`),
