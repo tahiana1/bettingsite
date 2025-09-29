@@ -111,6 +111,7 @@ const PartnerPage: React.FC = () => {
   const [userModal, setUserModal] = useState<boolean>(false);
   const [losingRollingModal, setLosingRollingModal] = useState<boolean>(false);
   const [selectedLosingRollingTab, setSelectedLosingRollingTab] = useState<string>("losingSetting");
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
 
   const [createUser] = useMutation(CREATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
@@ -233,6 +234,57 @@ const PartnerPage: React.FC = () => {
 
   const onLevelChange = (v: string = "") => {
     updateFilter(`"Profile"."level"`, v, "eq");
+  };
+
+  const onSearch = (value: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+
+    // Remove any existing search filters
+    filters = filters.filter((f) => 
+      f.field !== '"Profile"."nickname"' &&
+      f.field !== '"Profile"."holder_name"' &&
+      f.field !== '"Profile"."phone"' &&
+      f.field !== "users.userid" &&
+      f.field !== '"Profile"."name"'
+    );
+
+    if (value) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Add search filters for multiple fields
+      filters = [
+        ...filters,
+        {
+          field: '"Profile"."nickname"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."phone"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."holder_name"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: "users.userid",
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."name"',
+          value: value,
+          op: searchOp,
+        }
+      ];
+    }
+
+    setTableOptions({ ...tableOptions, filters });
   };
 
   const onExpand = (expanded: boolean, record: User) => {
@@ -413,32 +465,32 @@ const PartnerPage: React.FC = () => {
         >
           {t("losingRollingSetting")}
         </Button>,
-        <Button title={t("move")} variant="outlined" color="blue" key={"move"}>
-          {t("move")}
-        </Button>,
-        <Button
-          title={t("lower")}
-          variant="outlined"
-          color="blue"
-          key={"lower"}
-        >
-          {t("lower")}
-        </Button>,
+        // <Button title={t("move")} variant="outlined" color="blue" key={"move"}>
+        //   {t("move")}
+        // </Button>,
+        // <Button
+        //   title={t("lower")}
+        //   variant="outlined"
+        //   color="blue"
+        //   key={"lower"}
+        // >
+        //   {t("lower")}
+        // </Button>,
       ],
     },
-    {
-      title: t("shortcut"),
-      dataIndex: "shortcut",
-      key: "shortcut",
-      render: () => [
-        <Button title={t("money")} variant="outlined" color="red" key={"money"}>
-          {t("money")}
-        </Button>,
-        <Button title={t("bet")} variant="outlined" color="blue" key={"bet"}>
-          {t("bet")}
-        </Button>,
-      ],
-    },
+    // {
+    //   title: t("shortcut"),
+    //   dataIndex: "shortcut",
+    //   key: "shortcut",
+    //   render: () => [
+    //     <Button title={t("money")} variant="outlined" color="red" key={"money"}>
+    //       {t("money")}
+    //     </Button>,
+    //     <Button title={t("bet")} variant="outlined" color="blue" key={"bet"}>
+    //       {t("bet")}
+    //     </Button>,
+    //   ],
+    // },
     {
       title: t("action"),
       key: "action",
@@ -990,6 +1042,10 @@ const PartnerPage: React.FC = () => {
     );
   }, [domainData]);
 
+  useEffect(() => {
+    refetch(tableOptions ?? undefined);
+  }, [tableOptions]);
+
   return (
     <Layout>
       {contextHolder}
@@ -1018,7 +1074,7 @@ const PartnerPage: React.FC = () => {
               defaultValue={""}
             />
             <Space wrap>
-              <Radio.Group
+              {/* <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
@@ -1038,7 +1094,7 @@ const PartnerPage: React.FC = () => {
                 ]}
                 defaultValue={""}
                 onChange={(e) => onBlackMemoChange(e.target.value)}
-              />
+              /> */}
 
               <Radio.Group
                 className="flex-nowrap"
@@ -1077,7 +1133,7 @@ const PartnerPage: React.FC = () => {
             </Space>
             <Space className="!w-full justify-between">
               <Space>
-                <Select
+                {/* <Select
                   size="small"
                   placeholder="By Level"
                   className="min-w-28"
@@ -1109,7 +1165,7 @@ const PartnerPage: React.FC = () => {
                     },
                     { label: t("usdtAddress"), value: `usdtAddress` },
                   ]}
-                />
+                /> */}
                 <Input.Search
                   size="small"
                   placeholder="ID,Nickname,AccountHolder,Phone"
@@ -1118,12 +1174,19 @@ const PartnerPage: React.FC = () => {
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
-                <Button size="small">{t("only_root_distributor")}</Button>
-                <Checkbox> {t("only_direct_member")}</Checkbox>
+                {/* <Button size="small">{t("only_root_distributor")}</Button> */}
+                {/* <Checkbox> {t("only_direct_member")}</Checkbox> */}
               </Space>
               <Button size="small" onClick={() => setRegModal(true)}>
                 {t("register")}

@@ -42,6 +42,57 @@ const DistStatusPage: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(CONNECTED_USERS);
 
+  const onSearchUser = (v: string) => {
+    let filters: any[] = tableOptions?.filters ?? [];
+    // Remove existing search filters (userid, nickname, holderName, phone)
+    const f = filters.filter((f) => 
+      f.field !== "userid" && 
+      f.field !== '"Profile"."nickname"' && 
+      f.field !== '"Profile"."holder_name"' && 
+      f.field !== '"Profile"."phone"' && 
+      !f.or
+    );
+
+    filters = [...f];
+    if (v && v.trim()) {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          ...filters,
+          {
+            or: [
+              {
+                field: "userid",
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."nickname"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."holder_name"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."phone"',
+                value: v.trim(),
+                op: "ilike",
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      setTableOptions({
+        ...tableOptions,
+        filters: filters,
+      });
+    }
+  };
+
   const columns: TableProps<User>["columns"] = [
     {
       title: t("userid"),
@@ -330,6 +381,7 @@ const DistStatusPage: React.FC = () => {
                   />
                 }
                 enterButton={t("search")}
+                onSearch={onSearchUser}
               />
               <Button size="small" color="danger" variant="outlined">
                 {t("disconnectAll")}
