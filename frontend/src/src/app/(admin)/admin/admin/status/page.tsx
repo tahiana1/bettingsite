@@ -48,12 +48,73 @@ const AdminStatusPage: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const { loading, data, refetch } = useQuery(CONNECTED_USERS);
 
+  const onSearchUser = (v: string) => {
+    let filters: any[] = tableOptions?.filters ?? [];
+    // Remove existing search filters (userid, nickname, holderName, phone)
+    const f = filters.filter((f) => 
+      f.field !== "userid" && 
+      f.field !== '"Profile"."nickname"' && 
+      f.field !== '"Profile"."holder_name"' && 
+      f.field !== '"Profile"."phone"' && 
+      !f.or
+    );
+
+    filters = [...f];
+    if (v && v.trim()) {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          ...filters,
+          {
+            or: [
+              {
+                field: "userid",
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."nickname"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."holder_name"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."phone"',
+                value: v.trim(),
+                op: "ilike",
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      setTableOptions({
+        ...tableOptions,
+        filters: filters,
+      });
+    }
+  };
+
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+
   const columns: TableProps<User>["columns"] = [
     {
       title: "ID",
       dataIndex: "userid",
       key: "userid",
       fixed: "left",
+      render: (_, record) => {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.id)}> 
+          <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.profile?.level}</p>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.userid}</p>
+        </div>
+      },
     },
     {
       title: t("site"),
@@ -330,6 +391,7 @@ const AdminStatusPage: React.FC = () => {
                   />
                 }
                 enterButton="Search"
+                onSearch={onSearchUser}
               />
               <Button size="small" color="danger" variant="outlined">
                 {t("disconnectAll")}
