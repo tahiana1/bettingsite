@@ -1203,8 +1203,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             506,000
           </div>
         </div> */}
-        <div className="flex g
-        ap-20">
+        <div className="flex gap-20">
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoField
               label={t("id")}
