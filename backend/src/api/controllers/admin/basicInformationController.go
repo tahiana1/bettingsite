@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
@@ -304,4 +305,250 @@ func GetBasicInformation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// UpdateBasicInformationRequest represents the request structure for updating basic information
+type UpdateBasicInformationRequest struct {
+	Field string `json:"field"`
+	Value string `json:"value"`
+}
+
+// UpdateBasicInformation handles updates for user basic information fields
+func UpdateBasicInformation(c *gin.Context) {
+	userid := c.Param("userid")
+	var req UpdateBasicInformationRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request format",
+		})
+		return
+	}
+
+	// Find user by userid (could be either userid string or ID number)
+	var user models.User
+	var result *gorm.DB
+
+	// Try to find by ID first (if userid is a number)
+	if id, err := strconv.Atoi(userid); err == nil {
+		result = initializers.DB.Where("id = ?", id).Preload("Profile").First(&user)
+	} else {
+		// If not a number, search by userid string
+		result = initializers.DB.Where("userid = ?", userid).Preload("Profile").First(&user)
+	}
+
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	// Update the specific field based on the incoming field name
+	field := req.Field
+	value := req.Value
+
+	switch field {
+	case "id":
+		user.Userid = value
+	case "nickname":
+		updateProfileField(c, userid, field, value, []string{"Profile.Nickname"})
+		return
+	case "exchangePassword":
+		user.SecPassword = value
+	case "allas":
+		user.Name = value
+	case "depositor":
+		updateProfileField(c, userid, field, value, []string{"Profile.HolderName"})
+		return
+	case "bankName":
+		updateProfileField(c, userid, field, value, []string{"Profile.BankName"})
+		return
+	case "accountnumber":
+		updateProfileField(c, userid, field, value, []string{"Profile.AccountNumber"})
+		return
+	case "cellphone":
+		updateProfileField(c, userid, field, value, []string{"Profile.Mobile"})
+		return
+	case "birthday":
+		updateProfileField(c, userid, field, value, []string{"Profile.Birthday"})
+		return
+	case "topDistributor":
+		updateProfileField(c, userid, field, value, []string{"Profile.Referral"})
+		return
+	case "recommender":
+		updateProfileField(c, userid, field, value, []string{"Profile.Referral"})
+		return
+	case "level":
+		updateProfileField(c, userid, field, value, []string{"Profile.Level"})
+		return
+	case "memberType":
+		user.Type = value
+	case "color":
+		// Color field doesn't exist in current model - could add it later
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Color field updated (not stored in database)",
+			"field":   field,
+			"value":   value,
+		})
+		return
+	case "onoff":
+		user.Status = value
+	case "accountblock":
+		user.Status = value
+	case "residentNumber":
+		// ResidentNumber field doesn't exist in current model - could add it later
+		c.JSON(http.StatusOK, gin.H{
+			"message": "Resident number field updated (not stored in database)",
+			"field":   field,
+			"value":   value,
+		})
+		return
+	case "useUSDT":
+		if value == "true" && user.USDTAddress == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "USDT wallet address is required when enabling USDT",
+			})
+			return
+		}
+		// USDT use is determined by whether address exists, so no direct field to update
+		c.JSON(http.StatusOK, gin.H{
+			"message": "USDT usage determined by wallet address availability",
+			"field":   field,
+			"value":   value,
+		})
+		return
+	case "walletAddress":
+		user.USDTAddress = value
+	case "amountHold":
+		updateProfileField(c, userid, field, value, []string{"Profile.Balance"})
+		return
+	case "coupon":
+		updateProfileField(c, userid, field, value, []string{"Profile.Coupon"})
+		return
+	case "rollingGold":
+		updateProfileField(c, userid, field, value, []string{"Profile.Roll"})
+		return
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Unknown field: " + field,
+		})
+		return
+	}
+
+	// Save the user changes
+	if err := initializers.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update user",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Field updated successfully",
+		"field":   field,
+		"value":   value,
+	})
+}
+
+// updateProfileField is a helper function to update Profile fields
+func updateProfileField(c *gin.Context, userid string, field string, value string, profileFields []string) {
+	// Find user by userid (could be either userid string or ID number)
+	var user models.User
+	var result *gorm.DB
+
+	// Try to find by ID first (if userid is a number)
+	if id, err := strconv.Atoi(userid); err == nil {
+		result = initializers.DB.Where("id = ?", id).Preload("Profile").First(&user)
+	} else {
+		// If not a number, search by userid string
+		result = initializers.DB.Where("userid = ?", userid).Preload("Profile").First(&user)
+	}
+
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	// Update Profile fields based on the field name
+	switch field {
+	case "nickname":
+		user.Profile.Nickname = value
+	case "depositor":
+		user.Profile.HolderName = value
+	case "bankName":
+		user.Profile.BankName = value
+	case "accountnumber":
+		user.Profile.AccountNumber = value
+	case "cellphone":
+		user.Profile.Mobile = value
+	case "birthday":
+		if birthday, err := time.Parse("2006-01-02", value); err == nil {
+			user.Profile.Birthday = birthday
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid date format. Use YYYY-MM-DD",
+			})
+			return
+		}
+	case "topDistributor", "recommender":
+		user.Profile.Referral = value
+	case "level":
+		if level, err := strconv.Atoi(value); err == nil {
+			user.Profile.Level = int32(level)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid level format. Must be a number",
+			})
+			return
+		}
+	case "amountHold":
+		if balance, err := strconv.ParseFloat(value, 64); err == nil {
+			user.Profile.Balance = balance
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid balance format. Must be a number",
+			})
+			return
+		}
+	case "coupon":
+		if coupon, err := strconv.Atoi(value); err == nil {
+			user.Profile.Coupon = int32(coupon)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid coupon format. Must be a number",
+			})
+			return
+		}
+	case "rollingGold":
+		if roll, err := strconv.ParseFloat(value, 64); err == nil {
+			user.Profile.Roll = roll
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid roll format. Must be a number",
+			})
+			return
+		}
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Unknown profile field: " + field,
+		})
+		return
+	}
+
+	// Save the profile changes
+	if err := initializers.DB.Save(&user.Profile).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to update profile",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Profile field updated successfully",
+		"field":   field,
+		"value":   value,
+	})
 }

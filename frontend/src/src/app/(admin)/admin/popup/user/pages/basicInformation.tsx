@@ -1166,21 +1166,39 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
   const handleChange = (field: keyof typeof fields) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    // setFields((prev) => ({ ...prev, [field]: e.target.value }));
+    setFields((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleSelectChange = (field: keyof typeof fields) => (
+    value: any
+  ) => {
+    setFields((prev) => ({ ...prev, [field]: value.toString() }));
   };
 
   const handleButtonClick = (field: keyof typeof fields) => async () => {
-    // setLoading((prev) => ({ ...prev, [field]: true }));
-    console.log(field, fields[field]);
-    // try {
-    //   // Replace mockApiCall with your real API call
-    //   await mockApiCall(field, fields[field]);
-    //   message.success(`${field} updated: ${fields[field]}`);
-    // } catch (error) {
-    //   message.error(`Failed to update ${field}`);
-    // } finally {
-    //   setLoading((prev) => ({ ...prev, [field]: false }));
-    // }
+    setLoading((prev) => ({ ...prev, [field]: true }));
+    
+    try {
+      // API call to update the specific field
+      const response = await api(`admin/basic-information/${userid}/update`, {
+        method: "PUT",
+        data: {
+          field: field,
+          value: fields[field]
+        },
+      });
+      
+      if (response.message) {
+        message.success(response.message);
+        // Optionally refresh the data after successful update
+        // You could call fetchUserData() here to refresh the form with updated data
+      }
+    } catch (error: any) {
+      console.error("Failed to update field:", error);
+      message.error(`Failed to update ${field}: ${error.message || 'Unknown error'}`);
+    } finally {
+      setLoading((prev) => ({ ...prev, [field]: false }));
+    }
   };
 
   return (
@@ -1210,7 +1228,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               placeholder="id"
               value={fields.id}
               onChange={handleChange("id")}
-              buttonLabel="Black Registration"
+              buttonLabel="Change"
               onButtonClick={handleButtonClick("id")}
               loading={loading.id}
             />
@@ -1303,7 +1321,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   label={t("level")}
                   placeholder={t("level")}
                   value={fields.level}
-                  onChange={handleChange("level")}
+                  onChange={handleSelectChange("level")}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("level")}
                   loading={loading.level}
@@ -1313,7 +1331,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   label={t("memberType")}
                   placeholder={t("memberType")}
                   value={fields.memberType}
-                  onChange={handleChange("memberType")}
+                  onChange={handleSelectChange("memberType")}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("memberType")}
                   loading={loading.memberType}
@@ -1333,7 +1351,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   label={t("accountBlock")}
                   placeholder="ON/OFF"
                   value={fields.onoff}
-                  onChange={handleChange("onoff")}
+                  onChange={handleSelectChange("onoff")}
                   options={[
                     {label: 'Off', value: 'A'},
                     {label: 'On', value: 'B'},
@@ -1347,7 +1365,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   label={t("useUSDT")}
                   placeholder=""
                   value={fields.useUSDT}
-                  onChange={handleChange("useUSDT")}
+                  onChange={handleSelectChange("useUSDT")}
                   options={[
                     {label: 'Off', value: "false"},
                     {label: 'On', value: 'true'},
