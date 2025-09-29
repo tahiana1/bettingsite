@@ -52,6 +52,7 @@ const UserPage: React.FC = () => {
   const { loading, data, refetch } = useQuery(FILTER_USERS);
   const [updateProfile] = useMutation(UPDATE_PROFILE);
   const [colorModal, setColorModal] = useState<boolean>(false);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
 
   const [updateUser] = useMutation(UPDATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
@@ -171,7 +172,7 @@ const UserPage: React.FC = () => {
     {
       title: t("userid"),
       dataIndex: ["user", "userid"],
-      key: '"User"."userid"',
+      key: 'users.userid',
       fixed: "left",
       sorter: {
         compare: (a, b) => {
@@ -521,6 +522,10 @@ const UserPage: React.FC = () => {
     updateFilter(`"Profile"."level"`, v, "eq");
   };
 
+  const onRoleChange = (v: string = "") => {
+    updateFilter(`users.role`, v, "eq");
+  };
+
   const onResetCoupon = async () => {
     const confirmed = await modal.confirm({
       title: "Do you want to reset the number of coupons for all members to 0?",
@@ -553,6 +558,57 @@ const UserPage: React.FC = () => {
         },
       ];
     }
+    setTableOptions({ ...tableOptions, filters });
+  };
+
+  const onSearch = (value: string) => {
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+
+    // Remove any existing search filters
+    filters = filters.filter((f) => 
+      f.field !== '"Profile"."nickname"' &&
+      f.field !== '"Profile"."holder_name"' &&
+      f.field !== '"Profile"."phone"' &&
+      f.field !== "users.userid" &&
+      f.field !== '"Profile"."name"'
+    );
+
+    if (value) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Add search filters for multiple fields
+      filters = [
+        ...filters,
+        {
+          field: '"Profile"."nickname"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."phone"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."holder_name"',
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: "users.userid",
+          value: value,
+          op: searchOp,
+        },
+        {
+          field: '"Profile"."name"',
+          value: value,
+          op: searchOp,
+        }
+      ];
+    }
+
     setTableOptions({ ...tableOptions, filters });
   };
 
@@ -602,19 +658,24 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
+                    label: t("all"),
+                    value: "",
+                  },
+                  {
                     label: t("user"),
-                    value: "user",
+                    value: "U",
                   },
                   {
                     label: t("distributor"),
-                    value: "distributor",
+                    value: "P",
                   },
                   {
                     label: t("admin"),
-                    value: "admin",
+                    value: "A",
                   },
                 ]}
                 defaultValue={""}
+                onChange={(e) => onRoleChange(e.target.value)}
               />
               {/* <Radio.Group
                 size="small"
@@ -757,21 +818,6 @@ const UserPage: React.FC = () => {
                   className="min-w-28"
                   allowClear
                 /> */}
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
-                  allowClear
-                  onClear={onLevelChange}
-                  options={[
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
-                  ].map((i) => ({
-                    value: i,
-                    label:
-                      i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
-                  }))}
-                  onChange={onLevelChange}
-                />
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
@@ -784,9 +830,16 @@ const UserPage: React.FC = () => {
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
+                  onSearch={onSearch}
                 />
               </Space>
               <Space.Compact className="gap-1">
