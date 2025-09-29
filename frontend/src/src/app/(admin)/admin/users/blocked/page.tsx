@@ -51,6 +51,8 @@ const PendingUserPage: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const { loading, error, data, refetch } = useQuery(FILTER_USERS, {
     variables: {
       filters: [
@@ -354,26 +356,80 @@ const PendingUserPage: React.FC = () => {
   ) => {
     let filters: { field: string; value: string; op: string }[] =
       tableOptions?.filters ?? [];
+    
+    // Remove existing date filters
     const f = filters.filter((f) => f.field !== "users.created_at");
 
-    filters = [
-      ...f,
-      {
-        field: "users.created_at",
-        value: dateStrings[0],
-        op: "gt",
-      },
-      {
-        field: "users.created_at",
-        value: dateStrings[1],
-        op: "lt",
-      },
-    ];
+    // Only add date filters if both dates are provided and not empty
+    if (dates?.at(0) && dates?.at(1) && dateStrings[0] && dateStrings[1]) {
+      filters = [
+        ...f,
+        {
+          field: "users.created_at",
+          value: dateStrings[0],
+          op: "gt",
+        },
+        {
+          field: "users.created_at",
+          value: dateStrings[1],
+          op: "lt",
+        },
+      ];
+    } else {
+      // If no valid dates, just use the filtered list without date filters
+      filters = f;
+    }
+    
     setTableOptions({ ...tableOptions, filters });
   };
   const onMemberStatusChange = (v: string) => {
     updateFilter("status", v, "eq");
   };
+
+  const onSearch = (value: string) => {
+    setSearchTerm(value);
+    if (value.trim()) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create search filters for multiple fields using correct field names
+      const searchFilters = [
+        { field: "users.userid", value: value, op: searchOp },
+        { field: '"Profile"."nickname"', value: value, op: searchOp },
+        { field: '"Profile"."holder_name"', value: value, op: searchOp },
+        { field: '"Profile"."phone"', value: value, op: searchOp }
+      ];
+      
+      // Remove existing search filters and add new ones
+      let filters = tableOptions?.filters?.filter((f: any) => 
+        f.field !== "users.userid" &&
+        f.field !== '"Profile"."nickname"' &&
+        f.field !== '"Profile"."holder_name"' &&
+        f.field !== '"Profile"."phone"'
+      ) ?? [];
+      
+      filters = [...filters, ...searchFilters];
+      setTableOptions({ ...tableOptions, filters });
+    } else {
+      // Remove search filters when search term is empty
+      let filters = tableOptions?.filters?.filter((f: any) => 
+        f.field !== "users.userid" &&
+        f.field !== '"Profile"."nickname"' &&
+        f.field !== '"Profile"."holder_name"' &&
+        f.field !== '"Profile"."phone"'
+      ) ?? [];
+      setTableOptions({ ...tableOptions, filters });
+    }
+  };
+
+  const toggleCaseSensitivity = () => {
+    setCaseSensitive(!caseSensitive);
+    // Re-trigger search with new case sensitivity setting
+    if (searchTerm.trim()) {
+      onSearch(searchTerm);
+    }
+  };
+
   const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
     setColorModal(false);
@@ -431,14 +487,7 @@ const PendingUserPage: React.FC = () => {
               defaultValue={""}
             />
             <Space className="!w-full justify-between">
-              <Space>
-                <Select
-                  size="small"
-                  placeholder="select dist"
-                  className="min-w-28"
-                  allowClear
-                />
-
+            <Space>
                 <DatePicker.RangePicker
                   size="small"
                   onChange={onRangerChange}
@@ -446,11 +495,20 @@ const PendingUserPage: React.FC = () => {
                 <Input.Search
                   size="small"
                   placeholder="ID,Nickname,Account Holder,Phone Number"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onSearch={onSearch}
                   suffix={
                     <Button
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={toggleCaseSensitivity}
+                      title={caseSensitive ? "Case Sensitive" : "Case Insensitive"}
+                      style={{ 
+                        color: caseSensitive ? '#1677ff' : '#8c8c8c',
+                        backgroundColor: caseSensitive ? '#e6f7ff' : 'transparent'
+                      }}
                     />
                   }
                   enterButton={t("search")}
