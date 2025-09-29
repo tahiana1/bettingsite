@@ -357,22 +357,22 @@ const UserPage: React.FC = () => {
       key: "profile.coupon",
       render: (_, { profile }) => profile.coupon,
     },
-    {
-      title: t("lastDeposit"),
-      dataIndex: "profile.lastDeposit",
-      key: "lastDeposit",
-      render: (_, { profile }) =>
-        profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
-    },
-    {
-      title: t("lastWithdraw"),
-      dataIndex: "profile.lastWithdraw",
-      key: "lastWithdraw",
-      render: (_, { profile }) =>
-        profile.lastWithdraw
-          ? f.dateTime(new Date(profile.lastWithdraw))
-          : null,
-    },
+    // {
+    //   title: t("lastDeposit"),
+    //   dataIndex: "profile.lastDeposit",
+    //   key: "lastDeposit",
+    //   render: (_, { profile }) =>
+    //     profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
+    // },
+    // {
+    //   title: t("lastWithdraw"),
+    //   dataIndex: "profile.lastWithdraw",
+    //   key: "lastWithdraw",
+    //   render: (_, { profile }) =>
+    //     profile.lastWithdraw
+    //       ? f.dateTime(new Date(profile.lastWithdraw))
+    //       : null,
+    // },
     {
       title: t("role"),
       key: "role",
@@ -454,28 +454,18 @@ const UserPage: React.FC = () => {
             }
           >
             {record.status ? (
-              <Button
-                title={t("block")}
-                icon={<BiBlock />}
-                variant="outlined"
-                color="orange"
-              />
+              <button className="bg-black border-1 text-white rounded px-2 cursor-pointer">
+                {t("block")}
+              </button>
             ) : (
-              <Button
-                title={t("approve")}
-                variant="outlined"
-                color="blue"
-                icon={<PiUserCircleCheckLight />}
-              />
+              <button className="bg-[green] border-1 text-white rounded px-2 cursor-pointer">
+                {t("approve")}
+              </button>
             )}
           </Popconfirm>
-
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="danger"
-            icon={<BiTrash />}
-          />
+          <button className="bg-[red] border-1 text-white rounded px-2 cursor-pointer">
+            {t("delete")}
+          </button>
         </Space.Compact>
       ),
     },
@@ -612,21 +602,21 @@ const UserPage: React.FC = () => {
                 buttonStyle="solid"
                 options={[
                   {
-                    label: t("member"),
-                    value: "member",
+                    label: t("user"),
+                    value: "user",
                   },
                   {
                     label: t("distributor"),
-                    value: "dist",
+                    value: "distributor",
                   },
                   {
-                    label: t("member") + "+" + t("distributor"),
-                    value: "",
+                    label: t("admin"),
+                    value: "admin",
                   },
                 ]}
                 defaultValue={""}
               />
-              <Radio.Group
+              {/* <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
@@ -646,8 +636,8 @@ const UserPage: React.FC = () => {
                 ]}
                 defaultValue={""}
                 onChange={(e) => onReferralChange(e.target.value)}
-              />
-              <Radio.Group
+              /> */}
+              {/* <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
@@ -667,7 +657,7 @@ const UserPage: React.FC = () => {
                 ]}
                 defaultValue={""}
                 onChange={(e) => onBlackMemoChange(e.target.value)}
-              />
+              /> */}
 
               <Radio.Group
                 size="small"
@@ -709,10 +699,6 @@ const UserPage: React.FC = () => {
                     value: "",
                   },
                   {
-                    label: t("withdrawn"),
-                    value: "W",
-                  },
-                  {
                     label: t("approved"),
                     value: "A",
                   },
@@ -736,7 +722,7 @@ const UserPage: React.FC = () => {
                 defaultValue={""}
                 onChange={(e) => onMemberStatusChange(e.target.value)}
               />
-              <Radio.Group
+              {/* <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
@@ -755,11 +741,11 @@ const UserPage: React.FC = () => {
                   },
                 ]}
                 defaultValue={""}
-              />
+              /> */}
             </Space>
             <Space className="!w-full justify-between">
               <Space>
-                <Select
+                {/* <Select
                   size="small"
                   placeholder="select dist"
                   className="min-w-28"
@@ -770,7 +756,7 @@ const UserPage: React.FC = () => {
                   placeholder="By Color"
                   className="min-w-28"
                   allowClear
-                />
+                /> */}
                 <Select
                   size="small"
                   placeholder="By Level"
@@ -792,7 +778,7 @@ const UserPage: React.FC = () => {
                 />
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  placeholder={t("idNicknameAccountHolderPhoneNumber")}
                   suffix={
                     <Button
                       size="small"
