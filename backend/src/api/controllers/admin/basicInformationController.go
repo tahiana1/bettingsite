@@ -23,7 +23,6 @@ type BasicInformationResponse struct {
 	CellphoneCarrier                                              string `json:"cellphoneCarrier"`
 	Cellphone                                                     string `json:"cellphone"`
 	Birthday                                                      string `json:"birthday"`
-	Affiliation                                                   string `json:"affiliation"`
 	TopDistributor                                                string `json:"topDistributor"`
 	Recommender                                                   string `json:"recommender"`
 	Level                                                         int32  `json:"level"`
@@ -176,10 +175,8 @@ func GetBasicInformation(c *gin.Context) {
 		Depositor:        user.Profile.HolderName,
 		BankName:         user.Profile.BankName,
 		AccountNumber:    user.Profile.AccountNumber,
-		CellphoneCarrier: "", // Not available in current model
 		Cellphone:        user.Profile.Mobile,
 		Birthday:         user.Profile.Birthday.Format("2006-01-02"),
-		Affiliation:      "", // Not available in current model
 		TopDistributor:   user.Profile.Referral,
 		Recommender:      user.Profile.Referral,
 		Level:            user.Profile.Level,

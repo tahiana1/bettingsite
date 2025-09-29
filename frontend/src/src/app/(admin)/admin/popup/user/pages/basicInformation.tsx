@@ -23,6 +23,7 @@ type UserInfoFieldProps = {
   buttonLabel: string;
   onButtonClick: () => void;
   loading: boolean;
+  options?: any[];
 };
 
 type UserInfoFieldStyle1Props = {
@@ -647,12 +648,13 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     onChange,
     buttonLabel,
     onButtonClick,
+    options,
     loading,
     }) => (
         <div className="flex flex-column gap-2 justify-start items-center">
             <div className="text-xm w-[150px]">{label}</div>
             <div className="flex flex-row gap-2 w-[250px]">
-            <Select placeholder={placeholder} onChange={onChange} options={onoffType} className="w-full"/>
+            <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={options} className="w-full"/>
             <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
                 {buttonLabel}
             </Button>
@@ -755,10 +757,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
     depositor: "",
     bankName: "",
     accountnumber: "",
-    cellphonecarrier: "",
     cellphone: "",
     birthday: "",
-    affiliation: "",
     topDistributor: "",
     recommender: "",
     level: "",
@@ -888,10 +888,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
     depositor: false,
     bankName: false,
     accountnumber: false,
-    cellphonecarrier: false,
     cellphone: false,
     birthday: false,
-    affiliation: false,
     topDistributor: false,
     recommender: false,
     level: false,
@@ -1032,10 +1030,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             depositor: response.depositor || "",
             bankName: response.bankName || "",
             accountnumber: response.accountNumber || "",
-            cellphonecarrier: response.cellphoneCarrier || "",
             cellphone: response.cellphone || "",
             birthday: response.birthday || "",
-            affiliation: response.affiliation || "",
             topDistributor: response.topDistributor || "",
             recommender: response.recommender || "",
             level: response.level || "",
@@ -1190,7 +1186,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
   return (
     <div className="max-h-[90vh] overflow-auto">
       <div className="bg-white">
-        <div className="flex flex-column gap-4">
+        {/* <div className="flex flex-column gap-4">
           <div className="flex flex-col gap-2 text-xm">Deposit</div>
           <div className="flex flex-col gap-2 text-xm text-[#71cb4a]">
             506,000
@@ -1206,8 +1202,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
           <div className="flex flex-col gap-2 text-xm text-[red]">
             506,000
           </div>
-        </div>
-        <div className="flex gap-20">
+        </div> */}
+        <div className="flex g
+        ap-20">
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoField
               label={t("id")}
@@ -1264,15 +1261,6 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.accountnumber}
             />
             <UserInfoField
-              label={t("cellphonecarrier")}
-              placeholder={t("cellphonecarrier")}
-              value={fields.cellphonecarrier}
-              onChange={handleChange("cellphonecarrier")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("cellphonecarrier")}
-              loading={loading.cellphonecarrier}
-            />
-            <UserInfoField
               label={t("cellphone")}
               placeholder={t("cellphone")}
               value={fields.cellphone}
@@ -1291,16 +1279,6 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onButtonClick={handleButtonClick("birthday")}
               loading={loading.birthday}
             />
-
-              <UserInfoField
-                  label={t("affiliation")}
-                  placeholder={t("affiliation")}
-                  value={fields.affiliation}
-                  onChange={handleChange("affiliation")}
-                  buttonLabel="Change"
-                  onButtonClick={handleButtonClick("affiliation")}
-                  loading={loading.affiliation}
-              />
 
               <DisabledInfoField
                   label={t("topDistributor")}
@@ -1357,6 +1335,10 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   placeholder="ON/OFF"
                   value={fields.onoff}
                   onChange={handleChange("onoff")}
+                  options={[
+                    {label: 'Off', value: 'A'},
+                    {label: 'On', value: 'B'},
+                  ]}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("onoff")}
                   loading={loading.onoff}
@@ -1367,6 +1349,10 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   placeholder=""
                   value={fields.useUSDT}
                   onChange={handleChange("useUSDT")}
+                  options={[
+                    {label: 'Off', value: "false"},
+                    {label: 'On', value: 'true'},
+                  ]}
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("useUSDT")}
                   loading={loading.useUSDT}
@@ -1382,7 +1368,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   loading={loading.walletAddress}
               />
 
-              <DisabledInfoField
+              {/* <DisabledInfoField
                   label={t("lastDepositForCurrencyExchangeRolling")}
                   placeholder=""
                   value={fields.lastDeposit}
@@ -1420,9 +1406,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                   buttonLabel="Change"
                   onButtonClick={handleButtonClick("exchangeRollingBettingAmount")}
                   loading={loading.exchangeRollingBettingAmount}
-              />
+              /> */}
 
-            <DisabledCurrencyInfoField
+            {/* <DisabledCurrencyInfoField
                 label={t("currencyRollover")}   
                 placeholder=""  
                 value={fields.currencyRollover}
@@ -1430,8 +1416,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
                 buttonLabel="Change"
                 onButtonClick={handleButtonClick("currencyRollover")}
                 loading={loading.currencyRollover}
-            />
-            <UserInfoStyle1Field
+            /> */}
+            {/* <UserInfoStyle1Field
               label="Live Rate"
               placeholder="Live Game Rate"
               value={fields.live}
@@ -1450,12 +1436,12 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               label="Total Deposit"
               placeholder="Total Deposit"
               value={fields.membershipDeposit}
-            />
-            <UserInfoStyle1Field
+            /> */}
+            {/* <UserInfoStyle1Field
               label="Total Withdrawal"
               placeholder="Total Withdrawal"
               value={fields.totalWithdrawal}
-            />
+            /> */}
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle1Field
@@ -1529,7 +1515,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               placeholder={t("dateOfRegistered")}
               value={fields.createdAt}
             />
-            <UserInfoStyle3Field
+            {/* <UserInfoStyle3Field
               label={t("sameIPCheck")}
               placeholder={t("sameIPCheck")}
               value={""}
@@ -1537,11 +1523,11 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onChange={handleChange("sameIPCheck")}
               onButtonClick={handleButtonClick("sameIPCheck")}
               loading={loading.sameIPCheck}
-            />
+            /> */}
             <UserInfoStyle1Field
               label={t("frequentlyUsedGames")}
               placeholder={t("frequentlyUsedGames")}
-              value={""}
+              value={"Casino"}
             />
             <UserInfoStyle1Field
               label="OS"
@@ -1558,7 +1544,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               placeholder={t("mostRecentIP")}
               value={fields.currentIP || ""}
             />
-            <UserInfoStyle3Field
+            {/* <UserInfoStyle3Field
               label={t("recentlyConnectedDevice")}
               placeholder={t("recentlyConnectedDevice")}
               value={""}
@@ -1566,8 +1552,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onChange={handleChange("sameIPCheck")}
               onButtonClick={handleButtonClick("sameIPCheck")}
               loading={loading.sameIPCheck}
-            />
-            <DisabledRollingPercentyInfoField
+            /> */}
+            {/* <DisabledRollingPercentyInfoField
               label={t("rollingPercent")}   
               placeholder=""  
               value={fields.rollingPercenty}
@@ -1575,8 +1561,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
-            />  
-            <GameUsageInfoField
+            />   */}
+            {/* <GameUsageInfoField
               label="Game usage"   
               placeholder=""  
               value={fields.rollingPercenty}
@@ -1593,9 +1579,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("slotcityPriorityUse")}
               loading={loading.slotcityPriorityUse}
-            />  
+            />   */}
           </div>
-          <div className="flex flex-col gap-4 mt-10">
+          {/* <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
               label={t("webLoginAvailable")}   
               placeholder=""  
@@ -2159,9 +2145,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onButtonClick={handleButtonClick("minimumFolderForSportsBetting")}
               loading={loading.minimumFolderForSportsBetting}
             />
-          </div>
+          </div> */}
         </div>
-        <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
+        {/* <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">
             <MemoInputFiled 
               label={t("accountMemo")}
@@ -2204,7 +2190,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.xxx}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
