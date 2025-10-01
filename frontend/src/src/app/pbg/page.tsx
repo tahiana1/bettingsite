@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 
-export default function EOS1Page() {
-  const [activeTab, setActiveTab] = useState('EOS1');
+export default function PBGPage() {
+  const [activeTab, setActiveTab] = useState('PBG');
   const [currentTime, setCurrentTime] = useState<string>('00:00:00');
   const [iframeVisible, setIframeVisible] = useState(true);
   const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
@@ -31,13 +31,14 @@ export default function EOS1Page() {
   }, []);
 
   const handleTabClick = (tabName: string) => {
-    if (tabName !== 'EOS1') {
+    if (tabName !== 'PBG') {
       // Navigate to the appropriate page
       window.location.href = `/${tabName.toLowerCase()}`;
       return;
     }
     setActiveTab(tabName);
     setIframeVisible(true);
+    
     setSelectedPick({name: '', odds: ''});
     setBetAmount('');
   };
@@ -151,7 +152,7 @@ export default function EOS1Page() {
               onClick={() => handleTabClick('Dhpowerball')}
             >
               Dhpowerball
-            </div>
+          </div>
           </div>
         </div>
       </header>
@@ -174,18 +175,18 @@ export default function EOS1Page() {
                   >
                     {iframeVisible ? 'Hide' : 'Show'}
                   </button>
-                </div>
-                
+      </div>
+
                 {iframeVisible && (
                   <div className="iframe-section iframe-sec">
                     <div className="iframe-wrapper">
-                      <iframe
+              <iframe
                         src={getIframeSrc(activeTab)}
                         className="game-iframe"
-                        scrolling="no"
-                      />
-                    </div>
-                  </div>
+                scrolling="no"
+              />
+            </div>
+          </div>
                 )}
 
                 <div className="betting-table">
@@ -198,52 +199,52 @@ export default function EOS1Page() {
                         <th>Win Amount</th>
                         <th>Status</th>
                         <th>-</th>
-                      </tr>
-                    </thead>
+                </tr>
+              </thead>
                     <tbody>
                       <tr>
-                        <td>1256</td>
-                        <td>Powerball Odd/3.1</td>
-                        <td>15,000</td>
-                        <td>46,500</td>
+                        <td>P256</td>
+                        <td>PBG Powerball Odd/3.1</td>
+                        <td>68,000</td>
+                        <td>210,800</td>
                         <td><span className="status-badge in-progress">In Progress</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1255</td>
-                        <td>Powerball Even/1.95</td>
-                        <td>80,000</td>
-                        <td>156,000</td>
+                        <td>P255</td>
+                        <td>PBG Powerball Even/1.95</td>
+                        <td>105,000</td>
+                        <td>204,750</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1254</td>
-                        <td>Powerball Under/1.95</td>
-                        <td>120,000</td>
-                        <td>234,000</td>
+                        <td>P254</td>
+                        <td>PBG Powerball Under/1.95</td>
+                        <td>135,000</td>
+                        <td>263,250</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1253</td>
-                        <td>Powerball Over/1.95</td>
-                        <td>60,000</td>
-                        <td>117,000</td>
+                        <td>P253</td>
+                        <td>PBG Powerball Over/1.95</td>
+                        <td>85,000</td>
+                        <td>165,750</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1252</td>
-                        <td>PaOdd-PaUnder/4.1</td>
-                        <td>25,000</td>
-                        <td>102,500</td>
+                        <td>P252</td>
+                        <td>PBG PaOdd-PaOver/3.1</td>
+                        <td>95,000</td>
+                        <td>294,500</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                     </tbody>
-                  </table>
-                  
+            </table>
+            
                   <div className="pagination">
                     <button>‹</button>
                     <button>1</button>
@@ -251,9 +252,9 @@ export default function EOS1Page() {
                     <button>3</button>
                     <button>4</button>
                     <button>›</button>
-                  </div>
-                </div>
-              </div>
+            </div>
+          </div>
+        </div>
 
               <div className="right-column right-col">
                 <div className="betting-panel">
@@ -261,7 +262,7 @@ export default function EOS1Page() {
                     <div className="pick-header">
                       <span>Powerball Combinations</span>
                       <i className="fa fa-chevron-down"></i>
-                    </div>
+              </div>
                     <div className="pick-grid">
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
@@ -271,30 +272,30 @@ export default function EOS1Page() {
                         <div className="ball blue">Odd</div>
                         <span className="pick-name">Powerball Odd</span>
                       </button>
-                      <button 
+                <button
                         className={`pick-btn ${selectedPick.name === 'Powerball Even' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Even', '1.95')}
-                      >
+                >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
                         <span className="pick-name">Powerball Even</span>
-                      </button>
-                      <button 
+                </button>
+              <button
                         className={`pick-btn ${selectedPick.name === 'Powerball Under' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Under', '1.95')}
-                      >
+              >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
                         <span className="pick-name">Powerball Under</span>
-                      </button>
-                      <button 
+              </button>
+              <button
                         className={`pick-btn ${selectedPick.name === 'Powerball Over' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Over', '1.95')}
-                      >
+              >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
                         <span className="pick-name">Powerball Over</span>
-                      </button>
+              </button>
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaOdd-PaUnder', '4.1')}
@@ -303,7 +304,7 @@ export default function EOS1Page() {
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball blue">Under</div>
-                        </div>
+            </div>
                         <span className="pick-name">PaOdd-PaUnder</span>
                       </button>
                       <button 
@@ -314,7 +315,7 @@ export default function EOS1Page() {
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball red">Over</div>
-                        </div>
+              </div>
                         <span className="pick-name">PaOdd-PaOver</span>
                       </button>
                       <button 
@@ -325,10 +326,10 @@ export default function EOS1Page() {
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball blue">Under</div>
-                        </div>
+            </div>
                         <span className="pick-name">PaEven-PaUnder</span>
                       </button>
-                      <button 
+                      <button
                         className={`pick-btn ${selectedPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaEven-PaOver', '4.1')}
                       >
@@ -345,11 +346,11 @@ export default function EOS1Page() {
                   <div className="betinfo-section">
                     <div className="current-round-info">
                       <div className="round-header">
-                        <span className="round-title">Current Round [1257]</span>
-                        <span className="countdown">03:45</span>
+                        <span className="round-title">Current Round [P257]</span>
+                        <span className="countdown">01:25</span>
                       </div>
                       <div className="round-details">
-                        EOS1Min3310226871BE2E (1256) Round
+                        PBGMin3310226871BE2E (P256) Round
                       </div>
                       <div className="ball-display">
                         <span>Powerball</span>
@@ -416,6 +417,6 @@ export default function EOS1Page() {
           </div>
         </div>
       </main>
-    </div>
+      </div>
   );
 }

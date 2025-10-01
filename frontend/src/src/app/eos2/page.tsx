@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 
-export default function EOS1Page() {
-  const [activeTab, setActiveTab] = useState('EOS1');
+export default function EOS2Page() {
+  const [activeTab, setActiveTab] = useState('EOS2');
   const [currentTime, setCurrentTime] = useState<string>('00:00:00');
   const [iframeVisible, setIframeVisible] = useState(true);
   const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
@@ -31,7 +31,7 @@ export default function EOS1Page() {
   }, []);
 
   const handleTabClick = (tabName: string) => {
-    if (tabName !== 'EOS1') {
+    if (tabName !== 'EOS2') {
       // Navigate to the appropriate page
       window.location.href = `/${tabName.toLowerCase()}`;
       return;
@@ -202,42 +202,42 @@ export default function EOS1Page() {
                     </thead>
                     <tbody>
                       <tr>
-                        <td>1256</td>
-                        <td>Powerball Odd/3.1</td>
-                        <td>15,000</td>
-                        <td>46,500</td>
+                        <td>2256</td>
+                        <td>Powerball Even/1.95</td>
+                        <td>18,000</td>
+                        <td>35,100</td>
                         <td><span className="status-badge in-progress">In Progress</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1255</td>
-                        <td>Powerball Even/1.95</td>
-                        <td>80,000</td>
-                        <td>156,000</td>
-                        <td><span className="status-badge finished">Finished</span></td>
-                        <td><i className="fa fa-times"></i></td>
-                      </tr>
-                      <tr>
-                        <td>1254</td>
+                        <td>2255</td>
                         <td>Powerball Under/1.95</td>
-                        <td>120,000</td>
-                        <td>234,000</td>
+                        <td>150,000</td>
+                        <td>292,500</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1253</td>
+                        <td>2254</td>
                         <td>Powerball Over/1.95</td>
-                        <td>60,000</td>
-                        <td>117,000</td>
+                        <td>90,000</td>
+                        <td>175,500</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
                       <tr>
-                        <td>1252</td>
-                        <td>PaOdd-PaUnder/4.1</td>
-                        <td>25,000</td>
-                        <td>102,500</td>
+                        <td>2253</td>
+                        <td>PaEven-PaUnder/3.1</td>
+                        <td>75,000</td>
+                        <td>232,500</td>
+                        <td><span className="status-badge finished">Finished</span></td>
+                        <td><i className="fa fa-times"></i></td>
+                      </tr>
+                      <tr>
+                        <td>2252</td>
+                        <td>PaOdd-PaOver/3.1</td>
+                        <td>45,000</td>
+                        <td>139,500</td>
                         <td><span className="status-badge finished">Finished</span></td>
                         <td><i className="fa fa-times"></i></td>
                       </tr>
@@ -345,11 +345,11 @@ export default function EOS1Page() {
                   <div className="betinfo-section">
                     <div className="current-round-info">
                       <div className="round-header">
-                        <span className="round-title">Current Round [1257]</span>
-                        <span className="countdown">03:45</span>
+                        <span className="round-title">Current Round [2257]</span>
+                        <span className="countdown">01:30</span>
                       </div>
                       <div className="round-details">
-                        EOS1Min3310226871BE2E (1256) Round
+                        EOS2Min3310226871BE2E (2256) Round
                       </div>
                       <div className="ball-display">
                         <span>Powerball</span>

@@ -50,6 +50,9 @@ export default async function RootLayout({
   };
   return (
     <html lang={locale}>
+      <head>
+        <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         // style={{

@@ -1,0 +1,601 @@
+@charset "utf-8";
+
+/* Mini Game Specific Styles */
+.minigame-app {
+    background-color: #111827;
+    color: #F3F4F6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 70px;
+    position: relative;
+    overflow-x: hidden;
+    font-family: 'SCDream', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.minigame-app::-webkit-scrollbar {
+    width: 10px;
+    background: #18181b;
+}
+
+.minigame-app::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 8px;
+}
+
+.minigame-app::-webkit-scrollbar-track {
+    background: #1e293b;
+    border-radius: 8px;
+}
+
+@media (max-width: 1023px) {
+    .minigame-app::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Header */
+.minigame-app header {
+    background: #0f172a;
+    border-bottom: 1px solid #374151;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 8px 0;
+}
+
+.minigame-app .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.minigame-app .tabs-container {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.minigame-app .tabs-container::-webkit-scrollbar {
+    display: none;
+}
+
+.minigame-app .tab-item {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: #9ca3af;
+}
+
+.minigame-app .tab-item:hover {
+    background: #374151;
+    color: #ffffff;
+}
+
+.minigame-app .tab-item.active {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* Main content */
+.minigame-app main {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.minigame-app .tab-content {
+    display: none;
+}
+
+.minigame-app .tab-content.active {
+    display: block;
+}
+
+.minigame-app .content-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.minigame-app .left-column {
+    flex: 1;
+    min-width: 0;
+}
+
+.minigame-app .right-column {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+/* Game info bar */
+.minigame-app .game-info-bar {
+    background: #1e293b;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.minigame-app .time-display {
+    display: flex;
+    align-items: center;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.minigame-app .time-display i {
+    margin-right: 8px;
+    color: #60a5fa;
+}
+
+.minigame-app .game-name-display {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    flex: 1;
+    margin: 0 16px;
+}
+
+.minigame-app .toggle-iframe-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.minigame-app .toggle-iframe-btn:hover {
+    background: #2563eb;
+}
+
+/* Iframe section */
+.minigame-app .iframe-section {
+    background: #1e293b;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.minigame-app .iframe-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 78.313%;
+}
+
+.minigame-app .game-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    opacity: 0;
+}
+
+/* Betting table */
+.minigame-app .betting-table {
+    background: #1e293b;
+    border: 1px solid #9ca3af;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.minigame-app .betting-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.minigame-app .betting-table th {
+    background: #374151;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    color: #ffffff;
+}
+
+.minigame-app .betting-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    text-align: center;
+    border-bottom: 1px solid #374151;
+    color: #d1d5db;
+}
+
+.minigame-app .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.minigame-app .status-badge.in-progress {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.minigame-app .status-badge.finished {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.minigame-app .betting-table .fa-times {
+    color: #ef4444;
+    cursor: pointer;
+}
+
+/* Pagination */
+.minigame-app .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 24px;
+}
+
+.minigame-app .pagination button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #4b5563;
+    background: #374151;
+    color: #ffffff;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.minigame-app .pagination button:hover {
+    background: #4b5563;
+}
+
+.minigame-app .pagination button.active {
+    border-color: #3b82f6;
+    background: #3b82f6;
+}
+
+/* Betting panel */
+.minigame-app .betting-panel {
+    background: #1e293b;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.minigame-app .pick-section {
+    margin-bottom: 16px;
+}
+
+.minigame-app .pick-header {
+    background: #374151;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.minigame-app .pick-header i {
+    color: #9ca3af;
+}
+
+.minigame-app .pick-grid {
+    padding: 8px;
+    background: #1e293b;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.minigame-app .pick-btn {
+    padding: 8px;
+    border-radius: 4px;
+    background: #374151;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.minigame-app .pick-btn:hover {
+    background: #4b5563;
+}
+
+.minigame-app .pick-btn.selected {
+    background: #3b82f6;
+}
+
+.minigame-app .pick-btn .odds {
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.minigame-app .ball {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    border: 1px solid;
+    margin: 2px;
+}
+
+.minigame-app .ball.blue {
+    background: #3b82f6;
+    border-color: #1d4ed8;
+}
+
+.minigame-app .ball.red {
+    background: #ef4444;
+    border-color: #dc2626;
+}
+
+.minigame-app .ball-group {
+    display: flex;
+    gap: 2px;
+    margin: 2px 0;
+}
+
+.minigame-app .pick-name {
+    font-size: 12px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Bet info section */
+.minigame-app .betinfo-section {
+    padding: 16px;
+}
+
+.minigame-app .current-round-info {
+    background: #374151;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.minigame-app .round-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.minigame-app .round-title {
+    color: #f97316;
+    font-size: 14px;
+}
+
+.minigame-app .countdown {
+    color: #f97316;
+    font-weight: 600;
+    background: #fef2f2;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.minigame-app .round-details {
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #d1d5db;
+}
+
+.minigame-app .ball-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.minigame-app .betting-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.minigame-app .prev-bet {
+    color: #10b981;
+}
+
+.minigame-app .prev-win {
+    color: #3b82f6;
+}
+
+.minigame-app .curr-bet {
+    color: #fbbf24;
+}
+
+/* Bet form */
+.minigame-app .bet-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.minigame-app .form-row {
+    background: #374151;
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.minigame-app .form-row .label {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.minigame-app .form-row .value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.minigame-app .amount-input-row {
+    grid-column: 1 / -1;
+    background: #374151;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.minigame-app .amount-input-row .label {
+    font-size: 14px;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+.minigame-app .amount-input {
+    flex: 1;
+    background: #1e293b;
+    border: 1px solid #4b5563;
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.minigame-app .amount-input::placeholder {
+    color: #6b7280;
+}
+
+.minigame-app .amount-buttons {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.minigame-app .amount-buttons .amount-btn:nth-child(9) {
+    grid-column: 1 / 2;
+}
+
+.minigame-app .amount-buttons .amount-btn:nth-child(10) {
+    grid-column: 2 / 3;
+}
+
+.minigame-app .amount-buttons .amount-btn:nth-child(11) {
+    grid-column: 3 / 4;
+}
+
+.minigame-app .amount-btn {
+    background: #374151;
+    border: 1px solid #4b5563;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.minigame-app .amount-btn:hover {
+    background: #4b5563;
+}
+
+.minigame-app .amount-btn.clear {
+    background: #ef4444;
+    border-color: #dc2626;
+}
+
+.minigame-app .amount-btn.clear:hover {
+    background: #dc2626;
+}
+
+.minigame-app .amount-btn.max {
+    background: #8b5cf6;
+    border-color: #7c3aed;
+}
+
+.minigame-app .amount-btn.max:hover {
+    background: #7c3aed;
+}
+
+.minigame-app .amount-btn.confirm {
+    background: #10b981;
+    border-color: #059669;
+}
+
+.minigame-app .amount-btn.confirm:hover {
+    background: #059669;
+}
+
+/* Responsive design */
+@media (max-width: 1023px) {
+    .minigame-app .content-wrapper {
+        flex-direction: column;
+    }
+    
+    .minigame-app .right-column {
+        width: 100%;
+    }
+    
+    .minigame-app .tabs-container {
+        justify-content: space-between;
+    }
+    
+    .minigame-app .tab-item {
+        flex: 1;
+        text-align: center;
+        margin: 0 2px;
+    }
+}
+
+@media (max-width: 767px) {
+    .minigame-app .container {
+        padding: 0 8px;
+    }
+    
+    .minigame-app .pick-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .minigame-app .bet-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .minigame-app .amount-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
