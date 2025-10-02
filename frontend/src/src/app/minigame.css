@@ -10,6 +10,8 @@
     padding-bottom: 70px;
     position: relative;
     overflow-x: hidden;
+    margin: 0 auto;
+    padding: 0 160px;
     font-family: 'SCDream', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -45,29 +47,51 @@
 }
 
 .minigame-app .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 16px;
+    width: 100%;
 }
 
-.minigame-app .tabs-container {
-    display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+.tabs-container {
+    width: 100vw;
+    display:flex;
+    
+    max-width:1508px;
+    padding: 6px;
+    border-left: 1px solid #374151;
+    border-right: 1px solid #374151;
+    border-radius: 0px 0px 8px 8px;
+    justify-content: space-between;
+    border-bottom: 1px solid #374151;
+}
+
+.minigame-app .fixed-header{
+    background-color: #0f172a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid var(--gray-800);
+    padding: 4px 0;
+
 }
 
 .minigame-app .tabs-container::-webkit-scrollbar {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding:4px 0;
 }
 
 .minigame-app .tab-item {
-    padding: 8px 16px;
+    /* padding: 10px 16px; */
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    width: 10%;
     border-radius: 6px;
+    padding: 10px 0;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
     transition: all 0.2s ease;
     white-space: nowrap;
     flex-shrink: 0;
@@ -86,8 +110,10 @@
 
 /* Main content */
 .minigame-app main {
-    flex: 1;
+    flex-grow: 1;
     padding: 20px 0;
+    position: relative;
+    z-index: 1;
 }
 
 .minigame-app .tab-content {
@@ -107,16 +133,18 @@
 .minigame-app .left-column {
     flex: 1;
     min-width: 0;
+    width : 70%
 }
 
 .minigame-app .right-column {
-    width: 320px;
+    
     flex-shrink: 0;
+    width : 33%
 }
 
 /* Game info bar */
 .minigame-app .game-info-bar {
-    background: #1e293b;
+    background: #0f172a;
     border: 1px solid #374151;
     border-radius: 8px;
     padding: 16px;
@@ -163,7 +191,7 @@
 
 /* Iframe section */
 .minigame-app .iframe-section {
-    background: #1e293b;
+    background: #0f172a;
     border: 1px solid #374151;
     border-radius: 8px;
     margin-bottom: 16px;
@@ -188,8 +216,7 @@
 
 /* Betting table */
 .minigame-app .betting-table {
-    background: #1e293b;
-    border: 1px solid #9ca3af;
+    background: #0f172a;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -223,6 +250,18 @@
     font-weight: 500;
 }
 
+.text-red{
+    color: #ef4444;
+}
+.status-active {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #16a34a;
+}
+
+.status-inactive {
+    background-color: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+}
 .minigame-app .status-badge.in-progress {
     background: #dcfce7;
     color: #166534;
@@ -280,14 +319,21 @@
     margin-bottom: 16px;
 }
 
+.pick-wrap{
+    margin-bottom: 4px;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
 .minigame-app .pick-header {
-    background: #374151;
-    padding: 8px 12px;
+    background: #1e293b;
+    padding: 6px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 900;
 }
 
 .minigame-app .pick-header i {
@@ -297,40 +343,123 @@
 .minigame-app .pick-grid {
     padding: 8px;
     background: #1e293b;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     gap: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Dropdown animation classes */
+.minigame-app .pick-grid.dropdown-enter {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 8px;
+}
+
+.minigame-app .pick-grid.dropdown-enter-active {
+    max-height: 500px;
+    opacity: 1;
+    padding: 8px;
+}
+
+.minigame-app .pick-grid.dropdown-exit {
+    max-height: 500px;
+    opacity: 1;
+    padding: 8px;
+}
+
+.minigame-app .pick-grid.dropdown-exit-active {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 8px;
+}
+
+.pick-grid-4{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: space-between;
+    padding: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Dropdown animation classes for pick-grid-4 */
+.pick-grid-4.dropdown-enter-active {
+    max-height: 500px;
+    opacity: 1;
+    padding: 4px;
+}
+
+.pick-grid-4.dropdown-exit-active {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 4px;
+}
+
+/* Chevron rotation animation */
+.minigame-app .chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+.minigame-app .chevron-icon.rotated {
+    transform: rotate(180deg);
 }
 
 .minigame-app .pick-btn {
-    padding: 8px;
-    border-radius: 4px;
-    background: #374151;
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 1px 2px;
     min-height: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    flex: 1;
+    min-width: calc(25% - 3px);
+    background-color: #374151;
+    color: var(--light);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: 'SCDream';
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 1px 2px;
+    gap: 2px;
+ 
+}
+
+.bet-sidebar {
+    background-color: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.minigame-app .btn-grid-4 {
+    display: flex;
+    flex-wrap: nowrap;
+    gap:4px;
+    
 }
 
 .minigame-app .pick-btn:hover {
     background: #4b5563;
+    
 }
 
 .minigame-app .pick-btn.selected {
-    background: #3b82f6;
+    border: 1px solid #3b82f6;
+    background: #365d8d;
 }
 
 .minigame-app .pick-btn .odds {
     color: #fbbf24;
     font-weight: 600;
     font-size: 12px;
-    margin-bottom: 4px;
 }
 
 .minigame-app .ball {
@@ -344,7 +473,6 @@
     font-weight: 600;
     color: white;
     border: 1px solid;
-    margin: 2px;
 }
 
 .minigame-app .ball.blue {
@@ -363,12 +491,40 @@
     margin: 2px 0;
 }
 
-.minigame-app .pick-name {
+.minigame-app .ball.green {
+    background: #10b981;
+    border-color: #059669;
+}
+
+.pick-btn-lg{
+    padding: 1px 2px;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: calc(33% - 3px);
+    background-color: #374151;
+    color: var(--light);
     font-size: 12px;
-    margin-top: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: 'SCDream';
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 1px 2px;
+    gap: 2px;
+}
+
+.minigame-app .pick-name {
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-family: 'SCDream';
+    font-weight: 500;
 }
 
 /* Bet info section */
@@ -377,7 +533,7 @@
 }
 
 .minigame-app .current-round-info {
-    background: #374151;
+    background: #1e293b;
     padding: 12px;
     border-radius: 8px;
     margin-bottom: 16px;
@@ -444,13 +600,12 @@
 /* Bet form */
 .minigame-app .bet-form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin-bottom: 16px;
 }
 
 .minigame-app .form-row {
-    background: #374151;
+    background: #1e293b;
     padding: 12px;
     border-radius: 8px;
     display: flex;
@@ -458,20 +613,23 @@
     align-items: center;
 }
 
-.minigame-app .form-row .label {
+.label {
     font-size: 12px;
     color: #9ca3af;
+    margin-bottom: 0;
+    white-space: nowrap;
 }
 
-.minigame-app .form-row .value {
-    font-size: 14px;
+.value {
+    font-size: 17px;
     font-weight: 600;
-    color: #3b82f6;
+    color: #60a5fa;
+    white-space: nowrap;
 }
 
 .minigame-app .amount-input-row {
     grid-column: 1 / -1;
-    background: #374151;
+    background: #1e293b;
     padding: 8px;
     border-radius: 8px;
     display: flex;
@@ -487,12 +645,12 @@
 
 .minigame-app .amount-input {
     flex: 1;
-    background: #1e293b;
+    background: #0F172A;
     border: 1px solid #4b5563;
     border-radius: 4px;
     padding: 8px 12px;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .minigame-app .amount-input::placeholder {
@@ -500,13 +658,25 @@
 }
 
 .minigame-app .amount-buttons {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
     margin-bottom: 8px;
 }
-
+.betinfo-stats{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.stat-item{
+    background-color: #1e293b;
+    padding: 12px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .minigame-app .amount-buttons .amount-btn:nth-child(9) {
     grid-column: 1 / 2;
 }
@@ -520,14 +690,17 @@
 }
 
 .minigame-app .amount-btn {
-    background: #374151;
-    border: 1px solid #4b5563;
+    padding: 6px 0;
+    flex: 1;
+    min-width: calc(20% - 5px);
+    background-color: #1e293b;
+    border: 1px solid #334155;
     border-radius: 4px;
-    color: #ffffff;
-    padding: 8px;
+    color: var(--light);
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-family: 'SCDream';
 }
 
 .minigame-app .amount-btn:hover {
@@ -555,6 +728,9 @@
 .minigame-app .amount-btn.confirm {
     background: #10b981;
     border-color: #059669;
+    font-size:17px;
+    font-weight:bold;
+    font-family: 'SCDream';
 }
 
 .minigame-app .amount-btn.confirm:hover {
@@ -576,9 +752,13 @@
     }
     
     .minigame-app .tab-item {
-        flex: 1;
-        text-align: center;
-        margin: 0 2px;
+      
+        font-size:14px;
+        font-weight: 500;
+        color: #9ca3af;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.2s ease;
     }
 }
 

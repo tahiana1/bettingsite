@@ -3,16 +3,36 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 
+/**
+ * BepickPage Component - Powerball Betting Interface
+ * 
+ * This component provides a comprehensive betting interface for Bepick Min Powerball game.
+ * It includes real-time game display, betting options, bet history, and amount management.
+ * 
+ * Features:
+ * - Multi-game tab navigation (EOS1-5, Bepick, EOS, PBG, Dhpowerball)
+ * - Real-time clock display
+ * - Embedded iframe for live game visualization
+ * - Powerball betting combinations (Odd/Even, Over/Under, Combinations)
+ * - Bet amount management with quick selection buttons
+ * - Betting history table with pagination
+ * - Current round information and statistics
+ */
 export default function BepickPage() {
-  const [activeTab, setActiveTab] = useState('Bepick');
-  const [currentTime, setCurrentTime] = useState<string>('00:00:00');
-  const [iframeVisible, setIframeVisible] = useState(true);
-  const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
-  const [betAmount, setBetAmount] = useState<string>('');
-  const [balance] = useState<string>('300,000 Won');
-  const [winAmount] = useState<string>('292,500');
+  // State management for component functionality
+  const [activeTab, setActiveTab] = useState('Bepick'); // Currently selected game tab
+  const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display
+  const [iframeVisible, setIframeVisible] = useState(true); // Controls iframe visibility toggle
+  const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''}); // Selected betting option
+  const [betAmount, setBetAmount] = useState<string>(''); // User's bet amount input
+  const [balance] = useState<string>('300,000 Won'); // User's current balance (static for demo)
+  const [winAmount] = useState<string>('292,500'); // Potential win amount (static for demo)
 
-  // Update time every second
+  /**
+   * Real-time clock effect hook
+   * Updates the current time display every second in HH:MM:SS format
+   * Cleans up the interval when component unmounts to prevent memory leaks
+   */
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -25,43 +45,77 @@ export default function BepickPage() {
       setCurrentTime(timeString);
     };
     
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    updateTime(); // Initial time update
+    const interval = setInterval(updateTime, 1000); // Update every second
+    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
+  /**
+   * Handles tab navigation between different game types
+   * @param tabName - The name of the tab clicked (EOS1, EOS2, Bepick, etc.)
+   * 
+   * Behavior:
+   * - If clicking a different game tab, navigates to that game's page
+   * - If clicking current tab (Bepick), resets the interface state
+   */
   const handleTabClick = (tabName: string) => {
     if (tabName !== 'Bepick') {
-      // Navigate to the appropriate page
+      // Navigate to the appropriate game page
       window.location.href = `/${tabName.toLowerCase()}`;
       return;
     }
+    // Reset interface state for current tab
     setActiveTab(tabName);
     setIframeVisible(true);
     setSelectedPick({name: '', odds: ''});
     setBetAmount('');
   };
 
+  /**
+   * Handles selection of betting options (Powerball Odd/Even, Over/Under, etc.)
+   * @param pickName - The name of the selected betting option
+   * @param odds - The odds for the selected option
+   */
   const handlePickSelection = (pickName: string, odds: string) => {
     setSelectedPick({name: pickName, odds: odds});
   };
 
+  /**
+   * Handles bet amount input via quick selection buttons
+   * @param amount - The amount to add, 'Reset' to clear, or 'Max' for maximum bet
+   * 
+   * Behavior:
+   * - 'Reset': Clears the bet amount
+   * - 'Max': Sets bet amount to maximum (300,000)
+   * - Numeric values: Adds to current bet amount
+   */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
       setBetAmount('');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
+      // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
       setBetAmount(formatNumber(current + add));
     }
   };
 
+  /**
+   * Formats numbers with comma separators for better readability
+   * @param num - The number to format
+   * @returns Formatted number string with commas (e.g., "1,000,000")
+   */
   const formatNumber = (num: number) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
+  /**
+   * Maps tab names to their display names
+   * @param tab - The tab identifier
+   * @returns The formatted game name for display
+   */
   const getGameName = (tab: string) => {
     const gameNames: {[key: string]: string} = {
       'EOS1': 'EOS1 Min Powerball',
@@ -77,6 +131,31 @@ export default function BepickPage() {
     return gameNames[tab] || tab;
   };
 
+  const [pickSectionPower, setPickSectionPower] = useState(true);
+  const [pickSectionNormal, setPickSectionNormal] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  /**
+   * Handles the dropdown toggle with smooth animation
+   * Manages animation state to prevent rapid clicking during transitions
+   */
+  const handlePickSectionToggle = () => {
+    if (isAnimating) return; // Prevent rapid clicking during animation
+    
+    setIsAnimating(true);
+    setPickSectionPower(!pickSectionPower);
+    
+    // Reset animation state after animation completes
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 500);
+  };
+
+  /**
+   * Maps tab names to their corresponding iframe URLs for live game display
+   * @param tab - The tab identifier
+   * @returns The iframe source URL for the selected game
+   */
   const getIframeSrc = (tab: string) => {
     const iframeSrcs: {[key: string]: string} = {
       'EOS1': 'https://ntry.com/scores/eos_powerball/1min/main.php',
@@ -93,9 +172,13 @@ export default function BepickPage() {
   };
 
   return (
-    <div className="minigame-app">
-      {/* Header tabs */}
-      <header>
+    <div className="minigame-app relative">
+      {/* 
+        Header Section - Game Navigation Tabs
+        Provides navigation between different Powerball game variants
+        Each tab represents a different game type with varying intervals
+      */}
+      <header className = "fixed-header">
         <div className="container">
           <div className="tabs-container">
             <div 
@@ -156,12 +239,25 @@ export default function BepickPage() {
         </div>
       </header>
 
-      {/* Main content area */}
-      <main>
+      {/* 
+        Main Content Area
+        Contains the betting interface with two main columns:
+        - Left: Game display, betting history, and current round info
+        - Right: Betting options and amount selection
+      */}
+      <main className='mt-[50px]'>
         <div className="container">
           <div className="tab-content active">
             <div className="content-wrapper">
+              {/* 
+                Left Column - Game Information and History
+                Contains real-time game display, betting history table, and current round details
+              */}
               <div className="left-column left-col">
+                {/* 
+                  Game Info Bar - Top section with time, game name, and iframe toggle
+                  Displays current time, active game name, and controls iframe visibility
+                */}
                 <div className="game-info-bar info-bar">
                   <div className="time-display">
                     <i className="fa fa-clock-o"></i>
@@ -176,6 +272,11 @@ export default function BepickPage() {
                   </button>
                 </div>
                 
+                {/* 
+                  Live Game Display - Embedded iframe showing real-time game visualization
+                  Conditionally rendered based on iframeVisible state
+                  Displays live Powerball game results and animations
+                */}
                 {iframeVisible && (
                   <div className="iframe-section iframe-sec">
                     <div className="iframe-wrapper">
@@ -188,6 +289,11 @@ export default function BepickPage() {
                   </div>
                 )}
 
+                {/* 
+                  Betting History Table - Shows user's recent betting activity
+                  Displays round numbers, bet types, amounts, win amounts, and status
+                  Includes pagination for navigating through betting history
+                */}
                 <div className="betting-table">
                   <table>
                     <thead>
@@ -201,49 +307,51 @@ export default function BepickPage() {
                       </tr>
                     </thead>
                     <tbody>
+                      {/* Sample betting history data - in production this would come from API */}
                       <tr>
-                        <td>B256</td>
-                        <td>PBG Powerball Odd/3.1</td>
-                        <td>42,000</td>
-                        <td>130,200</td>
-                        <td><span className="status-badge in-progress">In Progress</span></td>
-                        <td><i className="fa fa-times"></i></td>
+                        <td>1256</td>
+                        <td>Powerball Odd/3.1</td>
+                        <td>15,000</td>
+                        <td>46,500</td>
+                        <td><span className="status-badge status-active">In Progress</span></td>
+                        <td><i className="fa fa-trash text-red"></i></td>
                       </tr>
                       <tr>
-                        <td>B255</td>
-                        <td>PBG Powerball Even/1.95</td>
-                        <td>78,000</td>
-                        <td>152,100</td>
-                        <td><span className="status-badge finished">Finished</span></td>
-                        <td><i className="fa fa-times"></i></td>
+                        <td>1255</td>
+                        <td>Powerball Even/1.95</td>
+                        <td>80,000</td>
+                        <td>156,000</td>
+                        <td><span className="status-badge status-inactive">Finished</span></td>
+                        <td><i className="fa fa-trash text-red"></i></td>
                       </tr>
                       <tr>
-                        <td>B254</td>
-                        <td>PBG Powerball Under/1.95</td>
-                        <td>95,000</td>
-                        <td>185,250</td>
-                        <td><span className="status-badge finished">Finished</span></td>
-                        <td><i className="fa fa-times"></i></td>
+                        <td>1254</td>
+                        <td>Powerball Under/1.95</td>
+                        <td>120,000</td>
+                        <td>234,000</td>
+                        <td><span className="status-badge status-inactive">Finished</span></td>
+                        <td><i className="fa fa-trash text-red"></i></td>
                       </tr>
                       <tr>
-                        <td>B253</td>
-                        <td>PBG Powerball Over/1.95</td>
-                        <td>115,000</td>
-                        <td>224,250</td>
-                        <td><span className="status-badge finished">Finished</span></td>
-                        <td><i className="fa fa-times"></i></td>
+                        <td>1253</td>
+                        <td>Powerball Over/1.95</td>
+                        <td>60,000</td>
+                        <td>117,000</td>
+                        <td><span className="status-badge status-inactive">Finished</span></td>
+                        <td><i className="fa fa-trash text-red"></i></td>
                       </tr>
                       <tr>
-                        <td>B252</td>
-                        <td>PBG PaOdd-PaUnder/4.1</td>
-                        <td>65,000</td>
-                        <td>266,500</td>
-                        <td><span className="status-badge finished">Finished</span></td>
-                        <td><i className="fa fa-times"></i></td>
+                        <td>1252</td>
+                        <td>PaOdd-PaUnder/4.1</td>
+                        <td>25,000</td>
+                        <td>102,500</td>
+                        <td><span className="status-badge status-inactive">Finished</span></td>
+                        <td><i className="fa fa-trash text-red"></i></td>
                       </tr>
                     </tbody>
                   </table>
                   
+                  {/* Pagination controls for navigating betting history */}
                   <div className="pagination">
                     <button>‹</button>
                     <button>1</button>
@@ -255,14 +363,21 @@ export default function BepickPage() {
                 </div>
               </div>
 
+              {/* 
+                Right Column - Betting Interface
+                Contains betting options, amount selection, and current round information
+              */}
               <div className="right-column right-col">
-                <div className="betting-panel">
-                  <div className="pick-section">
-                    <div className="pick-header">
+               <div className="bet-sidebar">
+                <div className="pick-wrap">
+
+                <div className="pick-header">
                       <span>Powerball Combinations</span>
-                      <i className="fa fa-chevron-down"></i>
+                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} onClick={() => setPickSectionPower(!pickSectionPower)}></i>
                     </div>
-                    <div className="pick-grid">
+                
+                    <div className={`pick-grid-4 ${pickSectionPower ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                      {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Odd', '1.95')}
@@ -271,6 +386,7 @@ export default function BepickPage() {
                         <div className="ball blue">Odd</div>
                         <span className="pick-name">Powerball Odd</span>
                       </button>
+                      {/* Single Powerball Even bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Even' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Even', '1.95')}
@@ -279,6 +395,7 @@ export default function BepickPage() {
                         <div className="ball red">Even</div>
                         <span className="pick-name">Powerball Even</span>
                       </button>
+                      {/* Single Powerball Under bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Under' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Under', '1.95')}
@@ -287,6 +404,7 @@ export default function BepickPage() {
                         <div className="ball blue">Under</div>
                         <span className="pick-name">Powerball Under</span>
                       </button>
+                      {/* Single Powerball Over bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Over' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('Powerball Over', '1.95')}
@@ -295,6 +413,7 @@ export default function BepickPage() {
                         <div className="ball red">Over</div>
                         <span className="pick-name">Powerball Over</span>
                       </button>
+                      {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaOdd-PaUnder', '4.1')}
@@ -306,6 +425,7 @@ export default function BepickPage() {
                         </div>
                         <span className="pick-name">PaOdd-PaUnder</span>
                       </button>
+                      {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaOdd-PaOver' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaOdd-PaOver', '3.1')}
@@ -317,6 +437,7 @@ export default function BepickPage() {
                         </div>
                         <span className="pick-name">PaOdd-PaOver</span>
                       </button>
+                      {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaEven-PaUnder' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaEven-PaUnder', '3.1')}
@@ -328,6 +449,7 @@ export default function BepickPage() {
                         </div>
                         <span className="pick-name">PaEven-PaUnder</span>
                       </button>
+                      {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('PaEven-PaOver', '4.1')}
@@ -340,17 +462,112 @@ export default function BepickPage() {
                         <span className="pick-name">PaEven-PaOver</span>
                       </button>
                     </div>
-                  </div>
+                </div>
+                <div className="pick-wrap">
 
-                  <div className="betinfo-section">
+                <div className="pick-header">
+                      <span>Normalball Combinations</span>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                    </div>
+                
+                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                      {/* Single Powerball Odd bet option */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                      >
+                        <span className="odds">1.95</span>
+                        <div className="ball blue">Odd</div>
+                        <span className="pick-name">Normalball Odd</span>
+                      </button>
+                      {/* Single Powerball Even bet option */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                      >
+                        <span className="odds">1.95</span>
+                        <div className="ball red">Even</div>
+                        <span className="pick-name">Normalball Even</span>
+                      </button>
+                      {/* Single Powerball Under bet option */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                      >
+                        <span className="odds">1.95</span>
+                        <div className="ball blue">Under</div>
+                        <span className="pick-name">Normalball Under</span>
+                      </button>
+                      {/* Single Powerball Over bet option */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                      >
+                        <span className="odds">1.95</span>
+                        <div className="ball red">Over</div>
+                        <span className="pick-name">Normalball Over</span>
+                      </button>
+                      {/* Combination bet: Powerball Odd + Under */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                      >
+                        <span className="odds">4.1</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball blue">Under</div>
+                        </div>
+                        <span className="pick-name">N-NUnder</span>
+                      </button>
+                      {/* Combination bet: Powerball Odd + Over */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                      >
+                        <span className="odds">3.1</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball red">Over</div>
+                        </div>
+                        <span className="pick-name">N-NOver</span>
+                      </button>
+                      {/* Combination bet: Powerball Even + Under */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                      >
+                        <span className="odds">3.1</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball blue">Under</div>
+                        </div>
+                          <span className="pick-name">NOdd-NUnder</span>
+                      </button>
+                      {/* Combination bet: Powerball Even + Over */}
+                      <button 
+                        className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                      >
+                        <span className="odds">4.1</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball red">Over</div>
+                        </div>
+                        <span className="pick-name">NEven-NOver</span>
+                      </button>
+                    </div>
+                </div>
+               </div>
+              <div className="bet-sidebar">
                     <div className="current-round-info">
                       <div className="round-header">
-                        <span className="round-title">Current Round [B257]</span>
-                        <span className="countdown">02:45</span>
+                        <span className="round-title">Current Round [1257]</span>
+                        <span className="countdown">03:45</span>
                       </div>
                       <div className="round-details">
-                        BepickMin3310226871BE2E (B256) Round
+                        Bepick3310226871BE2E (1256) Round
                       </div>
+                      {/* Visual representation of current game results */}
                       <div className="ball-display">
                         <span>Powerball</span>
                         <div className="ball blue">Odd</div>
@@ -359,6 +576,7 @@ export default function BepickPage() {
                         <div className="ball blue">Odd</div>
                         <div className="ball blue">Under</div>
                       </div>
+                      {/* Betting statistics for current session */}
                       <div className="betting-stats">
                         <span className="prev-bet">Previous Betting【0】</span>
                         <span className="prev-win">Previous Win【0】</span>
@@ -366,24 +584,33 @@ export default function BepickPage() {
                       </div>
                     </div>
 
-                    <div className="bet-form">
-                      <div className="form-row">
+                    {/* 
+                      Betting Form - User input and confirmation section
+                      Displays selected bet details, balance, and amount input controls
+                    */}
+                    <div className="betinfo-stats">
+                      {/* Display selected betting option */}
+                      <div className="stat-item">
                         <span className="label">Pick Selection</span>
                         <span className="value pick-selection">{selectedPick.name || ''}</span>
                       </div>
-                      <div className="form-row">
+                      {/* Display odds for selected option */}
+                      <div className="stat-item">
                         <span className="label">Odds</span>
                         <span className="value odds-display">{selectedPick.odds || ''}</span>
                       </div>
-                      <div className="form-row">
+                      {/* Display user's current balance */}
+                      <div className="stat-item">
                         <span className="label">Balance</span>
                         <span className="value myCash">{balance}</span>
                       </div>
-                      <div className="form-row">
+                      {/* Display potential win amount */}
+                      <div className="stat-item">
                         <span className="label">Win Amount</span>
                         <span className="value win-amount">{winAmount}</span>
                       </div>
 
+                      {/* Bet amount input field */}
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
@@ -394,8 +621,9 @@ export default function BepickPage() {
                           onChange={(e) => setBetAmount(e.target.value)}
                         />
                       </div>
-
-                      <div className="amount-buttons">
+                    </div>
+                    {/* Quick amount selection buttons and betting confirmation */}
+                    <div className="amount-buttons">
                         <button className="amount-btn" onClick={() => handleAmountClick('10000')}>10K</button>
                         <button className="amount-btn" onClick={() => handleAmountClick('20000')}>20K</button>
                         <button className="amount-btn" onClick={() => handleAmountClick('30000')}>30K</button>
@@ -408,14 +636,17 @@ export default function BepickPage() {
                         <button className="amount-btn max" onClick={() => handleAmountClick('Max')}>Max</button>
                         <button className="amount-btn confirm">Betting</button>
                       </div>
-                    </div>
-                  </div>
-                </div>
+              </div>
+              
+               
               </div>
             </div>
           </div>
         </div>
       </main>
+      <footer className = "text-center text-white-500 text-md border-t border-gray-800 pt-4 pb-[30px] bg-[#0f172a]">
+          © 2025 ToToClub. All rights reserved.
+      </footer>
     </div>
   );
 }
