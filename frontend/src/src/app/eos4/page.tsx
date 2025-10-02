@@ -50,14 +50,14 @@ export default function EOS4Page() {
 
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -560,7 +560,8 @@ export default function EOS4Page() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number"
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}

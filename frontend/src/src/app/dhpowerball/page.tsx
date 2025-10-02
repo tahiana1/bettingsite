@@ -91,14 +91,14 @@ export default function DhpowerballPage() {
    */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -131,19 +131,46 @@ export default function DhpowerballPage() {
     return gameNames[tab] || tab;
   };
 
-  const [pickSectionPower, setPickSectionPower] = useState(true);
-  const [pickSectionNormal, setPickSectionNormal] = useState(true);
+  // Individual state variables for each dropdown section
+  const [powerballCombinationsOpen, setPowerballCombinationsOpen] = useState(true);
+  const [normalballCombinationsOpen, setNormalballCombinationsOpen] = useState(true);
+  const [newCombinationOpen, setNewCombinationOpen] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // State for the new combination selection
+  const [selectedNewCombination, setSelectedNewCombination] = useState<{name: string, odds: string}>({name: '', odds: ''});
+
+  /**
+   * Handles selection of the new combination betting options
+   * @param pickName - The name of the selected betting option
+   * @param odds - The odds for the selected option
+   */
+  const handleNewCombinationSelection = (pickName: string, odds: string) => {
+    setSelectedNewCombination({name: pickName, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+  };
 
   /**
    * Handles the dropdown toggle with smooth animation
    * Manages animation state to prevent rapid clicking during transitions
    */
-  const handlePickSectionToggle = () => {
+  const handleDropdownToggle = (dropdownType: string) => {
     if (isAnimating) return; // Prevent rapid clicking during animation
     
     setIsAnimating(true);
-    setPickSectionPower(!pickSectionPower);
+    
+    switch (dropdownType) {
+      case 'powerball':
+        setPowerballCombinationsOpen(!powerballCombinationsOpen);
+        break;
+      case 'normalball':
+        setNormalballCombinationsOpen(!normalballCombinationsOpen);
+        break;
+      case 'newCombination':
+        setNewCombinationOpen(!newCombinationOpen);
+        break;
+    }
     
     // Reset animation state after animation completes
     setTimeout(() => {
@@ -373,10 +400,10 @@ export default function DhpowerballPage() {
 
                 <div className="pick-header">
                       <span>Powerball Combinations</span>
-                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} onClick={() => setPickSectionPower(!pickSectionPower)}></i>
+                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${powerballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('powerball')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionPower ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${powerballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
@@ -463,14 +490,53 @@ export default function DhpowerballPage() {
                       </button>
                     </div>
                 </div>
+
+                {/* New 3-Button Combination Section */}
+                <div className="pick-wrap">
+                  <div className="pick-header">
+                    <span>New Combination</span>
+                    <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${newCombinationOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('newCombination')}></i>
+                  </div>
+                
+                  <div className={`pick-grid-4 ${newCombinationOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    {/* First button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'Option 1' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecSmall', '5')}
+                    >
+                      <span className="odds">5.0</span>
+                      <div className="ball blue">Small</div>
+                      <span className="pick-name">Normal Ball Section 15-64</span>
+                    </button>
+                    {/* Second button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'Option 2' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecMedium', '5')}
+                    >
+                      <span className="odds">5</span>
+                      <div className="ball red">Medium</div>
+                      <span className="pick-name">Normal Ball Section 65-80</span>
+                    </button>
+                    {/* Third button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'Option 3' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecLarge', '5')}
+                    >
+                      <span className="odds">5</span>
+                      <div className="ball green">Large</div>
+                      <span className="pick-name">Normal Ball Section 81-100</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="pick-wrap">
 
                 <div className="pick-header">
                       <span>Normalball Combinations</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${normalballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('normalball')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${normalballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
@@ -592,12 +658,16 @@ export default function DhpowerballPage() {
                       {/* Display selected betting option */}
                       <div className="stat-item">
                         <span className="label">Pick Selection</span>
-                        <span className="value pick-selection">{selectedPick.name || ''}</span>
+                        <span className="value pick-selection">
+                          {selectedPick.name || selectedNewCombination.name || ''}
+                        </span>
                       </div>
                       {/* Display odds for selected option */}
                       <div className="stat-item">
                         <span className="label">Odds</span>
-                        <span className="value odds-display">{selectedPick.odds || ''}</span>
+                        <span className="value odds-display">
+                          {selectedPick.odds || selectedNewCombination.odds || ''}
+                        </span>
                       </div>
                       {/* Display user's current balance */}
                       <div className="stat-item">
@@ -614,7 +684,8 @@ export default function DhpowerballPage() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number" 
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}
