@@ -1844,5 +1844,18 @@
   "useInternationalFormatWithCountryCode" : "使用国际格式和国家代码",
   "includeAtSymbolForUsernames" : "包含@符号用于用户名",
   "enterYourKakaoTalkId" : "输入您的KakaoTalk ID",
-  "error" : "错误"
+  "error" : "错误",
+  "changeIndividualGameUsageStatus" : "更改单个游戏使用状态",
+  "unpaid" : "未支付",
+  "payment1" : "支付1",
+  "payment2" : "支付2",
+  "payment3" : "支付3",
+  "payment4" : "支付4",
+  "payment5" : "支付5",
+  "day" : "天",
+  "referralBonus" : "推荐奖金",
+  "maximumNumberOfDailySurpriseBonusPayments" : "每日惊喜奖金支付次数上限",
+  "maximumNumberOfSurpriseBonusPaymentsPerTimePeriod" : "每个时间段惊喜奖金支付次数上限",
+  "gameSpecificSettings" : "游戏特定设置",
+  "headStyle" : "头部样式"
 }

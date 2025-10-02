@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Button, Card, Form, Input, notification } from "antd";
+import React, { useEffect, useState } from "react";
+import { Button, Card, Form, Input, notification, Spin } from "antd";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Link from "next/link";
@@ -25,7 +25,9 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
   const [, setUser] = useAtom<any>(userState);
   const [form] = Form.useForm();
   const [notiApi, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState(false);
   const onSubmit = (data: User) => {
+    setLoading(true);
     api("auth/login", { method: "POST", data })
       .then((result) => {
         setUser(result.data);
@@ -51,6 +53,9 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
             placement: "topRight",
           });
         }
+      })
+      .finally(() => {
+        setLoading(false);
       });
 
   };
@@ -132,9 +137,14 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
           <Form.Item label={null} className="w-full ">
             <button
               type="submit"
+              disabled={loading}
               className="w-full btn-modal-auth cursor-pointer"
             >
-              {t("auth/login")}
+              {loading ? (
+                <Spin size="small" />
+              ) : (
+                t("auth/login")
+              )}
             </button>
           </Form.Item>
           <Form.Item label={null} className="w-full">

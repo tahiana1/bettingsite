@@ -446,10 +446,10 @@ export default function AdminRootLayout({
         //   key: "admin/settings/design",
         //   label: t("admin/menu/designSetting"),
         // },
-        {
-          key: "admin/settings/menu",
-          label: t("admin/menu/menuSetting"),
-        },
+        // {
+        //   key: "admin/settings/menu",
+        //   label: t("admin/menu/menuSetting"),
+        // },
         {
           key: "admin/settings/domain",
           label: t("admin/menu/domainSetting"),
@@ -474,10 +474,10 @@ export default function AdminRootLayout({
           key: "admin/settings/bank",
           label: t("admin/menu/bankSetting"),
         },
-        // {
-        //   key: "admin/settings/level",
-        //   label: t("admin/menu/levelSetting"),
-        // }
+        {
+          key: "admin/settings/level",
+          label: t("admin/menu/levelSetting"),
+        }
       ],
     },
     {

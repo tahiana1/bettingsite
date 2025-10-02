@@ -113,8 +113,8 @@ export default function LevelPage() {
         <div className="mt-3 flex flex-wrap gap-2">
             <Card 
                 title={t("level1Setting")}
-                className="max-w-[900px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                className="max-w-[1500px]"
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
             >
                 <div className="flex flex-row gap-2">
                     <div className="flex flex-col gap-2">
@@ -500,7 +500,7 @@ export default function LevelPage() {
             <Card 
                 title={t("level1PayBackSetting")}
                 className="max-w-[500px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 actions={
                     [<Button type="default" onClick={() => {}}>{t("change")}</Button>,
                     <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
@@ -561,7 +561,7 @@ export default function LevelPage() {
             <Card
                 title="Level1 sudden bonus setting"
                 className="max-w-[600px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 actions={
                     [<Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
                 }
@@ -590,7 +590,7 @@ export default function LevelPage() {
             </Card>
             <Card
                 className="max-w-[500px] min-w-[500px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("settingUpLevel1ReferalBenefits")}
                 actions={[<Button type="default" onClick={() => {}}>{t("change")}</Button>,
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
@@ -639,7 +639,7 @@ export default function LevelPage() {
             </Card>
             <Card
                 className="max-w-[500px] min-w-[500px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("level1CharginBonusSelectionSetting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
@@ -672,7 +672,7 @@ export default function LevelPage() {
             </Card>
             <Card
                 className="max-w-[500px] min-w-[500px]"
-                headStyle={{ backgroundColor: 'black', color: 'white' }}
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus1Setting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}

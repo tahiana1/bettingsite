@@ -411,7 +411,7 @@ const SlotPage: React.FC = () => {
                     ].map((provider, idx) => (
                         <div
                             key={provider.name}
-                            className="casino-game-grid-item md:max-w-[200px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
+                            className="casino-game-grid-item min-w-[180px] md:max-w-[200px] max-w-[180px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transform transition-transform group relative"
                             onClick={() => ProcessSlot(provider.id)}
                         >
                             <div className="w-full h-full relative">

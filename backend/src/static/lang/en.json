@@ -1843,5 +1843,18 @@
   "useInternationalFormatWithCountryCode" : "Use international format with country code",
   "includeAtSymbolForUsernames" : "Include @ symbol for usernames",
   "enterYourKakaoTalkId" : "Enter your KakaoTalk ID",
-  "error" : "Error"
+  "error" : "Error",
+  "changeIndividualGameUsageStatus" : "Change Individual Game Usage Status",
+  "unpaid" : "Unpaid",
+  "payment1" : "Payment 1",
+  "payment2" : "Payment 2",
+  "payment3" : "Payment 3",
+  "payment4" : "Payment 4",
+  "payment5" : "Payment 5",
+  "day" : "Day",
+  "referralBonus" : "Referral Bonus",
+  "maximumNumberOfDailySurpriseBonusPayments" : "Maximum Number Of Daily Surprise Bonus Payments",
+  "maximumNumberOfSurpriseBonusPaymentsPerTimePeriod" : "Maximum Number Of Surprise Bonus Payments Per Time Period",
+  "gameSpecificSettings" : "Game Specific Settings",
+  "headStyle" : "Head Style"
 }
