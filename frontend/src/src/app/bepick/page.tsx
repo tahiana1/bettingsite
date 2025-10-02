@@ -3,21 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 
-/**
- * BepickPage Component - Powerball Betting Interface
- * 
- * This component provides a comprehensive betting interface for Bepick Min Powerball game.
- * It includes real-time game display, betting options, bet history, and amount management.
- * 
- * Features:
- * - Multi-game tab navigation (EOS1-5, Bepick, EOS, PBG, Dhpowerball)
- * - Real-time clock display
- * - Embedded iframe for live game visualization
- * - Powerball betting combinations (Odd/Even, Over/Under, Combinations)
- * - Bet amount management with quick selection buttons
- * - Betting history table with pagination
- * - Current round information and statistics
- */
 export default function BepickPage() {
   // State management for component functionality
   const [activeTab, setActiveTab] = useState('Bepick'); // Currently selected game tab
@@ -423,7 +408,7 @@ export default function BepickPage() {
                           <div className="ball blue">Odd</div>
                           <div className="ball blue">Under</div>
                         </div>
-                        <span className="pick-name">PaOdd-PaUnder</span>
+                        <span className="pick-name">Powerball Odd+Under</span>
                       </button>
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
@@ -435,7 +420,7 @@ export default function BepickPage() {
                           <div className="ball blue">Odd</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">PaOdd-PaOver</span>
+                        <span className="pick-name">Powerball Odd-Over</span>
                       </button>
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
@@ -447,7 +432,7 @@ export default function BepickPage() {
                           <div className="ball red">Even</div>
                           <div className="ball blue">Under</div>
                         </div>
-                        <span className="pick-name">PaEven-PaUnder</span>
+                        <span className="pick-name">Powerball Even-Under</span>
                       </button>
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
@@ -459,7 +444,7 @@ export default function BepickPage() {
                           <div className="ball red">Even</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">PaEven-PaOver</span>
+                        <span className="pick-name">Powerball Even-Over</span>
                       </button>
                     </div>
                 </div>
@@ -478,7 +463,7 @@ export default function BepickPage() {
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
-                        <span className="pick-name">Normalball Odd</span>
+                        <span className="pick-name">Normal Ball</span>
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
@@ -487,7 +472,7 @@ export default function BepickPage() {
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
-                        <span className="pick-name">Normalball Even</span>
+                        <span className="pick-name">Normal Ball</span>
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
@@ -496,7 +481,7 @@ export default function BepickPage() {
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
-                        <span className="pick-name">Normalball Under</span>
+                        <span className="pick-name">Normal Ball</span>
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
@@ -505,55 +490,55 @@ export default function BepickPage() {
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
-                        <span className="pick-name">Normalball Over</span>
+                        <span className="pick-name">Normal Ball</span>
                       </button>
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('N-NUnder', '4.1')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball blue">Under</div>
                         </div>
-                        <span className="pick-name">N-NUnder</span>
+                        <span className="pick-name">Normal Ball Combinatoin</span>
                       </button>
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('N-NOver', '3.1')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">N-NOver</span>
+                        <span className="pick-name">Normal Ball Combinatoin</span>
                       </button>
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball blue">Under</div>
                         </div>
-                          <span className="pick-name">NOdd-NUnder</span>
+                          <span className="pick-name">Normal Ball Combinatoin</span>
                       </button>
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
                         onClick={() => handlePickSelection('NEven-NOver', '4.1')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">NEven-NOver</span>
+                        <span className="pick-name">Normal Ball Combinatoin</span>
                       </button>
                     </div>
                 </div>

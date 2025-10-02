@@ -3,21 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 
-/**
- * EOS4Page Component - Powerball Betting Interface
- * 
- * This component provides a comprehensive betting interface for EOS4 Min Powerball game.
- * It includes real-time game display, betting options, bet history, and amount management.
- * 
- * Features:
- * - Multi-game tab navigation (EOS1-5, Bepick, EOS, PBG, Dhpowerball)
- * - Real-time clock display
- * - Embedded iframe for live game visualization
- * - Powerball betting combinations (Odd/Even, Over/Under, Combinations)
- * - Bet amount management with quick selection buttons
- * - Betting history table with pagination
- * - Current round information and statistics
- */
 export default function EOS4Page() {
   // State management for component functionality
   const [activeTab, setActiveTab] = useState('EOS4'); // Currently selected game tab
@@ -28,11 +13,7 @@ export default function EOS4Page() {
   const [balance] = useState<string>('300,000 Won'); // User's current balance (static for demo)
   const [winAmount] = useState<string>('292,500'); // Potential win amount (static for demo)
 
-  /**
-   * Real-time clock effect hook
-   * Updates the current time display every second in HH:MM:SS format
-   * Cleans up the interval when component unmounts to prevent memory leaks
-   */
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -50,14 +31,6 @@ export default function EOS4Page() {
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
-  /**
-   * Handles tab navigation between different game types
-   * @param tabName - The name of the tab clicked (EOS1, EOS2, EOS4, etc.)
-   * 
-   * Behavior:
-   * - If clicking a different game tab, navigates to that game's page
-   * - If clicking current tab (EOS4), resets the interface state
-   */
   const handleTabClick = (tabName: string) => {
     if (tabName !== 'EOS4') {
       // Navigate to the appropriate game page
@@ -71,24 +44,10 @@ export default function EOS4Page() {
     setBetAmount('');
   };
 
-  /**
-   * Handles selection of betting options (Powerball Odd/Even, Over/Under, etc.)
-   * @param pickName - The name of the selected betting option
-   * @param odds - The odds for the selected option
-   */
   const handlePickSelection = (pickName: string, odds: string) => {
     setSelectedPick({name: pickName, odds: odds});
   };
 
-  /**
-   * Handles bet amount input via quick selection buttons
-   * @param amount - The amount to add, 'Reset' to clear, or 'Max' for maximum bet
-   * 
-   * Behavior:
-   * - 'Reset': Clears the bet amount
-   * - 'Max': Sets bet amount to maximum (300,000)
-   * - Numeric values: Adds to current bet amount
-   */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
       setBetAmount('');
@@ -102,20 +61,10 @@ export default function EOS4Page() {
     }
   };
 
-  /**
-   * Formats numbers with comma separators for better readability
-   * @param num - The number to format
-   * @returns Formatted number string with commas (e.g., "1,000,000")
-   */
   const formatNumber = (num: number) => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
-  /**
-   * Maps tab names to their display names
-   * @param tab - The tab identifier
-   * @returns The formatted game name for display
-   */
   const getGameName = (tab: string) => {
     const gameNames: {[key: string]: string} = {
       'EOS1': 'EOS1 Min Powerball',
@@ -135,10 +84,6 @@ export default function EOS4Page() {
   const [pickSectionNormal, setPickSectionNormal] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  /**
-   * Handles the dropdown toggle with smooth animation
-   * Manages animation state to prevent rapid clicking during transitions
-   */
   const handlePickSectionToggle = () => {
     if (isAnimating) return; // Prevent rapid clicking during animation
     
@@ -510,9 +455,9 @@ export default function EOS4Page() {
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                        onClick={() => handlePickSelection('N-NUnder', '3.7')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball blue">Under</div>
@@ -522,9 +467,9 @@ export default function EOS4Page() {
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                        onClick={() => handlePickSelection('N-NOver', '3.7')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball red">Over</div>
@@ -534,9 +479,9 @@ export default function EOS4Page() {
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                        onClick={() => handlePickSelection('NOdd-NUnder', '3.7')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball blue">Under</div>
@@ -546,9 +491,9 @@ export default function EOS4Page() {
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                        onClick={() => handlePickSelection('NEven-NOver', '3.7')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball red">Over</div>
@@ -562,7 +507,7 @@ export default function EOS4Page() {
                     <div className="current-round-info">
                       <div className="round-header">
                         <span className="round-title">Current Round [1257]</span>
-                        <span className="countdown">03:45</span>
+                        <span className="countdown">05:00</span>
                       </div>
                       <div className="round-details">
                         EOS4Min3310226871BE2E (1256) Round
@@ -570,11 +515,12 @@ export default function EOS4Page() {
                       {/* Visual representation of current game results */}
                       <div className="ball-display">
                         <span>Powerball</span>
-                        <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
+                        <div className="ball red">Over</div>
+                        <div className="ball red">Over</div>
                         <span>Normal Ball</span>
-                        <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
+                        <div className="ball red">Even</div>
+                        <div className="ball red">Over</div>
+                        <div className="ball red">Even</div>
                       </div>
                       {/* Betting statistics for current session */}
                       <div className="betting-stats">
