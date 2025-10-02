@@ -458,8 +458,8 @@ export default function BepickPage() {
                     <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Odd' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -467,8 +467,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Even' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -476,8 +476,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Under' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -485,8 +485,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Over' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
