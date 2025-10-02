@@ -421,14 +421,13 @@
     color: var(--light);
     font-size: 12px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     font-family: 'SCDream';
     background-color: #1e293b;
     border: 1px solid #334155;
     border-radius: 4px;
     padding: 1px 2px;
     gap: 2px;
- 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .bet-sidebar {
@@ -447,17 +446,23 @@
 }
 
 .minigame-app .pick-btn:hover {
-    background: #4b5563;
-    
+    background-color: #374151;
+    border-color: #4b5563;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.minigame-app .pick-btn:active {
+    /* No transition for immediate feedback */
 }
 
 .minigame-app .pick-btn.selected {
-    border: 1px solid #3b82f6;
+    border: 2px solid #3b82f6;
     background: #365d8d;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 .minigame-app .pick-btn .odds {
-    color: #fbbf24;
+    color: #ffff00;
     font-weight: 600;
     font-size: 12px;
 }
@@ -509,13 +514,34 @@
     color: var(--light);
     font-size: 12px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
     font-family: 'SCDream';
     background-color: #1e293b;
     border: 1px solid #334155;
     border-radius: 4px;
     padding: 1px 2px;
     gap: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pick-btn-lg .odds{
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffff00;
+}
+.pick-btn-lg:hover {
+    background-color: #374151;
+    border-color: #4b5563;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pick-btn-lg:active {
+    /* No transition for immediate feedback */
+}
+
+.pick-btn-lg.selected {
+    border: 2px solid #3b82f6;
+    background: #365d8d;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 .minigame-app .pick-name {
