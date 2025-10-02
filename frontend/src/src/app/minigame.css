@@ -51,10 +51,7 @@
 }
 
 .tabs-container {
-    width: 100vw;
     display:flex;
-    
-    max-width:1508px;
     padding: 6px;
     border-left: 1px solid #374151;
     border-right: 1px solid #374151;
@@ -63,7 +60,7 @@
     border-bottom: 1px solid #374151;
 }
 
-.minigame-app .fixed-header{
+ .minigame-app .fixed-header{
     background-color: #0f172a;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -71,13 +68,13 @@
     z-index: 10;
     border-bottom: 1px solid var(--gray-800);
     padding: 4px 0;
-
-}
+    width: calc(100% - 320px);
+} 
 
 .minigame-app .tabs-container::-webkit-scrollbar {
     display: flex;
     justify-content: space-between;
-    width: 100%;
+    
     padding:4px 0;
 }
 
@@ -579,12 +576,11 @@
 }
 
 .minigame-app .countdown {
-    color: #f97316;
+    color: #f5610b;
     font-weight: 600;
-    background: #fef2f2;
+    background-color: rgba(239, 68, 68, 0.1);
     padding: 2px 8px;
     border-radius: 4px;
-    font-size: 12px;
 }
 
 .minigame-app .round-details {

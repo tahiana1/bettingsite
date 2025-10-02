@@ -548,7 +548,7 @@ export default function EOS3Page() {
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Odd', '2.7')}
                       >
                         <span className="odds">2.7</span>
                         <div className="ball blue">Small</div>
@@ -557,7 +557,7 @@ export default function EOS3Page() {
                       {/* Single Powerball Even bet option */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Even', '2.6')}
                       >
                         <span className="odds">2.6</span>
                         <div className="ball red">Medium</div>
@@ -566,7 +566,7 @@ export default function EOS3Page() {
                       {/* Single Powerball Under bet option */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Under', '2.7')}
                       >
                         <span className="odds">2.7</span>
                         <div className="ball blue">Large</div>
@@ -575,7 +575,7 @@ export default function EOS3Page() {
                       {/* Single Powerball Over bet option */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Over', '4.4')}
                       >
                         <span className="odds">4.4</span>
                         <div className="ball-group">
@@ -587,7 +587,7 @@ export default function EOS3Page() {
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                        onClick={() => handlePickSelection('N-NUnder', '4.2')}
                       >
                         <span className="odds">4.2</span>
                         <div className="ball-group">
@@ -599,7 +599,7 @@ export default function EOS3Page() {
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                        onClick={() => handlePickSelection('N-NOver', '4.4')}
                       >
                         <span className="odds">4.4</span>
                         <div className="ball-group">
@@ -611,7 +611,7 @@ export default function EOS3Page() {
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                        onClick={() => handlePickSelection('NOdd-NUnder', '4.4')}
                       >
                         <span className="odds">4.4</span>
                         <div className="ball-group">
@@ -623,7 +623,7 @@ export default function EOS3Page() {
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                        onClick={() => handlePickSelection('NEven-NOver', '4.2')}
                       >
                         <span className="odds">4.2</span>
                         <div className="ball-group">
@@ -632,9 +632,10 @@ export default function EOS3Page() {
                         </div>
                         <span className="pick-name">Normal Ball Section Combination</span>
                       </button>
+
                       <button 
-                        className={`pick-btn-lg ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                        className={`pick-btn-lg ${selectedPick.name === 'NEven-NLarge' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NEven-NLarge', '4.4')}
                       >
                         <span className="odds">4.4</span>
                         <div className="ball-group">

@@ -78,6 +78,68 @@ export default function EOS5Page() {
    */
   const handlePickSelection = (pickName: string, odds: string) => {
     setSelectedPick({name: pickName, odds: odds});
+    // Clear other combination selections
+    setSelectedPowerballPick({name: '', odds: ''});
+    setSelectedOddEvenPick({powerball: '', normalball: '', odds: ''});
+    setSelectedNormalballPick({name: '', odds: ''});
+    setSelectedThreeCombinationPick({combination: '', odds: ''});
+  };
+
+  /**
+   * Handles selection of Powerball Combinations betting options
+   * @param pickName - The name of the selected betting option
+   * @param odds - The odds for the selected option
+   */
+  const handlePowerballPickSelection = (pickName: string, odds: string) => {
+    setSelectedPowerballPick({name: pickName, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+    setSelectedOddEvenPick({powerball: '', normalball: '', odds: ''});
+    setSelectedNormalballPick({name: '', odds: ''});
+    setSelectedThreeCombinationPick({combination: '', odds: ''});
+  };
+
+  /**
+   * Handles selection of Powerball + Normal Ball Odd/Even Combinations
+   * @param powerball - The powerball value (Odd/Even)
+   * @param normalball - The normalball value (Odd/Even)
+   * @param odds - The odds for the selected combination
+   */
+  const handleOddEvenPickSelection = (powerball: string, normalball: string, odds: string) => {
+    setSelectedOddEvenPick({powerball: powerball, normalball: normalball, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+    setSelectedPowerballPick({name: '', odds: ''});
+    setSelectedNormalballPick({name: '', odds: ''});
+    setSelectedThreeCombinationPick({combination: '', odds: ''});
+  };
+
+  /**
+   * Handles selection of Normalball Combinations
+   * @param name - The name of the selected combination
+   * @param odds - The odds for the selected combination
+   */
+  const handleNormalballPickSelection = (name: string, odds: string) => {
+    setSelectedNormalballPick({name: name, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+    setSelectedPowerballPick({name: '', odds: ''});
+    setSelectedOddEvenPick({powerball: '', normalball: '', odds: ''});
+    setSelectedThreeCombinationPick({combination: '', odds: ''});
+  };
+
+  /**
+   * Handles selection of 3-Combination
+   * @param combination - The combination identifier
+   * @param odds - The odds for the selected combination
+   */
+  const handleThreeCombinationPickSelection = (combination: string, odds: string) => {
+    setSelectedThreeCombinationPick({combination: combination, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+    setSelectedPowerballPick({name: '', odds: ''});
+    setSelectedOddEvenPick({powerball: '', normalball: '', odds: ''});
+    setSelectedNormalballPick({name: '', odds: ''});
   };
 
   /**
@@ -134,6 +196,19 @@ export default function EOS5Page() {
   const [pickSectionPower, setPickSectionPower] = useState(true);
   const [pickSectionNormal, setPickSectionNormal] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Separate state for Powerball Combinations section
+  const [powerballCombinationsOpen, setPowerballCombinationsOpen] = useState(true);
+  const [selectedPowerballPick, setSelectedPowerballPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
+
+  // Separate state for Powerball + Normal Ball Odd/Even Combinations section
+  const [selectedOddEvenPick, setSelectedOddEvenPick] = useState<{powerball: string, normalball: string, odds: string}>({powerball: '', normalball: '', odds: ''});
+
+  // Separate state for Normalball Combinations section
+  const [selectedNormalballPick, setSelectedNormalballPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
+
+  // Separate state for 3-Combination section
+  const [selectedThreeCombinationPick, setSelectedThreeCombinationPick] = useState<{combination: string, odds: string}>({combination: '', odds: ''});
 
   /**
    * Handles the dropdown toggle with smooth animation
@@ -369,8 +444,176 @@ export default function EOS5Page() {
               */}
               <div className="right-column right-col">
                <div className="bet-sidebar">
+                {/* 1st Combination: Normal Ball Section Combinations */}
                 <div className="pick-wrap">
+                  <div className="pick-header">
+                      <span>Normal Ball Section Combinations</span>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                    </div>
+                
+                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                      {/* Single Powerball Odd bet option */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                      >
+                        <span className="odds">2.7</span>
+                        <div className="ball blue">Small</div>
+                        <span className="pick-name">Normal Ball Section 15-64</span>
+                      </button>
+                      {/* Single Powerball Even bet option */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                      >
+                        <span className="odds">2.6</span>
+                        <div className="ball red">Medium</div>
+                        <span className="pick-name">Normal Ball Section 65-80</span>
+                      </button>
+                      {/* Single Powerball Under bet option */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                      >
+                        <span className="odds">2.7</span>
+                        <div className="ball blue">Large</div>
+                        <span className="pick-name">Normal Ball Section 81-130</span>
+                      </button>
+                      {/* Single Powerball Over bet option */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                      >
+                        <span className="odds">4.4</span>
+                        <div className="ball-group">
+                        <div className="ball blue">Over</div>
+                        <div className="ball blue">Small</div>
+                        </div>
+                        <span className="pick-name">NormalBall Section Combination</span>
+                      </button>
+                      {/* Combination bet: Powerball Odd + Under */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                      >
+                        <span className="odds">4.2</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball green">Medium</div>
+                        </div>
+                        <span className="pick-name">NormalBall Section Combination</span>
+                      </button>
+                      {/* Combination bet: Powerball Odd + Over */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                      >
+                        <span className="odds">4.4</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball red">Large</div>
+                        </div>
+                        <span className="pick-name">Normal Ball Section Combination</span>
+                      </button>
+                      {/* Combination bet: Powerball Even + Under */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                      >
+                        <span className="odds">4.4</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball blue">Small</div>
+                        </div>
+                          <span className="pick-name">Normal Ball Section Combination</span>
+                      </button>
+                      {/* Combination bet: Powerball Even + Over */}
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                      >
+                        <span className="odds">4.2</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball green">Medium</div>
+                        </div>
+                        <span className="pick-name">Normal Ball Section Combination</span>
+                      </button>
+                      <button 
+                        className={`pick-btn-lg ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                      >
+                        <span className="odds">4.4</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball red">Large</div>
+                        </div>
+                        <span className="pick-name">Normal Ball Section Combination</span>
+                      </button>
+                    </div>
+                </div>
 
+                {/* 2nd Combination: Powerball + Normal Ball Odd/Even Combinations */}
+                <div className="pick-wrap">
+                  <div className="pick-header">
+                      <span>Powerball + Normal Ball Odd/Even Combinations</span>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                    </div>
+                
+                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                      {/* Powerball Odd + Normalball Odd combination */}
+                      <button 
+                        className={`pick-btn ${selectedOddEvenPick.powerball === 'Odd' && selectedOddEvenPick.normalball === 'Odd' ? 'selected' : ''}`}
+                        onClick={() => handleOddEvenPickSelection('Odd', 'Odd', '3.3')}
+                      >
+                        <span className="odds">3.3</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball blue">Odd</div>
+                        </div>
+                        <span className="pick-name">Odd/Even Combination</span>
+                      </button>
+                      {/* Powerball Odd + Normalball Even combination */}
+                      <button 
+                        className={`pick-btn ${selectedOddEvenPick.powerball === 'Odd' && selectedOddEvenPick.normalball === 'Even' ? 'selected' : ''}`}
+                        onClick={() => handleOddEvenPickSelection('Odd', 'Even', '3.3')}
+                      >
+                        <span className="odds">3.3</span>
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball red">Even</div>
+                        </div>
+                        <span className="pick-name">Odd/Even Combination</span>
+                      </button>
+                      {/* Powerball Even + Normalball Odd combination */}
+                      <button 
+                        className={`pick-btn ${selectedOddEvenPick.powerball === 'Even' && selectedOddEvenPick.normalball === 'Odd' ? 'selected' : ''}`}
+                        onClick={() => handleOddEvenPickSelection('Even', 'Odd', '3.3')}
+                      >
+                        <span className="odds">3.3</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball blue">Odd</div>
+                        </div>
+                        <span className="pick-name">Odd/Even Combination</span>
+                      </button>
+                      {/* Powerball Even + Normalball Even combination */}
+                      <button 
+                        className={`pick-btn ${selectedOddEvenPick.powerball === 'Even' && selectedOddEvenPick.normalball === 'Even' ? 'selected' : ''}`}
+                        onClick={() => handleOddEvenPickSelection('Even', 'Even', '3.3')}
+                      >
+                        <span className="odds">3.3</span>
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball red">Even</div>
+                        </div>
+                        <span className="pick-name">Odd/Even Combination</span>
+                      </button>
+                    </div>
+                </div>
+
+                {/* 3rd Combination: Powerball Combinations */}
+                <div className="pick-wrap">
                 <div className="pick-header">
                       <span>Powerball Combinations</span>
                       <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} onClick={() => setPickSectionPower(!pickSectionPower)}></i>
@@ -379,8 +622,8 @@ export default function EOS5Page() {
                     <div className={`pick-grid-4 ${pickSectionPower ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Odd', '1.95')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'Powerball Odd' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('Powerball Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -388,8 +631,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Even', '1.95')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'Powerball Even' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('Powerball Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -397,8 +640,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Under', '1.95')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'Powerball Under' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('Powerball Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -406,8 +649,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Over', '1.95')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'Powerball Over' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('Powerball Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
@@ -415,8 +658,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaUnder', '4.1')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('PaOdd-PaUnder', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -427,8 +670,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'PaOdd-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaOver', '3.1')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'PaOdd-PaOver' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('PaOdd-PaOver', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -439,8 +682,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'PaEven-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaUnder', '3.1')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'PaEven-PaUnder' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('PaEven-PaUnder', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -451,8 +694,8 @@ export default function EOS5Page() {
                       </button>
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaOver', '4.1')}
+                        className={`pick-btn ${selectedPowerballPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
+                        onClick={() => handlePowerballPickSelection('PaEven-PaOver', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -463,97 +706,220 @@ export default function EOS5Page() {
                       </button>
                     </div>
                 </div>
+                {/* 4th Combination: Normalball Combinations */}
                 <div className="pick-wrap">
-
                 <div className="pick-header">
                       <span>Normalball Combinations</span>
                         <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
                     </div>
                 
                     <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
-                      {/* Single Powerball Odd bet option */}
+                      {/* Normalball Odd */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Odd' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
-                        <span className="pick-name">Normalball Odd</span>
+                        <span className="pick-name">Normalball</span>
                       </button>
-                      {/* Single Powerball Even bet option */}
+                      {/* Normalball Even */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Even' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
-                        <span className="pick-name">Normalball Even</span>
+                        <span className="pick-name">Normalball</span>
                       </button>
-                      {/* Single Powerball Under bet option */}
+                      {/* Normalball Under */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Under' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
-                        <span className="pick-name">Normalball Under</span>
+                        <span className="pick-name">Normalball</span>
                       </button>
-                      {/* Single Powerball Over bet option */}
+                      {/* Normalball Over */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Over' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
-                        <span className="pick-name">Normalball Over</span>
+                        <span className="pick-name">Normalball</span>
                       </button>
-                      {/* Combination bet: Powerball Odd + Under */}
+                      {/* Normalball Odd + Under combination */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Odd Under' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Odd Under', '3.7')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball blue">Under</div>
                         </div>
-                        <span className="pick-name">N-NUnder</span>
+                        <span className="pick-name">Normalball Combination</span>
                       </button>
-                      {/* Combination bet: Powerball Odd + Over */}
+                      {/* Normalball Odd + Over combination */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Odd Over' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Odd Over', '3.7')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball blue">Odd</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">N-NOver</span>
+                        <span className="pick-name">Normalball Combination</span>
                       </button>
-                      {/* Combination bet: Powerball Even + Under */}
+                      {/* Normalball Even + Under combination */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Even Under' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Even Under', '3.7')}
                       >
-                        <span className="odds">3.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball blue">Under</div>
                         </div>
-                          <span className="pick-name">NOdd-NUnder</span>
+                          <span className="pick-name">Normalball Combination</span>
                       </button>
-                      {/* Combination bet: Powerball Even + Over */}
+                      {/* Normalball Even + Over combination */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                        className={`pick-btn ${selectedNormalballPick.name === 'Normalball Even Over' ? 'selected' : ''}`}
+                        onClick={() => handleNormalballPickSelection('Normalball Even Over', '3.7')}
                       >
-                        <span className="odds">4.1</span>
+                        <span className="odds">3.7</span>
                         <div className="ball-group">
                           <div className="ball red">Even</div>
                           <div className="ball red">Over</div>
                         </div>
-                        <span className="pick-name">NEven-NOver</span>
+                        <span className="pick-name">Normalball Combination</span>
+                      </button>
+                    </div>
+                </div>
+
+                {/* 5th Combination: 3-Combination */}
+                <div className="pick-wrap">
+                <div className="pick-header">
+                      <span>Normalball Ball Combination + Powerball 3-Combination</span>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                    </div>
+                
+                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                      {/* 3-Combination: Odd-Under-Odd */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Odd-Under-Odd' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Odd-Under-Odd', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball blue">under</div>
+                          <div className="ball blue">Odd</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Odd-Under-Even */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Odd-Under-Even' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Odd-Under-Even', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball blue">under</div>
+                          <div className="ball red">Odd</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Odd-Over-Even */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Odd-Over-Even' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Odd-Over-Even', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball blue">Odd</div>
+                          <div className="ball red">Over</div>
+                          <div className="ball blue">Even</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Even-Under-Even */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Even-Under-Even' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Even-Under-Even', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball blue">Even</div>
+                          <div className="ball red">under</div>
+                          <div className="ball red">Even</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Even-Under-Odd */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Even-Under-Odd' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Even-Under-Odd', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball blue">Under</div>
+                          <div className="ball blue">Odd</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Even-Under-Even */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Even-Under-Even2' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Even-Under-Even2', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball blue">Under</div>
+                          <div className="ball red">Even</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Even-Over-Odd */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Even-Over-Odd' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Even-Over-Odd', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball red">Over</div>
+                          <div className="ball blue">Odd</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
+                      </button>
+                      {/* 3-Combination: Even-Over-Even */}
+                      <button 
+                        className={`pick-btn ${selectedThreeCombinationPick.combination === 'Even-Over-Even' ? 'selected' : ''}`}
+                        onClick={() => handleThreeCombinationPickSelection('Even-Over-Even', '7.1')}
+                      >
+                        <span className="odds">7.1</span>
+                        
+                        <div className="ball-group">
+                          <div className="ball red">Even</div>
+                          <div className="ball red">Over</div>
+                          <div className="ball red">Even</div>
+                        </div>
+                        <span className="pick-name">3-Combination</span>
                       </button>
                     </div>
                 </div>
@@ -562,7 +928,7 @@ export default function EOS5Page() {
                     <div className="current-round-info">
                       <div className="round-header">
                         <span className="round-title">Current Round [1257]</span>
-                        <span className="countdown">03:45</span>
+                        <span className="countdown">5:00</span>
                       </div>
                       <div className="round-details">
                         EOS5Min3310226871BE2E (1256) Round
@@ -571,10 +937,11 @@ export default function EOS5Page() {
                       <div className="ball-display">
                         <span>Powerball</span>
                         <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
+                        <div className="ball red">Even</div>
                         <span>Normal Ball</span>
                         <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
+                        <div className="ball red">Over</div>
+                        <div className="ball red">Even</div>
                       </div>
                       {/* Betting statistics for current session */}
                       <div className="betting-stats">
@@ -592,12 +959,24 @@ export default function EOS5Page() {
                       {/* Display selected betting option */}
                       <div className="stat-item">
                         <span className="label">Pick Selection</span>
-                        <span className="value pick-selection">{selectedPick.name || ''}</span>
+                        <span className="value pick-selection">
+                          {selectedPick.name || 
+                           selectedPowerballPick.name || 
+                           (selectedOddEvenPick.powerball && selectedOddEvenPick.normalball ? `${selectedOddEvenPick.powerball} + ${selectedOddEvenPick.normalball}` : '') ||
+                           selectedNormalballPick.name ||
+                           selectedThreeCombinationPick.combination || ''}
+                        </span>
                       </div>
                       {/* Display odds for selected option */}
                       <div className="stat-item">
                         <span className="label">Odds</span>
-                        <span className="value odds-display">{selectedPick.odds || ''}</span>
+                        <span className="value odds-display">
+                          {selectedPick.odds || 
+                           selectedPowerballPick.odds || 
+                           selectedOddEvenPick.odds ||
+                           selectedNormalballPick.odds ||
+                           selectedThreeCombinationPick.odds || ''}
+                        </span>
                       </div>
                       {/* Display user's current balance */}
                       <div className="stat-item">

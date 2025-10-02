@@ -172,7 +172,7 @@ export default function EOS1Page() {
   };
 
   return (
-    <div className="minigame-app relative">
+    <div className="minigame-app">
       {/* 
         Header Section - Game Navigation Tabs
         Provides navigation between different Powerball game variants
