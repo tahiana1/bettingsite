@@ -153,14 +153,14 @@ export default function EOS3Page() {
    */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -193,12 +193,13 @@ export default function EOS3Page() {
     return gameNames[tab] || tab;
   };
 
-  const [pickSectionPower, setPickSectionPower] = useState(true);
-  const [pickSectionNormal, setPickSectionNormal] = useState(true);
-  const [isAnimating, setIsAnimating] = useState(false);
-  
-  // Separate state for Powerball Combinations section
+  // Individual state variables for each dropdown section
   const [powerballCombinationsOpen, setPowerballCombinationsOpen] = useState(true);
+  const [normalBallSectionOpen, setNormalBallSectionOpen] = useState(true);
+  const [oddEvenCombinationsOpen, setOddEvenCombinationsOpen] = useState(true);
+  const [normalballCombinationsOpen, setNormalballCombinationsOpen] = useState(true);
+  const [threeCombinationOpen, setThreeCombinationOpen] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [selectedPowerballPick, setSelectedPowerballPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
 
   // Separate state for Powerball + Normal Ball Odd/Even Combinations section
@@ -214,11 +215,28 @@ export default function EOS3Page() {
    * Handles the dropdown toggle with smooth animation
    * Manages animation state to prevent rapid clicking during transitions
    */
-  const handlePickSectionToggle = () => {
+  const handleDropdownToggle = (dropdownType: string) => {
     if (isAnimating) return; // Prevent rapid clicking during animation
     
     setIsAnimating(true);
-    setPickSectionPower(!pickSectionPower);
+    
+    switch (dropdownType) {
+      case 'powerball':
+        setPowerballCombinationsOpen(!powerballCombinationsOpen);
+        break;
+      case 'normalBallSection':
+        setNormalBallSectionOpen(!normalBallSectionOpen);
+        break;
+      case 'oddEven':
+        setOddEvenCombinationsOpen(!oddEvenCombinationsOpen);
+        break;
+      case 'normalball':
+        setNormalballCombinationsOpen(!normalballCombinationsOpen);
+        break;
+      case 'threeCombination':
+        setThreeCombinationOpen(!threeCombinationOpen);
+        break;
+    }
     
     // Reset animation state after animation completes
     setTimeout(() => {
@@ -447,7 +465,7 @@ export default function EOS3Page() {
                 <div className="pick-wrap">
                     <div className="pick-header">
                       <span>Powerball Combinations</span>
-                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${powerballCombinationsOpen ? 'rotated' : ''}`} onClick={() => setPowerballCombinationsOpen(!powerballCombinationsOpen)}></i>
+                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${powerballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('powerball')}></i>
                     </div>
                 
                     <div className={`pick-grid-4 ${powerballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
@@ -541,10 +559,10 @@ export default function EOS3Page() {
                 <div className="pick-wrap">
                   <div className="pick-header">
                       <span>Normal Ball Section Combinations</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${normalBallSectionOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('normalBallSection')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${normalBallSectionOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn-lg ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
@@ -650,10 +668,10 @@ export default function EOS3Page() {
                 <div className="pick-wrap">
                   <div className="pick-header">
                       <span>Powerball + Normal Ball Odd/Even Combinations</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${oddEvenCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('oddEven')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${oddEvenCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Powerball Odd + Normalball Odd combination */}
                       <button 
                         className={`pick-btn ${selectedOddEvenPick.powerball === 'Odd' && selectedOddEvenPick.normalball === 'Odd' ? 'selected' : ''}`}
@@ -709,10 +727,10 @@ export default function EOS3Page() {
 
                 <div className="pick-header">
                       <span>Normalball Combinations</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${normalballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('normalball')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${normalballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Normalball Odd */}
                       <button 
                         className={`pick-btn ${selectedNormalballPick.name === 'Normalball Odd' ? 'selected' : ''}`}
@@ -804,10 +822,10 @@ export default function EOS3Page() {
 
                 <div className="pick-header">
                       <span>Normalball Ball Combination + Powerball 3-Combination</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${threeCombinationOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('threeCombination')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${threeCombinationOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* 3-Combination: Odd-Under-Odd */}
                       <button 
                         className={`pick-btn ${selectedThreeCombinationPick.combination === 'Odd-Under-Odd' ? 'selected' : ''}`}
@@ -993,7 +1011,8 @@ export default function EOS3Page() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number"
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}

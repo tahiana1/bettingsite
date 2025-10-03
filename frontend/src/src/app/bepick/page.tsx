@@ -76,14 +76,14 @@ export default function BepickPage() {
    */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -458,8 +458,8 @@ export default function BepickPage() {
                     <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Odd' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -467,8 +467,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Even' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -476,8 +476,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Under' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -485,8 +485,8 @@ export default function BepickPage() {
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Over' ? 'selected' : ''}`}
+                        onClick={() => handlePickSelection('Normalball-Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
@@ -599,7 +599,8 @@ export default function BepickPage() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number"
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}

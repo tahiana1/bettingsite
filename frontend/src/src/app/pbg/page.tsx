@@ -91,14 +91,14 @@ export default function PBGPage() {
    */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -413,54 +413,6 @@ export default function PBGPage() {
                         <div className="ball red">Over</div>
                         <span className="pick-name">Powerball Over</span>
                       </button>
-                      {/* Combination bet: Powerball Odd + Under */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaUnder', '4.1')}
-                      >
-                        <span className="odds">4.1</span>
-                        <div className="ball-group">
-                          <div className="ball blue">Odd</div>
-                          <div className="ball blue">Under</div>
-                        </div>
-                        <span className="pick-name">PaOdd-PaUnder</span>
-                      </button>
-                      {/* Combination bet: Powerball Odd + Over */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'PaOdd-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaOver', '3.1')}
-                      >
-                        <span className="odds">3.1</span>
-                        <div className="ball-group">
-                          <div className="ball blue">Odd</div>
-                          <div className="ball red">Over</div>
-                        </div>
-                        <span className="pick-name">PaOdd-PaOver</span>
-                      </button>
-                      {/* Combination bet: Powerball Even + Under */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'PaEven-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaUnder', '3.1')}
-                      >
-                        <span className="odds">3.1</span>
-                        <div className="ball-group">
-                          <div className="ball red">Even</div>
-                          <div className="ball blue">Under</div>
-                        </div>
-                        <span className="pick-name">PaEven-PaUnder</span>
-                      </button>
-                      {/* Combination bet: Powerball Even + Over */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaOver', '4.1')}
-                      >
-                        <span className="odds">4.1</span>
-                        <div className="ball-group">
-                          <div className="ball red">Even</div>
-                          <div className="ball red">Over</div>
-                        </div>
-                        <span className="pick-name">PaEven-PaOver</span>
-                      </button>
                     </div>
                 </div>
                 <div className="pick-wrap">
@@ -506,54 +458,6 @@ export default function PBGPage() {
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
                         <span className="pick-name">Normalball Over</span>
-                      </button>
-                      {/* Combination bet: Powerball Odd + Under */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
-                      >
-                        <span className="odds">4.1</span>
-                        <div className="ball-group">
-                          <div className="ball blue">Odd</div>
-                          <div className="ball blue">Under</div>
-                        </div>
-                        <span className="pick-name">N-NUnder</span>
-                      </button>
-                      {/* Combination bet: Powerball Odd + Over */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NOver', '3.1')}
-                      >
-                        <span className="odds">3.1</span>
-                        <div className="ball-group">
-                          <div className="ball blue">Odd</div>
-                          <div className="ball red">Over</div>
-                        </div>
-                        <span className="pick-name">N-NOver</span>
-                      </button>
-                      {/* Combination bet: Powerball Even + Under */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
-                      >
-                        <span className="odds">3.1</span>
-                        <div className="ball-group">
-                          <div className="ball red">Even</div>
-                          <div className="ball blue">Under</div>
-                        </div>
-                          <span className="pick-name">NOdd-NUnder</span>
-                      </button>
-                      {/* Combination bet: Powerball Even + Over */}
-                      <button 
-                        className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
-                      >
-                        <span className="odds">4.1</span>
-                        <div className="ball-group">
-                          <div className="ball red">Even</div>
-                          <div className="ball red">Over</div>
-                        </div>
-                        <span className="pick-name">NEven-NOver</span>
                       </button>
                     </div>
                 </div>
@@ -614,7 +518,8 @@ export default function PBGPage() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number"
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}

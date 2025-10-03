@@ -24,6 +24,7 @@ export default function DhpowerballPage() {
   const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display
   const [iframeVisible, setIframeVisible] = useState(true); // Controls iframe visibility toggle
   const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''}); // Selected betting option
+  
   const [betAmount, setBetAmount] = useState<string>(''); // User's bet amount input
   const [balance] = useState<string>('300,000 Won'); // User's current balance (static for demo)
   const [winAmount] = useState<string>('292,500'); // Potential win amount (static for demo)
@@ -91,14 +92,14 @@ export default function DhpowerballPage() {
    */
   const handleAmountClick = (amount: string) => {
     if (amount === 'Reset') {
-      setBetAmount('');
+      setBetAmount('0');
     } else if (amount === 'Max') {
       setBetAmount('300000');
     } else {
       // Parse current amount (remove commas) and add new amount
       const current = parseInt(betAmount.replace(/,/g, '')) || 0;
       const add = parseInt(amount);
-      setBetAmount(formatNumber(current + add));
+      setBetAmount((current + add).toString());
     }
   };
 
@@ -131,19 +132,49 @@ export default function DhpowerballPage() {
     return gameNames[tab] || tab;
   };
 
-  const [pickSectionPower, setPickSectionPower] = useState(true);
-  const [pickSectionNormal, setPickSectionNormal] = useState(true);
+  // Individual state variables for each dropdown section
+  const [powerballCombinationsOpen, setPowerballCombinationsOpen] = useState(true);
+  const [normalballCombinationsOpen, setNormalballCombinationsOpen] = useState(true);
+  const [newCombinationOpen, setNewCombinationOpen] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // State for the new combination selection
+  const [selectedNewCombination, setSelectedNewCombination] = useState<{name: string, odds: string}>({name: '', odds: ''});
 
+  /**
+   * Handles selection of the new combination betting options
+   * @param pickName - The name of the selected betting option
+   * @param odds - The odds for the selected option
+   */
+  const handleNewCombinationSelection = (pickName: string, odds: string) => {
+    setSelectedNewCombination({name: pickName, odds: odds});
+    // Clear other combination selections
+    setSelectedPick({name: '', odds: ''});
+  };
+  const handleSelectedPick = (pickName: string, odds: string) => {
+    setSelectedPick({name: pickName, odds: odds});
+    setSelectedNewCombination({name: '', odds: ''});
+  };
   /**
    * Handles the dropdown toggle with smooth animation
    * Manages animation state to prevent rapid clicking during transitions
    */
-  const handlePickSectionToggle = () => {
+  const handleDropdownToggle = (dropdownType: string) => {
     if (isAnimating) return; // Prevent rapid clicking during animation
     
     setIsAnimating(true);
-    setPickSectionPower(!pickSectionPower);
+    
+    switch (dropdownType) {
+      case 'powerball':
+        setPowerballCombinationsOpen(!powerballCombinationsOpen);
+        break;
+      case 'normalball':
+        setNormalballCombinationsOpen(!normalballCombinationsOpen);
+        break;
+      case 'newCombination':
+        setNewCombinationOpen(!newCombinationOpen);
+        break;
+    }
     
     // Reset animation state after animation completes
     setTimeout(() => {
@@ -373,14 +404,14 @@ export default function DhpowerballPage() {
 
                 <div className="pick-header">
                       <span>Powerball Combinations</span>
-                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} onClick={() => setPickSectionPower(!pickSectionPower)}></i>
+                      <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${powerballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('powerball')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionPower ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${powerballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Odd', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Powerball-Odd' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Powerball-Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -388,8 +419,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Even', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Powerball-Even' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Powerball-Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -397,8 +428,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Under', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Powerball-Under' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Powerball-Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -406,8 +437,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Powerball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Over', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Powerball-Over' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Powerball-Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
@@ -416,7 +447,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaOdd-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaUnder', '4.1')}
+                        onClick={() => handleSelectedPick('PaOdd-PaUnder', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -428,7 +459,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaOdd-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaOdd-PaOver', '3.1')}
+                        onClick={() => handleSelectedPick('PaOdd-PaOver', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -440,7 +471,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaEven-PaUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaUnder', '3.1')}
+                            onClick={() => handleSelectedPick('PaEven-PaUnder', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -452,7 +483,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'PaEven-PaOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('PaEven-PaOver', '4.1')}
+                        onClick={() => handleSelectedPick('PaEven-PaOver', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -463,18 +494,57 @@ export default function DhpowerballPage() {
                       </button>
                     </div>
                 </div>
+
+                {/* New 3-Button Combination Section */}
+                <div className="pick-wrap">
+                  <div className="pick-header">
+                    <span>New Combination</span>
+                    <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${newCombinationOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('newCombination')}></i>
+                  </div>
+                
+                  <div className={`pick-grid-4 ${newCombinationOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    {/* First button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'NBSecSmall' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecSmall', '5')}
+                    >
+                      <span className="odds">5.0</span>
+                      <div className="ball blue">Small</div>
+                      <span className="pick-name">Normal Ball Section 15-64</span>
+                    </button>
+                    {/* Second button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'NBSecMedium' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecMedium', '5')}
+                    >
+                      <span className="odds">5</span>
+                      <div className="ball red">Medium</div>
+                      <span className="pick-name">Normal Ball Section 65-80</span>
+                    </button>
+                    {/* Third button with single ball */}
+                    <button 
+                      className={`pick-btn ${selectedNewCombination.name === 'NBSecLarge' ? 'selected' : ''}`}
+                      onClick={() => handleNewCombinationSelection('NBSecLarge', '5')}
+                    >
+                      <span className="odds">5</span>
+                      <div className="ball green">Large</div>
+                      <span className="pick-name">Normal Ball Section 81-100</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="pick-wrap">
 
                 <div className="pick-header">
                       <span>Normalball Combinations</span>
-                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
+                        <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${normalballCombinationsOpen ? 'rotated' : ''}`} onClick={() => handleDropdownToggle('normalball')}></i>
                     </div>
                 
-                    <div className={`pick-grid-4 ${pickSectionNormal ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
+                    <div className={`pick-grid-4 ${normalballCombinationsOpen ? 'dropdown-enter-active' : 'dropdown-exit-active'}`}>
                       {/* Single Powerball Odd bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Odd' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Normalball-Odd', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -482,8 +552,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Even bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Even' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Normalball-Even', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -491,8 +561,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Under bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Under' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Normalball-Under', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -500,8 +570,8 @@ export default function DhpowerballPage() {
                       </button>
                       {/* Single Powerball Over bet option */}
                       <button 
-                        className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        className={`pick-btn ${selectedPick.name === 'Normalball-Over' ? 'selected' : ''}`}
+                        onClick={() => handleSelectedPick('Normalball-Over', '1.95')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
@@ -510,7 +580,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Odd + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NUnder', '4.1')}
+                        onClick={() => handleSelectedPick('N-NUnder', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -522,7 +592,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Odd + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'N-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('N-NOver', '3.1')}
+                        onClick={() => handleSelectedPick('N-NOver', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -534,7 +604,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Even + Under */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NOdd-NUnder' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NOdd-NUnder', '3.1')}
+                        onClick={() => handleSelectedPick('NOdd-NUnder', '3.1')}
                       >
                         <span className="odds">3.1</span>
                         <div className="ball-group">
@@ -546,7 +616,7 @@ export default function DhpowerballPage() {
                       {/* Combination bet: Powerball Even + Over */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'NEven-NOver' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('NEven-NOver', '4.1')}
+                            onClick={() => handleSelectedPick('NEven-NOver', '4.1')}
                       >
                         <span className="odds">4.1</span>
                         <div className="ball-group">
@@ -592,12 +662,16 @@ export default function DhpowerballPage() {
                       {/* Display selected betting option */}
                       <div className="stat-item">
                         <span className="label">Pick Selection</span>
-                        <span className="value pick-selection">{selectedPick.name || ''}</span>
+                        <span className="value pick-selection">
+                          {selectedPick.name || selectedNewCombination.name || ''}
+                        </span>
                       </div>
                       {/* Display odds for selected option */}
                       <div className="stat-item">
                         <span className="label">Odds</span>
-                        <span className="value odds-display">{selectedPick.odds || ''}</span>
+                        <span className="value odds-display">
+                          {selectedPick.odds || selectedNewCombination.odds || ''}
+                        </span>
                       </div>
                       {/* Display user's current balance */}
                       <div className="stat-item">
@@ -614,7 +688,8 @@ export default function DhpowerballPage() {
                       <div className="amount-input-row">
                         <span className="label">Betting Amount</span>
                         <input 
-                          type="text" 
+                          type="number" 
+                          min="0"
                           className="amount-input" 
                           placeholder="Numbers only"
                           value={betAmount}
