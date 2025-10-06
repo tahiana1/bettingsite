@@ -1857,5 +1857,14 @@
   "maximumNumberOfDailySurpriseBonusPayments" : "每日惊喜奖金支付次数上限",
   "maximumNumberOfSurpriseBonusPaymentsPerTimePeriod" : "每个时间段惊喜奖金支付次数上限",
   "gameSpecificSettings" : "游戏特定设置",
-  "headStyle" : "头部样式"
+  "headStyle" : "头部样式",
+  "bonusAmountSettings" : "奖金金额设置",
+  "bonusTimeSettings" : "奖金时间设置",
+  "chargeBonus2Setting" : "充值奖金2设置",
+  "chargeBonus3Setting" : "充值奖金3设置",
+  "addition" : "添加",
+  "level1Setting" : "等级1设置",
+  "level1SuddenBonusSetting" : "等级1突发奖金设置",
+  "chargeBonus4Setting" : "充值奖金4设置",
+  "chargeBonus5Setting" : "充值奖金5设置"
 }

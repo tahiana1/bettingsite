@@ -1856,5 +1856,13 @@
   "maximumNumberOfDailySurpriseBonusPayments" : "Maximum Number Of Daily Surprise Bonus Payments",
   "maximumNumberOfSurpriseBonusPaymentsPerTimePeriod" : "Maximum Number Of Surprise Bonus Payments Per Time Period",
   "gameSpecificSettings" : "Game Specific Settings",
-  "headStyle" : "Head Style"
+  "headStyle" : "Head Style",
+  "bonusAmountSettings" : "Bonus Amount Settings",
+  "bonusTimeSettings" : "Bonus Time Settings",
+  "chargeBonus2Setting" : "Charge Bonus 2 Setting",
+  "chargeBonus3Setting" : "Charge Bonus 3 Setting",
+  "addition" : "Addition",
+  "level1SuddenBonusSetting" : "Level1 Sudden Bonus Setting",
+  "chargeBonus4Setting" : "Charge Bonus 4 Setting",
+  "chargeBonus5Setting" : "Charge Bonus 5 Setting"
 }

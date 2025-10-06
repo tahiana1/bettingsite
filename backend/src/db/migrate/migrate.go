@@ -45,6 +45,7 @@ func main() {
 		models.CasinoBet{},
 		models.Popup{},
 		models.Contact{},
+		models.Level{},
 	)
 
 	if err != nil {

@@ -1,10 +1,209 @@
 "use client";
-import { useState } from "react";
-import { Button, Card, Checkbox, DatePicker, Form, Input, InputNumber, Select, Switch, Table } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Card, Checkbox, DatePicker, Form, Input, InputNumber, Select, Switch, Table, message, Modal } from "antd";
 import { useTranslations } from "next-intl";
+import { levelAPI, Level, SurpriseBonus } from "@/api/levelAPI";
 
 export default function LevelPage() {
     const t = useTranslations();
+    const [form] = Form.useForm();
+    
+    // State management
+    const [levels, setLevels] = useState<Level[]>([]);
+    const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalType, setModalType] = useState<'surpriseBonus' | 'chargingBonus' | null>(null);
+    
+    // Surprise Bonus state
+    const [surpriseBonuses, setSurpriseBonuses] = useState<SurpriseBonus[]>([]);
+    const [surpriseBonusForm] = Form.useForm();
+    const [editingSurpriseBonus, setEditingSurpriseBonus] = useState<SurpriseBonus | null>(null);
+    
+    const [bonusAmountData, setBonusAmountData] = useState([
+        { key: 1, amount: 100000, bonus: 3000 },
+        { key: 2, amount: 300000, bonus: 10000 },
+        { key: 3, amount: 500000, bonus: 10000 },
+        { key: 4, amount: 1000000, bonus: 30000 },
+        { key: 5, amount: 3000000, bonus: 70000 },
+    ]);
+    const [newAmount, setNewAmount] = useState<number | null>(null);
+    const [newBonus, setNewBonus] = useState<number | null>(null);
+
+    // Data fetching functions
+    const fetchLevels = async () => {
+        setLoading(true);
+        try {
+            const response = await levelAPI.getLevels(1, 15);
+            console.log("Fetched levels:", response.levels);
+            setLevels(response.levels);
+            if (response.levels.length > 0 && !selectedLevel) {
+                // Find Level 1 specifically, or fall back to first level
+                const level1 = response.levels.find(level => level.levelNumber === 1) || response.levels[0];
+                setSelectedLevel(level1);
+                form.setFieldsValue(level1);
+                fetchSurpriseBonuses(level1.id!);
+            }
+        } catch (error) {
+            message.error("Failed to fetch levels");
+            console.error("Error fetching levels:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleLevelSelect = (level: Level) => {
+        console.log("Selected level:", level);
+        setSelectedLevel(level);
+        // Set form values for all forms
+        form.setFieldsValue(level);
+        // Reset form validation
+        form.resetFields();
+        form.setFieldsValue(level);
+        fetchSurpriseBonuses(level.id!);
+    };
+
+    // Surprise Bonus functions
+    const fetchSurpriseBonuses = async (levelId: number) => {
+        try {
+            const response = await levelAPI.getSurpriseBonuses(levelId);
+            setSurpriseBonuses(response.surpriseBonuses);
+        } catch (error) {
+            message.error("Failed to fetch surprise bonuses");
+            console.error("Error fetching surprise bonuses:", error);
+        }
+    };
+
+    const handleCreateSurpriseBonus = async (values: any) => {
+        if (!selectedLevel?.id) return;
+        
+        setSaving(true);
+        try {
+            const nextNumber = surpriseBonuses.length + 1;
+            await levelAPI.createSurpriseBonus(selectedLevel.id, {
+                ...values,
+                number: nextNumber,
+                isActive: true,
+            });
+            message.success("Surprise bonus created successfully");
+            setModalVisible(false);
+            surpriseBonusForm.resetFields();
+            fetchSurpriseBonuses(selectedLevel.id);
+        } catch (error) {
+            message.error("Failed to create surprise bonus");
+            console.error("Error creating surprise bonus:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleUpdateSurpriseBonus = async (values: any) => {
+        if (!editingSurpriseBonus?.id) return;
+        
+        setSaving(true);
+        try {
+            await levelAPI.updateSurpriseBonus(editingSurpriseBonus.id, values);
+            message.success("Surprise bonus updated successfully");
+            setModalVisible(false);
+            surpriseBonusForm.resetFields();
+            setEditingSurpriseBonus(null);
+            if (selectedLevel?.id) {
+                fetchSurpriseBonuses(selectedLevel.id);
+            }
+        } catch (error) {
+            message.error("Failed to update surprise bonus");
+            console.error("Error updating surprise bonus:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleDeleteSurpriseBonus = async (id: number) => {
+        Modal.confirm({
+            title: "Are you sure you want to delete this surprise bonus?",
+            content: "This action cannot be undone.",
+            onOk: async () => {
+                try {
+                    await levelAPI.deleteSurpriseBonus(id);
+                    message.success("Surprise bonus deleted successfully");
+                    if (selectedLevel?.id) {
+                        fetchSurpriseBonuses(selectedLevel.id);
+                    }
+                } catch (error) {
+                    message.error("Failed to delete surprise bonus");
+                    console.error("Error deleting surprise bonus:", error);
+                }
+            },
+        });
+    };
+
+    const handleUpdateLevel = async (values: any) => {
+        if (!selectedLevel?.id) {
+            message.error("No level selected");
+            return;
+        }
+        
+        setSaving(true);
+        try {
+            const response = await levelAPI.updateLevel(selectedLevel.id, values);
+            message.success("Level updated successfully");
+            // Update the local state with the new values
+            const updatedLevel = { ...selectedLevel, ...values };
+            setSelectedLevel(updatedLevel);
+            // Update the levels array
+            setLevels(prevLevels => 
+                prevLevels.map(level => 
+                    level.id === selectedLevel.id ? updatedLevel : level
+                )
+            );
+        } catch (error: any) {
+            console.error("Error updating level:", error);
+            if (error.response?.data?.validations) {
+                message.error("Validation errors occurred");
+                // Set form validation errors
+                const validationErrors = error.response.data.validations;
+                Object.keys(validationErrors).forEach(field => {
+                    form.setFields([{
+                        name: field,
+                        errors: [validationErrors[field]]
+                    }]);
+                });
+            } else {
+                message.error(error.response?.data?.error || "Failed to update level");
+            }
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleBulkUpdate = async () => {
+        setSaving(true);
+        try {
+            await levelAPI.bulkUpdateLevels(levels);
+            message.success("Levels updated successfully");
+            fetchLevels();
+        } catch (error) {
+            message.error("Failed to update levels");
+            console.error("Error bulk updating levels:", error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleAddBonus = () => {
+        if (newAmount !== null && newBonus !== null) {
+            const newKey = Math.max(...bonusAmountData.map(item => item.key)) + 1;
+            setBonusAmountData([...bonusAmountData, { key: newKey, amount: newAmount, bonus: newBonus }]);
+            setNewAmount(null);
+            setNewBonus(null);
+        }
+    };
+
+    // Load data on component mount
+    useEffect(() => {
+        fetchLevels();
+    }, []);
     const numberOptions = [
         {lable: t("noRestrictions"), value : 0},
         {lable: t("100"), value : 100},
@@ -53,13 +252,20 @@ export default function LevelPage() {
 
     const surpriseBonusTableColumns = [
         {title: t("number"), dataIndex: "number", key: "number", width: 100},
-        {title: t("timeInterval"), dataIndex: "timeInterval", key: "timeInterval", width: 100},
-        {title: t("surpriseBonus%"), dataIndex: "surpriseBonus%", key: "surpriseBonus%", width: 100},
-        {title: t("paymentStatus"), dataIndex: "paymentStatus", key: "paymentStatus", width: 100},
-        {title: "-", dataIndex: "action", key: "action", width: 300, render: (text: string, record: any) => {
+        {title: t("timeInterval"), dataIndex: "timeInterval", key: "timeInterval", width: 150},
+        {title: t("surpriseBonus%"), dataIndex: "bonusPercent", key: "bonusPercent", width: 150, render: (value: number) => `${value}%`},
+        {title: t("paymentStatus"), dataIndex: "paymentStatus", key: "paymentStatus", width: 150},
+        {title: "-", dataIndex: "action", key: "action", width: 300, render: (text: string, record: SurpriseBonus) => {
             return <>
-                <Button type="primary" onClick={() => {}}>{t("change")}</Button>
-                <Button type="primary" danger onClick={() => {}}>{t("delete")}</Button>
+                <Button type="primary" onClick={() => {
+                    setEditingSurpriseBonus(record);
+                    surpriseBonusForm.setFieldsValue(record);
+                    setModalType('surpriseBonus');
+                    setModalVisible(true);
+                }}>{t("change")}</Button>
+                <Button type="primary" danger onClick={() => {
+                    handleDeleteSurpriseBonus(record.id!);
+                }}>{t("delete")}</Button>
             </>
         }},
     ]
@@ -86,40 +292,62 @@ export default function LevelPage() {
         {title: t("bonusPaymentMethod"), dataIndex: "bonusPaymentMethod", key: "bonusPaymentMethod", width: 100},
         {title: "-", dataIndex: "action", key: "action", width: 100, render: (text: string, record: any) => {
             return <>
-                <Button type="primary" onClick={() => {}}>{t("change")}</Button>
-                <Button type="primary" danger onClick={() => {}}>{t("delete")}</Button>
+                <Button type="primary" onClick={() => {
+                    setModalType('chargingBonus');
+                    setModalVisible(true);
+                }}>{t("change")}</Button>
+                <Button type="primary" danger onClick={() => {
+                    // Handle delete logic
+                }}>{t("delete")}</Button>
             </>
         }},
     ]
 
     return <Card title={t("admin/menu/levelSettingTitle")}>
-        <div className="flex flex-wrap gap-2">
-            <Button>{t("level1")}</Button>
-            <Button>{t("level2")}</Button>
-            <Button>{t("level3")}</Button>
-            <Button>{t("level4")}</Button>
-            <Button>{t("level5")}</Button>
-            <Button>{t("level6")}</Button>
-            <Button>{t("level7")}</Button>
-            <Button>{t("level8")}</Button>
-            <Button>{t("level9")}</Button>
-            <Button>{t("level10")}</Button>
-            <Button>{t("level11")}</Button>
-            <Button>{t("level12")}</Button>
-            <Button>{t("levelVIP1")}</Button>
-            <Button>{t("levelVIP2")}</Button>
-            <Button>{t("levelPremium")}</Button>
+        <div className="mb-4 flex justify-between items-center">
+            <div className="flex flex-wrap gap-2">
+                {levels.map((level) => (
+                    <Button
+                        key={level.id}
+                        type={selectedLevel?.id === level.id ? "primary" : "default"}
+                        onClick={() => handleLevelSelect(level)}
+                    >
+                        {level.name}
+                    </Button>
+                ))}
+            </div>
+            <Button 
+                onClick={handleBulkUpdate}
+                loading={saving}
+            >
+                {t("applyToAllLevelsAtOnce")}
+            </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
             <Card 
-                title={t("level1Setting")}
+                title={selectedLevel ? `${selectedLevel.name} ${t("setting")}` : t("selectLevelToEdit")}
                 className="max-w-[1500px]"
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
+                actions={[
+                    <Button 
+                        type="default" 
+                        onClick={() => {
+                            if (selectedLevel) {
+                                form.submit();
+                            }
+                        }}
+                        disabled={!selectedLevel || saving}
+                        loading={saving}
+                    >
+                        {t("change")}
+                    </Button>
+                ]}
             >
                 <div className="flex flex-row gap-2">
                     <div className="flex flex-col gap-2">
                         <Form
-                            onFinish={() => {}}
+                            form={form}
+                            onFinish={handleUpdateLevel}
                             labelCol={{ span: 12 }}
                         >
                             <Form.Item label={t("minimumDepositAmount")} name="minimumDepositAmount">
@@ -213,7 +441,8 @@ export default function LevelPage() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <Form
-                            onFinish={() => {}}
+                            form={form}
+                            onFinish={handleUpdateLevel}
                             labelCol={{ span: 12 }}
                         >
                             <Form.Item label={t("casinoLiveMaximumRolling")} name="casinoLiveMaximumRolling">
@@ -309,7 +538,8 @@ export default function LevelPage() {
                 <div className="flex flex-row gap-2">
                     <div className="flex flex-col gap-2">
                         <Form
-                            onFinish={() => {}}
+                            form={form}
+                            onFinish={handleUpdateLevel}
                             labelCol={{ span: 12 }}
                         >
                             <Form.Item label={t("minimumDepositAmount")} name="minimumDepositAmount">
@@ -403,7 +633,8 @@ export default function LevelPage() {
                     </div>
                     <div className="flex flex-col gap-2">
                         <Form
-                            onFinish={() => {}}
+                            form={form}
+                            onFinish={handleUpdateLevel}
                             labelCol={{ span: 12 }}
                         >
                             <Form.Item label={t("casinoLiveMaximumRolling")} name="casinoLiveMaximumRolling">
@@ -507,7 +738,8 @@ export default function LevelPage() {
                 }
             >
                 <Form
-                    onFinish={() => {}}
+                    form={form}
+                    onFinish={handleUpdateLevel}
                     labelCol={{ span: 12 }}
                 >
                     <Form.Item label={t("paymentCycle")} name="paymentCycle">
@@ -559,15 +791,18 @@ export default function LevelPage() {
                 </Form>
             </Card>
             <Card
-                title="Level1 sudden bonus setting"
+                title={t("level1SuddenBonusSetting")}
                 className="max-w-[600px]"
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 actions={
-                    [<Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
+                    [
+                    <Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                    <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
                 }
             >
                 <Form
-                    onFinish={() => {}}
+                    form={form}
+                    onFinish={handleUpdateLevel}
                     labelCol={{ span: 12 }}
                 >
                     <Form.Item label={t("restrictionsOnOtherBonusesBesidesSupriseBonuses")} name="restrictionsOnOtherBonusesBesidesSupriseBonuses">
@@ -582,9 +817,25 @@ export default function LevelPage() {
                     <Form.Item label={t("surpriseBonusRestrictionAfterCashingOutWithinSurpriseBonusTime")} name="surpriseBonusRestrictionAfterCashingOutWithinSurpriseBonusTime">
                         <Switch />
                     </Form.Item>
-                    <Button type="primary" onClick={() => {}}>{t("addSurpriseBonus")}</Button>
+                    <Button 
+                        type="primary" 
+                        onClick={() => {
+                            setEditingSurpriseBonus(null);
+                            surpriseBonusForm.resetFields();
+                            setModalType('surpriseBonus');
+                            setModalVisible(true);
+                        }}
+                        disabled={!selectedLevel}
+                    >
+                        {t("addSurpriseBonus")}
+                    </Button>
                     <div>
-                        <Table columns={surpriseBonusTableColumns} dataSource={surpriseBonusTableData} />   
+                        <Table 
+                            columns={surpriseBonusTableColumns} 
+                            dataSource={surpriseBonuses} 
+                            rowKey="id"
+                            pagination={false}
+                        />   
                     </div>
                 </Form>
             </Card>
@@ -592,10 +843,11 @@ export default function LevelPage() {
                 className="max-w-[500px] min-w-[500px]"
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("settingUpLevel1ReferalBenefits")}
-                actions={[<Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
-                <Form labelCol={{ span: 12 }}>
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("referralBenefitsMini")} name="referralBenefitsMini">
                         <div className="flex gap-2">
                             <Select options={referralOption} />
@@ -642,9 +894,10 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("level1CharginBonusSelectionSetting")}
                 actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
-                <Form labelCol={{ span: 12 }}>
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("useTheRechargeBonousSelection")} name="useTheRechargeBonousSelection">
                         <Switch />
                     </Form.Item>
@@ -671,13 +924,14 @@ export default function LevelPage() {
                 </Form>
             </Card>
             <Card
-                className="max-w-[500px] min-w-[500px]"
+                className="max-w-[600px] min-w-[600px]"
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus1Setting")}
                 actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
                 <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
-                <Form labelCol={{ span: 12 }}>
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
                         <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
                     </Form.Item>
@@ -735,11 +989,1181 @@ export default function LevelPage() {
                     <Form.Item label={t("changeIndividualGameUsageStatus")} name="changeIndividualGameUsageStatus">   
                         <Switch />
                     </Form.Item>
-                    <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
+                    {/* <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
                         <Checkbox.Group options={applicabliltyByGameOptions} />
+                    </Form.Item> */}
+                    {/* Bonus Amount Table */}
+                    <Form.Item label={t("bonusAmountSettings")}>
+                        <Table
+                            dataSource={bonusAmountData}
+                            footer={() => (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 70 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 70 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    <div className="flex w-full justify-center">
+                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                            {t("addition")}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "amount",
+                                    key: "amount",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "+",
+                                    dataIndex: "plus",
+                                    key: "plus",
+                                    width: 30,
+                                    render: () => <span style={{ fontWeight: "bold" }} className="justify-center flex">+</span>,
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "bonus",
+                                    key: "bonus",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    render: () => (
+                                        <div className="flex justify-center items-center">
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    {/* Bonus Time Table */}
+                    <Form.Item label={t("bonusTimeSettings")}>
+                        <Table
+                            dataSource={[
+                                { key: 1, from: "21:00", to: "23:00" },
+                                { key: 2, from: "02:00", to: "05:00" },
+                            ]}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            footer={() => (
+                                <div className="flex items-center ">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 80 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 80 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    
+                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                        {t("addition")}
+                                    </Button>
+                                </div>
+                            )}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "from",
+                                    key: "from",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "to",
+                                    key: "to",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    width: 160,
+                                    render: () => (
+                                        <>
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            </Card>
+
+            <Card
+                className="max-w-[600px] min-w-[600px]"
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
+                title={t("chargeBonus2Setting")}
+                actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+            >
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
+                    <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("firstDepositBonusWeekends")} name="firstDepositBonusWeekends">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("everyDayBonusWeekday")} name="everyDayBonusWeekday">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("weekendBonus")} name="weekendBonus">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("signUpFirstDepositBonus")} name="signUpFirstDepositBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1time)")} name="maximumBonusMoney(1time)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1day)")} name="maximumBonusMoney(1day)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("referralBonus")} name="referralBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForFirstDepositUponSigningUp")} name="depositPlusPriorityApplicationForFirstDepositUponSigningUp">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForEachDeposit")} name="depositPlusPriorityApplicationForEachDeposit">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("rechargeBonusLimitMaximumAmountOfMoneyHeldPoints")} name="rechargeBonusLimitMaximumAmountOfMoneyHeldPoints">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("won")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayFirstDepositBonusLimit(AfterWithdrawal)")} name="sameDayFirstDepositBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayReplenishmentBonusLimit(AfterWithdrawal)")} name="sameDayReplenishmentBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("replenishmentBonusLimit(AfterWithdrawal)")} name="replenishmentBonusLimit(AfterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("min")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayRepleishmentBonus%(afterWithdrawal)")} name="sameDayRepleishmentBonus%(afterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("restrictionsApplyAfterWithdrawalOfSurpriseBonus")} name="restrictionsApplyAfterWithdrawalOfSurpriseBonus">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfDailySurpriseBonusPayments")} name="maximumNumberOfDailySurpriseBonusPayments">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("times")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfSurpriseBonusPaymentsPerTimePeriod")} name="maximumNumberOfSurpriseBonusPaymentsPerTimePeriod">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("changeIndividualGameUsageStatus")} name="changeIndividualGameUsageStatus">   
+                        <Switch />
+                    </Form.Item>
+                    {/* <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
+                        <Checkbox.Group options={applicabliltyByGameOptions} />
+                    </Form.Item> */}
+                    {/* Bonus Amount Table */}
+                    <Form.Item label={t("bonusAmountSettings")}>
+                        <Table
+                            dataSource={bonusAmountData}
+                            footer={() => (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 70 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 70 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    <div className="flex w-full justify-center">
+                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                            {t("addition")}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "amount",
+                                    key: "amount",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "+",
+                                    dataIndex: "plus",
+                                    key: "plus",
+                                    width: 30,
+                                    render: () => <span style={{ fontWeight: "bold" }} className="justify-center flex">+</span>,
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "bonus",
+                                    key: "bonus",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    render: () => (
+                                        <div className="flex justify-center items-center">
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    {/* Bonus Time Table */}
+                    <Form.Item label={t("bonusTimeSettings")}>
+                        <Table
+                            dataSource={[
+                                { key: 1, from: "21:00", to: "23:00" },
+                                { key: 2, from: "02:00", to: "05:00" },
+                            ]}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            footer={() => (
+                                <div className="flex items-center ">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 80 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 80 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    
+                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                        {t("addition")}
+                                    </Button>
+                                </div>
+                            )}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "from",
+                                    key: "from",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "to",
+                                    key: "to",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    width: 160,
+                                    render: () => (
+                                        <>
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            </Card>
+            
+            <Card
+                className="max-w-[600px] min-w-[600px]"
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
+                title={t("chargeBonus3Setting")}
+                actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+            >
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
+                    <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("firstDepositBonusWeekends")} name="firstDepositBonusWeekends">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("everyDayBonusWeekday")} name="everyDayBonusWeekday">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("weekendBonus")} name="weekendBonus">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("signUpFirstDepositBonus")} name="signUpFirstDepositBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1time)")} name="maximumBonusMoney(1time)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1day)")} name="maximumBonusMoney(1day)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("referralBonus")} name="referralBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForFirstDepositUponSigningUp")} name="depositPlusPriorityApplicationForFirstDepositUponSigningUp">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForEachDeposit")} name="depositPlusPriorityApplicationForEachDeposit">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("rechargeBonusLimitMaximumAmountOfMoneyHeldPoints")} name="rechargeBonusLimitMaximumAmountOfMoneyHeldPoints">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("won")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayFirstDepositBonusLimit(AfterWithdrawal)")} name="sameDayFirstDepositBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayReplenishmentBonusLimit(AfterWithdrawal)")} name="sameDayReplenishmentBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("replenishmentBonusLimit(AfterWithdrawal)")} name="replenishmentBonusLimit(AfterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("min")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayRepleishmentBonus%(afterWithdrawal)")} name="sameDayRepleishmentBonus%(afterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("restrictionsApplyAfterWithdrawalOfSurpriseBonus")} name="restrictionsApplyAfterWithdrawalOfSurpriseBonus">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfDailySurpriseBonusPayments")} name="maximumNumberOfDailySurpriseBonusPayments">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("times")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfSurpriseBonusPaymentsPerTimePeriod")} name="maximumNumberOfSurpriseBonusPaymentsPerTimePeriod">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("changeIndividualGameUsageStatus")} name="changeIndividualGameUsageStatus">   
+                        <Switch />
+                    </Form.Item>
+                    {/* <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
+                        <Checkbox.Group options={applicabliltyByGameOptions} />
+                    </Form.Item> */}
+                    {/* Bonus Amount Table */}
+                    <Form.Item label={t("bonusAmountSettings")}>
+                        <Table
+                            dataSource={bonusAmountData}
+                            footer={() => (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 70 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 70 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    <div className="flex w-full justify-center">
+                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                            {t("addition")}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "amount",
+                                    key: "amount",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "+",
+                                    dataIndex: "plus",
+                                    key: "plus",
+                                    width: 30,
+                                    render: () => <span style={{ fontWeight: "bold" }} className="justify-center flex">+</span>,
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "bonus",
+                                    key: "bonus",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    render: () => (
+                                        <div className="flex justify-center items-center">
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    {/* Bonus Time Table */}
+                    <Form.Item label={t("bonusTimeSettings")}>
+                        <Table
+                            dataSource={[
+                                { key: 1, from: "21:00", to: "23:00" },
+                                { key: 2, from: "02:00", to: "05:00" },
+                            ]}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            footer={() => (
+                                <div className="flex items-center ">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 80 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 80 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    
+                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                        {t("addition")}
+                                    </Button>
+                                </div>
+                            )}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "from",
+                                    key: "from",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "to",
+                                    key: "to",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    width: 160,
+                                    render: () => (
+                                        <>
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            </Card>
+
+            <Card
+                className="max-w-[600px] min-w-[600px]"
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
+                title={t("chargeBonus4Setting")}
+                actions={[
+                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+            >
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
+                    <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("firstDepositBonusWeekends")} name="firstDepositBonusWeekends">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("everyDayBonusWeekday")} name="everyDayBonusWeekday">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("weekendBonus")} name="weekendBonus">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("signUpFirstDepositBonus")} name="signUpFirstDepositBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1time)")} name="maximumBonusMoney(1time)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1day)")} name="maximumBonusMoney(1day)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("referralBonus")} name="referralBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForFirstDepositUponSigningUp")} name="depositPlusPriorityApplicationForFirstDepositUponSigningUp">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForEachDeposit")} name="depositPlusPriorityApplicationForEachDeposit">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("rechargeBonusLimitMaximumAmountOfMoneyHeldPoints")} name="rechargeBonusLimitMaximumAmountOfMoneyHeldPoints">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("won")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayFirstDepositBonusLimit(AfterWithdrawal)")} name="sameDayFirstDepositBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayReplenishmentBonusLimit(AfterWithdrawal)")} name="sameDayReplenishmentBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("replenishmentBonusLimit(AfterWithdrawal)")} name="replenishmentBonusLimit(AfterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("min")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayRepleishmentBonus%(afterWithdrawal)")} name="sameDayRepleishmentBonus%(afterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("restrictionsApplyAfterWithdrawalOfSurpriseBonus")} name="restrictionsApplyAfterWithdrawalOfSurpriseBonus">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfDailySurpriseBonusPayments")} name="maximumNumberOfDailySurpriseBonusPayments">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("times")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfSurpriseBonusPaymentsPerTimePeriod")} name="maximumNumberOfSurpriseBonusPaymentsPerTimePeriod">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("changeIndividualGameUsageStatus")} name="changeIndividualGameUsageStatus">   
+                        <Switch />
+                    </Form.Item>
+                    {/* <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
+                        <Checkbox.Group options={applicabliltyByGameOptions} />
+                    </Form.Item> */}
+                    {/* Bonus Amount Table */}
+                    <Form.Item label={t("bonusAmountSettings")}>
+                        <Table
+                            dataSource={bonusAmountData}
+                            footer={() => (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 70 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 70 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    <div className="flex w-full justify-center">
+                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                            {t("addition")}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "amount",
+                                    key: "amount",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "+",
+                                    dataIndex: "plus",
+                                    key: "plus",
+                                    width: 30,
+                                    render: () => <span style={{ fontWeight: "bold" }} className="justify-center flex">+</span>,
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "bonus",
+                                    key: "bonus",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    render: () => (
+                                        <div className="flex justify-center items-center">
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    {/* Bonus Time Table */}
+                    <Form.Item label={t("bonusTimeSettings")}>
+                        <Table
+                            dataSource={[
+                                { key: 1, from: "21:00", to: "23:00" },
+                                { key: 2, from: "02:00", to: "05:00" },
+                            ]}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            footer={() => (
+                                <div className="flex items-center ">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 80 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 80 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    
+                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                        {t("addition")}
+                                    </Button>
+                                </div>
+                            )}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "from",
+                                    key: "from",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "to",
+                                    key: "to",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    width: 160,
+                                    render: () => (
+                                        <>
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+                </Form>
+            </Card>
+
+            <Card
+                className="max-w-[600px] min-w-[600px]"
+                styles={{ header: { backgroundColor: 'black', color: 'white' } }}
+                title={t("chargeBonus5Setting")}
+                actions={[
+                    <Button type="default" onClick={() => {}}>{t("change")}</Button>,
+                    <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>
+                ]}
+            >
+                <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
+                    <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("firstDepositBonusWeekends")} name="firstDepositBonusWeekends">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("everyDayBonusWeekday")} name="everyDayBonusWeekday">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("weekendBonus")} name="weekendBonus">
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("signUpFirstDepositBonus")} name="signUpFirstDepositBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1time)")} name="maximumBonusMoney(1time)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumBonusMoney(1day)")} name="maximumBonusMoney(1day)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("p")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("referralBonus")} name="referralBonus">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForFirstDepositUponSigningUp")} name="depositPlusPriorityApplicationForFirstDepositUponSigningUp">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("depositPlusPriorityApplicationForEachDeposit")} name="depositPlusPriorityApplicationForEachDeposit">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("rechargeBonusLimitMaximumAmountOfMoneyHeldPoints")} name="rechargeBonusLimitMaximumAmountOfMoneyHeldPoints">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("won")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayFirstDepositBonusLimit(AfterWithdrawal)")} name="sameDayFirstDepositBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayReplenishmentBonusLimit(AfterWithdrawal)")} name="sameDayReplenishmentBonusLimit(AfterWithdrawal)">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("replenishmentBonusLimit(AfterWithdrawal)")} name="replenishmentBonusLimit(AfterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("min")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("sameDayRepleishmentBonus%(afterWithdrawal)")} name="sameDayRepleishmentBonus%(afterWithdrawal)">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("restrictionsApplyAfterWithdrawalOfSurpriseBonus")} name="restrictionsApplyAfterWithdrawalOfSurpriseBonus">   
+                        <Switch />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfDailySurpriseBonusPayments")} name="maximumNumberOfDailySurpriseBonusPayments">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>{t("times")}</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("maximumNumberOfSurpriseBonusPaymentsPerTimePeriod")} name="maximumNumberOfSurpriseBonusPaymentsPerTimePeriod">   
+                        <InputNumber min={0} addonAfter={<span style={{ display: 'inline-block', width: '40px', textAlign: 'center' }}>%</span>} />
+                    </Form.Item>
+                    <Form.Item label={t("changeIndividualGameUsageStatus")} name="changeIndividualGameUsageStatus">   
+                        <Switch />
+                    </Form.Item>
+                    {/* <Form.Item label={t("gameSpecificSettings")} name="gameSpecificSettings">   
+                        <Checkbox.Group options={applicabliltyByGameOptions} />
+                    </Form.Item> */}
+                    {/* Bonus Amount Table */}
+                    <Form.Item label={t("bonusAmountSettings")}>
+                        <Table
+                            dataSource={bonusAmountData}
+                            footer={() => (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 70 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 70 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    <div className="flex w-full justify-center">
+                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                            {t("addition")}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "amount",
+                                    key: "amount",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "+",
+                                    dataIndex: "plus",
+                                    key: "plus",
+                                    width: 30,
+                                    render: () => <span style={{ fontWeight: "bold" }} className="justify-center flex">+</span>,
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "bonus",
+                                    key: "bonus",
+                                    width: 70,
+                                    render: (value: number) => (
+                                        <InputNumber
+                                            min={0}
+                                            value={value}
+                                            style={{ width: 70 }}
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    render: () => (
+                                        <div className="flex justify-center items-center">
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </div>
+                                    ),
+                                },
+                            ]}
+                        />
+                    </Form.Item>
+
+                    {/* Bonus Time Table */}
+                    <Form.Item label={t("bonusTimeSettings")}>
+                        <Table
+                            dataSource={[
+                                { key: 1, from: "21:00", to: "23:00" },
+                                { key: 2, from: "02:00", to: "05:00" },
+                            ]}
+                            pagination={false}
+                            rowKey="key"
+                            showHeader={false}
+                            style={{ marginBottom: 16 }}
+                            footer={() => (
+                                <div className="flex items-center ">
+                                    <div className="flex items-center justify-between">
+                                        <InputNumber
+                                            min={0}
+                                            value={newAmount}
+                                            onChange={setNewAmount}
+                                            style={{ width: 80 }}
+                                            placeholder="Amount"
+                                        />
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
+                                        <InputNumber
+                                            min={0}
+                                            value={newBonus}
+                                            onChange={setNewBonus}
+                                            style={{ width: 80 }}
+                                            placeholder="Bonus"
+                                        />
+                                    </div>
+                                    
+                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                        {t("addition")}
+                                    </Button>
+                                </div>
+                            )}
+                            columns={[
+                                {
+                                    title: "",
+                                    dataIndex: "from",
+                                    key: "from",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    dataIndex: "to",
+                                    key: "to",
+                                    width: 80,
+                                    render: (value: string) => (
+                                        <Input
+                                            value={value}
+                                            style={{ width: 80 }}
+                                            placeholder="00:00"
+                                        />
+                                    ),
+                                },
+                                {
+                                    title: "",
+                                    key: "actions",
+                                    width: 160,
+                                    render: () => (
+                                        <>
+                                            <Button type="primary" size="small" style={{ marginRight: 8 }}>{t("change")}</Button>
+                                            <Button type="primary" size="small" danger>{t("delete")}</Button>
+                                        </>
+                                    ),
+                                },
+                            ]}
+                        />
                     </Form.Item>
                 </Form>
             </Card>
         </div>
+
+        {/* Modal for Surprise Bonus and Charging Bonus */}
+        <Modal
+            title={modalType === 'surpriseBonus' ? t("surpriseBonusSettings") : t("chargingBonusSettings")}
+            open={modalVisible}
+            onCancel={() => {
+                setModalVisible(false);
+                setModalType(null);
+            }}
+            footer={null}
+            width={800}
+        >
+            {modalType === 'surpriseBonus' && (
+                <div>
+                    <Form 
+                        form={surpriseBonusForm}
+                        layout="vertical"
+                        onFinish={editingSurpriseBonus ? handleUpdateSurpriseBonus : handleCreateSurpriseBonus}
+                    >
+                        <Form.Item 
+                            label={t("timeInterval")} 
+                            name="timeInterval"
+                            rules={[{ required: true, message: 'Please enter time interval' }]}
+                        >
+                            <Input placeholder="00:00 - 23:59" />
+                        </Form.Item>
+                        <Form.Item 
+                            label={t("surpriseBonus%")} 
+                            name="bonusPercent"
+                            rules={[{ required: true, message: 'Please enter bonus percentage' }]}
+                        >
+                            <InputNumber min={0} max={100} addonAfter="%" />
+                        </Form.Item>
+                        <Form.Item 
+                            label={t("paymentStatus")} 
+                            name="paymentStatus"
+                            rules={[{ required: true, message: 'Please select payment status' }]}
+                        >
+                            <Select>
+                                <Select.Option value="paid">{t("paid")}</Select.Option>
+                                <Select.Option value="unpaid">{t("unpaid")}</Select.Option>
+                            </Select>
+                        </Form.Item>
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button onClick={() => {
+                                setModalVisible(false);
+                                setEditingSurpriseBonus(null);
+                                surpriseBonusForm.resetFields();
+                            }}>
+                                {t("cancel")}
+                            </Button>
+                            <Button type="primary" htmlType="submit" loading={saving}>
+                                {editingSurpriseBonus ? t("update") : t("create")}
+                            </Button>
+                        </div>
+                    </Form>
+                </div>
+            )}
+            
+            {modalType === 'chargingBonus' && (
+                <div>
+                    <Form layout="vertical">
+                        <Form.Item label={t("member")}>
+                            <Input placeholder={t("memberName")} />
+                        </Form.Item>
+                        <Form.Item label={t("bonusPaymentMethod")}>
+                            <Select>
+                                {bonusPaymentMethodOptions.map(option => (
+                                    <Select.Option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button onClick={() => setModalVisible(false)}>
+                                {t("cancel")}
+                            </Button>
+                            <Button type="primary">
+                                {t("save")}
+                            </Button>
+                        </div>
+                    </Form>
+                </div>
+            )}
+        </Modal>
   </Card>;
 }

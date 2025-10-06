@@ -117,4 +117,22 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		contactInfoRouter.GET("/get", controllers.GetContactInfo)
 		contactInfoRouter.POST("/update", controllers.UpdateContactInfo)
 	}
+
+	// Level routes
+	levelRouter := r.Group("/levels")
+	{
+		levelRouter.GET("/", controllers.GetLevels)
+		levelRouter.GET("/:id", controllers.GetLevel)
+		levelRouter.PUT("/:id/update", controllers.UpdateLevel)
+		levelRouter.POST("/bulk-update", controllers.BulkUpdateLevels)
+	}
+
+	// Surprise Bonus routes (separate group to avoid route conflicts)
+	surpriseBonusRouter := r.Group("/surprise-bonuses")
+	{
+		surpriseBonusRouter.GET("/level/:levelId", controllers.GetSurpriseBonuses)
+		surpriseBonusRouter.POST("/level/:levelId", controllers.CreateSurpriseBonus)
+		surpriseBonusRouter.PUT("/:id", controllers.UpdateSurpriseBonus)
+		surpriseBonusRouter.DELETE("/:id", controllers.DeleteSurpriseBonus)
+	}
 }

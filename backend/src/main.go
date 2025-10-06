@@ -13,6 +13,7 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/fetcher"
 	"github.com/hotbrainy/go-betting/backend/internal/kafka"
 	"github.com/hotbrainy/go-betting/backend/internal/redis"
+	"github.com/hotbrainy/go-betting/backend/internal/seeders"
 	"github.com/hotbrainy/go-betting/backend/internal/services"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -24,6 +25,9 @@ func init() {
 	kafka.InitKafka()
 	redis.InitRedis()
 	fetcher.StartPolling()
+
+	// Auto-seed levels if table is empty
+	seeders.AutoSeedLevels()
 }
 
 func main() {
