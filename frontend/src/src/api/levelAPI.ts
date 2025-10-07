@@ -152,6 +152,9 @@ export interface Level {
   useTheRechargeBonousSelection: boolean;
   numberOfBonusPaymentTypes: number;
   
+  // Payback Settings
+  applicabliltyByGame: string;
+  
   // Bonus Amount Settings (JSON string for complex bonus structures)
   bonusAmountSettings: string;
   bonusTimeSettings: string;

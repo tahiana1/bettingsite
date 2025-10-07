@@ -74,8 +74,24 @@ export default function LevelPage() {
             if (response.levels.length > 0 && !selectedLevel) {
                 // Find Level 1 specifically, or fall back to first level
                 const level1 = response.levels.find(level => level.levelNumber === 1) || response.levels[0];
+                
+                // Transform JSON string fields to arrays for form display
+                const transformedLevel = { ...level1 };
+                
+                // Parse applicabliltyByGame JSON string to array
+                if (typeof transformedLevel.applicabliltyByGame === 'string' && transformedLevel.applicabliltyByGame) {
+                    try {
+                        (transformedLevel as any).applicabliltyByGame = JSON.parse(transformedLevel.applicabliltyByGame);
+                    } catch (error) {
+                        console.error("Error parsing applicabliltyByGame:", error);
+                        (transformedLevel as any).applicabliltyByGame = [];
+                    }
+                } else {
+                    (transformedLevel as any).applicabliltyByGame = [];
+                }
+                
                 setSelectedLevel(level1);
-                form.setFieldsValue(level1);
+                form.setFieldsValue(transformedLevel);
                 fetchSurpriseBonuses(level1.id!);
             }
         } catch (error) {
@@ -89,11 +105,27 @@ export default function LevelPage() {
     const handleLevelSelect = (level: Level) => {
         console.log("Selected level:", level);
         setSelectedLevel(level);
+        
+        // Transform JSON string fields to arrays for form display
+        const transformedLevel = { ...level };
+        
+        // Parse applicabliltyByGame JSON string to array
+        if (typeof transformedLevel.applicabliltyByGame === 'string' && transformedLevel.applicabliltyByGame) {
+            try {
+                (transformedLevel as any).applicabliltyByGame = JSON.parse(transformedLevel.applicabliltyByGame);
+            } catch (error) {
+                console.error("Error parsing applicabliltyByGame:", error);
+                (transformedLevel as any).applicabliltyByGame = [];
+            }
+        } else {
+            (transformedLevel as any).applicabliltyByGame = [];
+        }
+        
         // Set form values for all forms
-        form.setFieldsValue(level);
+        form.setFieldsValue(transformedLevel);
         // Reset form validation
         form.resetFields();
-        form.setFieldsValue(level);
+        form.setFieldsValue(transformedLevel);
         fetchSurpriseBonuses(level.id!);
         // Fetch charge bonus tables for all charge bonus settings (1-5)
         for (let i = 1; i <= 5; i++) {
@@ -266,7 +298,15 @@ export default function LevelPage() {
         
         setSaving(true);
         try {
-            const response = await levelAPI.updateLevel(selectedLevel.id, values);
+            // Transform array fields to JSON strings before sending to backend
+            const transformedValues = { ...values };
+            
+            // Convert applicabliltyByGame array to JSON string
+            if (Array.isArray(transformedValues.applicabliltyByGame)) {
+                transformedValues.applicabliltyByGame = JSON.stringify(transformedValues.applicabliltyByGame);
+            }
+            
+            const response = await levelAPI.updateLevel(selectedLevel.id, transformedValues);
             message.success("Level updated successfully");
             // Update the local state with the new values
             const updatedLevel = { ...selectedLevel, ...values };
@@ -541,12 +581,12 @@ export default function LevelPage() {
                     </Button>
                 ))}
             </div>
-            <Button 
+            {/* <Button 
                 onClick={handleBulkUpdate}
                 loading={saving}
             >
                 {t("applyToAllLevelsAtOnce")}
-            </Button>
+            </Button> */}
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
             <Card 
@@ -958,8 +998,18 @@ export default function LevelPage() {
                 className="max-w-[500px]"
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 actions={
-                    [<Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                    <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
+                    [<Button 
+                        type="default" 
+                        onClick={() => {
+                            if (selectedLevel) {
+                                form.submit();
+                            }
+                        }}
+                        disabled={!selectedLevel || saving}
+                        loading={saving}
+                    >{t("change")}</Button>,
+                    // <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>
+                ]
                 }
             >
                 <Form
@@ -1021,8 +1071,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 actions={
                     [
-                    <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                    <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]
+                    <Button 
+                        type="default" 
+                        onClick={() => {
+                            if (selectedLevel) {
+                                form.submit();
+                            }
+                        }}
+                        disabled={!selectedLevel || saving}
+                        loading={saving}
+                    >{t("change")}</Button>,
+                    // <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>
+                ]
                 }
             >
                 <Form
@@ -1069,8 +1129,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("settingUpLevel1ReferalBenefits")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("referralBenefitsMini")} name="referralBenefitsMini">
@@ -1119,8 +1189,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("level1CharginBonusSelectionSetting")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("useTheRechargeBonousSelection")} name="useTheRechargeBonousSelection">
@@ -1153,8 +1233,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus1Setting")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1384,8 +1474,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus2Setting")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1610,8 +1710,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus3Setting")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1836,8 +1946,18 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus4Setting")}
                 actions={[
-                <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button 
+                    type="default" 
+                    onClick={() => {
+                        if (selectedLevel) {
+                            form.submit();
+                        }
+                    }}
+                    disabled={!selectedLevel || saving}
+                    loading={saving}
+                >{t("change")}</Button>,
+                // <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>
+            ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -2062,8 +2182,17 @@ export default function LevelPage() {
                 styles={{ header: { backgroundColor: 'black', color: 'white' } }}
                 title={t("chargeBonus5Setting")}
                 actions={[
-                    <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                    <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>
+                    <Button 
+                        type="default" 
+                        onClick={() => {
+                            if (selectedLevel) {
+                                form.submit();
+                            }
+                        }}
+                        disabled={!selectedLevel || saving}
+                        loading={saving}
+                    >{t("change")}</Button>,
+                    // <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>
                 ]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>

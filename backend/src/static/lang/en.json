@@ -1864,5 +1864,6 @@
   "addition" : "Addition",
   "level1SuddenBonusSetting" : "Level1 Sudden Bonus Setting",
   "chargeBonus4Setting" : "Charge Bonus 4 Setting",
-  "chargeBonus5Setting" : "Charge Bonus 5 Setting"
+  "chargeBonus5Setting" : "Charge Bonus 5 Setting",
+  "selectLevelToEdit" : "Select Level To Edit"
 }

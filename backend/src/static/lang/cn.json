@@ -1866,5 +1866,6 @@
   "level1Setting" : "等级1设置",
   "level1SuddenBonusSetting" : "等级1突发奖金设置",
   "chargeBonus4Setting" : "充值奖金4设置",
-  "chargeBonus5Setting" : "充值奖金5设置"
+  "chargeBonus5Setting" : "充值奖金5设置",
+  "selectLevelToEdit" : "选择要编辑的等级"
 }

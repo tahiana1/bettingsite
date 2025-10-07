@@ -131,7 +131,7 @@ const MiniPage: React.FC = () => {
                                 alt={`${company.name} logo`}
                                 width={300}
                                 height={200}
-                                className="object-contain w-full opacity-0 rounded-t-lg border-b-1 border-[#ffd273]"
+                                className="object-contain w-full opacity-100 rounded-t-lg border-b-1 border-[#ffd273]"
                             />
                             {/* Loading Spinner */}
                             {loading && selectedGame === company.name && (
