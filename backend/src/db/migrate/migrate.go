@@ -46,6 +46,7 @@ func main() {
 		models.Popup{},
 		models.Contact{},
 		models.Level{},
+		models.ChargeBonusTableLevel{},
 	)
 
 	if err != nil {

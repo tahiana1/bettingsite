@@ -135,4 +135,15 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		surpriseBonusRouter.PUT("/:id", controllers.UpdateSurpriseBonus)
 		surpriseBonusRouter.DELETE("/:id", controllers.DeleteSurpriseBonus)
 	}
+
+	// Charge Bonus Table Level routes
+	chargeBonusTableRouter := r.Group("/charge-bonus-tables")
+	{
+		chargeBonusTableRouter.GET("/level/:levelId/charge/:chargeBonusNumber", controllers.GetChargeBonusTableLevels)
+		chargeBonusTableRouter.GET("/:id", controllers.GetChargeBonusTableLevel)
+		chargeBonusTableRouter.POST("/", controllers.CreateChargeBonusTableLevel)
+		chargeBonusTableRouter.PUT("/:id", controllers.UpdateChargeBonusTableLevel)
+		chargeBonusTableRouter.DELETE("/:id", controllers.DeleteChargeBonusTableLevel)
+		chargeBonusTableRouter.POST("/upsert", controllers.UpsertChargeBonusTableLevel)
+	}
 }

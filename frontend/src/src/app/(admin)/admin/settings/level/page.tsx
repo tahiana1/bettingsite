@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Checkbox, DatePicker, Form, Input, InputNumber, Select, Switch, Table, message, Modal } from "antd";
 import { useTranslations } from "next-intl";
-import { levelAPI, Level, SurpriseBonus } from "@/api/levelAPI";
+import { levelAPI, Level, SurpriseBonus, ChargeBonusTableLevel } from "@/api/levelAPI";
 
 export default function LevelPage() {
     const t = useTranslations();
@@ -21,13 +21,46 @@ export default function LevelPage() {
     const [surpriseBonusForm] = Form.useForm();
     const [editingSurpriseBonus, setEditingSurpriseBonus] = useState<SurpriseBonus | null>(null);
     
-    const [bonusAmountData, setBonusAmountData] = useState([
-        { key: 1, amount: 100000, bonus: 3000 },
-        { key: 2, amount: 300000, bonus: 10000 },
-        { key: 3, amount: 500000, bonus: 10000 },
-        { key: 4, amount: 1000000, bonus: 30000 },
-        { key: 5, amount: 3000000, bonus: 70000 },
-    ]);
+    // Charge Bonus Table state
+    const [chargeBonusTables, setChargeBonusTables] = useState<{[key: string]: ChargeBonusTableLevel[]}>({});
+    
+    const [bonus1AmountData, setBonusAmountData] = useState<{key: number, amount: number, bonus: number}[]>([]);
+    const [bonus2AmountData, setBonus2AmountData] = useState<{key: number, amount: number, bonus: number}[]>([]);
+    const [bonus3AmountData, setBonus3AmountData] = useState<{key: number, amount: number, bonus: number}[]>([]);
+    const [bonus4AmountData, setBonus4AmountData] = useState<{key: number, amount: number, bonus: number}[]>([]);
+    const [bonus5AmountData, setBonus5AmountData] = useState<{key: number, amount: number, bonus: number}[]>([]);
+
+    const [bonus1TimeData, setBonus1TimeData] = useState<{key: number, from: string, to: string}[]>([]);
+    const [bonus2TimeData, setBonus2TimeData] = useState<{key: number, from: string, to: string}[]>([]);
+    const [bonus3TimeData, setBonus3TimeData] = useState<{key: number, from: string, to: string}[]>([]);
+    const [bonus4TimeData, setBonus4TimeData] = useState<{key: number, from: string, to: string}[]>([]);
+    const [bonus5TimeData, setBonus5TimeData] = useState<{key: number, from: string, to: string}[]>([]);
+    
+    // Separate input states for each charge bonus setting
+    const [newAmount1, setNewAmount1] = useState<number | null>(null);
+    const [newBonus1, setNewBonus1] = useState<number | null>(null);
+    const [newAmount2, setNewAmount2] = useState<number | null>(null);
+    const [newBonus2, setNewBonus2] = useState<number | null>(null);
+    const [newAmount3, setNewAmount3] = useState<number | null>(null);
+    const [newBonus3, setNewBonus3] = useState<number | null>(null);
+    const [newAmount4, setNewAmount4] = useState<number | null>(null);
+    const [newBonus4, setNewBonus4] = useState<number | null>(null);
+    const [newAmount5, setNewAmount5] = useState<number | null>(null);
+    const [newBonus5, setNewBonus5] = useState<number | null>(null);
+    
+    // Time input states for each charge bonus setting
+    const [newTimeFrom1, setNewTimeFrom1] = useState<string>("");
+    const [newTimeTo1, setNewTimeTo1] = useState<string>("");
+    const [newTimeFrom2, setNewTimeFrom2] = useState<string>("");
+    const [newTimeTo2, setNewTimeTo2] = useState<string>("");
+    const [newTimeFrom3, setNewTimeFrom3] = useState<string>("");
+    const [newTimeTo3, setNewTimeTo3] = useState<string>("");
+    const [newTimeFrom4, setNewTimeFrom4] = useState<string>("");
+    const [newTimeTo4, setNewTimeTo4] = useState<string>("");
+    const [newTimeFrom5, setNewTimeFrom5] = useState<string>("");
+    const [newTimeTo5, setNewTimeTo5] = useState<string>("");
+    
+    // Legacy state for backward compatibility
     const [newAmount, setNewAmount] = useState<number | null>(null);
     const [newBonus, setNewBonus] = useState<number | null>(null);
 
@@ -62,6 +95,10 @@ export default function LevelPage() {
         form.resetFields();
         form.setFieldsValue(level);
         fetchSurpriseBonuses(level.id!);
+        // Fetch charge bonus tables for all charge bonus settings (1-5)
+        for (let i = 1; i <= 5; i++) {
+            fetchChargeBonusTables(level.id!, i);
+        }
     };
 
     // Surprise Bonus functions
@@ -72,6 +109,89 @@ export default function LevelPage() {
         } catch (error) {
             message.error("Failed to fetch surprise bonuses");
             console.error("Error fetching surprise bonuses:", error);
+        }
+    };
+
+    // Charge Bonus Table functions
+    const fetchChargeBonusTables = async (levelId: number, chargeBonusNumber: number) => {
+        try {
+            const response = await levelAPI.getChargeBonusTableLevels(levelId, chargeBonusNumber);
+            const key = `${levelId}-${chargeBonusNumber}`;
+            setChargeBonusTables(prev => ({
+                ...prev,
+                [key]: response.chargeBonusTables
+            }));
+            
+            // Update the specific bonus data arrays
+            const amountTable = response.chargeBonusTables.find(t => t.type === "amount");
+            const timeTable = response.chargeBonusTables.find(t => t.type === "time");
+            
+            if (amountTable && amountTable.data) {
+                try {
+                    const amountData = JSON.parse(amountTable.data);
+                    const formattedAmountData = amountData.map((item: any, index: number) => ({
+                        key: index + 1,
+                        amount: item.amount,
+                        bonus: item.bonus
+                    }));
+                    
+                    // Update the correct bonus data array based on charge bonus number
+                    switch (chargeBonusNumber) {
+                        case 1:
+                            setBonusAmountData(formattedAmountData);
+                            break;
+                        case 2:
+                            setBonus2AmountData(formattedAmountData);
+                            break;
+                        case 3:
+                            setBonus3AmountData(formattedAmountData);
+                            break;
+                        case 4:
+                            setBonus4AmountData(formattedAmountData);
+                            break;
+                        case 5:
+                            setBonus5AmountData(formattedAmountData);
+                            break;
+                    }
+                } catch (error) {
+                    console.error("Error parsing amount data:", error);
+                }
+            }
+            
+            if (timeTable && timeTable.data) {
+                try {
+                    const timeData = JSON.parse(timeTable.data);
+                    const formattedTimeData = timeData.map((item: any, index: number) => ({
+                        key: index + 1,
+                        from: item.from,
+                        to: item.to
+                    }));
+                    
+                    // Update the correct bonus time data array based on charge bonus number
+                    switch (chargeBonusNumber) {
+                        case 1:
+                            setBonus1TimeData(formattedTimeData);
+                            break;
+                        case 2:
+                            setBonus2TimeData(formattedTimeData);
+                            break;
+                        case 3:
+                            setBonus3TimeData(formattedTimeData);
+                            break;
+                        case 4:
+                            setBonus4TimeData(formattedTimeData);
+                            break;
+                        case 5:
+                            setBonus5TimeData(formattedTimeData);
+                            break;
+                    }
+                } catch (error) {
+                    console.error("Error parsing time data:", error);
+                }
+            }
+        } catch (error) {
+            console.error(`Error fetching charge bonus tables for level ${levelId}, charge ${chargeBonusNumber}:`, error);
+            // Don't show error message for missing data, just log it
         }
     };
 
@@ -191,13 +311,118 @@ export default function LevelPage() {
         }
     };
 
-    const handleAddBonus = () => {
-        if (newAmount !== null && newBonus !== null) {
-            const newKey = Math.max(...bonusAmountData.map(item => item.key)) + 1;
-            setBonusAmountData([...bonusAmountData, { key: newKey, amount: newAmount, bonus: newBonus }]);
-            setNewAmount(null);
-            setNewBonus(null);
+    const handleAddBonus = async (chargeBonusNumber: number, type: "amount" | "time") => {
+        if (!selectedLevel?.id) return;
+        
+        try {
+            // Get current data for this charge bonus and type
+            const currentData = getChargeBonusTableData(chargeBonusNumber, type);
+            
+            // Create new entry based on type and charge bonus number
+            let newEntry: any;
+            let updatedData: any[];
+            
+            if (type === "amount") {
+                // Get the correct amount and bonus values based on charge bonus number
+                let amount, bonus;
+                switch (chargeBonusNumber) {
+                    case 1: amount = newAmount1; bonus = newBonus1; break;
+                    case 2: amount = newAmount2; bonus = newBonus2; break;
+                    case 3: amount = newAmount3; bonus = newBonus3; break;
+                    case 4: amount = newAmount4; bonus = newBonus4; break;
+                    case 5: amount = newAmount5; bonus = newBonus5; break;
+                    default: return;
+                }
+                
+                if (amount === null || bonus === null) return;
+                
+                newEntry = { amount, bonus };
+                updatedData = [...currentData, newEntry];
+                
+                // Clear the specific input fields
+                switch (chargeBonusNumber) {
+                    case 1: setNewAmount1(null); setNewBonus1(null); break;
+                    case 2: setNewAmount2(null); setNewBonus2(null); break;
+                    case 3: setNewAmount3(null); setNewBonus3(null); break;
+                    case 4: setNewAmount4(null); setNewBonus4(null); break;
+                    case 5: setNewAmount5(null); setNewBonus5(null); break;
+                }
+            } else {
+                // Get the correct time values based on charge bonus number
+                let from, to;
+                switch (chargeBonusNumber) {
+                    case 1: from = newTimeFrom1; to = newTimeTo1; break;
+                    case 2: from = newTimeFrom2; to = newTimeTo2; break;
+                    case 3: from = newTimeFrom3; to = newTimeTo3; break;
+                    case 4: from = newTimeFrom4; to = newTimeTo4; break;
+                    case 5: from = newTimeFrom5; to = newTimeTo5; break;
+                    default: return;
+                }
+                
+                if (!from || !to) return;
+                
+                newEntry = { from, to };
+                updatedData = [...currentData, newEntry];
+                
+                // Clear the specific input fields
+                switch (chargeBonusNumber) {
+                    case 1: setNewTimeFrom1(""); setNewTimeTo1(""); break;
+                    case 2: setNewTimeFrom2(""); setNewTimeTo2(""); break;
+                    case 3: setNewTimeFrom3(""); setNewTimeTo3(""); break;
+                    case 4: setNewTimeFrom4(""); setNewTimeTo4(""); break;
+                    case 5: setNewTimeFrom5(""); setNewTimeTo5(""); break;
+                }
+            }
+            
+            // Save to database
+            await saveChargeBonusTableData(chargeBonusNumber, type, updatedData);
+            
+        } catch (error) {
+            message.error(`Failed to add ${type === "amount" ? "bonus amount" : "bonus time"} entry`);
+            console.error("Error adding bonus entry:", error);
         }
+    };
+
+    // Charge Bonus Table save functions
+    const saveChargeBonusTableData = async (chargeBonusNumber: number, type: "amount" | "time", data: any[]) => {
+        if (!selectedLevel?.id) return;
+        
+        try {
+            const jsonData = JSON.stringify(data);
+            await levelAPI.upsertChargeBonusTableLevel({
+                levelId: selectedLevel.id,
+                chargeBonusNumber,
+                type,
+                data: jsonData
+            });
+            message.success(`${type === "amount" ? "Bonus amount" : "Bonus time"} table saved successfully`);
+            // Refresh the data
+            fetchChargeBonusTables(selectedLevel.id, chargeBonusNumber);
+        } catch (error) {
+            message.error(`Failed to save ${type === "amount" ? "bonus amount" : "bonus time"} table`);
+            console.error("Error saving charge bonus table:", error);
+        }
+    };
+
+    const getChargeBonusTableData = (chargeBonusNumber: number, type: "amount" | "time") => {
+        if (!selectedLevel?.id) return [];
+        const key = `${selectedLevel.id}-${chargeBonusNumber}`;
+        const tables = chargeBonusTables[key] || [];
+        const table = tables.find(t => t.type === type);
+        if (table && table.data) {
+            try {
+                return JSON.parse(table.data);
+            } catch (error) {
+                console.error("Error parsing charge bonus table data:", error);
+                return [];
+            }
+        }
+        return [];
+    };
+
+    // Empty functions for Apply To All Levels At Once buttons
+    const handleApplyToAllLevels = () => {
+        message.info("Apply to all levels functionality will be implemented later");
     };
 
     // Load data on component mount
@@ -845,7 +1070,7 @@ export default function LevelPage() {
                 title={t("settingUpLevel1ReferalBenefits")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("referralBenefitsMini")} name="referralBenefitsMini">
@@ -895,7 +1120,7 @@ export default function LevelPage() {
                 title={t("level1CharginBonusSelectionSetting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 12 }}>
                     <Form.Item label={t("useTheRechargeBonousSelection")} name="useTheRechargeBonousSelection">
@@ -929,7 +1154,7 @@ export default function LevelPage() {
                 title={t("chargeBonus1Setting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -995,28 +1220,28 @@ export default function LevelPage() {
                     {/* Bonus Amount Table */}
                     <Form.Item label={t("bonusAmountSettings")}>
                         <Table
-                            dataSource={bonusAmountData}
+                            dataSource={bonus1AmountData}
                             footer={() => (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center justify-between">
                                         <InputNumber
                                             min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                            value={newAmount1}
+                                            onChange={setNewAmount1}
                                             style={{ width: 70 }}
                                             placeholder="Amount"
                                         />
                                         <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
                                         <InputNumber
                                             min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                            value={newBonus1}
+                                            onChange={setNewBonus1}
                                             style={{ width: 70 }}
                                             placeholder="Bonus"
                                         />
                                     </div>
                                     <div className="flex w-full justify-center">
-                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                        <Button type="primary" size="small" onClick={() => handleAddBonus(1, "amount")}>
                                             {t("addition")}
                                         </Button>
                                     </div>
@@ -1105,7 +1330,7 @@ export default function LevelPage() {
                                         />
                                     </div>
                                     
-                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                    <Button type="primary" className="ml-4" size="small" onClick={() => handleAddBonus(2, "time")}>
                                         {t("addition")}
                                     </Button>
                                 </div>
@@ -1160,7 +1385,7 @@ export default function LevelPage() {
                 title={t("chargeBonus2Setting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1226,28 +1451,28 @@ export default function LevelPage() {
                     {/* Bonus Amount Table */}
                     <Form.Item label={t("bonusAmountSettings")}>
                         <Table
-                            dataSource={bonusAmountData}
+                            dataSource={bonus2AmountData}
                             footer={() => (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center justify-between">
                                         <InputNumber
                                             min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                            value={newAmount2}
+                                            onChange={setNewAmount2}
                                             style={{ width: 70 }}
                                             placeholder="Amount"
                                         />
                                         <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
                                         <InputNumber
                                             min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                            value={newBonus2}
+                                            onChange={setNewBonus2}
                                             style={{ width: 70 }}
                                             placeholder="Bonus"
                                         />
                                     </div>
                                     <div className="flex w-full justify-center">
-                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                        <Button type="primary" size="small" onClick={() => handleAddBonus(2, "amount")}>
                                             {t("addition")}
                                         </Button>
                                     </div>
@@ -1308,10 +1533,7 @@ export default function LevelPage() {
                     {/* Bonus Time Table */}
                     <Form.Item label={t("bonusTimeSettings")}>
                         <Table
-                            dataSource={[
-                                { key: 1, from: "21:00", to: "23:00" },
-                                { key: 2, from: "02:00", to: "05:00" },
-                            ]}
+                            dataSource={bonus2TimeData}
                             pagination={false}
                             rowKey="key"
                             showHeader={false}
@@ -1319,24 +1541,22 @@ export default function LevelPage() {
                             footer={() => (
                                 <div className="flex items-center ">
                                     <div className="flex items-center justify-between">
-                                        <InputNumber
-                                            min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                        <Input
+                                            value={newTimeFrom2}
+                                            onChange={(e) => setNewTimeFrom2(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Amount"
+                                            placeholder="00:00"
                                         />
-                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
-                                        <InputNumber
-                                            min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex">-</span>
+                                        <Input
+                                            value={newTimeTo2}
+                                            onChange={(e) => setNewTimeTo2(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Bonus"
+                                            placeholder="00:00"
                                         />
                                     </div>
                                     
-                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                    <Button type="primary" className="ml-4" size="small" onClick={() => handleAddBonus(2, "time")}>
                                         {t("addition")}
                                     </Button>
                                 </div>
@@ -1391,7 +1611,7 @@ export default function LevelPage() {
                 title={t("chargeBonus3Setting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1457,28 +1677,28 @@ export default function LevelPage() {
                     {/* Bonus Amount Table */}
                     <Form.Item label={t("bonusAmountSettings")}>
                         <Table
-                            dataSource={bonusAmountData}
+                            dataSource={bonus3AmountData}
                             footer={() => (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center justify-between">
                                         <InputNumber
                                             min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                            value={newAmount3}
+                                            onChange={setNewAmount3}
                                             style={{ width: 70 }}
                                             placeholder="Amount"
                                         />
                                         <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
                                         <InputNumber
                                             min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                            value={newBonus3}
+                                            onChange={setNewBonus3}
                                             style={{ width: 70 }}
                                             placeholder="Bonus"
                                         />
                                     </div>
                                     <div className="flex w-full justify-center">
-                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                        <Button type="primary" size="small" onClick={() => handleAddBonus(3, "amount")}>
                                             {t("addition")}
                                         </Button>
                                     </div>
@@ -1539,10 +1759,7 @@ export default function LevelPage() {
                     {/* Bonus Time Table */}
                     <Form.Item label={t("bonusTimeSettings")}>
                         <Table
-                            dataSource={[
-                                { key: 1, from: "21:00", to: "23:00" },
-                                { key: 2, from: "02:00", to: "05:00" },
-                            ]}
+                            dataSource={bonus3TimeData}
                             pagination={false}
                             rowKey="key"
                             showHeader={false}
@@ -1550,24 +1767,22 @@ export default function LevelPage() {
                             footer={() => (
                                 <div className="flex items-center ">
                                     <div className="flex items-center justify-between">
-                                        <InputNumber
-                                            min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                        <Input
+                                            value={newTimeFrom3}
+                                            onChange={(e) => setNewTimeFrom3(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Amount"
+                                            placeholder="00:00"
                                         />
-                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
-                                        <InputNumber
-                                            min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex">-</span>
+                                        <Input
+                                            value={newTimeTo3}
+                                            onChange={(e) => setNewTimeTo3(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Bonus"
+                                            placeholder="00:00"
                                         />
                                     </div>
                                     
-                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                    <Button type="primary" className="ml-4" size="small" onClick={() => handleAddBonus(3, "time")}>
                                         {t("addition")}
                                     </Button>
                                 </div>
@@ -1622,7 +1837,7 @@ export default function LevelPage() {
                 title={t("chargeBonus4Setting")}
                 actions={[
                 <Button type="default" onClick={() => {}}>{t("change")}</Button>,
-                <Button type="default" onClick={() => {}}>{t("applyToAllLevelsAtOnce")}</Button>]}
+                <Button type="default" onClick={handleApplyToAllLevels}>{t("applyToAllLevelsAtOnce")}</Button>]}
             >
                 <Form form={form} onFinish={handleUpdateLevel} labelCol={{ span: 10 }}>
                     <Form.Item label={t("firstDepositBonusWeekdays")} name="firstDepositBonusWeekdays">
@@ -1688,28 +1903,28 @@ export default function LevelPage() {
                     {/* Bonus Amount Table */}
                     <Form.Item label={t("bonusAmountSettings")}>
                         <Table
-                            dataSource={bonusAmountData}
+                            dataSource={bonus4AmountData}
                             footer={() => (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center justify-between">
                                         <InputNumber
                                             min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                            value={newAmount4}
+                                            onChange={setNewAmount4}
                                             style={{ width: 70 }}
                                             placeholder="Amount"
                                         />
                                         <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
                                         <InputNumber
                                             min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                            value={newBonus4}
+                                            onChange={setNewBonus4}
                                             style={{ width: 70 }}
                                             placeholder="Bonus"
                                         />
                                     </div>
                                     <div className="flex w-full justify-center">
-                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                        <Button type="primary" size="small" onClick={() => handleAddBonus(4, "amount")}>
                                             {t("addition")}
                                         </Button>
                                     </div>
@@ -1770,10 +1985,7 @@ export default function LevelPage() {
                     {/* Bonus Time Table */}
                     <Form.Item label={t("bonusTimeSettings")}>
                         <Table
-                            dataSource={[
-                                { key: 1, from: "21:00", to: "23:00" },
-                                { key: 2, from: "02:00", to: "05:00" },
-                            ]}
+                            dataSource={bonus4TimeData}
                             pagination={false}
                             rowKey="key"
                             showHeader={false}
@@ -1781,24 +1993,22 @@ export default function LevelPage() {
                             footer={() => (
                                 <div className="flex items-center ">
                                     <div className="flex items-center justify-between">
-                                        <InputNumber
-                                            min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                        <Input
+                                            value={newTimeFrom4}
+                                            onChange={(e) => setNewTimeFrom4(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Amount"
+                                            placeholder="00:00"
                                         />
-                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
-                                        <InputNumber
-                                            min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex">-</span>
+                                        <Input
+                                            value={newTimeTo4}
+                                            onChange={(e) => setNewTimeTo4(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Bonus"
+                                            placeholder="00:00"
                                         />
                                     </div>
                                     
-                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                    <Button type="primary" className="ml-4" size="small" onClick={() => handleAddBonus(4, "time")}>
                                         {t("addition")}
                                     </Button>
                                 </div>
@@ -1920,28 +2130,28 @@ export default function LevelPage() {
                     {/* Bonus Amount Table */}
                     <Form.Item label={t("bonusAmountSettings")}>
                         <Table
-                            dataSource={bonusAmountData}
+                            dataSource={bonus5AmountData}
                             footer={() => (
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center justify-between">
                                         <InputNumber
                                             min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                            value={newAmount5}
+                                            onChange={setNewAmount5}
                                             style={{ width: 70 }}
                                             placeholder="Amount"
                                         />
                                         <span style={{ fontWeight: "bold", width: 45 }} className="justify-center flex">+</span>
                                         <InputNumber
                                             min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                            value={newBonus5}
+                                            onChange={setNewBonus5}
                                             style={{ width: 70 }}
                                             placeholder="Bonus"
                                         />
                                     </div>
                                     <div className="flex w-full justify-center">
-                                        <Button type="primary" size="small" onClick={handleAddBonus}>
+                                        <Button type="primary" size="small" onClick={() => handleAddBonus(5, "amount")}>
                                             {t("addition")}
                                         </Button>
                                     </div>
@@ -2002,10 +2212,7 @@ export default function LevelPage() {
                     {/* Bonus Time Table */}
                     <Form.Item label={t("bonusTimeSettings")}>
                         <Table
-                            dataSource={[
-                                { key: 1, from: "21:00", to: "23:00" },
-                                { key: 2, from: "02:00", to: "05:00" },
-                            ]}
+                            dataSource={bonus5TimeData}
                             pagination={false}
                             rowKey="key"
                             showHeader={false}
@@ -2013,24 +2220,22 @@ export default function LevelPage() {
                             footer={() => (
                                 <div className="flex items-center ">
                                     <div className="flex items-center justify-between">
-                                        <InputNumber
-                                            min={0}
-                                            value={newAmount}
-                                            onChange={setNewAmount}
+                                        <Input
+                                            value={newTimeFrom5}
+                                            onChange={(e) => setNewTimeFrom5(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Amount"
+                                            placeholder="00:00"
                                         />
-                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex"></span>
-                                        <InputNumber
-                                            min={0}
-                                            value={newBonus}
-                                            onChange={setNewBonus}
+                                        <span style={{ fontWeight: "bold", width: 15 }} className="justify-center flex">-</span>
+                                        <Input
+                                            value={newTimeTo5}
+                                            onChange={(e) => setNewTimeTo5(e.target.value)}
                                             style={{ width: 80 }}
-                                            placeholder="Bonus"
+                                            placeholder="00:00"
                                         />
                                     </div>
                                     
-                                    <Button type="primary" className="ml-4" size="small" onClick={handleAddBonus}>
+                                    <Button type="primary" className="ml-4" size="small" onClick={() => handleAddBonus(5, "time")}>
                                         {t("addition")}
                                     </Button>
                                 </div>

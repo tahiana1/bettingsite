@@ -204,6 +204,25 @@ export interface SingleSurpriseBonusResponse {
   surpriseBonus: SurpriseBonus;
 }
 
+export interface ChargeBonusTableLevel {
+  id?: number;
+  levelId: number;
+  chargeBonusNumber: number;
+  type: "amount" | "time";
+  data: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+}
+
+export interface ChargeBonusTableLevelResponse {
+  chargeBonusTables: ChargeBonusTableLevel[];
+}
+
+export interface SingleChargeBonusTableLevelResponse {
+  chargeBonusTable: ChargeBonusTableLevel;
+}
+
 // Level API functions
 export const levelAPI = {
   // Get all levels with pagination
@@ -264,6 +283,52 @@ export const levelAPI = {
   deleteSurpriseBonus: async (id: number): Promise<{ message: string }> => {
     return api(`admin/surprise-bonuses/${id}`, {
       method: "DELETE",
+    });
+  },
+
+  // Charge Bonus Table Level API functions
+  // Get charge bonus table data for a specific level and charge bonus number
+  getChargeBonusTableLevels: async (levelId: number, chargeBonusNumber: number): Promise<ChargeBonusTableLevelResponse> => {
+    return api(`admin/charge-bonus-tables/level/${levelId}/charge/${chargeBonusNumber}`, {
+      method: "GET",
+    });
+  },
+
+  // Get a single charge bonus table entry
+  getChargeBonusTableLevel: async (id: number): Promise<SingleChargeBonusTableLevelResponse> => {
+    return api(`admin/charge-bonus-tables/${id}`, {
+      method: "GET",
+    });
+  },
+
+  // Create a new charge bonus table entry
+  createChargeBonusTableLevel: async (chargeBonusTable: Omit<ChargeBonusTableLevel, "id" | "createdAt" | "updatedAt" | "deletedAt">): Promise<SingleChargeBonusTableLevelResponse> => {
+    return api("admin/charge-bonus-tables", {
+      method: "POST",
+      data: chargeBonusTable,
+    });
+  },
+
+  // Update an existing charge bonus table entry
+  updateChargeBonusTableLevel: async (id: number, chargeBonusTable: Partial<ChargeBonusTableLevel>): Promise<SingleChargeBonusTableLevelResponse> => {
+    return api(`admin/charge-bonus-tables/${id}`, {
+      method: "PUT",
+      data: chargeBonusTable,
+    });
+  },
+
+  // Delete a charge bonus table entry
+  deleteChargeBonusTableLevel: async (id: number): Promise<{ message: string }> => {
+    return api(`admin/charge-bonus-tables/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  // Upsert (create or update) charge bonus table data
+  upsertChargeBonusTableLevel: async (chargeBonusTable: Omit<ChargeBonusTableLevel, "id" | "createdAt" | "updatedAt" | "deletedAt">): Promise<SingleChargeBonusTableLevelResponse> => {
+    return api("admin/charge-bonus-tables/upsert", {
+      method: "POST",
+      data: chargeBonusTable,
     });
   },
 };

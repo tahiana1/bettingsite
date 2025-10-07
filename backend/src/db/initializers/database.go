@@ -135,6 +135,7 @@ func ConnectDB() {
 		models.Contact{},
 		models.Level{},
 		models.SurpriseBonus{},
+		models.ChargeBonusTableLevel{},
 	)
 
 	if err != nil {
