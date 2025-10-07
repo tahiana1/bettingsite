@@ -146,11 +146,23 @@ const MiniPage: React.FC = () => {
                                     onClick={() => {
                                         if (company.name === "EOS 1min") {
                                             window.open(`/eos1`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
-                                        } else {
-                                            // Handle other games
-                                            // setLoading(true);
-                                            // setSelectedGame(company.name);
-                                        }
+                                        } else if (company.name === "EOS 2min") {
+                                            window.open(`/eos2`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "EOS 3min") {
+                                            window.open(`/eos3`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "EOS 4min") {
+                                            window.open(`/eos4`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "EOS 5min") {
+                                            window.open(`/eos5`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "Bepick PBG") {
+                                            window.open(`/bepick`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "Powerball") {
+                                            window.open(`/powerball`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "Poverball Game") {
+                                            window.open(`/poverballgame`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } else if (company.name === "Dhpowerball") {
+                                            window.open(`/dhpowerball`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+                                        } 
                                     }}
                                 >
                                     {t("playNow")}
