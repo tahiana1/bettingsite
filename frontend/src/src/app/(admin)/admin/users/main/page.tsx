@@ -18,7 +18,6 @@ import {
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
-
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@apollo/client";
@@ -31,15 +30,10 @@ import {
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
-// import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { USER_STATUS, USER_TYPE } from "@/constants";
 import { UPDATE_PROFILE } from "@/actions/profile";
-
-// const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
-
-// type UserIndex = keyof User;
 
 const UserPage: React.FC = () => {
   const t = useTranslations();
@@ -53,7 +47,6 @@ const UserPage: React.FC = () => {
   const [updateProfile] = useMutation(UPDATE_PROFILE);
   const [colorModal, setColorModal] = useState<boolean>(false);
   const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
-
   const [updateUser] = useMutation(UPDATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
@@ -86,6 +79,7 @@ const UserPage: React.FC = () => {
         console.log({ err });
       });
   };
+  
   const onUserLevelChange = (u: User, v: string = "") => {
     updateProfile({
       variables: {
@@ -98,6 +92,7 @@ const UserPage: React.FC = () => {
       refetch(tableOptions);
     });
   };
+
   const onUserTypeChange = (u: User, v: string = "") => {
     updateUser({
       variables: {
