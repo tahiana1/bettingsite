@@ -76,7 +76,7 @@ const Notice: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
       };
                 
     return (
-        <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] notice-section">
+        <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23]">
             <Card
                 title={
                     <div className="relative">
@@ -179,7 +179,7 @@ const Notice: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                             current: pagination.current,
                         }}
                         onChange={onChange}
-                        className="w-full bg-[#160d0c]"
+                        className="w-full bg-[#160d0c] custom-table"
                         size="small"
                         onRow={(record) => ({
                             onClick: () => setSelectedItem(record),

@@ -1,17 +1,38 @@
-import { Card, Table, Layout, TableProps } from "antd";
+"use client"
+import { Card, Table, Layout, ConfigProvider } from "antd";
 import { useTranslations } from "next-intl";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import api from "@/api";
+import type {TableProps} from "antd";
 import { useState } from "react";
-import "./event.css";
 import dayjs from "dayjs";
 import modalImage from '@/assets/img/main/modal-head.png';
 import { SiDepositphotos } from "react-icons/si";
+import "./index.css";
 
+interface EventItem {
+    id: string;
+    title: string;
+    description: string;
+    createdAt: string;
+    status: string;
+    answerTitle?: string;
+    answer?: string;
+    repliedAt?: string;
+    user?: {
+        root?: {
+            userid: string;
+        };
+        parent?: {
+            userid: string;
+        };
+    };
+}
 const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
     const [eventData, setEventData] = useState<any[]>([]);
     const [selectedItem, setSelectedItem] = useState<any | null>(null);
     const t = useTranslations();
+    const tableRef = useRef<any>(null);
     useEffect(() => {
         api("event/get-event", { 
             method: "GET"
@@ -20,30 +41,107 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
         });
     }, [])
 
-    const columns = [
-        {
-            title: t("number"),
-            dataIndex: "number",
-            key: "number",
-            render: (_: any, __: any, index: number) => index + 1,
-            width: 80,
-        },
-        {
-            title: t("title"),
-            dataIndex: "title",
-            width: 400,
-            key: "title",
-        },
-        {
-            title: t("createdDate"),
-            dataIndex: "createdAt",
-            key: "date",
-            render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm:ss")
-        },
-    ];
+    // useEffect(() => {
+    //     const applyTableRowStyles = () => {
+    //         if (tableRef.current) {
+    //             const tableElement = tableRef.current.nativeElement || tableRef.current;
+    //             const tableRows = tableElement.querySelectorAll('.ant-table-tbody .ant-table-row');
+                
+    //             tableRows.forEach((row: Element) => {
+                   
+    //                 const htmlRow = row as HTMLElement;
+    //                 htmlRow.style.backgroundColor = '#160d0c';
+    //                 htmlRow.style.transition = 'background-color 0.2s ease';
+    //                 console.log("-----------------------------------", row);
+    //                 // Add hover effect
+    //                 const handleMouseEnter = () => {
+    //                     htmlRow.style.backgroundColor = '#3e2e23';
+    //                 };
+                    
+    //                 const handleMouseLeave = () => {
+    //                     htmlRow.style.backgroundColor = '#160d0c';
+    //                 };
+                    
+    //                 htmlRow.addEventListener('mouseenter', handleMouseEnter);
+    //                 htmlRow.addEventListener('mouseleave', handleMouseLeave);
+                    
+    //                 // Store event handlers for cleanup
+    //                 (htmlRow as any)._mouseEnterHandler = handleMouseEnter;
+    //                 (htmlRow as any)._mouseLeaveHandler = handleMouseLeave;
+    //             });
+    //         }
+    //     };
 
-    
+    //     // Apply styles after data loads
+    //     if (eventData.length > 0) {
+    //         // Use setTimeout to ensure DOM is updated
+    //         setTimeout(applyTableRowStyles, 100);
+            
+    //     }
 
+    //     // Cleanup function
+    //     return () => {
+    //         if (tableRef.current) {
+    //             const tableElement = tableRef.current.nativeElement || tableRef.current;
+    //             const tableRows = tableElement.querySelectorAll('.ant-table-tbody .ant-table-row');
+    //             tableRows.forEach((row: Element) => {
+    //                 const htmlRow = row as HTMLElement;
+    //                 if ((htmlRow as any)._mouseEnterHandler) {
+    //                     htmlRow.removeEventListener('mouseenter', (htmlRow as any)._mouseEnterHandler);
+    //                 }
+    //                 if ((htmlRow as any)._mouseLeaveHandler) {
+    //                     htmlRow.removeEventListener('mouseleave', (htmlRow as any)._mouseLeaveHandler);
+    //                 }
+    //             });
+    //         }
+    //     };
+    // }, [eventData])
+
+    // const columns = [
+    //     {
+    //         title: t("number"),
+    //         dataIndex: "number",
+    //         key: "number",
+    //         render: (_: any, __: any, index: number) => index + 1,
+    //         width: 80,
+    //     },
+    //     {
+    //         title: t("title"),
+    //         dataIndex: "title",
+    //         width: 400,
+    //         key: "title",
+    //     },
+    //     {
+    //         title: t("createdDate"),
+    //         dataIndex: "createdAt",
+    //         key: "date",
+    //         render: (date: string) => dayjs(date).format("YYYY-MM-DD HH:mm:ss")
+    //     },
+    // ];
+
+    const columns: TableProps<EventItem>["columns"] = [
+        {
+          title: t("number"),
+          dataIndex: "id",
+          key: "id",
+          fixed: "left",
+          render: (_, __, index) => index + 1,
+        },
+        {
+          title: t("title"),
+          dataIndex: "title",
+          key: "title",
+        },
+       
+        {
+          title: t("applicationDate"),
+          dataIndex: "createdAt",
+          key: "createdAt",
+          render: (_, record) => (
+            <span>{dayjs(record.createdAt).format("YYYY-MM-DD HH:mm:ss")}</span>
+          ),
+        },
+      ];
     const onChange: TableProps<any>["onChange"] = (
         pagination,
         filters,
@@ -56,7 +154,7 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
 
     
     return (
-        <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] event-section">
+        <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] ">
             <Card
                 title={
                     <div className="relative">
@@ -141,17 +239,20 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
                 </div>
             </Card>
             {!selectedItem ? (
-                <Table
+                <div className="mt-8">
+                    <Table<EventItem>               
                     columns={columns}
                     dataSource={eventData.map((event, idx) => ({
                         ...event,
                         number: idx + 1,
                         key: event.id || idx,
                     }))}
-                    className="w-full mt-4 bg-[#160d0c] px-2"
+                    className=" w-full mt-4 px-6 custom-table"
                     size="small"
                     scroll={{ x: "max-content" }}
+                    rowKey="id"
                     onChange={onChange}
+                   
                     pagination={{
                         showTotal(total, range) {
                             return t(`paginationLabel`, {
@@ -168,6 +269,10 @@ const Event: React.FC<{checkoutModal?: (modal: string) => void}> = (props) => {
                         onClick: () => setSelectedItem(record),
                     })}
                 />
+                </div>
+                    
+               
+                
             ) : (
                 <div className="px-4 pt-4 pb-10 bg-[#160d0c]">
                     <h3 className="font-bold mb-2 text-[#edd497]">{selectedItem.title}</h3>

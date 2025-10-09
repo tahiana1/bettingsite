@@ -4,13 +4,10 @@ import { Button, Card, Form, Input, Layout, message, Space, Switch, Table, Tag }
 import React, { useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuill } from "react-quilljs";
-import { Content } from "antd/es/layout/layout";
-import 'quill/dist/quill.snow.css';
 import type { TableProps } from "antd";
 import { BiTrash } from "react-icons/bi";
 import { FILTER_QNAS } from "@/actions/qna";
 import { useQuery } from "@apollo/client";
-import "./index.css";
 import api from "@/api";
 import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";

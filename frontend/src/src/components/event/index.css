@@ -1,0 +1,51 @@
+#qna-content .ql-toolbar {
+  display: none!important;
+}
+
+#qna-content #newForm_description {
+  border-top: 1px solid rgba(255,255,255,1)!important;
+}
+
+/* Custom styles for expandable table rows */
+.custom-table .ant-table-expand-icon-col {
+  width: 48px;
+}
+
+.custom-table .ant-table-row-expand-icon {
+  background: transparent;
+  border: 1px solid #5d4a3a;
+  color: #edd497;
+  transition: all 0.3s ease;
+}
+
+.custom-table .ant-table-row-expand-icon:hover {
+  background: #4a3224;
+  border-color: #edd497;
+}
+
+.custom-table .ant-table-expanded-row > td {
+  background: #1a0f0e !important;
+  padding: 0 !important;
+}
+
+.custom-table .ant-table-expanded-row > td > .ant-table-expanded-row-fixed {
+  margin: 16px;
+}
+
+/* Style for reply content HTML */
+.custom-table .ant-table-expanded-row p {
+  margin-bottom: 8px;
+}
+
+.custom-table .ant-table-expanded-row ul,
+.custom-table .ant-table-expanded-row ol {
+  margin-bottom: 8px;
+  padding-left: 20px;
+}
+
+.custom-table .ant-table-expanded-row blockquote {
+  border-left: 3px solid #edd497;
+  padding-left: 12px;
+  margin: 8px 0;
+  color: #ccc;
+}

@@ -146,7 +146,7 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
   ];
 
   return (
-    <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23] deposit-section">
+    <Layout.Content className="w-full border-1 bg-[#160d0c] border-[#3e2e23]">
       <Card
         title={
             <div className="relative">
@@ -328,7 +328,7 @@ const PointPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) =>
         columns={columns}
         loading={false}
         dataSource={transactions}
-        className="w-full mt-4 bg-[#160d0c] px-6"
+        className="w-full mt-4 bg-[#160d0c] px-6 custom-table"
         size="small"
         scroll={{ x: "max-content" }}
         onChange={() => {}}
