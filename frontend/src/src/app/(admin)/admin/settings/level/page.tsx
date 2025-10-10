@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Card, Checkbox, DatePicker, Form, Input, InputNumber, Select, Switch, Table, message, Modal } from "antd";
 import { useTranslations } from "next-intl";
 import { levelAPI, Level, SurpriseBonus, ChargeBonusTableLevel } from "@/api/levelAPI";
+import dayjs from "dayjs";
 
 export default function LevelPage() {
     const t = useTranslations();
@@ -90,6 +91,17 @@ export default function LevelPage() {
                     (transformedLevel as any).applicabliltyByGame = [];
                 }
                 
+                // Convert date strings to dayjs objects
+                if ((transformedLevel as any).startDateAndTime) {
+                    (transformedLevel as any).startDateAndTime = dayjs((transformedLevel as any).startDateAndTime);
+                }
+                if ((transformedLevel as any).deadline) {
+                    (transformedLevel as any).deadline = dayjs((transformedLevel as any).deadline);
+                }
+                if ((transformedLevel as any).paymentDate) {
+                    (transformedLevel as any).paymentDate = dayjs((transformedLevel as any).paymentDate);
+                }
+                
                 setSelectedLevel(level1);
                 form.setFieldsValue(transformedLevel);
                 fetchSurpriseBonuses(level1.id!);
@@ -119,6 +131,17 @@ export default function LevelPage() {
             }
         } else {
             (transformedLevel as any).applicabliltyByGame = [];
+        }
+        
+        // Convert date strings to dayjs objects
+        if ((transformedLevel as any).startDateAndTime) {
+            (transformedLevel as any).startDateAndTime = dayjs((transformedLevel as any).startDateAndTime);
+        }
+        if ((transformedLevel as any).deadline) {
+            (transformedLevel as any).deadline = dayjs((transformedLevel as any).deadline);
+        }
+        if ((transformedLevel as any).paymentDate) {
+            (transformedLevel as any).paymentDate = dayjs((transformedLevel as any).paymentDate);
         }
         
         // Set form values for all forms
@@ -304,6 +327,17 @@ export default function LevelPage() {
             // Convert applicabliltyByGame array to JSON string
             if (Array.isArray(transformedValues.applicabliltyByGame)) {
                 transformedValues.applicabliltyByGame = JSON.stringify(transformedValues.applicabliltyByGame);
+            }
+            
+            // Convert dayjs objects to ISO strings
+            if (transformedValues.startDateAndTime && dayjs.isDayjs(transformedValues.startDateAndTime)) {
+                transformedValues.startDateAndTime = transformedValues.startDateAndTime.toISOString();
+            }
+            if (transformedValues.deadline && dayjs.isDayjs(transformedValues.deadline)) {
+                transformedValues.deadline = transformedValues.deadline.toISOString();
+            }
+            if (transformedValues.paymentDate && dayjs.isDayjs(transformedValues.paymentDate)) {
+                transformedValues.paymentDate = transformedValues.paymentDate.toISOString();
             }
             
             const response = await levelAPI.updateLevel(selectedLevel.id, transformedValues);
