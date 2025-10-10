@@ -4,6 +4,9 @@ type Popup {
   description: String!
   status: Boolean!
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   registerDate: Time!
   showFrom: Time!
   showTo: Time!
@@ -17,6 +20,9 @@ input UpdatePopupInput {
   description: String
   status: Boolean
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   showFrom: Time
   showTo: Time
   registerDate: Time
@@ -27,6 +33,9 @@ input NewPopupInput {
   description: String!
   status: Boolean
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   showFrom: Time
   showTo: Time
   registerDate: Time

@@ -12,6 +12,9 @@ type Popup struct {
 	Description  string          `json:"description" gorm:"type:text"`
 	OrderNum     uint            `json:"orderNum" gorm:"default:0"`
 	Status       bool            `json:"status"`
+	DisplayType  string          `json:"displayType" gorm:"size:50;default:'standard'"` // standard, center, doesn't exist
+	Width        uint            `json:"width" gorm:"default:0"`                        // 0 means no width restriction
+	Height       uint            `json:"height" gorm:"default:0"`                       // 0 means no height limit
 	RegisterDate time.Time       `json:"registerDate"`
 	ShowFrom     time.Time       `json:"showFrom"`
 	ShowTo       time.Time       `json:"showTo"`

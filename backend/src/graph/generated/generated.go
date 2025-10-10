@@ -357,6 +357,8 @@ type ComplexityRoot struct {
 		CreatedAt    func(childComplexity int) int
 		DeletedAt    func(childComplexity int) int
 		Description  func(childComplexity int) int
+		DisplayType  func(childComplexity int) int
+		Height       func(childComplexity int) int
 		ID           func(childComplexity int) int
 		OrderNum     func(childComplexity int) int
 		RegisterDate func(childComplexity int) int
@@ -365,6 +367,7 @@ type ComplexityRoot struct {
 		Status       func(childComplexity int) int
 		Title        func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
+		Width        func(childComplexity int) int
 	}
 
 	PopupList struct {
@@ -2731,6 +2734,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Popup.Description(childComplexity), true
 
+	case "Popup.displayType":
+		if e.complexity.Popup.DisplayType == nil {
+			break
+		}
+
+		return e.complexity.Popup.DisplayType(childComplexity), true
+
+	case "Popup.height":
+		if e.complexity.Popup.Height == nil {
+			break
+		}
+
+		return e.complexity.Popup.Height(childComplexity), true
+
 	case "Popup.id":
 		if e.complexity.Popup.ID == nil {
 			break
@@ -2786,6 +2803,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Popup.UpdatedAt(childComplexity), true
+
+	case "Popup.width":
+		if e.complexity.Popup.Width == nil {
+			break
+		}
+
+		return e.complexity.Popup.Width(childComplexity), true
 
 	case "PopupList.popups":
 		if e.complexity.PopupList.Popups == nil {
@@ -5491,6 +5515,9 @@ extend type Mutation {
   description: String!
   status: Boolean!
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   registerDate: Time!
   showFrom: Time!
   showTo: Time!
@@ -5504,6 +5531,9 @@ input UpdatePopupInput {
   description: String
   status: Boolean
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   showFrom: Time
   showTo: Time
   registerDate: Time
@@ -5514,6 +5544,9 @@ input NewPopupInput {
   description: String!
   status: Boolean
   orderNum: Uint
+  displayType: String
+  width: Uint
+  height: Uint
   showFrom: Time
   showTo: Time
   registerDate: Time
@@ -20361,6 +20394,12 @@ func (ec *executionContext) fieldContext_Mutation_createPopup(ctx context.Contex
 				return ec.fieldContext_Popup_status(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Popup_orderNum(ctx, field)
+			case "displayType":
+				return ec.fieldContext_Popup_displayType(ctx, field)
+			case "width":
+				return ec.fieldContext_Popup_width(ctx, field)
+			case "height":
+				return ec.fieldContext_Popup_height(ctx, field)
 			case "registerDate":
 				return ec.fieldContext_Popup_registerDate(ctx, field)
 			case "showFrom":
@@ -20467,6 +20506,12 @@ func (ec *executionContext) fieldContext_Mutation_updatePopup(ctx context.Contex
 				return ec.fieldContext_Popup_status(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Popup_orderNum(ctx, field)
+			case "displayType":
+				return ec.fieldContext_Popup_displayType(ctx, field)
+			case "width":
+				return ec.fieldContext_Popup_width(ctx, field)
+			case "height":
+				return ec.fieldContext_Popup_height(ctx, field)
 			case "registerDate":
 				return ec.fieldContext_Popup_registerDate(ctx, field)
 			case "showFrom":
@@ -24131,6 +24176,129 @@ func (ec *executionContext) fieldContext_Popup_orderNum(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Popup_displayType(ctx context.Context, field graphql.CollectedField, obj *models.Popup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Popup_displayType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisplayType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Popup_displayType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Popup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Popup_width(ctx context.Context, field graphql.CollectedField, obj *models.Popup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Popup_width(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Width, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Popup_width(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Popup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Popup_height(ctx context.Context, field graphql.CollectedField, obj *models.Popup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Popup_height(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Height, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(uint)
+	fc.Result = res
+	return ec.marshalOUint2uint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Popup_height(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Popup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Uint does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Popup_registerDate(ctx context.Context, field graphql.CollectedField, obj *models.Popup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Popup_registerDate(ctx, field)
 	if err != nil {
@@ -24441,6 +24609,12 @@ func (ec *executionContext) fieldContext_PopupList_popups(_ context.Context, fie
 				return ec.fieldContext_Popup_status(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Popup_orderNum(ctx, field)
+			case "displayType":
+				return ec.fieldContext_Popup_displayType(ctx, field)
+			case "width":
+				return ec.fieldContext_Popup_width(ctx, field)
+			case "height":
+				return ec.fieldContext_Popup_height(ctx, field)
 			case "registerDate":
 				return ec.fieldContext_Popup_registerDate(ctx, field)
 			case "showFrom":
@@ -28161,6 +28335,12 @@ func (ec *executionContext) fieldContext_Query_popups(_ context.Context, field g
 				return ec.fieldContext_Popup_status(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_Popup_orderNum(ctx, field)
+			case "displayType":
+				return ec.fieldContext_Popup_displayType(ctx, field)
+			case "width":
+				return ec.fieldContext_Popup_width(ctx, field)
+			case "height":
+				return ec.fieldContext_Popup_height(ctx, field)
 			case "registerDate":
 				return ec.fieldContext_Popup_registerDate(ctx, field)
 			case "showFrom":
@@ -41293,7 +41473,7 @@ func (ec *executionContext) unmarshalInputNewPopupInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo", "registerDate"}
+	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "displayType", "width", "height", "showFrom", "showTo", "registerDate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41328,6 +41508,27 @@ func (ec *executionContext) unmarshalInputNewPopupInput(ctx context.Context, obj
 				return it, err
 			}
 			it.OrderNum = data
+		case "displayType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayType"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayType = data
+		case "width":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("width"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Width = data
+		case "height":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("height"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Height = data
 		case "showFrom":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("showFrom"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -42972,7 +43173,7 @@ func (ec *executionContext) unmarshalInputUpdatePopupInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "showFrom", "showTo", "registerDate"}
+	fieldsInOrder := [...]string{"title", "description", "status", "orderNum", "displayType", "width", "height", "showFrom", "showTo", "registerDate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -43007,6 +43208,27 @@ func (ec *executionContext) unmarshalInputUpdatePopupInput(ctx context.Context, 
 				return it, err
 			}
 			it.OrderNum = data
+		case "displayType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayType"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayType = data
+		case "width":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("width"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Width = data
+		case "height":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("height"))
+			data, err := ec.unmarshalOUint2ᚖuint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Height = data
 		case "showFrom":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("showFrom"))
 			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
@@ -45685,6 +45907,12 @@ func (ec *executionContext) _Popup(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "orderNum":
 			out.Values[i] = ec._Popup_orderNum(ctx, field, obj)
+		case "displayType":
+			out.Values[i] = ec._Popup_displayType(ctx, field, obj)
+		case "width":
+			out.Values[i] = ec._Popup_width(ctx, field, obj)
+		case "height":
+			out.Values[i] = ec._Popup_height(ctx, field, obj)
 		case "registerDate":
 			out.Values[i] = ec._Popup_registerDate(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

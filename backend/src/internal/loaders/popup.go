@@ -133,6 +133,21 @@ func (pr *popupReader) CreatePopup(ctx context.Context, updates model.NewPopupIn
 		ShowTo:       *updates.ShowTo,
 	}
 
+	// Set new fields with defaults if not provided
+	if updates.DisplayType != nil {
+		popup.DisplayType = *updates.DisplayType
+	} else {
+		popup.DisplayType = "standard"
+	}
+
+	if updates.Width != nil {
+		popup.Width = *updates.Width
+	}
+
+	if updates.Height != nil {
+		popup.Height = *updates.Height
+	}
+
 	// Override registerDate if provided
 	if updates.RegisterDate != nil {
 		popup.RegisterDate = *updates.RegisterDate
@@ -188,6 +203,18 @@ func (pr *popupReader) UpdatePopup(ctx context.Context, pID uint, updates model.
 
 	if updates.ShowTo != nil {
 		popup.ShowTo = *updates.ShowTo
+	}
+
+	if updates.DisplayType != nil {
+		popup.DisplayType = *updates.DisplayType
+	}
+
+	if updates.Width != nil {
+		popup.Width = *updates.Width
+	}
+
+	if updates.Height != nil {
+		popup.Height = *updates.Height
 	}
 
 	pr.db.Save(popup)

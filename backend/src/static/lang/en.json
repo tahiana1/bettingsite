@@ -1865,5 +1865,23 @@
   "level1SuddenBonusSetting" : "Level1 Sudden Bonus Setting",
   "chargeBonus4Setting" : "Charge Bonus 4 Setting",
   "chargeBonus5Setting" : "Charge Bonus 5 Setting",
-  "selectLevelToEdit" : "Select Level To Edit"
-}
+  "selectLevelToEdit" : "Select Level To Edit",
+  "popupTitle" : "Popup Title",
+  "displayType" : "Display Type",
+  "width" : "Width",
+  "createNewPopup" : "Create New Popup",
+  "afterLoggingInPopupTitle" : "After Logging In Popup Title",
+  "standard" : "Standard",
+  "center" : "Center",
+  "doesntExist" : "Doesn't Exist",
+  "if0NoWidthRestriction" : "If 0 No Width Restriction",
+  "if0NoheightLimit" : "If 0 No Height Limit",
+  "content" : "Content",
+  "startDate" : "Start Date",
+  "endDate" : "End Date",
+  "registration" : "Registration",
+  "popup" : "Popup",
+  "settings" : "Settings",
+  "if0NoHeightLimit" : "If 0 No Height Limit",
+  "heightMinimum" : "Height Minimum"
+} 
