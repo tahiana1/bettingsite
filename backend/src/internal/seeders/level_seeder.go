@@ -85,16 +85,37 @@ func createLevel(name string, levelNumber int, levelType string, sortOrder int, 
 		FirstDepositBonusWeekdays: baseBonus, FirstDepositBonusWeekends: baseBonus + 2.0,
 		EveryDayBonusWeekday: baseBonus * 0.4, WeekendBonus: baseBonus * 0.6,
 		SignUpFirstDepositBonus: baseBonus * 2, MaximumBonusMoneyOneTime: maxBonus,
-		MaximumBonusMoneyOneDay: maxBonus * 2, ReferralBonus: baseBonus * 0.2,
+		MaximumBonusMoneyOneDay: maxBonus * 2,
+
+		// Referral Bonuses
+		ReferralBonus: baseBonus * 0.2, ReferralBonusOneTime: maxBonus * 0.05,
+		ReferralBonusOneDay: maxBonus * 0.1,
 
 		// Game-Specific Rolling Rates
 		LiveRollingRate: 12.0, SlotRollingRate: 10.0, HoldemRollingRate: 10.0,
 		MiniRollingRate: 10.0, SportsRollingRate: 10.0, VirtualGameRollingRate: 10.0,
 		LotusRollingRate: 10.0, MgmRollingRate: 10.0, TouchRollingRate: 10.0,
 
+		// Sports-Specific Rolling Rates
+		SportsDanpolRollingRate: 10.0, SportsDupolRollingRate: 10.0,
+		Sports3PoleRollingRate: 10.0, Sports4PoleRollingRate: 10.0,
+		Sports5PoleRollingRate: 10.0, SportsDapolRollingRate: 10.0,
+
+		// Mini-Specific Rolling Rates
+		MiniDanpolRollingRate: 10.0, MiniCombinationRollingRate: 10.0,
+
 		// Payback Settings
-		PaybackPercent: baseBonus * 0.1, MaximumPaymentAmount: maxBonus,
-		PaymentUponDepositOfXOrMoreTimes: 1, PaymentUponDepositForXDaysOrMore: 1,
+		StartDateAndTime:                     nil,
+		Deadline:                             nil,
+		PaymentDate:                          nil,
+		ApplicabliltyByGame:                  `[]`,
+		PaybackPercent:                       baseBonus * 0.1,
+		IfTheAmountIsNegativeProcessedAsZero: false,
+		NonPaymentWhenDepositWithdrawalDifferenceIsNegative: false,
+		PaymentToDistributorsAsWell:                         false,
+		MaximumPaymentAmount:                                maxBonus,
+		PaymentUponDepositOfXOrMoreTimes:                    1,
+		PaymentUponDepositForXDaysOrMore:                    1,
 
 		// Bonus Limits and Restrictions
 		RechargeBonusLimit: maxBonus * 2, SameDayFirstDepositBonusLimit: false,
@@ -109,7 +130,7 @@ func createLevel(name string, levelNumber int, levelType string, sortOrder int, 
 		SurpriseBonusRestrictionAfterCashingOutWithinSurpriseBonusTime: false,
 		RestrictionsApplyAfterWithdrawalOfSurpriseBonus:                false,
 		MaximumNumberOfDailySurpriseBonusPayments:                      0,
-		MaximumNumberOfSurpriseBonusPaymentsPerTimePeriod:              0,
+		MaximumNumberOfSurpriseBonusPaymentsPerTimePeriod:              0.0,
 
 		// Game Access Control
 		LiveGameAccess: true, SlotGameAccess: true, HoldemGameAccess: true,
