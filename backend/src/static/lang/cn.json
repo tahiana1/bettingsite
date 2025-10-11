@@ -1885,5 +1885,9 @@
   "popup" : "弹窗",
   "settings" : "设置",
   "if0NoHeightLimit" : "为0则无限制高度",
-  "heightMinimum" : "最小高度"
+  "heightMinimum" : "最小高度", 
+  "showOn" : "显示时机",
+  "both" : "登录前后都显示",
+  "beforeLogin" : "登录前显示",
+  "afterLogin" : "登录后显示"
 }

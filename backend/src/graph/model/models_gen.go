@@ -208,6 +208,7 @@ type NewPopupInput struct {
 	Status       *bool      `json:"status,omitempty"`
 	OrderNum     *uint      `json:"orderNum,omitempty"`
 	DisplayType  *string    `json:"displayType,omitempty"`
+	ShowOn       *string    `json:"showOn,omitempty"`
 	Width        *uint      `json:"width,omitempty"`
 	Height       *uint      `json:"height,omitempty"`
 	ShowFrom     *time.Time `json:"showFrom,omitempty"`
@@ -516,6 +517,7 @@ type UpdatePopupInput struct {
 	Status       *bool      `json:"status,omitempty"`
 	OrderNum     *uint      `json:"orderNum,omitempty"`
 	DisplayType  *string    `json:"displayType,omitempty"`
+	ShowOn       *string    `json:"showOn,omitempty"`
 	Width        *uint      `json:"width,omitempty"`
 	Height       *uint      `json:"height,omitempty"`
 	ShowFrom     *time.Time `json:"showFrom,omitempty"`

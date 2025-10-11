@@ -6,10 +6,13 @@ The Popup settings page has been transformed from a table-based layout to a card
 ## Changes Made
 
 ### 1. Database Model Updates (`backend/src/internal/models/popup.go`)
-Added three new fields to the `Popup` model:
-- **DisplayType** (string): Controls when/where to display the popup
+Added four new fields to the `Popup` model:
+- **DisplayType** (string): Controls where to display the popup
   - Options: `"standard"`, `"center"`, `"doesn't exist"`
   - Default: `"standard"`
+- **ShowOn** (string): Controls when to show the popup (before/after login)
+  - Options: `"beforeLogin"`, `"afterLogin"`, `"both"`
+  - Default: `"both"`
 - **Width** (uint): Popup width in pixels
   - Default: `0` (no width restriction)
 - **Height** (uint): Popup height in pixels (minimum)
@@ -17,7 +20,7 @@ Added three new fields to the `Popup` model:
 
 ### 2. GraphQL Schema Updates (`backend/src/graph/schema/popup.graphql`)
 Updated the GraphQL schema to include the new fields:
-- Added `displayType`, `width`, and `height` to the `Popup` type
+- Added `displayType`, `showOn`, `width`, and `height` to the `Popup` type
 - Added these fields to `NewPopupInput` (for creation)
 - Added these fields to `UpdatePopupInput` (for updates)
 
@@ -30,6 +33,7 @@ Updated the Create and Update functions:
 Updated the TypeScript `Popup` interface to include:
 ```typescript
 displayType: string;
+showOn: string;
 width: number;
 height: number;
 ```
@@ -51,9 +55,11 @@ Complete redesign from table-based to card-based layout:
 #### New Design:
 - **"Create New Popup" Card** at the top with inline form
 - **Individual Cards** for each existing popup with inline editing
+- **3 cards per row** on desktop (responsive on mobile/tablet)
 - Each card includes:
   - Popup title input
   - Display Type dropdown (standard/center/doesn't exist)
+  - Show On dropdown (beforeLogin/afterLogin/both)
   - Width input (with hint: "if 0, no width restriction")
   - Height input (with hint: "if 0, no height limit")
   - Rich text editor (Quill) for content
@@ -75,6 +81,7 @@ The database will be automatically migrated when the backend restarts, thanks to
 ### Existing Data
 Existing popups in the database will have:
 - `display_type` = `"standard"` (default)
+- `show_on` = `"both"` (default)
 - `width` = `0` (no restriction)
 - `height` = `0` (no limit)
 
@@ -89,8 +96,9 @@ Existing popups in the database will have:
    - Navigate to the Popup Settings page in the admin interface
 
 3. **Test creating a new popup:**
-   - Fill in the "Create New Popup" form
+   - Fill in the "Create New Popup" form (first card in the grid)
    - Select a display type
+   - Select when to show the popup (before/after login)
    - Set width and height values
    - Add content using the rich text editor
    - Click "Registration"
@@ -114,6 +122,10 @@ The following translation keys should be added to your i18n files:
 - `standard` - "standard"
 - `center` - "center"
 - `doesntExist` - "doesn't exist"
+- `showOn` - "Show On"
+- `both` - "Both (Before & After Login)"
+- `beforeLogin` - "Before Login"
+- `afterLogin` - "After Login"
 - `width` - "Width"
 - `heightMinimum` - "Height (minimum)"
 - `if0NoWidthRestriction` - "if 0, there is no width restriction"
@@ -145,8 +157,10 @@ The following translation keys should be added to your i18n files:
 ## Notes
 
 - The card-based layout provides a more intuitive interface for managing popups
+- **3 cards per row** layout on desktop (responsive on smaller screens)
 - Each popup can now be edited inline without opening a modal
-- The display type field allows for future control over when/where popups appear
+- The **display type** field controls where popups appear (standard/center/doesn't exist)
+- The **show on** field controls when popups appear (before login/after login/both)
 - Width and height controls give precise control over popup dimensions
 - All existing functionality (create, read, update, delete) is preserved
 

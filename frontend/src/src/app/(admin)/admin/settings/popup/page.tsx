@@ -184,6 +184,7 @@ const PopupPage: React.FC = () => {
       orderNum: values.orderNum || 0,
       description: createEditorContent,
       displayType: values.displayType || 'standard',
+      showOn: values.showOn || 'both',
       width: values.width || 0,
       height: values.height || 0,
       showFrom: values.duration ? values.duration[0].toISOString() : new Date().toISOString(),
@@ -214,6 +215,7 @@ const PopupPage: React.FC = () => {
       title: values.title,
       description: editEditorContents[popupId] || '',
       displayType: values.displayType,
+      showOn: values.showOn,
       width: values.width,
       height: values.height,
       showFrom: values.duration ? values.duration[0].toISOString() : undefined,
@@ -288,6 +290,7 @@ const PopupPage: React.FC = () => {
                     onFinish={onCreate}
                     initialValues={{
                       displayType: 'standard',
+                      showOn: 'both',
                       width: 400,
                       height: 600,
                       status: false,
@@ -298,13 +301,26 @@ const PopupPage: React.FC = () => {
                       <Input placeholder={t("afterLoggingInPopupTitle")} />
                     </Form.Item>
 
-                    <Form.Item name="displayType" label={t("displayType")}>
-                      <Select>
-                        <Select.Option value="standard">{t("standard")}</Select.Option>
-                        <Select.Option value="center">{t("center")}</Select.Option>
-                        <Select.Option value="doesntExist">{t("doesntExist")}</Select.Option>
-                      </Select>
-                    </Form.Item>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Form.Item name="displayType" label={t("displayType")}>
+                          <Select>
+                            <Select.Option value="standard">{t("standard")}</Select.Option>
+                            <Select.Option value="center">{t("center")}</Select.Option>
+                            <Select.Option value="doesntExist">{t("doesntExist")}</Select.Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={12}>
+                        <Form.Item name="showOn" label={t("showOn")}>
+                          <Select>
+                            <Select.Option value="both">{t("both")}</Select.Option>
+                            <Select.Option value="beforeLogin">{t("beforeLogin")}</Select.Option>
+                            <Select.Option value="afterLogin">{t("afterLogin")}</Select.Option>
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    </Row>
 
                     <Row gutter={8}>
                       <Col span={12}>
@@ -386,13 +402,26 @@ const PopupPage: React.FC = () => {
                         <Input />
                       </Form.Item>
 
-                      <Form.Item name="displayType" label={t("displayType")}>
-                        <Select>
-                          <Select.Option value="standard">{t("standard")}</Select.Option>
-                          <Select.Option value="center">{t("center")}</Select.Option>
-                          <Select.Option value="doesntExist">{t("doesntExist")}</Select.Option>
-                        </Select>
-                      </Form.Item>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <Form.Item name="displayType" label={t("displayType")}>
+                            <Select>
+                              <Select.Option value="standard">{t("standard")}</Select.Option>
+                              <Select.Option value="center">{t("center")}</Select.Option>
+                              <Select.Option value="doesntExist">{t("doesntExist")}</Select.Option>
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item name="showOn" label={t("showOn")}>
+                            <Select>
+                              <Select.Option value="both">{t("both")}</Select.Option>
+                              <Select.Option value="beforeLogin">{t("beforeLogin")}</Select.Option>
+                              <Select.Option value="afterLogin">{t("afterLogin")}</Select.Option>
+                            </Select>
+                          </Form.Item>
+                        </Col>
+                      </Row>
 
                       <Row gutter={8}>
                         <Col span={12}>

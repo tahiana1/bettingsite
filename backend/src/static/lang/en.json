@@ -1883,5 +1883,9 @@
   "popup" : "Popup",
   "settings" : "Settings",
   "if0NoHeightLimit" : "If 0 No Height Limit",
-  "heightMinimum" : "Height Minimum"
+  "heightMinimum" : "Height Minimum",
+  "showOn" : "Show On",
+  "both" : "Both (Before & After Login)",
+  "beforeLogin" : "Before Login",
+  "afterLogin" : "After Login"
 } 

@@ -18,6 +18,7 @@ export const FILTER_POPUP = gql`
         orderNum
         status
         displayType
+        showOn
         width
         height
         registerDate
@@ -41,6 +42,7 @@ export const CREATE_POPUP = gql`
       orderNum
       status
       displayType
+      showOn
       width
       height
       registerDate
@@ -59,6 +61,7 @@ export const UPDATE_POPUP = gql`
       orderNum
       status
       displayType
+      showOn
       width
       height
       registerDate

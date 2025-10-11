@@ -309,6 +309,7 @@ interface Popup {
   orderNum: number;
   status: boolean;
   displayType: string;
+  showOn: string;
   width: number;
   height: number;
   registerDate: string;

@@ -140,6 +140,12 @@ func (pr *popupReader) CreatePopup(ctx context.Context, updates model.NewPopupIn
 		popup.DisplayType = "standard"
 	}
 
+	if updates.ShowOn != nil {
+		popup.ShowOn = *updates.ShowOn
+	} else {
+		popup.ShowOn = "both"
+	}
+
 	if updates.Width != nil {
 		popup.Width = *updates.Width
 	}
@@ -207,6 +213,10 @@ func (pr *popupReader) UpdatePopup(ctx context.Context, pID uint, updates model.
 
 	if updates.DisplayType != nil {
 		popup.DisplayType = *updates.DisplayType
+	}
+
+	if updates.ShowOn != nil {
+		popup.ShowOn = *updates.ShowOn
 	}
 
 	if updates.Width != nil {
