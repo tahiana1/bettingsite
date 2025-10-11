@@ -268,10 +268,10 @@
 	z-index: 999999!important;
 	position: relative;
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-	width: 400px;
-	min-width: 400px;
+	/* width: 400px; */
+	/* min-width: 400px;
 	min-height: 500px;
-	max-height: 500px;
+	max-height: 500px; */
 	overflow-y: auto;
 }
 
@@ -377,8 +377,8 @@
 	}
 	
 	.totoPopup-window {
-		min-height: 250px;
-		max-height: 400px;
+		/* min-height: 250px;
+		max-height: 400px; */
 		padding: 12px;
 		border-radius: 8px;
 	}

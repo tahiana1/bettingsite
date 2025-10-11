@@ -20,6 +20,7 @@ func GetPopups(c *gin.Context) {
 		Where("status = ?", true).
 		Where("show_from <= ?", now).
 		Where("show_to >= ?", now).
+		Order("order_num ASC").
 		Order("created_at DESC").
 		Find(&popups).Error
 

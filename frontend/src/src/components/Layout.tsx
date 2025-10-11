@@ -14,6 +14,7 @@ import Head from "./Header";
 import Loading from "@/assets/img/main/loader.png";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import api from "@/api";
 
 function LayoutContent({
   children,
@@ -27,8 +28,31 @@ function LayoutContent({
   const [popupsData, setPopupsData] = useState([]);
   const [closedPopups, setClosedPopups] = useState<Set<number>>(new Set());
   const [dontShowAgainPopups, setDontShowAgainPopups] = useState<Set<number>>(new Set());
-  const [popupLoading, setPopupLoading] = useState(true);
-  const [popupError, setPopupError] = useState<Error | null>(null);
+  const [profile, setProfile] = useState<any>(null);
+
+  // Fetch popups from backend API
+  const fetchPopups = async (isLoggedIn: boolean) => {
+    try {
+      const response = await api("common/popups");
+      
+      if (response.success && response.data) {
+        // Filter popups based on showOn field
+        const filteredPopups = response.data.filter((popup: any) => {
+          // Check showOn field
+          if (popup.showOn === 'beforeLogin' && isLoggedIn) return false;
+          if (popup.showOn === 'afterLogin' && !isLoggedIn) return false;
+          // 'both' shows to everyone
+          
+          return true;
+        });
+        
+        setPopupsData(filteredPopups);
+      }
+    } catch (error) {
+      console.error("Error fetching popups:", error);
+    }
+  };
+
   useEffect(() => {
     setMount(true);
     
@@ -50,28 +74,26 @@ function LayoutContent({
       setDontShowAgainPopups(validDontShow);
     }
 
-    // Fetch popup data from REST API
-    const fetchPopups = async () => {
-      try {
-        setPopupLoading(true);
-        const response = await fetch('/api/v1/common/popups');
-        if (!response.ok) {
-          throw new Error('Failed to fetch popups');
-        }
-        const data = await response.json();
-        if (data.success && data.data) {
-          setPopupsData(data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching popups:', error);
-        setPopupError(error as Error);
-      } finally {
-        setPopupLoading(false);
-      }
-    };
+    // Fetch popups initially (before login check)
+    fetchPopups(false);
 
-    fetchPopups();
+    // Check if user is logged in and fetch popups again
+    api("user/me").then((res) => {
+      setProfile(res.data.profile);
+      // Refetch popups with logged-in status
+      fetchPopups(true);
+    }).catch((err) => {
+      console.log("User not logged in");
+      // User not logged in, already fetched popups for beforeLogin
+    });
   }, []);
+
+  // Refetch popups when profile changes (user logs in/out)
+  useEffect(() => {
+    if (profile !== null) {
+      fetchPopups(!!profile?.id);
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (isDarkTheme) {
@@ -83,33 +105,33 @@ function LayoutContent({
 
 
   // Handler for close button (temporary hide - no persistence)
-  const handleClosePopup = (popupIndex: number) => {
+  const handleClosePopup = (popupId: number) => {
     const newClosedPopups = new Set(closedPopups);
-    newClosedPopups.add(popupIndex);
+    newClosedPopups.add(popupId);
     setClosedPopups(newClosedPopups);
     // No localStorage persistence - popup will show again on page reload
   };
 
   // Handler for don't show again checkbox (24 hour persistence)
-  const handleDontShowAgain = (popupIndex: number, checked: boolean) => {
+  const handleDontShowAgain = (popupId: number, checked: boolean) => {
     const newDontShowAgain = new Set(dontShowAgainPopups);
     
     if (checked) {
-      newDontShowAgain.add(popupIndex);
+      newDontShowAgain.add(popupId);
       // Also add to closed popups for immediate hiding
       const newClosedPopups = new Set(closedPopups);
-      newClosedPopups.add(popupIndex);
+      newClosedPopups.add(popupId);
       setClosedPopups(newClosedPopups);
     } else {
-      newDontShowAgain.delete(popupIndex);
+      newDontShowAgain.delete(popupId);
     }
     
     setDontShowAgainPopups(newDontShowAgain);
     
     // Save to localStorage with timestamp for 24-hour persistence
     const dontShowData: { [key: string]: number } = {};
-    newDontShowAgain.forEach(popupId => {
-      dontShowData[popupId.toString()] = Date.now();
+    newDontShowAgain.forEach(id => {
+      dontShowData[id.toString()] = Date.now();
     });
     localStorage.setItem('dontShowAgainPopups', JSON.stringify(dontShowData));
   };
@@ -130,31 +152,48 @@ function LayoutContent({
         {
           popupsData.map((popup: any, index:number) => {
             // Don't show popup if it's been closed or marked as don't show again
-            if (closedPopups.has(index) || dontShowAgainPopups.has(index)) {
+            if (closedPopups.has(popup.id) || dontShowAgainPopups.has(popup.id)) {
               return null;
             }
             
-            return <div className="totoPopup-window" key={index}>
+            // Apply width and height from database
+            const popupStyle: React.CSSProperties = {};
+            if (popup.width > 0) {
+              popupStyle.width = `${popup.width}px`;
+            }
+            if (popup.height > 0) {
+              popupStyle.minHeight = `${popup.height}px`;
+              popupStyle.maxHeight = `${popup.height}px`;
+            }
+            
+            return <div 
+              className="totoPopup-window" 
+              key={popup.id}
+              style={popupStyle}
+            >
               <h2 className="popup-title px-4">{popup?.title}</h2>
               <div
                 dangerouslySetInnerHTML={{
                   __html: popup?.description
                 }}
-                className="popup-content max-h-[320px] overflow-y-auto px-4"
+                className="popup-content overflow-y-auto px-4"
+                style={{
+                  maxHeight: popup.height > 0 ? `${popup.height - 100}px` : '320px'
+                }}
               />
               
               <div className="absolute w-full flex pr-2 justify-between items-center bg-[rgba(0,0,0,0.9)] left-0 top-0 text-white flex items-center">
                 <div className="px-4 py-[12px] gap-2 flex items-center">
                   <Checkbox 
                     className="relative bg-white w-4 h-4"
-                    checked={dontShowAgainPopups.has(index)}
-                    onChange={(e) => handleDontShowAgain(index, e.target.checked)}
+                    checked={dontShowAgainPopups.has(popup.id)}
+                    onChange={(e) => handleDontShowAgain(popup.id, e.target.checked)}
                   /> 
                   {t("dontShowAgain")}
                 </div>
                 <button 
                   className="w-8 h-8 bg-gray-400 cursor-pointer rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors"
-                  onClick={() => handleClosePopup(index)}
+                  onClick={() => handleClosePopup(popup.id)}
                 >
                   <svg 
                     width="16" 
