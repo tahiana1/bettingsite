@@ -29,6 +29,8 @@ function LayoutContent({
   const [closedPopups, setClosedPopups] = useState<Set<number>>(new Set());
   const [dontShowAgainPopups, setDontShowAgainPopups] = useState<Set<number>>(new Set());
   const [profile, setProfile] = useState<any>(null);
+  const [isAuthChecked, setIsAuthChecked] = useState<boolean>(false);
+  const [popupsLoaded, setPopupsLoaded] = useState<boolean>(false);
 
   // Fetch popups from backend API
   const fetchPopups = async (isLoggedIn: boolean) => {
@@ -47,9 +49,11 @@ function LayoutContent({
         });
         
         setPopupsData(filteredPopups);
+        setPopupsLoaded(true);
       }
     } catch (error) {
       console.error("Error fetching popups:", error);
+      setPopupsLoaded(true);
     }
   };
 
@@ -74,26 +78,29 @@ function LayoutContent({
       setDontShowAgainPopups(validDontShow);
     }
 
-    // Fetch popups initially (before login check)
-    fetchPopups(false);
-
-    // Check if user is logged in and fetch popups again
-    api("user/me").then((res) => {
-      setProfile(res.data.profile);
-      // Refetch popups with logged-in status
-      fetchPopups(true);
-    }).catch((err) => {
-      console.log("User not logged in");
-      // User not logged in, already fetched popups for beforeLogin
-    });
+    // Check if user is logged in FIRST, then fetch popups
+    api("user/me")
+      .then((res) => {
+        setProfile(res.data.profile);
+        setIsAuthChecked(true);
+        // User is logged in - fetch popups for logged-in users
+        fetchPopups(true);
+      })
+      .catch((err) => {
+        console.log("User not logged in");
+        setIsAuthChecked(true);
+        // User not logged in - fetch popups for non-logged-in users
+        fetchPopups(false);
+      });
   }, []);
 
-  // Refetch popups when profile changes (user logs in/out)
+  // Refetch popups when profile changes (user logs in/out during session)
   useEffect(() => {
-    if (profile !== null) {
+    if (isAuthChecked && profile !== null) {
+      setPopupsLoaded(false);
       fetchPopups(!!profile?.id);
     }
-  }, [profile]);
+  }, [profile?.id]);
 
   useEffect(() => {
     if (isDarkTheme) {
@@ -150,7 +157,8 @@ function LayoutContent({
       <WebSocketTracker />
       <div className="popup-container">
         {
-          popupsData.map((popup: any, index:number) => {
+          // Only render popups after auth is checked and popups are loaded
+          (isAuthChecked && popupsLoaded) && popupsData.map((popup: any, index:number) => {
             // Don't show popup if it's been closed or marked as don't show again
             if (closedPopups.has(popup.id) || dontShowAgainPopups.has(popup.id)) {
               return null;
@@ -159,11 +167,14 @@ function LayoutContent({
             // Apply width and height from database
             const popupStyle: React.CSSProperties = {};
             if (popup.width > 0) {
+              popupStyle.minWidth = `${popup.width}px`;
+              popupStyle.maxWidth = `${popup.width}px`;
               popupStyle.width = `${popup.width}px`;
             }
             if (popup.height > 0) {
               popupStyle.minHeight = `${popup.height}px`;
               popupStyle.maxHeight = `${popup.height}px`;
+              popupStyle.height = `${popup.height}px`;
             }
             
             return <div 
@@ -178,7 +189,8 @@ function LayoutContent({
                 }}
                 className="popup-content overflow-y-auto px-4"
                 style={{
-                  maxHeight: popup.height > 0 ? `${popup.height - 100}px` : '320px'
+                  maxHeight: popup.height > 0 ? `${popup.height - 100}px` : '320px',
+                  minHeight: popup.height > 0 ? `${popup.height - 100}px` : 'auto'
                 }}
               />
               
