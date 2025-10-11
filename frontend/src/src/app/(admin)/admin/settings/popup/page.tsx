@@ -298,7 +298,7 @@ const PopupPage: React.FC = () => {
                     }}
                   >
                     <Form.Item name="title" label={t("popupTitle")}>
-                      <Input placeholder={t("afterLoggingInPopupTitle")} />
+                      <Input />
                     </Form.Item>
 
                     <Row gutter={8}>
