@@ -165,6 +165,15 @@ const UserPage: React.FC = () => {
   ];
   const columns: TableProps<User>["columns"] = [
     {
+      title: t("id"),
+      dataIndex: "id",
+      key: "id",
+      fixed: "left",
+      render: (_, record, index) => {
+        return index + 1;
+      },
+    },
+    {
       title: t("userid"),
       dataIndex: ["user", "userid"],
       key: 'users.userid',
@@ -181,11 +190,6 @@ const UserPage: React.FC = () => {
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.userid}</p>
         </div>
       },
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("site"),
@@ -197,16 +201,20 @@ const UserPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root.userid",
       key: "root.userid",
-      render(_, record,) {
-        return record.root?.userid;
+      render(_, record) {
+        return record.root?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.root?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.root?.userid}</p>
+        </div> : "";
       },
     },
     {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
-      render(_, record,) {
-        return record.parent?.userid;
+      render(_, record) {
+        return record.parent?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.parent?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.parent?.userid}</p>
+        </div> : "";
       },
     },
     {
@@ -214,33 +222,18 @@ const UserPage: React.FC = () => {
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, { profile }) => profile.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("holderName"),
       dataIndex: "profile.holderName",
       key: '"Profile"."holder_name"',
       render: (_, { profile }) => profile.holderName,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("phone"),
       dataIndex: "profile.phone",
       key: '"Profile"."phone"',
       render: (_, { profile }) => profile.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("birthday"),
