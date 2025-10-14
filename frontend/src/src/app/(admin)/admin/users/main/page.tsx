@@ -118,17 +118,26 @@ const UserPage: React.FC = () => {
       refetch(tableOptions);
     });
   };
-  const labelRenderer = (props: any) =>
-    props.value.toString() == "100"
-      ? "Premium"
-      : (parseInt(props.value.toString()) > 100 ? "VIP " : "Level ") +
-        props.value;
+  const labelRenderer = (props: any) => {
+    const val = parseInt(props.value.toString());
+    if (val === 100) return "Premium";
+    if (val === 101) return "VIP 1";
+    if (val > 100) return "VIP " + (val - 100);
+    return "Level " + val;
+  };
 
   const levelOption = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 101, 102, 100,
   ].map((i) => ({
     value: i,
-    label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
+    label:
+      i == 100
+        ? "Premium"
+        : i == 101
+        ? "VIP 1"
+        : i > 100
+        ? "VIP " + (i - 100)
+        : "Level " + i,
   }));
 
   const userTypeOption = [
