@@ -1561,7 +1561,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               placeholder={t("mostRecentIP")}
               value={fields.currentIP || ""}
             />
-            {/* <UserInfoStyle3Field
+            <UserInfoStyle3Field
               label={t("recentlyConnectedDevice")}
               placeholder={t("recentlyConnectedDevice")}
               value={""}
@@ -1569,8 +1569,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onChange={handleChange("sameIPCheck")}
               onButtonClick={handleButtonClick("sameIPCheck")}
               loading={loading.sameIPCheck}
-            /> */}
-            {/* <DisabledRollingPercentyInfoField
+            />
+            <DisabledRollingPercentyInfoField
               label={t("rollingPercent")}   
               placeholder=""  
               value={fields.rollingPercenty}
@@ -1578,8 +1578,8 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
-            />   */}
-            {/* <GameUsageInfoField
+            />  
+            <GameUsageInfoField
               label="Game usage"   
               placeholder=""  
               value={fields.rollingPercenty}
@@ -1596,9 +1596,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("slotcityPriorityUse")}
               loading={loading.slotcityPriorityUse}
-            />   */}
+            />  
           </div>
-          {/* <div className="flex flex-col gap-4 mt-10">
+          <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
               label={t("webLoginAvailable")}   
               placeholder=""  
@@ -2162,7 +2162,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onButtonClick={handleButtonClick("minimumFolderForSportsBetting")}
               loading={loading.minimumFolderForSportsBetting}
             />
-          </div> */}
+          </div>
         </div>
         {/* <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">

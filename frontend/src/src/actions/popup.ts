@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 
+
 export const FILTER_POPUP = gql`
   query GetPopups(
     $filters: [Filter!]
