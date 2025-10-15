@@ -139,6 +139,9 @@ const LogStatusPage: React.FC = () => {
       dataIndex: "id",
       key: "id",
       fixed: "left",
+      render: (_, record, index) => {
+        return index + 1;
+      },
     },
     {
       title: t("IP"),

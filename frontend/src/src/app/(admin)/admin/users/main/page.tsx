@@ -81,16 +81,16 @@ const UserPage: React.FC = () => {
   };
   
   const onUserLevelChange = (u: User, v: string = "") => {
-    updateProfile({
-      variables: {
-        id: u.id,
-        input: {
-          level: v ? parseInt(v) : 0,
-        },
-      },
-    }).then(() => {
-      refetch(tableOptions);
-    });
+    // updateProfile({
+    //   variables: {
+    //     id: u.id,
+    //     input: {
+    //       level: v ? parseInt(v) : 0,
+    //     },
+    //   },
+    // }).then(() => {
+    //   refetch(tableOptions);
+    // });
   };
 
   const onUserTypeChange = (u: User, v: string = "") => {
@@ -842,19 +842,6 @@ const UserPage: React.FC = () => {
               <Space.Compact className="gap-1">
                 <Button size="small" type="primary" onClick={onResetCoupon}>
                   {t("reset_all_coupon")}
-                </Button>
-                <Button
-                  size="small"
-                  type="primary"
-                  onClick={() => setColorModal(true)}
-                >
-                  {t("change_color_in_batches")}
-                </Button>
-                <Button size="small" type="primary">
-                  {t("change_password_in_bulk")}
-                </Button>
-                <Button size="small" type="primary">
-                  {t("point_multi_payment")}
                 </Button>
               </Space.Compact>
             </Space>

@@ -136,11 +136,15 @@ const LogStatusPage: React.FC = () => {
       dataIndex: "id",
       key: "id",
       fixed: "left",
+      render: (_, record, index) => {
+        return index + 1;
+      },
     },
     {
       title: t("userid"),
       dataIndex: "user.userid",
       key: "user.userid",
+      fixed: "left",
       render: (text, record) => {
         if (record.user?.id) {
           const userId = record.user.id;

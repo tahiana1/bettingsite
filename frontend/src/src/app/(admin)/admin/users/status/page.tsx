@@ -67,6 +67,15 @@ const UserStatusPage: React.FC = () => {
 
   const columns: TableProps<User>["columns"] = [
     {
+      title: t("id"),
+      dataIndex: "id",
+      key: "id",
+      fixed: "left",
+      render: (_, record, index) => {
+        return index + 1;
+      },
+    },
+    {
       title: t("userid"),
       dataIndex: ["user", "userid"],
       key: '"User"."userid"',
