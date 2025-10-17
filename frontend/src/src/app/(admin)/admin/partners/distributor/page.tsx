@@ -13,12 +13,10 @@ import {
   Select,
   Modal,
   Form,
-  Checkbox,
   Switch,
   InputNumber,
-  Tabs,
+  message
 } from "antd";
-import { FilterDropdown } from "@refinedev/antd";
 import type { RadioChangeEvent, TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
@@ -42,6 +40,7 @@ import BasicInformation from "@/components/Admin/Distributor/Basic";
 import LosingSettingPage from "./pages/losingSetting/page";
 import "./index.css";
 import RollingCasinoPage from "./pages/rollingCasino/page";
+import api from "@/api";
 
 const formItemLayout = {
   labelCol: {
@@ -108,10 +107,10 @@ const PartnerPage: React.FC = () => {
   const [regModal, setRegModal] = useState<boolean>(false);
   const [domainModal, setDomainModal] = useState<boolean>(false);
   const [moneyModal, setMoneyModal] = useState<boolean>(false);
-  const [userModal, setUserModal] = useState<boolean>(false);
   const [losingRollingModal, setLosingRollingModal] = useState<boolean>(false);
   const [selectedLosingRollingTab, setSelectedLosingRollingTab] = useState<string>("losingSetting");
   const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
 
   const [createUser] = useMutation(CREATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
@@ -128,6 +127,10 @@ const PartnerPage: React.FC = () => {
         console.log({ err });
       });
   };
+
+  const popupWindow = (id: number) => {
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
 
   const onApproveUser = (user: User) => {
     approveUser({ variables: { id: user.id } })
@@ -191,9 +194,80 @@ const PartnerPage: React.FC = () => {
     });
   };
 
+  const onDeposit = async () => {
+    if (!currentUser?.id) {
+      message.error(t("userNotSelected"));
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      message.error(t("invalidAmount"));
+      return;
+    }
+
+    try {
+      const response = await api("admin/transaction/deposit", {
+        method: "POST",
+        data: {
+          userId: currentUser.id,
+          amount: amount,
+        },
+      });
+
+      message.success(t("depositSuccess"));
+      setMoneyModal(false);
+      setAmount(0);
+      form.resetFields();
+      
+      // Refetch users to update balance
+      refetch(tableOptions);
+    } catch (error: any) {
+      console.error("Deposit error:", error);
+      message.error(error?.response?.data?.error || t("depositFailed"));
+    }
+  };
+
+  const onWithdraw = async () => {
+    if (!currentUser?.id) {
+      message.error(t("userNotSelected"));
+      return;
+    }
+
+    if (!amount || amount <= 0) {
+      message.error(t("invalidAmount"));
+      return;
+    }
+
+    if (amount > (currentUser?.profile?.balance ?? 0)) {
+      message.error(t("balanceNotEnough"));
+      return;
+    }
+
+    try {
+      const response = await api("admin/transaction/withdrawal", {
+        method: "POST",
+        data: {
+          userId: currentUser.id,
+          amount: amount,
+        },
+      });
+
+      message.success(t("withdrawalSuccess"));
+      setMoneyModal(false);
+      setAmount(0);
+      form.resetFields();
+      
+      // Refetch users to update balance
+      refetch(tableOptions);
+    } catch (error: any) {
+      console.error("Withdrawal error:", error);
+      message.error(error?.response?.data?.error || t("withdrawalFailed"));
+    }
+  };
+
   const onAmountChange = (e: RadioChangeEvent) => {
     if (e.target.value == "max") {
-      form.setFieldValue("amount", 232323);
+      form.setFieldValue("amount", 10000000);
     } else {
       form.setFieldValue("amount", parseInt(e.target.value));
     }
@@ -308,18 +382,13 @@ const PartnerPage: React.FC = () => {
     }
   };
 
-  const onViewCurrentMember = (u: User) => {
-    console.log({ u });
-    setCurrentUser(u);
-    setUserModal(true);
-  };
-
   const columns: TableProps<User>["columns"] = [
     {
-      title: "ID",
+      title: t('userid'),
       dataIndex: "userid",
       key: "userid",
       fixed: "left",
+      width: 200,
       sorter: {
         compare: (a, b) => {
           return a.userid > b.userid ? -1 : 1;
@@ -327,18 +396,12 @@ const PartnerPage: React.FC = () => {
         multiple: 1,
       },
       render: (text, record) => (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => onViewCurrentMember(record)}
-        >
-          {text}
-        </Button>
-      ),
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
+        <div>
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.id)}>
+            <p className="w-[15px] h-[15px] min-w-[15px] min-h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.profile?.level}</p>
+            <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.userid}</p>
+          </div>
+        </div>        
       ),
     },
     {
@@ -351,8 +414,10 @@ const PartnerPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root.userid",
       key: "root.userid",
-      render(_, record) {
-        return record.root?.userid;
+      render: (_, record) => {
+        return record.root?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.root?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.root?.userid}</p>
+        </div> : "";
       },
     },
     {
@@ -367,17 +432,14 @@ const PartnerPage: React.FC = () => {
       key: '"Profile"."nickname"',
       render: (_, { profile }) => 
         profile.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
-    },
+      },
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (text) => USER_STATUS[text],
+      render: (text) => (
+        USER_STATUS[text]
+      ),
     },
     {
       title: t("entry/exit"),
@@ -416,32 +478,41 @@ const PartnerPage: React.FC = () => {
       render: (_, { profile }) => profile.point,
     },
     {
-      title: t("settlementType"),
-      dataIndex: "settlementType",
-      key: "settlementType",
-      render: (_, { profile }) => profile.comp,
-    },
-    {
       title: t("rollingRate"),
-      dataIndex: "rollingRate",
+      dataIndex: "profile.roll",
       key: "rollingRate",
+      render: (_, record) => {
+        // Safely access live, slot, hold with fallback to 0 if not present
+        const live = record?.live ?? 0;
+        const slot = record?.slot ?? 0;
+        const hold = record?.hold ?? 0;
+        // The original renders 0/0/0/0/0/0/0/0 for missing, so we keep the placeholders
+        // If you want to append more data, expand as needed
+        return `${live}/${slot}/${hold}/0/0/0/0/0/0/0`;
+      },
     },
     {
       title: t("rolling"),
-      dataIndex: "rolling",
-      key: "rolling",
+      dataIndex: "profile",
+      key: "profile",
+      render: (_, { profile }) => (profile && typeof profile.roll !== 'undefined' ? profile.roll : '-'),
     },
     {
       title: t("losingRate"),
       dataIndex: "losingRate",
       key: "losingRate",
+      render: (_, record) => {
+        return `0/0/0/0/0/0/0/0/0/0/0`;
+      },
     },
     {
       title: t("losing"),
       dataIndex: "losing",
       key: "losing",
+      render: (_, record) => {
+        return `0`;
+      },
     },
-
     {
       title: t("membership"),
       dataIndex: "membership",
@@ -1168,7 +1239,7 @@ const PartnerPage: React.FC = () => {
                 /> */}
                 <Input.Search
                   size="small"
-                  placeholder="ID,Nickname,AccountHolder,Phone"
+                  placeholder={t("idNicknameAccount")}
                   suffix={
                     <Button
                       size="small"
@@ -1392,17 +1463,21 @@ const PartnerPage: React.FC = () => {
           >
             <Space direction="vertical" className="gap-2 w-full">
               <Form
-                initialValues={{
-                  userId: currentUser?.userid,
-                  balance: currentUser?.profile?.balance,
-                }}
+                // initialValues={{
+                //   userId: currentUser?.userid,
+                //   balance: currentUser?.profile?.balance,
+                // }}
                 form={form}
                 onFinish={() => {
                   setMoneyModal(false);
                 }}
               >
-                <Form.Item name={"balance"} label={t("balance")}>
-                  <Input disabled />
+                <Form.Item
+                  name="balance"
+                  label={t("balance")}
+                  initialValue={currentUser?.profile?.balance}
+                >
+                  <InputNumber readOnly  className="!w-full !p-0 !m-0"/>
                 </Form.Item>
                 <Space>
                   <Form.Item
@@ -1410,11 +1485,11 @@ const PartnerPage: React.FC = () => {
                     label={t("amount")}
                     className="!flex !w-full !p-0 !m-0"
                   >
-                    <InputNumber min={0} />
+                    <InputNumber min={0} onChange={(value) => setAmount(value || 0)}/>
                   </Form.Item>
-                  <Button type="primary">{t("pay")}</Button>
-                  <Button color="danger" variant="outlined">
-                    {t("cancel")}
+                  <Button type="primary" onClick={() => onDeposit()}>{t("deposit")}</Button>
+                  <Button color="danger" variant="outlined" onClick={() => onWithdraw()}>
+                    {t("withdraw")}
                   </Button>
                 </Space>
 
@@ -1425,37 +1500,25 @@ const PartnerPage: React.FC = () => {
                     onChange={onAmountChange}
                   >
                     <Space.Compact className="w-full mt-4 flex flex-wrap gap-2">
-                      <Radio.Button value={1000}>
-                        {f.number(1000, { style: "currency", currency: "USD" })}
+                      <Radio.Button value={1000} onClick={() => setAmount(1000)}>
+                        {f.number(1000)}
                       </Radio.Button>
-                      <Radio.Button value={5000}>
-                        {f.number(5000, { style: "currency", currency: "USD" })}
+                      <Radio.Button value={5000} onClick={() => setAmount(5000)}>
+                        {f.number(5000)}
                       </Radio.Button>
-                      <Radio.Button value={10000}>
-                        {f.number(10000, {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                      <Radio.Button value={10000} onClick={() => setAmount(10000)}>
+                        {f.number(10000)}
                       </Radio.Button>
-                      <Radio.Button value={50000}>
-                        {f.number(50000, {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                      <Radio.Button value={50000} onClick={() => setAmount(50000)}>
+                        {f.number(50000)}
                       </Radio.Button>
-                      <Radio.Button value={100000}>
-                        {f.number(100000, {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                      <Radio.Button value={100000} onClick={() => setAmount(100000)}>
+                        {f.number(100000)}
                       </Radio.Button>
-                      <Radio.Button value={500000}>
-                        {f.number(500000, {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                      <Radio.Button value={500000} onClick={() => setAmount(500000)}>
+                        {f.number(500000)}
                       </Radio.Button>
-                      <Radio.Button value={"max"}>MAX</Radio.Button>
+                      <Radio.Button value={"max"} onClick={() => setAmount(10000000)}>MAX</Radio.Button>
                     </Space.Compact>
                   </Radio.Group>
                 </Form.Item>
@@ -1466,16 +1529,6 @@ const PartnerPage: React.FC = () => {
                 </Form.Item>
               </Form>
             </Space>
-          </Modal>
-
-          <Modal
-            title={t("user")}
-            open={userModal}
-            onCancel={() => setUserModal(false)}
-            footer={null}
-            width={"98%"}
-          >
-            {/* <Tabs items={tabItems} /> */}
           </Modal>
 
           <Modal

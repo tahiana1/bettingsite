@@ -162,6 +162,7 @@ export const GET_DISTRIBUTORS = gql`
           coupon
           lastDeposit
           lastWithdraw
+          roll
         }
       }
       total

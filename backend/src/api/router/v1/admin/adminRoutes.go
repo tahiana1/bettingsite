@@ -146,4 +146,11 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		chargeBonusTableRouter.DELETE("/:id", controllers.DeleteChargeBonusTableLevel)
 		chargeBonusTableRouter.POST("/upsert", controllers.UpsertChargeBonusTableLevel)
 	}
+
+	// Transaction routes
+	transactionRouter := r.Group("/transaction")
+	{
+		transactionRouter.POST("/deposit", controllers.Deposit)
+		transactionRouter.POST("/withdrawal", controllers.Withdrawal)
+	}
 }

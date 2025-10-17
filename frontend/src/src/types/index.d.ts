@@ -22,6 +22,7 @@ interface Profile {
   balance: number;
   point: number;
   comp: number;
+  roll?: number;
   favorites: string; // Assuming favorites are stored as comma-separated values (CSV)
   referral: string;
   lastDeposit?: string;
@@ -47,6 +48,9 @@ interface User {
   parent: User;
   parentId: number;
   rootId: number;
+  live?: number;
+  slot?: number;
+  hold?: number;
 }
 
 interface Noti {

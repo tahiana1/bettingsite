@@ -1889,5 +1889,10 @@
   "showOn" : "显示时机",
   "both" : "登录前后都显示",
   "beforeLogin" : "登录前显示",
-  "afterLogin" : "登录后显示"
-}
+  "afterLogin" : "登录后显示",
+  "balanceNotEnough" : "余额不足",
+  "withdrawalSuccess" : "提现成功",
+  "withdrawalFailed" : "提现失败",
+  "userNotSelected" : "未选择用户",
+  "invalidAmount" : "无效金额"
+} 

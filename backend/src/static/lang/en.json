@@ -1887,5 +1887,10 @@
   "showOn" : "Show On",
   "both" : "Both (Before & After Login)",
   "beforeLogin" : "Before Login",
-  "afterLogin" : "After Login"
+  "afterLogin" : "After Login",
+  "balanceNotEnough" : "Balance Not Enough",
+  "withdrawalSuccess" : "Withdrawal completed successfully",
+  "withdrawalFailed" : "Withdrawal failed",
+  "userNotSelected" : "User not selected",
+  "invalidAmount" : "Invalid amount"
 } 
