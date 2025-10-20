@@ -289,4 +289,5 @@ extend type Mutation {
   approveUser(id: ID!): Boolean! @hasRole(role: A)
   blockUser(id: ID!): Boolean! @hasRole(role: A)
   updateUser(id: ID!, input: UpdateUser!): Boolean! @hasRole(role: A)
+  deleteUser(id: ID!): Boolean! @hasRole(role: A)
 }

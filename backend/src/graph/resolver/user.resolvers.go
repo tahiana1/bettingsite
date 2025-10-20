@@ -82,6 +82,15 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, id uint, input model.
 	return true, nil
 }
 
+// DeleteUser is the resolver for the deleteUser field.
+func (r *mutationResolver) DeleteUser(ctx context.Context, id uint) (bool, error) {
+	ldr := loaders.For(ctx)
+	if err := ldr.UserReader.DeleteUser(ctx, id); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // Profile is the resolver for the profile field.
 func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
 	authUser, err := helpers.GetAuthUser(ctx)

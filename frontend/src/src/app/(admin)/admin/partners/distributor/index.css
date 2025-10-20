@@ -6,3 +6,7 @@
 .ant-modal-close-icon {
     color: #fff !important;
 }
+
+.losingRollingModal .ant-modal-content {
+    padding: 0px!important;
+}

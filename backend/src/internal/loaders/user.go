@@ -104,11 +104,30 @@ func (pr *userReader) BlockUser(ctx context.Context, userID uint) error {
 	return tx.Error
 }
 
-// DeleteProfile deletes a profile by ID (soft delete if GORM soft delete is enabled)
+// DeleteUser permanently deletes a user by ID (hard delete)
 func (pr *userReader) DeleteUser(ctx context.Context, userID uint) error {
-	fmt.Println(userID)
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	
+	fmt.Println("Permanently deleting user ID:", userID)
+
+	user := models.User{}
+
+	// First, find the user (including soft-deleted ones)
+	if err := initializers.DB.Unscoped().First(&user, "id = ?", userID).Error; err != nil {
+		return fmt.Errorf("user not found: %w", err)
+	}
+
+	// Permanently delete the user and related profile (cascade delete should handle profile)
+	if err := initializers.DB.Unscoped().Delete(&user).Error; err != nil {
+		return fmt.Errorf("failed to delete user: %w", err)
+	}
+
+	fmt.Println("User deleted successfully:", userID)
 	return nil
-	// return pr.db.Delete(&models.Profile{}, profileID).Error
 }
 
 // GetProfiles returns many profiles by ids efficiently

@@ -1892,5 +1892,13 @@
   "withdrawalSuccess" : "Withdrawal completed successfully",
   "withdrawalFailed" : "Withdrawal failed",
   "userNotSelected" : "User not selected",
-  "invalidAmount" : "Invalid amount"
+  "invalidAmount" : "Invalid amount",
+  "currentPoints" : "Current Points",
+  "pointManagement" : "Point Management",
+  "userDeletedSuccessfully" : "User Deleted Successfully",
+  "deleteFailed" : "Delete Failed",
+  "userBlockedSuccessfully" : "User Blocked Successfully",
+  "blockFailed" : "Block Failed",
+  "yourinformationwasregisteredsuccessfully" : "Your information was registered successfully!",
+  "pleasewaitwhileyougetaccess" : "Please wait while you get access."
 } 

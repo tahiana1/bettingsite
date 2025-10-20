@@ -253,6 +253,18 @@ export const BLOCK_USER = gql`
   }
 `;
 
+export const INACTIVATE_USER = gql`
+  mutation InactivateUser($id: ID!, $input: UpdateUser!) {
+    success: updateUser(id: $id, input: $input)
+  }
+`;
+
+export const DELETE_USER = gql`
+  mutation DeleteUser($id: ID!) {
+    success: deleteUser(id: $id)
+  }
+`;
+
 export const GET_DISTRIBUTORSDETAILS = gql`
   query GetDistributorDetails(
     $filters: [Filter!]

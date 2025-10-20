@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -11,6 +11,7 @@ import {
   notification,
   Select,
   Space,
+  Spin,
 } from "antd";
 import { useTranslations } from "next-intl";
 import api from "@/api";
@@ -27,9 +28,11 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const [form] = Form.useForm();
   const router = useRouter();
   const [notiApi, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState(false);
 
   const onFinish = (values: any) => {
     console.log("Received values of form: ", values);
+    setLoading(true);
     const data = {
       ...values,
       phone: values.phone_prefix + values.phone,
@@ -42,13 +45,14 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
     })
       .then((result) => {
         console.log({ result });
+        setLoading(false);
         notiApi.info({
           message: "Welcome!",
           description: (
             <div>
-              Your information was registered successfully!
+              {t("yourinformationwasregisteredsuccessfully")}
               <br />
-              Please wait while you get access.
+              {t("pleasewaitwhileyougetaccess")}
             </div>
           ),
           placement: "topRight",
@@ -61,6 +65,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
         notiApi.error({
           message: "Error",
           description: `Some error occurred! ${err}`,
@@ -368,9 +373,14 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
           <Form.Item label={null} className="w-full">
             <button
               type="submit"
+              disabled={loading}
               className="w-full btn-modal-auth cursor-pointer"
             >
-              {t("auth/register")}
+              {loading ? (
+                <Spin size="small" />
+              ) : (
+                t("auth/register")
+              )}
             </button>
           </Form.Item>
         </div>

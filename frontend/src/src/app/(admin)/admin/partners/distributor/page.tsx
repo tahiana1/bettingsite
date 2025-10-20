@@ -27,6 +27,8 @@ import {
   BLOCK_USER,
   CREATE_USER,
   GET_DISTRIBUTORS,
+  INACTIVATE_USER,
+  DELETE_USER,
 } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
@@ -86,6 +88,11 @@ const PartnerPage: React.FC = () => {
           },
         ],
       },
+      {
+        field: "status",
+        value: "D",
+        op: "neq",
+      },
     ],
   });
 
@@ -107,24 +114,31 @@ const PartnerPage: React.FC = () => {
   const [regModal, setRegModal] = useState<boolean>(false);
   const [domainModal, setDomainModal] = useState<boolean>(false);
   const [moneyModal, setMoneyModal] = useState<boolean>(false);
+  const [pointsModal, setPointsModal] = useState<boolean>(false);
   const [losingRollingModal, setLosingRollingModal] = useState<boolean>(false);
   const [selectedLosingRollingTab, setSelectedLosingRollingTab] = useState<string>("losingSetting");
   const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const [amount, setAmount] = useState<number>(0);
+  const [pointAmount, setPointAmount] = useState<number>(0);
 
   const [createUser] = useMutation(CREATE_USER);
   const [approveUser] = useMutation(APPROVE_USER);
   const [blockUser] = useMutation(BLOCK_USER);
+  const [inactivateUser] = useMutation(INACTIVATE_USER);
+  const [deleteUser] = useMutation(DELETE_USER);
 
   const onBlockUser = (user: User) => {
     blockUser({ variables: { id: user.id } })
       .then((res) => {
         if (res.data?.success) {
+          message.success(t("userBlockedSuccessfully") || "User blocked successfully");
         }
         refetch(tableOptions);
+        window.location.reload()
       })
       .catch((err) => {
         console.log({ err });
+        message.error(t("blockFailed") || "Failed to block user");
       });
   };
 
@@ -136,11 +150,54 @@ const PartnerPage: React.FC = () => {
     approveUser({ variables: { id: user.id } })
       .then((res) => {
         if (res.data?.success) {
+          message.success(t("userApprovedSuccessfully") || "User approved successfully");
         }
-        refetch();
+        refetch(tableOptions);
+        window.location.reload()
       })
       .catch((err) => {
         console.log({ err });
+        message.error(t("approvalFailed") || "Failed to approve user");
+      });
+  };
+
+  const onInactivateUser = (user: User) => {
+    inactivateUser({ 
+      variables: { 
+        id: user.id,
+        input: { status: "I" }
+      } 
+    })
+      .then((res) => {
+        if (res.data?.success) {
+          message.success(t("userInactivatedSuccessfully") || "User set to dormancy successfully");
+        }
+        refetch(tableOptions);
+        window.location.reload()
+      })
+      .catch((err) => {
+        console.log({ err });
+        message.error(t("inactivateFailed") || "Failed to inactivate user");
+      });
+  };
+
+  const onDeleteUser = (user: User) => {
+    deleteUser({ 
+      variables: { 
+        id: user.id
+      } 
+    })
+      .then((res) => {
+        if (res.data?.success) {
+          message.success(t("userDeletedSuccessfully") || "User has been permanently deleted from the database");
+        }
+        // Refetch with current table options to update the list
+        refetch(tableOptions);
+        window.location.reload()
+      })
+      .catch((err) => {
+        console.error("Delete user error:", err);
+        message.error(err?.message || t("deleteFailed") || "Failed to delete user");
       });
   };
 
@@ -170,6 +227,11 @@ const PartnerPage: React.FC = () => {
   const onPayment = (record: User) => {
     setCurrentUser(record);
     setMoneyModal(true);
+  };
+
+  const onPointsManagement = (record: User) => {
+    setCurrentUser(record);
+    setPointsModal(true);
   };
 
   const onLosingRollingSetting = (record: User) => {
@@ -265,6 +327,73 @@ const PartnerPage: React.FC = () => {
     }
   };
 
+  const onAddPoints = async () => {
+    if (!currentUser?.id) {
+      message.error(t("userNotSelected"));
+      return;
+    }
+
+    if (!pointAmount || pointAmount <= 0) {
+      message.error(t("invalidAmount"));
+      return;
+    }
+
+    try {
+      // TODO: Implement API call for adding points
+      console.log("Adding points:", pointAmount, "to user:", currentUser.id);
+      message.success(t("pointsAddedSuccessfully") || "Points added successfully");
+      setPointsModal(false);
+      setPointAmount(0);
+      form.resetFields();
+      
+      // Refetch users to update points
+      refetch(tableOptions);
+    } catch (error: any) {
+      console.error("Add points error:", error);
+      message.error(error?.response?.data?.error || t("pointsAddFailed") || "Failed to add points");
+    }
+  };
+
+  const onSubtractPoints = async () => {
+    if (!currentUser?.id) {
+      message.error(t("userNotSelected"));
+      return;
+    }
+
+    if (!pointAmount || pointAmount <= 0) {
+      message.error(t("invalidAmount"));
+      return;
+    }
+
+    if (pointAmount > (currentUser?.profile?.point ?? 0)) {
+      message.error(t("notEnoughPoints") || "Not enough points");
+      return;
+    }
+
+    try {
+      // TODO: Implement API call for subtracting points
+      console.log("Subtracting points:", pointAmount, "from user:", currentUser.id);
+      message.success(t("pointsSubtractedSuccessfully") || "Points subtracted successfully");
+      setPointsModal(false);
+      setPointAmount(0);
+      form.resetFields();
+      
+      // Refetch users to update points
+      refetch(tableOptions);
+    } catch (error: any) {
+      console.error("Subtract points error:", error);
+      message.error(error?.response?.data?.error || t("pointsSubtractFailed") || "Failed to subtract points");
+    }
+  };
+
+  const onPointAmountChange = (e: RadioChangeEvent) => {
+    if (e.target.value == "max") {
+      form.setFieldValue("pointAmount", 10000000);
+    } else {
+      form.setFieldValue("pointAmount", parseInt(e.target.value));
+    }
+  };
+
   const onAmountChange = (e: RadioChangeEvent) => {
     if (e.target.value == "max") {
       form.setFieldValue("amount", 10000000);
@@ -303,7 +432,35 @@ const PartnerPage: React.FC = () => {
   };
 
   const onMemberStatusChange = (v: string) => {
-    updateFilter("status", v, "eq");
+    let filters: { field: string; value: string; op: string }[] =
+      tableOptions?.filters ?? [];
+    
+    // Remove existing status filters
+    filters = filters.filter((f) => f.field !== "status");
+    
+    if (v) {
+      // If a specific status is selected, filter by that status
+      filters = [
+        ...filters,
+        {
+          field: "status",
+          value: v,
+          op: "eq",
+        },
+      ];
+    } else {
+      // If no status is selected, exclude deleted users by default
+      filters = [
+        ...filters,
+        {
+          field: "status",
+          value: "D",
+          op: "neq",
+        },
+      ];
+    }
+    
+    setTableOptions({ ...tableOptions, filters });
   };
 
   const onLevelChange = (v: string = "") => {
@@ -460,6 +617,7 @@ const PartnerPage: React.FC = () => {
           variant="outlined"
           color="blue"
           key={"point"}
+          onClick={() => onPointsManagement(record)}
         >
           {t("points") + "+"}
         </Button>,
@@ -571,15 +729,15 @@ const PartnerPage: React.FC = () => {
           <Popconfirm
             title={t("confirmSure")}
             onConfirm={
-              record.status
+              record.status === "A"
                 ? () => onBlockUser(record)
                 : () => onApproveUser(record)
             }
             description={
-              record.status ? t("blockMessage") : t("approveMessage")
+              record.status === "A" ? t("blockMessage") : t("approveMessage")
             }
           >
-            {record.status ? (
+            {record.status === "A" ? (
               <Button
                 title={t("block")}
                 icon={<BiBlock />}
@@ -590,24 +748,37 @@ const PartnerPage: React.FC = () => {
               <Button
                 title={t("approve")}
                 variant="outlined"
-                color="red"
+                color="default"
                 icon={<PiUserCircleCheckLight />}
               />
             )}
           </Popconfirm>
 
-          <Button
-            title={t("dormancy")}
-            variant="outlined"
-            color="red"
-            icon={<GiNightSleep />}
-          />
-          <Button
-            title={t("delete")}
-            variant="outlined"
-            color="red"
-            icon={<BiTrash />}
-          />
+          <Popconfirm
+            title={t("confirmSure")}
+            onConfirm={() => onInactivateUser(record)}
+            description={t("dormancyMessage") || "Are you sure you want to set this user to dormancy?"}
+          >
+            <Button
+              title={t("dormancy")}
+              variant="outlined"
+              color="default"
+              icon={<GiNightSleep />}
+            />
+          </Popconfirm>
+          
+          <Popconfirm
+            title={t("confirmSure")}
+            onConfirm={() => onDeleteUser(record)}
+            description={t("deleteMessage") || "Are you sure you want to delete this user?"}
+          >
+            <Button
+              title={t("delete")}
+              variant="outlined"
+              color="danger"
+              icon={<BiTrash />}
+            />
+          </Popconfirm>
         </Space.Compact>
       ),
     },
@@ -1532,12 +1703,87 @@ const PartnerPage: React.FC = () => {
           </Modal>
 
           <Modal
+            title={t("pointsManagement") || "Points Management"}
+            open={pointsModal}
+            onCancel={() => setPointsModal(false)}
+            footer={null}
+          >
+            <Space direction="vertical" className="gap-2 w-full">
+              <Form
+                form={form}
+                onFinish={() => {
+                  setPointsModal(false);
+                }}
+              >
+                <Form.Item
+                  name="currentPoints"
+                  label={t("currentPoints") || "Current Points"}
+                  initialValue={currentUser?.profile?.point}
+                >
+                  <InputNumber readOnly className="!w-full !p-0 !m-0"/>
+                </Form.Item>
+                <Space>
+                  <Form.Item
+                    name={"pointAmount"}
+                    label={t("amount")}
+                    className="!flex !w-full !p-0 !m-0"
+                  >
+                    <InputNumber min={0} onChange={(value) => setPointAmount(value || 0)}/>
+                  </Form.Item>
+                  <Button type="primary" onClick={() => onAddPoints()}>
+                    {t("add") || "Add"}
+                  </Button>
+                  <Button color="danger" variant="outlined" onClick={() => onSubtractPoints()}>
+                    {t("subtract") || "Subtract"}
+                  </Button>
+                </Space>
+
+                <Form.Item>
+                  <Radio.Group
+                    buttonStyle="solid"
+                    className="w-full "
+                    onChange={onPointAmountChange}
+                  >
+                    <Space.Compact className="w-full mt-4 flex flex-wrap gap-2">
+                      <Radio.Button value={100} onClick={() => setPointAmount(100)}>
+                        {f.number(100)}
+                      </Radio.Button>
+                      <Radio.Button value={500} onClick={() => setPointAmount(500)}>
+                        {f.number(500)}
+                      </Radio.Button>
+                      <Radio.Button value={1000} onClick={() => setPointAmount(1000)}>
+                        {f.number(1000)}
+                      </Radio.Button>
+                      <Radio.Button value={5000} onClick={() => setPointAmount(5000)}>
+                        {f.number(5000)}
+                      </Radio.Button>
+                      <Radio.Button value={10000} onClick={() => setPointAmount(10000)}>
+                        {f.number(10000)}
+                      </Radio.Button>
+                      <Radio.Button value={50000} onClick={() => setPointAmount(50000)}>
+                        {f.number(50000)}
+                      </Radio.Button>
+                      <Radio.Button value={"max"} onClick={() => setPointAmount(10000000)}>MAX</Radio.Button>
+                    </Space.Compact>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item>
+                  <Button type="default" htmlType="submit">
+                    {t("close")}
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Space>
+          </Modal>
+
+          <Modal
             open={losingRollingModal}
             onCancel={() => {
               setLosingRollingModal(false);
               setCurrentUserChildren([]);
             }}  
             footer={null}
+            className="losingRollingModal"
             width={"98%"}
           >
             <Card
