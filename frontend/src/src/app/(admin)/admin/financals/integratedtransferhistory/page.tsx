@@ -59,16 +59,41 @@ const IntegratedTransferPage: React.FC = () => {
                 value: "win",
                 op: "eq",
               },
-              // {
-              //   field: "transactions.type",
-              //   value: "deposit",
-              //   op: "eq",
-              // },
-              // {
-              //   field: "transactions.type",
-              //   value: "withdrawal",
-              //   op: "eq",
-              // },
+              {
+                field: "transactions.type",
+                value: "deposit",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "withdrawal",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "point",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "rollingExchange",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "pointDeposit",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "directDeposit",
+                op: "eq"
+              },
+              {
+                field: "transactions.type",
+                value: "directWithdraw",
+                op: "eq"
+              }
             ],
           },
         ],
@@ -193,6 +218,15 @@ const IntegratedTransferPage: React.FC = () => {
             {record.type === "WithdrawalCasino" && (
               <span>{t("withdrawalCasino")}</span>
             )}
+            {record.type === "point" && (
+              <span>{t("point")}</span>
+            )}
+            {record.type === "rollingExchange" && (
+              <span>{t("rollingExchange")}</span>
+            )}
+            {record.type === "pointDeposit" && (
+              <span>{t("pointDeposit")}</span>
+            )}
             {
               record.type === "Rolling" && (
                 <span>{t("rolling")}</span>
@@ -203,6 +237,12 @@ const IntegratedTransferPage: React.FC = () => {
             )}
             {record.type === "win" && (
               <span>{t("casinoWin")}</span>
+            )}
+            {record.type === "directDeposit" && (
+              <span>Direct Deposit</span>
+            )}
+            {record.type === "directWithdraw" && (
+              <span>Direct Withdrawal</span>
             )}
           </div>
         );

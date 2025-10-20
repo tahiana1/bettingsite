@@ -76,12 +76,7 @@ const MemberDWPage: React.FC = () => {
             or: [
               {
                 field: "users.role",
-                value: "A",
-                op: "eq",
-              },
-              {
-                field: "users.role",
-                value: "P",
+                value: "U",
                 op: "eq",
               },
             ],

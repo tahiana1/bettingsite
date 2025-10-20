@@ -49,20 +49,20 @@ const MemberTransferPage: React.FC = () => {
                 value: "WithdrawalCasino",
                 op: "eq",
               },
+              {
+                field: "transactions.type",
+                value: "directDeposit",
+                op: "eq"
+              },
+              {
+                field: "transactions.type",
+                value: "directWithdraw",
+                op: "eq"
+              }
             ],
           },
           {
             or: [
-              {
-                field: "users.role",
-                value: "A",
-                op: "eq",
-              },  
-              {
-                field: "users.role",
-                value: "P",
-                op: "eq",
-              },
               {
                 field: "users.role",
                 value: "U",
@@ -189,6 +189,12 @@ const MemberTransferPage: React.FC = () => {
             )}
             {record.type === "WithdrawalCasino" && (
               <span>Withdrawal Casino</span>
+            )}
+            {record.type === "directDeposit" && (
+              <span>Direct Deposit</span>
+            )}
+            {record.type === "directWithdraw" && (
+              <span>Direct Withdrawal</span>
             )}
           </div>
         );

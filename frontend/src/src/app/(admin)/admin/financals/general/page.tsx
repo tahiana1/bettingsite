@@ -226,12 +226,12 @@ const GeneralDWPage: React.FC = () => {
           or: [
             {
               field: "users.role",
-              value: "A",
+              value: "P",
               op: "eq",
             },
             {
               field: "users.role",
-              value: "P",
+              value: "A",
               op: "eq",
             },
           ],
