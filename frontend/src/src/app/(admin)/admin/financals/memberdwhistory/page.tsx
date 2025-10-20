@@ -325,7 +325,10 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "root.transactionid",
       key: "root.transactionid",
       render(_, record) {
-        return record.user?.root?.userid;
+        return record.user?.root?.userid ? (
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.root?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.root?.userid}</p>
+        </div>) : ""
       },
     },
     {
@@ -333,7 +336,10 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "top_dist",
       key: "top_dist",
       render(_, record) {
-        return record.user?.parent?.userid;
+        return record.user?.parent?.userid ? (
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.parent?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.parent?.userid}</p>
+        </div>) : ""
       },
     },
     {

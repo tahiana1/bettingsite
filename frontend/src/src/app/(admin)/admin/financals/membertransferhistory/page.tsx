@@ -82,6 +82,11 @@ const MemberTransferPage: React.FC = () => {
   const [colorOption, setColorOptoin] = useState<any>("new");
   const [range, setRange] = useState<any[]>([]);
   const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
+
+  const popupWindow = (id: number) => { 
+    window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+
   const labelRenderer = (props: any) =>
     props.value.toString() == "100"
       ? "Premium"
@@ -114,7 +119,10 @@ const MemberTransferPage: React.FC = () => {
       dataIndex: "root.transactionid",
       key: "root.transactionid",
       render(_, record) {
-        return record.user?.root?.userid;
+        return record.user?.root?.userid ? (
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.root?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.root?.userid}</p>
+        </div>) : ""
       },
     },
     {
@@ -122,7 +130,10 @@ const MemberTransferPage: React.FC = () => {
       dataIndex: "top_dist",
       key: "top_dist",
       render(_, record) {
-        return record.user?.parent?.userid;
+        return record.user?.parent?.userid ? (
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.parent?.id)}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.parent?.userid}</p>
+        </div>) : ""
       },
     },
     {
