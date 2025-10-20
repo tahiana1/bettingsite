@@ -1784,7 +1784,7 @@
   "initialLevelOfAcquaintanceRegistration" : "Intial Level Of Acquaintance Registration",
   "useTheRoulette" : "Use The Roulette",
   "customCenterInquiryAvailable" : "Custom Center Inquiry Available",
-  "whiteACommentOnThePost" : "White c Comment on the Post",
+  "whiteACommentOnThePost" : "White a Comment on the Post",
   "pointsAwardedForThePost" : "Points Awareded For The Post",
   "usingWinningPoints" : "Using Winning Points",
   "useTheRefundLimit" : "Use The Refund Limit",
@@ -1796,7 +1796,7 @@
   "changeMemberProperties" : "Change Member Properties",
   "changeOfMemberProperties" : "Change Of Member Properties",
   "changeOfDistributorProperties" : "Change Of Distributor Properties",
-  "delegationOfAdminstrator" : "delegation Of Adminstrator",
+  "delegationOfAdminstrator" : "Delegation Of Adminstrator",
   "displayOfAdminstrator" : "Display Of Adminstrator",
   "partnerButtonDisplay" : "Partner Button Display",
   "partnerMultiAccessPossible" : "Partner Multi Access Possible",
@@ -1900,5 +1900,6 @@
   "userBlockedSuccessfully" : "User Blocked Successfully",
   "blockFailed" : "Block Failed",
   "yourinformationwasregisteredsuccessfully" : "Your information was registered successfully!",
-  "pleasewaitwhileyougetaccess" : "Please wait while you get access."
+  "pleasewaitwhileyougetaccess" : "Please wait while you get access.",
+  "displayOfIntegratedMoneyDetails" : "Display of integrated money details"
 } 

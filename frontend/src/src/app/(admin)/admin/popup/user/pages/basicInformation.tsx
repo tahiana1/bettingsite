@@ -210,6 +210,13 @@ const distributorType = [
   {label: 'distributor', value: '2'}
 ]
 
+const webLoginAvailableType = [
+  {label: 'web login available', value: '1'},
+  {label: 'pc only', value: '2'},
+  {label: 'mobile only', value: '3'},
+  {label: 'web login unavailable', value: '4'},
+]
+
 const distributorPropertiesType = [
   {label: 'online distributor', value: '1'},
   {label: 'offline distributor', value: '2'},
@@ -223,6 +230,86 @@ const cutBettingHistoryType = [
 const codeSignupAvailableType = [
   {label: 'code signup available', value: '1'},
   {label: 'code registration not possible', value: '2'},
+]
+
+const displayMemberCodeType = [
+  {label: 'Registration code not displayed', value: '1'},
+  {label: 'Display membership code', value: '2'},
+]
+
+const initialLevelOfAcquaintanceRegistrationType = [
+  {label: 'Basic method', value: '1'},
+  {label: 'Top member level', value: '2'},
+  {label: 'Level 1', value: '3'},
+  {label: 'Level 2', value: '4'},
+  {label: 'Level 3', value: '5'},
+  {label: 'Level', value: '6'},
+  {label: 'Level 5', value: '7'},
+  {label: 'Level 6', value: '8'},
+  {label: 'Level 7', value: '9'},
+  {label: 'Level 8', value: '10'},
+  {label: 'Level 9', value: '11'},
+  {label: 'Level 10', value: '12'},
+  {label: 'Level 11', value: '13'},
+  {label: 'Level 12', value: '14'},
+  {label: 'VIP 1', value: '15'},
+  {label: 'VIP 2', value: '16'},
+  {label: 'Premium', value: '17'},
+]
+
+const memberPageAlarmSoundType = [
+  {label: 'Turn on', value: '1'},
+  {label: 'Turn off', value: '2'},
+]
+
+const useAttendanceCheckType = [
+  {label: 'Use', value: '1'},
+  {label: 'Do not use', value: '2'},
+]
+
+const useTheRouletteType = [
+  {label: 'Use', value: '1'},
+  {label: 'Do not use roulette', value: '2'},
+]
+
+const customCenterInquiryAvailableType = [
+  {label: 'allowance', value: '1'},
+  {label: 'not allowed', value: '2'},
+]
+
+const createPostType = [
+  {label: 'allowance', value: '1'},
+  {label: 'not allowed', value: '2'},
+]
+
+const whiteCommentOnPostType = [
+  {label: 'allowance', value: '1'},
+  {label: 'not allowed', value: '2'},
+]
+
+const allowanceType = [
+  {label: 'allowance', value: '1'},
+  {label: 'not allowed', value: '2'},
+]
+
+const useOnOffType = [
+  {label: 'use', value: '1'},
+  {label: 'Not in use', value: '2'},
+]
+
+const restrictionType = [
+  {label: 'No restrictions', value: '1'},
+  {label: 'Limits', value: '2'},
+]
+
+const onlineOfflinedistributorType = [
+  {label: "Online distributor", value: '1'},
+  {label: "Offline distributor", value: '2'}
+]
+
+const currentType = [
+  {label: "Current", value: '1'},
+  {label: "Non-presentation", value: '2'}
 ]
 
 const UserInfoField: React.FC<UserInfoFieldProps> = ({
@@ -1579,7 +1666,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               onButtonClick={handleButtonClick("rollingPercenty")}
               loading={loading.rollingPercenty}
             />  
-            <GameUsageInfoField
+            {/* <GameUsageInfoField
               label="Game usage"   
               placeholder=""  
               value={fields.rollingPercenty}
@@ -1596,13 +1683,13 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("slotcityPriorityUse")}
               loading={loading.slotcityPriorityUse}
-            />  
+            />   */}
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
               label={t("webLoginAvailable")}   
               placeholder=""  
-              type={distributorType}
+              type={webLoginAvailableType}
               value={fields.webLoginAvailable}
               onChange={handleChange("webLoginAvailable")}
               buttonLabel="Change"
@@ -1631,7 +1718,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("displayMemberCode")}   
               placeholder=""  
-              type={onoffType}
+              type={displayMemberCodeType}
               value={fields.displayMemberCode}
               onChange={handleChange("displayMemberCode")}
               buttonLabel="Change"
@@ -1641,7 +1728,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("initialLevelOfAcquaintanceRegistration")}   
               placeholder=""  
-              type={levelOption}
+              type={initialLevelOfAcquaintanceRegistrationType}
               value={fields.initialLevelOfAcquaintanceRegistration}
               onChange={handleChange("initialLevelOfAcquaintanceRegistration")}
               buttonLabel="Change"
@@ -1651,7 +1738,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("memberPageAlarmSound")}   
               placeholder=""  
-              type={onoffType}
+              type={memberPageAlarmSoundType}
               value={fields.memberPageAlarmSound}
               onChange={handleChange("memberPageAlarmSound")}
               buttonLabel="Change"
@@ -1661,7 +1748,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("useAttendanceCheck")}   
               placeholder=""  
-              type={onoffType}
+              type={useAttendanceCheckType}
               value={fields.useAttendanceCheck}
               onChange={handleChange("useAttendanceCheck")}
               buttonLabel="Change"
@@ -1671,7 +1758,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("useTheRoulette")}   
               placeholder=""  
-              type={onoffType}
+              type={useTheRouletteType}
               value={fields.useRoulette}
               onChange={handleChange("useRoulette")}
               buttonLabel="Change"
@@ -1681,7 +1768,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("customCenterInquiryAvailable")}   
               placeholder=""  
-              type={onoffType}
+              type={customCenterInquiryAvailableType}
               value={fields.customerCenterInquiryAvailable}
               onChange={handleChange("customerCenterInquiryAvailable")}
               buttonLabel="Change"
@@ -1691,7 +1778,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("createPost")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.createPost}
               onChange={handleChange("createPost")}
               buttonLabel="Change"
@@ -1701,7 +1788,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("whiteACommentOnThePost")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.whiteCommentOnPost}
               onChange={handleChange("whiteCommentOnPost")}
               buttonLabel="Change"
@@ -1711,7 +1798,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("pointsAwardedForThePost")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.pointsAwardedForThePost}
               onChange={handleChange("pointsAwardedForThePost")}
               buttonLabel="Change"
@@ -1719,19 +1806,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.pointsAwardedForThePost}
             />  
             <UserInfoStyle6Field
-              label={t("usingVirtualAccountAPI")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.usingVirtualAccountApi}
-              onChange={handleChange("usingVirtualAccountApi")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("usingVirtualAccountApi")}
-              loading={loading.usingVirtualAccountApi}
-            /> 
-            <UserInfoStyle6Field
               label={t("useOfWinningPoints")}   
               placeholder=""  
-              type={onoffType}
+              type={useOnOffType}
               value={fields.usingOfWinningPoints}
               onChange={handleChange("usingOfWinningPoints")}
               buttonLabel="Change"
@@ -1741,7 +1818,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("usePaybackPayment")}   
               placeholder=""  
-              type={onoffType}
+              type={useOnOffType}
               value={fields.usePaybackPayment}
               onChange={handleChange("usePaybackPayment")}
               buttonLabel="Change"
@@ -1751,7 +1828,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("useRefundList")}   
               placeholder=""  
-              type={onoffType}
+              type={useOnOffType}
               value={fields.useRefundLimit}
               onChange={handleChange("useRefundLimit")}
               buttonLabel="Change"
@@ -1761,7 +1838,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("dailyFirstDepositBonusLimit")}   
               placeholder=""  
-              type={onoffType}
+              type={restrictionType}
               value={fields.dailyFirstDepositBonusLimit}
               onChange={handleChange("dailyFirstDepositBonusLimit")}
               buttonLabel="Change"
@@ -1771,7 +1848,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("signUpFirstDepositBonusLimit")}   
               placeholder=""  
-              type={onoffType}
+              type={restrictionType}
               value={fields.signUpFirstDepositBonusLimit}
               onChange={handleChange("signUpFirstDepositBonusLimit")}
               buttonLabel="Change"
@@ -1781,7 +1858,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("replenishmentBonusLimit")}   
               placeholder=""  
-              type={onoffType}
+              type={restrictionType}
               value={fields.replenishmentBonusLimit}
               onChange={handleChange("replenishmentBonusLimit")}
               buttonLabel="Change"
@@ -1791,7 +1868,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("surpriseBonusLimit")}   
               placeholder=""  
-              type={onoffType}
+              type={restrictionType}
               value={fields.surpriseBonusLimit}
               onChange={handleChange("surpriseBonusLimit")}
               buttonLabel="Change"
@@ -1801,7 +1878,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("[applyRollingToMembersOnly]ignoreOption")}   
               placeholder=""  
-              type={onoffType}
+              type={restrictionType}
               value={fields.ignoreOption}
               onChange={handleChange("ignoreOption")}
               buttonLabel="Change"
@@ -1811,100 +1888,19 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("rollingConversionAutomaticApproval")}   
               placeholder=""  
-              type={onoffType}
+              type={useOnOffType}
               value={fields.rollingConversionAutomaticApproval}
               onChange={handleChange("rollingConversionAutomaticApproval")}
               buttonLabel="Change"
               onButtonClick={handleButtonClick("rollingConversionAutomaticApproval")}
               loading={loading.rollingConversionAutomaticApproval}
             />  
-            <UserInfoStyle7Field
-              label={t("cutBettingHistory")}   
-              placeholder=""  
-              type={cutBettingHistoryType}
-              value={fields.cutBettingHistory}
-              onChange={handleChange("cutBettingHistory")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("cutBettingHistory")}
-              loading={loading.cutBettingHistory}
-            />  
-            <UserInfoStyle8Field
-              label={t("cutBettingHistory")}   
-              placeholder=""  
-              type={cutBettingHistoryType}
-              value={fields.cutBettingHistory}
-              onChange={handleChange("cutBettingHistory")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("cutBettingHistory")}
-              loading={loading.cutBettingHistory}
-            />  
-            <UserInfoStyle8Field
-              label={t("maximumAmountOfBettingHistoryReduction")}   
-              placeholder=""  
-              type={cutBettingHistoryType}
-              value={fields.maximumAmountOfBettingHistoryReduction}
-              onChange={handleChange("maximumAmountOfBettingHistoryReduction")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("maximumAmountOfBettingHistoryReduction")}
-              loading={loading.maximumAmountOfBettingHistoryReduction}
-            /> 
-            <UserInfoStyle8Field
-              label={t("%reductionInBettingAmount")}   
-              placeholder=""  
-              type={cutBettingHistoryType}
-              value={fields.percentageReductionInBettingAmount}
-              onChange={handleChange("percentageReductionInBettingAmount")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("percentageReductionInBettingAmount")}
-              loading={loading.percentageReductionInBettingAmount}
-            /> 
-            <UserInfoStyle4Field
-              label={t("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
-              onChange={handleChange("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted")}
-              loading={loading.waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted}
-            />
-            <UserInfoStyle4Field
-              label={t("waitingTimeForReApplicationAfterChargingIsCompleted")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.waitingTimeForReApplicationAfterChargingIsCompleted}
-              onChange={handleChange("waitingTimeForReApplicationAfterChargingIsCompleted")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("waitingTimeForReApplicationAfterChargingIsCompleted")}
-              loading={loading.waitingTimeForReApplicationAfterChargingIsCompleted}
-            />
-            <UserInfoStyle4Field
-              label={t("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
-              onChange={handleChange("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted")}
-              loading={loading.waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted}
-            />  
-            <UserInfoStyle4Field
-              label={t("changeMemberProperties")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.changeMemberProperties}
-              onChange={handleChange("changeMemberProperties")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("changeMemberProperties")}
-              loading={loading.changeMemberProperties}
-            />  
-            
           </div>
           <div className="flex flex-col gap-4 mt-10">
             <UserInfoStyle4Field
               label={t("changeOfMemberProperties")}   
               placeholder=""  
-              type={onoffType}
+              type={distributorType}
               value={fields.changeOfMemberProperties}
               onChange={handleChange("changeOfMemberProperties")}
               buttonLabel="Change"
@@ -1914,7 +1910,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("changeOfDistributorProperties")}   
               placeholder=""  
-              type={onoffType}
+              type={onlineOfflinedistributorType}
               value={fields.changeOfDistributorProperties}
               onChange={handleChange("changeOfDistributorProperties")}
               buttonLabel="Change"
@@ -1924,7 +1920,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("delegationOfAdminstrator")}   
               placeholder=""  
-              type={onoffType}
+              type={useOnOffType}
               value={fields.delegationOfAdminstrator}
               onChange={handleChange("delegationOfAdminstrator")}
               buttonLabel="Change"
@@ -1932,9 +1928,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.delegationOfAdminstrator}
             /> 
             <UserInfoStyle4Field
-              label={t("displayOfAdminstrator")}   
+              label={t("displayOfIntegratedMoneyDetails")}   
               placeholder=""  
-              type={onoffType}
+              type={currentType}
               value={fields.displayOfAdministrator}
               onChange={handleChange("displayOfAdministrator")}
               buttonLabel="Change"
@@ -1942,19 +1938,9 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.displayOfAdministrator}
             />
             <UserInfoStyle4Field
-              label={t("partnerButtonDisplay")}   
-              placeholder=""  
-              type={onoffType}
-              value={fields.partnerButtonDisplay}
-              onChange={handleChange("partnerButtonDisplay")}
-              buttonLabel="Change"
-              onButtonClick={handleButtonClick("partnerButtonDisplay")}
-              loading={loading.partnerButtonDisplay}
-            /> 
-            <UserInfoStyle4Field
               label={t("partnerMultiAccessPossible")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.partnerMultiAccessPossible}
               onChange={handleChange("partnerMultiAccessPossible")}
               buttonLabel="Change"
@@ -1962,9 +1948,19 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.partnerMultiAccessPossible}
             /> 
             <UserInfoStyle4Field
+              label={t("partnerButtonDisplay")}   
+              placeholder=""  
+              type={currentType}
+              value={fields.partnerButtonDisplay}
+              onChange={handleChange("partnerButtonDisplay")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("partnerButtonDisplay")}
+              loading={loading.partnerButtonDisplay}
+            /> 
+            <UserInfoStyle4Field
               label={t("displayPartnerreductionDetails")}   
               placeholder=""  
-              type={onoffType}
+              type={currentType}
               value={fields.displayPartnerReductionDetail}
               onChange={handleChange("displayPartnerReductionDetail")}
               buttonLabel="Change"
@@ -1974,7 +1970,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle4Field
               label={t("displayOfPartnerRollingPayment/RecoveryHistory")}   
               placeholder=""  
-              type={onoffType}
+              type={currentType}
               value={fields.displayPartnerRollingPaymentRecoveryHistory}
               onChange={handleChange("displayPartnerRollingPaymentRecoveryHistory")}
               buttonLabel="Change"
@@ -1984,17 +1980,17 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             <UserInfoStyle6Field
               label={t("createSubDistributor")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.createSubDistributor}
               onChange={handleChange("createSubDistributor")}
               buttonLabel="Change"
               onButtonClick={handleButtonClick("createSubDistributor")}
               loading={loading.createSubDistributor}
             /> 
-            <UserInfoStyle6Field
+            {/* <UserInfoStyle6Field
               label={t("createASuborDinatorDirectMember")}   
               placeholder=""  
-              type={onoffType}
+              type={allowanceType}
               value={fields.createSubordinatorDirectMember}
               onChange={handleChange("createSubordinatorDirectMember")}
               buttonLabel="Change"
@@ -2161,10 +2157,10 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("minimumFolderForSportsBetting")}
               loading={loading.minimumFolderForSportsBetting}
-            />
+            /> */}
           </div>
         </div>
-        {/* <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
+        <div className="flex flex-row gap-4 mt-10 min-w-[1200px]">
           <div className="flex flex-col gap-2 text-xm">
             <MemoInputFiled 
               label={t("accountMemo")}
@@ -2207,7 +2203,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               loading={loading.xxx}
             />
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );
