@@ -21,6 +21,7 @@ func main() {
 
 	err := initializers.DB.AutoMigrate(
 		models.User{},
+		models.Profile{},
 		models.Event{},
 		models.Domain{},
 		models.Category{},

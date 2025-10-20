@@ -401,7 +401,13 @@ const UserInfoStyle4Field: React.FC<UserInfoFieldStyle4Props> = ({
   <div className="flex flex-column gap-2 justify-start items-center">
     <div className="text-xm w-[150px]">{label}</div>
     <div className="flex flex-row gap-2 w-[250px]">
-      <Select placeholder={placeholder} options={type} className="w-full"/>
+      <Select 
+        placeholder={placeholder} 
+        options={type} 
+        value={value} 
+        onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)}
+        className="w-full"
+      />
       <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
         {buttonLabel}
       </Button>
@@ -422,7 +428,13 @@ const UserInfoStyle6Field: React.FC<UserInfoFieldStyle6Props> = ({
   <div className="flex flex-column gap-2 justify-start items-center">
     <div className="text-xm w-[150px]">{label}</div>
     <div className="flex flex-row gap-2 w-[250px]">
-      <Select placeholder={placeholder} options={type} className="w-full"/>
+      <Select 
+        placeholder={placeholder} 
+        options={type} 
+        value={value}
+        onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)}
+        className="w-full"
+      />
       <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
         {buttonLabel}
       </Button>
@@ -530,7 +542,13 @@ const SlotcityPriorityUseField: React.FC<SlotcityPriorityUseFieldProps> = ({
   <div className="flex flex-column gap-2 justify-start items-center">
     <div className="text-xm w-[150px]">{label}</div>
     <div className="flex flex-row gap-2 w-[250px]">
-      <Select placeholder={placeholder} options={slotcityPriorityUseType} className="w-full"/>
+      <Select 
+        placeholder={placeholder} 
+        options={slotcityPriorityUseType} 
+        value={value === 'true' ? true : value === 'false' ? false : Boolean(value)}
+        onChange={(val) => onChange({ target: { value: String(val) } } as React.ChangeEvent<HTMLInputElement>)}
+        className="w-full"
+      />
       <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
         {buttonLabel}
       </Button>
@@ -720,7 +738,13 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     <div className="flex flex-column gap-2 justify-start items-center">
       <div className="text-xm w-[150px]">{label}</div>
       <div className="flex flex-row gap-2 w-[250px]">
-        <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={levelOption} className="w-full"/>
+        <Select 
+          placeholder={placeholder} 
+          onChange={(val) => onChange({ target: { value: String(val) } } as React.ChangeEvent<HTMLInputElement>)} 
+          value={value ? Number(value) : undefined} 
+          options={levelOption} 
+          className="w-full"
+        />
         <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
           {buttonLabel}
         </Button>
@@ -741,7 +765,13 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
         <div className="flex flex-column gap-2 justify-start items-center">
             <div className="text-xm w-[150px]">{label}</div>
             <div className="flex flex-row gap-2 w-[250px]">
-            <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={options} className="w-full"/>
+            <Select 
+              placeholder={placeholder} 
+              onChange={(val) => onChange({ target: { value: String(val) } } as React.ChangeEvent<HTMLInputElement>)} 
+              value={value} 
+              options={options} 
+              className="w-full"
+            />
             <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
                 {buttonLabel}
             </Button>
@@ -761,7 +791,13 @@ const DateInfoField: React.FC<UserInfoFieldProps> = ({
     <div className="flex flex-column gap-2 justify-start items-center">
       <div className="text-xm w-[150px]">{label}</div>
       <div className="flex flex-row gap-2 w-[250px]">
-        <Select placeholder={placeholder} onChange={(val) => onChange({ target: { value: val } } as React.ChangeEvent<HTMLInputElement>)} value={value} options={memberType} className="w-full"/>
+        <Select 
+          placeholder={placeholder} 
+          onChange={(val) => onChange({ target: { value: String(val) } } as React.ChangeEvent<HTMLInputElement>)} 
+          value={value} 
+          options={memberType} 
+          className="w-full"
+        />
         <Button type="primary" onClick={onButtonClick} loading={loading} disabled={loading}>
           {buttonLabel}
         </Button>
@@ -821,7 +857,7 @@ const MemoInput1Filed: React.FC<UserInfoFieldProps> = ({
   <div className="flex flex-column gap-2 justify-start items-center">
     <div className="text-xm w-[150px]">{label}</div>
     <div className="flex flex-row gap-2 w-[500px]">
-      <TextArea rows={4} placeholder={placeholder} value={value} className="w-ful l "/>
+      <TextArea rows={4} placeholder={placeholder} value={value} onChange={(e) => onChange(e as any)} className="w-full"/>
       <Button type="primary" onClick={onButtonClick} loading={loading} className="min-w-[150px]" disabled={loading}>
         {buttonLabel}
       </Button>

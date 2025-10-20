@@ -182,10 +182,10 @@ func GetBasicInformation(c *gin.Context) {
 		Recommender:      user.Profile.Referral,
 		Level:            user.Profile.Level,
 		MemberType:       user.Type,
-		Color:            "",          // Not available in current model
+		Color:            user.Color,
 		OnOff:            user.Status, // Map status to OnOff
 		AccountBlock:     user.Status,
-		ResidentNumber:   "", // Not available in current model
+		ResidentNumber:   user.ResidentNumber,
 		UseUSDT: func() string {
 			if user.USDTAddress != "" {
 				return "true"
@@ -193,85 +193,90 @@ func GetBasicInformation(c *gin.Context) {
 				return "false"
 			}
 		}(),
-		WalletAddress:                          user.USDTAddress,
-		LastDeposit:                            user.Profile.LastDeposit.Format("2006-01-02 15:04:05"),
-		CurrencyExchangeRolling:                "0", // Default value
-		CurrencyExchangeRollingBonus:           "0", // Default value
-		ExchangeRollingBettingAmount:           "0", // Default value
-		CurrencyRollover:                       "0", // Default value
-		AmountHold:                             fmt.Sprintf("%.2f", user.Profile.Balance),
-		AmountHoldPayment:                      "0", // Default value
-		AmountHoldCollect:                      "0", // Default value
-		Coupon:                                 fmt.Sprintf("%d", user.Profile.Coupon),
-		CouponProcessing:                       "0", // Default value
-		TotalLoss:                              "0", // Default value
-		TotalLossProcessing:                    "0", // Default value
-		RollingGold:                            fmt.Sprintf("%.2f", user.Profile.Roll),
-		RollingGoldProcessing:                  "0",            // Default value
-		SameIPCheck:                            user.CurrentIP, // Use current IP for same IP check
-		RollingPercenty:                        "0",            // Default value
-		SlotcityPriorityUse:                    "",             // Not available in current model
-		WebLoginAvailable:                      "",             // Not available in current model
-		ChangeOfDistributorProperties:          "",             // Not available in current model
-		DelegationOfAdminstrator:               "",             // Not available in current model
-		SignUpCode:                             "",             // Not available in current model
-		CodeSignupAvailable:                    "",             // Not available in current model
-		DisplayMemberCode:                      "",             // Not available in current model
-		InitialLevelOfAcquaintanceRegistration: "",             // Not available in current model
-		MemberPageAlarmSound:                   "",             // Not available in current model
-		UseAttendanceCheck:                     "",             // Not available in current model
-		UseRoulette:                            "",             // Not available in current model
-		CustomerCenterInquiryAvailable:         "",             // Not available in current model
-		CreatePost:                             "",             // Not available in current model
-		WhiteCommentOnPost:                     "",             // Not available in current model
-		PointsAwardedForThePost:                "",             // Not available in current model
-		UsingVirtualAccountApi:                 "",             // Not available in current model
-		UsingOfWinningPoints:                   "",             // Not available in current model
-		UsePaybackPayment:                      "",             // Not available in current model
-		UseRefundLimit:                         "",             // Not available in current model
-		DailyFirstDepositBonusLimit:            "",             // Not available in current model
-		SignUpFirstDepositBonusLimit:           "",             // Not available in current model
-		ReplenishmentBonusLimit:                "",             // Not available in current model
-		SurpriseBonusLimit:                     "",             // Not available in current model
-		IgnoreOption:                           "",             // Not available in current model
-		RollingConversionAutomaticApproval:     "",             // Not available in current model
-		CutBettingHistory:                      "",             // Not available in current model
-		MaximumAmountOfBettingHistoryReduction: "",             // Not available in current model
-		PercentageReductionInBettingAmount:     "",             // Not available in current model
-		WaitingTimeForReApplicationAfterCurrencyExchangeIsCompleted:   "", // Not available in current model
-		WaitingTimeForReApplicationAfterChargingIsCompleted:           "", // Not available in current model
-		WaitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted: "", // Not available in current model
-		ChangeMemberProperties:                      "",             // Not available in current model
-		Distributor:                                 "",             // Not available in current model
-		ChangeOfMemberProperties:                    "",             // Not available in current model
-		DisplayOfAdministrator:                      "",             // Not available in current model
-		PartnerButtonDisplay:                        "",             // Not available in current model
-		PartnerMultiAccessPossible:                  "",             // Not available in current model
-		DisplayPartnerReductionDetail:               "",             // Not available in current model
-		DisplayPartnerRollingPaymentRecoveryHistory: "",             // Not available in current model
-		CreateSubDistributor:                        "",             // Not available in current model
-		CreateSubordinatorDirectMember:              "",             // Not available in current model
-		AccessToSubDetails:                          "",             // Not available in current model
-		AccessToSubBankInformation:                  "",             // Not available in current model
-		LowerConnectionCanBeKicked:                  "",             // Not available in current model
-		SubMoneyPayable:                             "",             // Not available in current model
-		LowerMoneyRecoveryPossible:                  "",             // Not available in current model
-		LowerLosingChangePossible:                   "",             // Not available in current model
-		LowerRollingChangeable:                      "",             // Not available in current model
-		ReferalBenefitsMember:                       "",             // Not available in current model
-		ReferalBenefitsMini:                         "",             // Not available in current model
-		ReferalBenefitsVirtual:                      "",             // Not available in current model
-		ReferalBenefitsSportsSinglePoles:            "",             // Not available in current model
-		ReferalBenefitsSports2Poles:                 "",             // Not available in current model
-		ReferalBenefitsSports3Poles:                 "",             // Not available in current model
-		ReferalBenefitsSports4Poles:                 "",             // Not available in current model
-		ReferalBenefitsSportsDapol:                  "",             // Not available in current model
-		SportsBettingAllowed:                        "",             // Not available in current model
-		MinimumFolderForSportsBetting:               "",             // Not available in current model
-		AccountMemo:                                 "",             // Not available in current model
-		AdminNote:                                   "",             // Not available in current model
-		AdminMemo2:                                  "",             // Not available in current model
-		XXX:                                         user.CurrentIP, // Use current IP for allowed IP address
+		WalletAddress:                user.USDTAddress,
+		LastDeposit:                  user.Profile.LastDeposit.Format("2006-01-02 15:04:05"),
+		CurrencyExchangeRolling:      "0", // Default value
+		CurrencyExchangeRollingBonus: "0", // Default value
+		ExchangeRollingBettingAmount: "0", // Default value
+		CurrencyRollover:             "0", // Default value
+		AmountHold:                   fmt.Sprintf("%.2f", user.Profile.Balance),
+		AmountHoldPayment:            "0", // Default value
+		AmountHoldCollect:            "0", // Default value
+		Coupon:                       fmt.Sprintf("%d", user.Profile.Coupon),
+		CouponProcessing:             "0", // Default value
+		TotalLoss:                    "0", // Default value
+		TotalLossProcessing:          "0", // Default value
+		RollingGold:                  fmt.Sprintf("%.2f", user.Profile.Roll),
+		RollingGoldProcessing:        "0",            // Default value
+		SameIPCheck:                  user.CurrentIP, // Use current IP for same IP check
+		RollingPercenty:              "0",            // Default value
+		SlotcityPriorityUse: func() string {
+			if user.SlotcityPriorityUse {
+				return "true"
+			}
+			return "false"
+		}(),
+		WebLoginAvailable:                      user.WebLoginAvailable,
+		ChangeOfDistributorProperties:          user.ChangeOfDistributorProperties,
+		DelegationOfAdminstrator:               user.DelegationOfAdministrator,
+		SignUpCode:                             user.SignUpCode,
+		CodeSignupAvailable:                    user.CodeSignupAvailable,
+		DisplayMemberCode:                      user.DisplayMemberCode,
+		InitialLevelOfAcquaintanceRegistration: user.InitialLevelOfAcquaintanceRegistration,
+		MemberPageAlarmSound:                   user.MemberPageAlarmSound,
+		UseAttendanceCheck:                     user.UseAttendanceCheck,
+		UseRoulette:                            user.UseRoulette,
+		CustomerCenterInquiryAvailable:         user.CustomerCenterInquiryAvailable,
+		CreatePost:                             user.CreatePost,
+		WhiteCommentOnPost:                     user.WhiteCommentOnPost,
+		PointsAwardedForThePost:                user.PointsAwardedForThePost,
+		UsingVirtualAccountApi:                 user.UsingVirtualAccountApi,
+		UsingOfWinningPoints:                   user.UsingOfWinningPoints,
+		UsePaybackPayment:                      user.UsePaybackPayment,
+		UseRefundLimit:                         user.UseRefundLimit,
+		DailyFirstDepositBonusLimit:            user.DailyFirstDepositBonusLimit,
+		SignUpFirstDepositBonusLimit:           user.SignUpFirstDepositBonusLimit,
+		ReplenishmentBonusLimit:                user.ReplenishmentBonusLimit,
+		SurpriseBonusLimit:                     user.SurpriseBonusLimit,
+		IgnoreOption:                           user.IgnoreOption,
+		RollingConversionAutomaticApproval:     user.RollingConversionAutomaticApproval,
+		CutBettingHistory:                      user.CutBettingHistory,
+		MaximumAmountOfBettingHistoryReduction: user.MaximumAmountOfBettingHistoryReduction,
+		PercentageReductionInBettingAmount:     user.PercentageReductionInBettingAmount,
+		WaitingTimeForReApplicationAfterCurrencyExchangeIsCompleted:   fmt.Sprintf("%d", user.WaitingTimeAfterCurrencyExchange),
+		WaitingTimeForReApplicationAfterChargingIsCompleted:           fmt.Sprintf("%d", user.WaitingTimeAfterCharging),
+		WaitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted: fmt.Sprintf("%d", user.WaitingTimeForExchangeRequest),
+		ChangeMemberProperties:                      user.ChangeMemberProperties,
+		Distributor:                                 user.Distributor,
+		ChangeOfMemberProperties:                    user.ChangeOfMemberProperties,
+		DisplayOfAdministrator:                      user.DisplayOfAdministrator,
+		PartnerButtonDisplay:                        user.PartnerButtonDisplay,
+		PartnerMultiAccessPossible:                  user.PartnerMultiAccessPossible,
+		DisplayPartnerReductionDetail:               user.DisplayPartnerReductionDetail,
+		DisplayPartnerRollingPaymentRecoveryHistory: user.DisplayPartnerRollingPaymentRecoveryHistory,
+		CreateSubDistributor:                        user.CreateSubDistributor,
+		CreateSubordinatorDirectMember:              user.CreateSubordinatorDirectMember,
+		AccessToSubDetails:                          user.AccessToSubDetails,
+		AccessToSubBankInformation:                  user.AccessToSubBankInformation,
+		LowerConnectionCanBeKicked:                  user.LowerConnectionCanBeKicked,
+		SubMoneyPayable:                             user.SubMoneyPayable,
+		LowerMoneyRecoveryPossible:                  user.LowerMoneyRecoveryPossible,
+		LowerLosingChangePossible:                   user.LowerLosingChangePossible,
+		LowerRollingChangeable:                      user.LowerRollingChangeable,
+		ReferalBenefitsMember:                       user.ReferalBenefitsMember,
+		ReferalBenefitsMini:                         user.ReferalBenefitsMini,
+		ReferalBenefitsVirtual:                      user.ReferalBenefitsVirtual,
+		ReferalBenefitsSportsSinglePoles:            user.ReferalBenefitsSportsSinglePoles,
+		ReferalBenefitsSports2Poles:                 user.ReferalBenefitsSports2Poles,
+		ReferalBenefitsSports3Poles:                 user.ReferalBenefitsSports3Poles,
+		ReferalBenefitsSports4Poles:                 user.ReferalBenefitsSports4Poles,
+		ReferalBenefitsSportsDapol:                  user.ReferalBenefitsSportsDapol,
+		SportsBettingAllowed:                        user.SportsBettingAllowed,
+		MinimumFolderForSportsBetting:               user.MinimumFolderForSportsBetting,
+		AccountMemo:                                 user.AccountMemo,
+		AdminNote:                                   user.AdminNote,
+		AdminMemo2:                                  user.AdminMemo2,
+		XXX:                                         user.AllowedIPAddress,
 		OS:                                          user.OS,
 		Device:                                      user.Device,
 		FingerPrint:                                 user.FingerPrint,
@@ -385,25 +390,13 @@ func UpdateBasicInformation(c *gin.Context) {
 	case "memberType":
 		user.Type = value
 	case "color":
-		// Color field doesn't exist in current model - could add it later
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Color field updated (not stored in database)",
-			"field":   field,
-			"value":   value,
-		})
-		return
+		user.Color = value
 	case "onoff":
 		user.Status = value
 	case "accountblock":
 		user.Status = value
 	case "residentNumber":
-		// ResidentNumber field doesn't exist in current model - could add it later
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Resident number field updated (not stored in database)",
-			"field":   field,
-			"value":   value,
-		})
-		return
+		user.ResidentNumber = value
 	case "useUSDT":
 		if value == "true" && user.USDTAddress == "" {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -429,6 +422,153 @@ func UpdateBasicInformation(c *gin.Context) {
 	case "rollingGold":
 		updateProfileField(c, userid, field, value, []string{"Profile.Roll"})
 		return
+
+	// New fields for admin settings and permissions
+	case "slotcityPriorityUse":
+		user.SlotcityPriorityUse = (value == "true" || value == "1")
+	case "webLoginAvailable":
+		user.WebLoginAvailable = value
+	case "changeOfDistributorProperties":
+		user.ChangeOfDistributorProperties = value
+	case "delegationOfAdminstrator":
+		user.DelegationOfAdministrator = value
+	case "signUpCode":
+		user.SignUpCode = value
+	case "codeSignupAvailable":
+		user.CodeSignupAvailable = value
+	case "displayMemberCode":
+		user.DisplayMemberCode = value
+	case "initialLevelOfAcquaintanceRegistration":
+		user.InitialLevelOfAcquaintanceRegistration = value
+	case "memberPageAlarmSound":
+		user.MemberPageAlarmSound = value
+	case "useAttendanceCheck":
+		user.UseAttendanceCheck = value
+	case "useRoulette":
+		user.UseRoulette = value
+	case "customerCenterInquiryAvailable":
+		user.CustomerCenterInquiryAvailable = value
+	case "createPost":
+		user.CreatePost = value
+	case "whiteCommentOnPost":
+		user.WhiteCommentOnPost = value
+	case "pointsAwardedForThePost":
+		user.PointsAwardedForThePost = value
+	case "usingVirtualAccountApi":
+		user.UsingVirtualAccountApi = value
+	case "usingOfWinningPoints":
+		user.UsingOfWinningPoints = value
+	case "usePaybackPayment":
+		user.UsePaybackPayment = value
+	case "useRefundLimit":
+		user.UseRefundLimit = value
+	case "dailyFirstDepositBonusLimit":
+		user.DailyFirstDepositBonusLimit = value
+	case "signUpFirstDepositBonusLimit":
+		user.SignUpFirstDepositBonusLimit = value
+	case "replenishmentBonusLimit":
+		user.ReplenishmentBonusLimit = value
+	case "surpriseBonusLimit":
+		user.SurpriseBonusLimit = value
+	case "ignoreOption":
+		user.IgnoreOption = value
+	case "rollingConversionAutomaticApproval":
+		user.RollingConversionAutomaticApproval = value
+	case "cutBettingHistory":
+		user.CutBettingHistory = value
+	case "maximumAmountOfBettingHistoryReduction":
+		user.MaximumAmountOfBettingHistoryReduction = value
+	case "percentageReductionInBettingAmount":
+		user.PercentageReductionInBettingAmount = value
+	case "waitingTimeForReApplicationAfterCurrencyExchangeIsCompleted":
+		if waitTime, err := strconv.Atoi(value); err == nil {
+			user.WaitingTimeAfterCurrencyExchange = waitTime
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid waiting time format. Must be a number",
+			})
+			return
+		}
+	case "waitingTimeForReApplicationAfterChargingIsCompleted":
+		if waitTime, err := strconv.Atoi(value); err == nil {
+			user.WaitingTimeAfterCharging = waitTime
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid waiting time format. Must be a number",
+			})
+			return
+		}
+	case "waitingTimeForCurrencyExchangeRequestAfterChargingIsCompleted":
+		if waitTime, err := strconv.Atoi(value); err == nil {
+			user.WaitingTimeForExchangeRequest = waitTime
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid waiting time format. Must be a number",
+			})
+			return
+		}
+	case "changeMemberProperties":
+		user.ChangeMemberProperties = value
+	case "distributor":
+		user.Distributor = value
+	case "changeOfMemberProperties":
+		user.ChangeOfMemberProperties = value
+	case "displayOfAdministrator":
+		user.DisplayOfAdministrator = value
+	case "partnerButtonDisplay":
+		user.PartnerButtonDisplay = value
+	case "partnerMultiAccessPossible":
+		user.PartnerMultiAccessPossible = value
+	case "displayPartnerReductionDetail":
+		user.DisplayPartnerReductionDetail = value
+	case "displayPartnerRollingPaymentRecoveryHistory":
+		user.DisplayPartnerRollingPaymentRecoveryHistory = value
+	case "createSubDistributor":
+		user.CreateSubDistributor = value
+	case "createSubordinatorDirectMember":
+		user.CreateSubordinatorDirectMember = value
+	case "accessToSubDetails":
+		user.AccessToSubDetails = value
+	case "accessToSubBankInformation":
+		user.AccessToSubBankInformation = value
+	case "lowerConnectionCanBeKicked":
+		user.LowerConnectionCanBeKicked = value
+	case "subMoneyPayable":
+		user.SubMoneyPayable = value
+	case "lowerMoneyRecoveryPossible":
+		user.LowerMoneyRecoveryPossible = value
+	case "lowerLosingChangePossible":
+		user.LowerLosingChangePossible = value
+	case "lowerRollingChangeable":
+		user.LowerRollingChangeable = value
+	case "referalBenefitsMember":
+		user.ReferalBenefitsMember = value
+	case "referalBenefitsMini":
+		user.ReferalBenefitsMini = value
+	case "referalBenefitsVirtual":
+		user.ReferalBenefitsVirtual = value
+	case "referalBenefitsSportsSinglePoles":
+		user.ReferalBenefitsSportsSinglePoles = value
+	case "referalBenefitsSports2Poles":
+		user.ReferalBenefitsSports2Poles = value
+	case "referalBenefitsSports3Poles":
+		user.ReferalBenefitsSports3Poles = value
+	case "referalBenefitsSports4Poles":
+		user.ReferalBenefitsSports4Poles = value
+	case "referalBenefitsSportsDapol":
+		user.ReferalBenefitsSportsDapol = value
+	case "sportsBettingAllowed":
+		user.SportsBettingAllowed = value
+	case "minimumFolderForSportsBetting":
+		user.MinimumFolderForSportsBetting = value
+	case "accountMemo":
+		user.AccountMemo = value
+	case "adminNote":
+		user.AdminNote = value
+	case "adminMemo2":
+		user.AdminMemo2 = value
+	case "xxx":
+		user.AllowedIPAddress = value
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Unknown field: " + field,
