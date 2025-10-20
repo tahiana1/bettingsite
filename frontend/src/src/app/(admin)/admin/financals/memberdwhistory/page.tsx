@@ -225,12 +225,7 @@ const MemberDWPage: React.FC = () => {
           or: [
             {
               field: "users.role",
-              value: "A",
-              op: "eq",
-            },
-            {
-              field: "users.role",
-              value: "P",
+              value: "U",
               op: "eq",
             },
           ],
@@ -365,11 +360,12 @@ const MemberDWPage: React.FC = () => {
       ),
     },
     {
-      title: "Level",
+      title: t('userid'),
       dataIndex: "level",
       key: "level",
       fixed: "left",
       render: (_, record) => {
+        // return (record.user?.profile?.level + " " + record.user?.profile?.name);
         return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.id)}>
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.user?.profile?.level}</p>
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.profile?.name}</p>
@@ -466,7 +462,6 @@ const MemberDWPage: React.FC = () => {
     {
       title: t("shortcut"),
       dataIndex: "shortcut",
-      width: 150,
       key: "shortcut",
       render: (_, record) => (
         <>
