@@ -370,12 +370,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("phone"),
       dataIndex: "profile.phone",
       key: '"Profile"."phone"',
-      render: (_, record) => record.user?.profile?.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      render: (_, record) => record.user?.profile?.phone || "",
     },
     {
       title: t("bankName"),
@@ -511,13 +506,33 @@ const GeneralDWPage: React.FC = () => {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) =>
+        isValidDate(v)
+          ? f.dateTime(new Date(v), {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            })
+          : "",
     },
     {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("updatedAt"),
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (v) =>
+        isValidDate(v)
+          ? f.dateTime(new Date(v), {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            })
+          : "",
     },
     {
       title: t("status"),
