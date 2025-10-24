@@ -271,29 +271,17 @@ export default function EOS1Page() {
                     {iframeVisible ? 'Hide' : 'Show'}
                   </button>
                 </div>
-                
-                {/* 
-                  Live Game Display - Embedded iframe showing real-time game visualization
-                  Conditionally rendered based on iframeVisible state
-                  Displays live Powerball game results and animations
-                */}
                 {iframeVisible && (
                   <div className="iframe-section iframe-sec">
-                    <div className="iframe-wrapper">
+                    <div className="iframe-wrapper flex items-center justify-center"> 
                       <iframe
                         src={getIframeSrc(activeTab)}
-                        className="game-iframe"
+                        className="game-iframe !z-10 opacity-0 m-auto"
                         scrolling="no"
                       />
                     </div>
                   </div>
                 )}
-
-                {/* 
-                  Betting History Table - Shows user's recent betting activity
-                  Displays round numbers, bet types, amounts, win amounts, and status
-                  Includes pagination for navigating through betting history
-                */}
                 <div className="betting-table">
                   <table>
                     <thead>

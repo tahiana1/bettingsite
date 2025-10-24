@@ -211,6 +211,24 @@
     /* opacity: 0; */
 }
 
+.minigame-app .game-iframe html{
+    height: 100%!important;
+}
+
+.minigame-app .game-iframe body{
+    height: 100%!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.minigame-app .game-iframe body div{
+   margin: auto!important;
+}
+
+.game-iframe{
+   margin: auto!important;
+}
+
 /* Betting table */
 .minigame-app .betting-table {
     background: #0f172a;
@@ -759,6 +777,358 @@
     background: #059669;
 }
 
+/* Admin-specific styles */
+.minigame-app .admin-pick-btn {
+    position: relative;
+    min-height: 80px;
+    padding-bottom: 20px;
+}
+
+.minigame-app .admin-controls {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    right: 2px;
+    display: flex;
+    gap: 1px;
+    justify-content: space-between;
+}
+
+.minigame-app .admin-btn {
+    flex: 1;
+    padding: 2px 4px;
+    font-size: 10px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'SCDream';
+}
+
+.minigame-app .admin-btn.edit-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.minigame-app .admin-btn.edit-btn:hover {
+    background: #2563eb;
+}
+
+.minigame-app .admin-btn.toggle-btn {
+    background: #10b981;
+    color: white;
+}
+
+.minigame-app .admin-btn.toggle-btn:hover {
+    background: #059669;
+}
+
+.minigame-app .admin-btn.toggle-btn.disabled {
+    background: #ef4444;
+    color: white;
+}
+
+.minigame-app .admin-btn.toggle-btn.disabled:hover {
+    background: #dc2626;
+}
+
+.minigame-app .admin-btn.delete-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.minigame-app .admin-btn.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* Disabled state for betting options */
+.minigame-app .admin-pick-btn.disabled {
+    opacity: 0.5;
+    background-color: #374151;
+}
+
+.minigame-app .admin-pick-btn.disabled .odds {
+    color: #6b7280;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1e293b;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #374151;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    background: #0f172a;
+    border: 1px solid #4b5563;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+.ball-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.ball-input-group select {
+    flex: 1;
+}
+
+.ball-input-group input {
+    flex: 2;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #374151;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+}
+
+.btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2563eb;
+}
+
+.btn-primary:disabled {
+    background: #374151;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+/* Admin header styles */
+.minigame-app .admin-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.minigame-app .admin-header h1 {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.minigame-app .admin-header p {
+    color: #9ca3af;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Admin statistics panel enhancements */
+.minigame-app .admin-stats-panel {
+    background: #1e293b;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.minigame-app .admin-stats-panel .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.minigame-app .admin-stats-panel .stat-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+}
+
+.minigame-app .admin-stats-panel .stat-card .stat-label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.minigame-app .admin-stats-panel .stat-card .stat-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Level Options Styling */
+.level-options-container {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.level-options-header h4 {
+    margin: 0 0 12px 0;
+    color: #f3f4f6;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.level-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+
+/* Admin action buttons styling */
+.minigame-app .admin-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.minigame-app .admin-actions .admin-action-btn {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    padding: 8px 12px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'SCDream';
+}
+
+.minigame-app .admin-actions .admin-action-btn:hover {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.minigame-app .admin-actions .admin-action-btn.primary {
+    background: #3b82f6;
+    border-color: #2563eb;
+}
+
+.minigame-app .admin-actions .admin-action-btn.primary:hover {
+    background: #2563eb;
+}
+
+.minigame-app .admin-actions .admin-action-btn.danger {
+    background: #ef4444;
+    border-color: #dc2626;
+}
+
+.minigame-app .admin-actions .admin-action-btn.danger:hover {
+    background: #dc2626;
+}
+
 /* Responsive design */
 @media (max-width: 1023px) {
     .minigame-app .content-wrapper {
@@ -781,6 +1151,16 @@
         cursor: pointer;
         border-radius: 4px;
         transition: all 0.2s ease;
+    }
+    
+    .minigame-app .admin-controls {
+        position: static;
+        margin-top: 4px;
+    }
+    
+    .minigame-app .admin-pick-btn {
+        min-height: 60px;
+        padding-bottom: 8px;
     }
 }
 

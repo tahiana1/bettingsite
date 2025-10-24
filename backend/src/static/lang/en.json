@@ -1901,5 +1901,15 @@
   "blockFailed" : "Block Failed",
   "yourinformationwasregisteredsuccessfully" : "Your information was registered successfully!",
   "pleasewaitwhileyougetaccess" : "Please wait while you get access.",
-  "displayOfIntegratedMoneyDetails" : "Display of integrated money details"
+  "displayOfIntegratedMoneyDetails" : "Display of integrated money details",
+  "admin/menu/miniManagement/eos1min" : "EOS 1min",
+  "admin/menu/miniManagement/eos2min" : "EOS 2min",
+  "admin/menu/miniManagement/eos3min" : "EOS 3min",
+  "admin/menu/miniManagement/eos4min" : "EOS 4min",
+  "admin/menu/miniManagement/eos5min" : "EOS 5min",
+  "admin/menu/miniManagement/bepick" : "Bepick",
+  "admin/menu/miniManagement/eos" : "EOS",
+  "admin/menu/miniManagement/pbg" : "PBG",
+  "admin/menu/miniManagement/dhpowerball" : "Dhpowerball",
+  "eos1minPowerballAdminManagement" : "EOS1 Min Powerball - Admin Management"
 } 

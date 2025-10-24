@@ -550,33 +550,49 @@ export default function AdminRootLayout({
         // },
       ],
     },
-    // {
-    //   key: "admin/game/mini",
-    //   label: t("admin/menu/miniManagement"),
-    //   icon: <FaFootball />,
-    //   children: [
-    //     {
-    //       key: "admin/game/mini/miniManagement",
-    //       label: t("admin/menu/miniManagement"),
-    //     },
-    //     {
-    //       key: "admin/game/mini/miniGameUrlManagement",
-    //       label: t("admin/menu/miniGameUrlManagement"),
-    //     },
-    //     {
-    //       key: "admin/game/mini/miniGameApiManagement",
-    //       label: t("admin/menu/miniGameApiManagement"),
-    //     },
-    //     {
-    //       key: "admin/game/mini/settingsByMinigameType",
-    //       label: t("admin/menu/settingsByMinigameType"),
-    //     },
-    //     {
-    //       key: "admin/game/mini/miniInsuranceApiManagement",
-    //       label: t("admin/menu/miniInsuranceApiManagement"),
-    //     },
-    //   ],
-    // },
+    {
+      key: "admin/game/mini",
+      label: t("admin/menu/miniManagement"),
+      icon: <FaFootball />,
+      children: [
+        {
+          key: "admin/game/mini/eos1min",
+          label: t("admin/menu/miniManagement/eos1min"),
+        },
+        {
+          key: "admin/game/mini/eos2min",
+          label: t("admin/menu/miniManagement/eos2min"),
+        },
+        {
+          key: "admin/game/mini/eos3min",
+          label: t("admin/menu/miniManagement/eos3min"),
+        },
+        {
+          key: "admin/game/mini/eos4min",
+          label: t("admin/menu/miniManagement/eos4min"),
+        },
+        {
+          key: "admin/game/mini/eos5min",
+          label: t("admin/menu/miniManagement/eos5min"),
+        },
+        {
+          key: "admin/game/mini/bepick",
+          label: t("admin/menu/miniManagement/bepick"),
+        },
+        {
+          key: "admin/game/mini/eos",
+          label: t("admin/menu/miniManagement/eos"),
+        },
+        {
+          key: "admin/game/mini/pbg",
+          label: t("admin/menu/miniManagement/pbg"),
+        },
+        {
+          key: "admin/game/mini/dhpowerball",
+          label: t("admin/menu/miniManagement/dhpowerball"),
+        },
+      ],
+    },
     // {
     //   key: "admin/game/sports",
     //   label: t("admin/menu/sports"),

@@ -1901,5 +1901,14 @@
   "deleteFailed" : "删除失败",
   "yourinformationwasregisteredsuccessfully" : "您的信息已成功注册！",
   "pleasewaitwhileyougetaccess" : "请等待获取访问权限。",
-  "displayOfIntegratedMoneyDetails" : "综合资金详情显示"
+  "displayOfIntegratedMoneyDetails" : "综合资金详情显示",
+  "admin/menu/miniManagement/eos1min" : "EOS 1分钟",
+  "admin/menu/miniManagement/eos2min" : "EOS 2分钟",
+  "admin/menu/miniManagement/eos3min" : "EOS 3分钟",
+  "admin/menu/miniManagement/eos4min" : "EOS 4分钟",
+  "admin/menu/miniManagement/eos5min" : "EOS 5分钟",
+  "admin/menu/miniManagement/bepick" : "Bepick",
+  "admin/menu/miniManagement/eos" : "EOS",
+  "admin/menu/miniManagement/pbg" : "PBG",
+  "admin/menu/miniManagement/dhpowerball" : "Dhpowerball"
 } 
