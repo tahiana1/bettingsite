@@ -1911,5 +1911,9 @@
   "admin/menu/miniManagement/eos" : "EOS",
   "admin/menu/miniManagement/pbg" : "PBG",
   "admin/menu/miniManagement/dhpowerball" : "Dhpowerball",
-  "eos1minPowerballAdminManagement" : "EOS1 Min Powerball - Admin Management"
+  "eos1minPowerballAdminManagement" : "EOS1 Min Powerball - Admin Management",
+  "blue" : "Blue",
+  "red" : "Red",
+  "green" : "Green",
+  "ballText" : "Ball Text",
 } 

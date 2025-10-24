@@ -434,9 +434,9 @@ export default function EOS1MinAdminPage() {
                                         setFormData({...formData, balls: newBalls});
                                         }}
                                     >
-                                        <option value="blue">Blue</option>
-                                        <option value="red">Red</option>
-                                        <option value="green">Green</option>
+                                        <option value="blue">{t("blue")}</option>
+                                        <option value="red">{t("red")}</option>
+                                        <option value="green">{t("green")}</option>
                                     </select>
                                     <input 
                                         type="text"
@@ -446,23 +446,13 @@ export default function EOS1MinAdminPage() {
                                         newBalls[index].text = e.target.value;
                                         setFormData({...formData, balls: newBalls});
                                         }}
-                                        placeholder="Ball text"
+                                        placeholder={t("ballText")}
                                     />
                                     </div>
                                 ))}
                                 </div>
                             )}
                             
-                            <div className="form-group">
-                                <label>Category</label>
-                                <select 
-                                value={formData.category}
-                                onChange={(e) => setFormData({...formData, category: e.target.value as 'powerball' | 'normalball'})}
-                                >
-                                <option value="powerball">Powerball</option>
-                                <option value="normalball">Normalball</option>
-                                </select>
-                            </div>
                             
                             <div className="form-group">
                                 <label>
