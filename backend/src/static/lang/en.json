@@ -1947,5 +1947,9 @@
   "eos1admin/ballTextOdd" : "Odd",
   "eos1admin/ballTextEven" : "Even",
   "eos1admin/ballTextUnder" : "Under",
-  "eos1admin/ballTextOver" : "Over"
+  "eos1admin/ballTextOver" : "Over",
+  "eos1admin/maxBettingValue" : "Max Betting Value",
+  "eos1admin/placeholderMaxBetting" : "e.g., 1000",
+  "eos1admin/change" : "Change",
+  "eos1admin/maxBettingValueChanged" : "Max Betting Value Changed Successfully!"
 } 

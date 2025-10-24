@@ -1084,6 +1084,13 @@
     margin-bottom: 10px;
 }
 
+.max-betting-container {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 12px;
+}
+
 /* Admin action buttons styling */
 .minigame-app .admin-actions {
     display: flex;

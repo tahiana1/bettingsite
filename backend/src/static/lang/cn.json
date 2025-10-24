@@ -1947,5 +1947,11 @@
   "eos1admin/ballTextOdd" : "奇数",
   "eos1admin/ballTextEven" : "偶数",
   "eos1admin/ballTextUnder" : "小",
-  "eos1admin/ballTextOver" : "大"
-}
+  "eos1admin/ballTextOver" : "大",
+  "eos1admin/maxBettingValue" : "最大投注值",
+  "eos1admin/placeholderMaxBetting" : "例如：1000",
+  "eos1admin/change" : "更改",
+  "eos1admin/maxBettingValueChanged" : "最大投注值更改成功！",
+  "admin/menu/bettingStatus/casinoLive" : "真人娱乐场",
+  "admin/menu/bettingStatus/casinoSlot" : "老虎机游戏"
+} 

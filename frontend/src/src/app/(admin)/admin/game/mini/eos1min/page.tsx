@@ -7,6 +7,7 @@ import {
     Card,
     Button,
     Form,
+    Input,
   } from "antd";
   import { FilterDropdown } from "@refinedev/antd";
 import { useTranslations } from 'next-intl';
@@ -51,6 +52,7 @@ export default function EOS1MinAdminPage() {
     const [editingOption, setEditingOption] = useState<BettingOption | null>(null);
     const [hasChanges, setHasChanges] = useState(false);
     const [selectedLevel, setSelectedLevel] = useState<number>(1);
+    const [maxBettingValue, setMaxBettingValue] = useState<string>('1000');
 
     // State for betting options with full CRUD capabilities
     const [powerballOptions, setPowerballOptions] = useState<BettingOption[]>([
@@ -199,6 +201,12 @@ export default function EOS1MinAdminPage() {
         console.log(`Level ${level} selected`);
     };
 
+    const handleMaxBettingChange = () => {
+        setHasChanges(true);
+        console.log(`Max betting value changed to: ${maxBettingValue}`);
+        alert(t('eos1admin/maxBettingValueChanged'));
+    };
+
     return (
         <Layout>
             <Card title={t("eos1minPowerballAdminManagement")}>
@@ -218,6 +226,30 @@ export default function EOS1MinAdminPage() {
                             </Button>
                         );
                     })}
+                </div>
+                
+                {/* Max Betting Value Input */}
+                <div className="max-betting-container" style={{ marginTop: 16, marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <label style={{ color: '#f3f4f6', fontWeight: 500 }}>
+                            {t('eos1admin/maxBettingValue')}:
+                        </label>
+                        <Input
+                            type="number"
+                            value={maxBettingValue}
+                            onChange={(e) => setMaxBettingValue(e.target.value)}
+                            placeholder={t('eos1admin/placeholderMaxBetting')}
+                            style={{ width: 120 }}
+                            size="small"
+                        />
+                        <Button
+                            type="primary"
+                            size="small"
+                            onClick={handleMaxBettingChange}
+                        >
+                            {t('eos1admin/change')}
+                        </Button>
+                    </div>
                 </div>
                 
                 <div className="minigame-app !min-h-auto !bg-transparent !p-0">
