@@ -1943,5 +1943,9 @@
   "eos1admin/changesSaved" : "Changes saved successfully!",
   "eos1admin/placeholderOptionName" : "e.g., Powerball Odd",
   "eos1admin/placeholderOdds" : "e.g., 1.95",
-  "eos1admin/placeholderBallText" : "e.g., Odd, Even, Under, Over"
+  "eos1admin/placeholderBallText" : "e.g., Odd, Even, Under, Over",
+  "eos1admin/ballTextOdd" : "Odd",
+  "eos1admin/ballTextEven" : "Even",
+  "eos1admin/ballTextUnder" : "Under",
+  "eos1admin/ballTextOver" : "Over"
 } 

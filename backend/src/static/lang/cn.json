@@ -1943,5 +1943,9 @@
   "eos1admin/changesSaved" : "更改保存成功！",
   "eos1admin/placeholderOptionName" : "例如：强力球奇数",
   "eos1admin/placeholderOdds" : "例如：1.95",
-  "eos1admin/placeholderBallText" : "例如：奇数、偶数、小、大"
-} 
+  "eos1admin/placeholderBallText" : "例如：奇数、偶数、小、大",
+  "eos1admin/ballTextOdd" : "奇数",
+  "eos1admin/ballTextEven" : "偶数",
+  "eos1admin/ballTextUnder" : "小",
+  "eos1admin/ballTextOver" : "大"
+}

@@ -6,6 +6,7 @@ import {
     Layout,
     Card,
     Button,
+    Form,
   } from "antd";
   import { FilterDropdown } from "@refinedev/antd";
 import { useTranslations } from 'next-intl';
@@ -413,12 +414,15 @@ export default function EOS1MinAdminPage() {
                                 
                                 <div className="form-group">
                                     <label>{t('eos1admin/ballText')}</label>
-                                    <input 
-                                    type="text"
+                                    <select 
                                     value={formData.text}
                                     onChange={(e) => setFormData({...formData, text: e.target.value})}
-                                    placeholder={t('eos1admin/placeholderBallText')}
-                                    />
+                                    >
+                                    <option value="Odd">{t('eos1admin/ballTextOdd')}</option>
+                                    <option value="Even">{t('eos1admin/ballTextEven')}</option>
+                                    <option value="Under">{t('eos1admin/ballTextUnder')}</option>
+                                    <option value="Over">{t('eos1admin/ballTextOver')}</option>
+                                    </select>
                                 </div>
                                 </>
                             ) : (
@@ -438,16 +442,20 @@ export default function EOS1MinAdminPage() {
                                         <option value="red">{t("red")}</option>
                                         <option value="green">{t("green")}</option>
                                     </select>
-                                    <input 
-                                        type="text"
+                                    <select 
                                         value={ball.text}
                                         onChange={(e) => {
                                         const newBalls = [...formData.balls];
                                         newBalls[index].text = e.target.value;
                                         setFormData({...formData, balls: newBalls});
                                         }}
-                                        placeholder={t("ballText")}
-                                    />
+                                    >
+                                    <option value="">{t('eos1admin/placeholderBallText')}</option>
+                                    <option value="Odd">{t('eos1admin/ballTextOdd')}</option>
+                                    <option value="Even">{t('eos1admin/ballTextEven')}</option>
+                                    <option value="Under">{t('eos1admin/ballTextUnder')}</option>
+                                    <option value="Over">{t('eos1admin/ballTextOver')}</option>
+                                    </select>
                                     </div>
                                 ))}
                                 </div>
@@ -488,6 +496,8 @@ export default function EOS1MinAdminPage() {
                         </div>
                         </div>
                     )}
+                    <Form>
+                    </Form>
                 </div>
             </Card>
         </Layout>
