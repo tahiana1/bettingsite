@@ -155,13 +155,13 @@ export default function EOS1MinAdminPage() {
     };
 
     const handleDeleteOption = (optionId: string, category: 'powerball' | 'normalball') => {
-        if (confirm('Are you sure you want to delete this betting option?')) {
-        if (category === 'powerball') {
-            setPowerballOptions(prev => prev.filter(opt => opt.id !== optionId));
-        } else {
-            setNormalballOptions(prev => prev.filter(opt => opt.id !== optionId));
-        }
-        setHasChanges(true);
+        if (confirm(t('eos1admin/confirmDelete'))) {
+            if (category === 'powerball') {
+                setPowerballOptions(prev => prev.filter(opt => opt.id !== optionId));
+            } else {
+                setNormalballOptions(prev => prev.filter(opt => opt.id !== optionId));
+            }
+            setHasChanges(true);
         }
     };
 
@@ -182,13 +182,13 @@ export default function EOS1MinAdminPage() {
         // Here you would typically save to backend
         console.log('Saving changes:', { powerballOptions, normalballOptions });
         setHasChanges(false);
-        alert('Changes saved successfully!');
+        alert(t('eos1admin/changesSaved'));
     };
 
     const handleResetChanges = () => {
-        if (confirm('Are you sure you want to reset all changes?')) {
-        // Reload from initial state
-        window.location.reload();
+        if (confirm(t('eos1admin/confirmReset'))) {
+            // Reload from initial state
+            window.location.reload();
         }
     };
 
@@ -213,7 +213,7 @@ export default function EOS1MinAdminPage() {
                                 onClick={() => handleLevelChange(level)}
                                 style={{ marginRight: 4, marginBottom: 4 }}
                             >
-                                Level {level}
+                                {t('eos1admin/level')} {level}
                             </Button>
                         );
                     })}
@@ -229,13 +229,13 @@ export default function EOS1MinAdminPage() {
                             {/* Powerball Combinations Section */}
                             <div className="pick-wrap">
                                 <div className="pick-header">
-                                <span>Powerball Combinations</span>
+                                <span>{t('eos1admin/powerballCombinations')}</span>
                                 <div className="flex items-center gap-2">
                                     <button 
                                     className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                                     onClick={() => handleAddOption('powerball')}
                                     >
-                                    + Add
+                                    + {t('eos1admin/add')}
                                     </button>
                                     <i 
                                     className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} 
@@ -264,19 +264,19 @@ export default function EOS1MinAdminPage() {
                                         className="admin-btn edit-btn"
                                         onClick={() => handleEditOption(option)}
                                         >
-                                        Edit
+                                        {t('eos1admin/edit')}
                                         </button>
                                         <button 
                                         className={`admin-btn ${option.enabled ? 'toggle-btn' : 'toggle-btn disabled'}`}
                                         onClick={() => handleToggleOption(option.id, 'powerball')}
                                         >
-                                        {option.enabled ? 'Disable' : 'Enable'}
+                                        {option.enabled ? t('eos1admin/disable') : t('eos1admin/enable')}
                                         </button>
                                         <button 
                                         className="admin-btn delete-btn"
                                         onClick={() => handleDeleteOption(option.id, 'powerball')}
                                         >
-                                        Delete
+                                        {t('eos1admin/delete')}
                                         </button>
                                     </div>
                                     </div>
@@ -287,13 +287,13 @@ export default function EOS1MinAdminPage() {
                             {/* Normalball Combinations Section */}
                             <div className="pick-wrap">
                                 <div className="pick-header">
-                                <span>Normalball Combinations</span>
+                                <span>{t('eos1admin/normalballCombinations')}</span>
                                 <div className="flex items-center gap-2">
                                     <button 
                                     className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                                     onClick={() => handleAddOption('normalball')}
                                     >
-                                    + Add
+                                    + {t('eos1admin/add')}
                                     </button>
                                     <i 
                                     className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} 
@@ -322,19 +322,19 @@ export default function EOS1MinAdminPage() {
                                         className="admin-btn edit-btn"
                                         onClick={() => handleEditOption(option)}
                                         >
-                                        Edit
+                                        {t('eos1admin/edit')}
                                         </button>
                                         <button 
                                         className={`admin-btn ${option.enabled ? 'toggle-btn' : 'toggle-btn disabled'}`}
                                         onClick={() => handleToggleOption(option.id, 'normalball')}
                                         >
-                                        {option.enabled ? 'Disable' : 'Enable'}
+                                        {option.enabled ? t('eos1admin/disable') : t('eos1admin/enable')}
                                         </button>
                                         <button 
                                         className="admin-btn delete-btn"
                                         onClick={() => handleDeleteOption(option.id, 'normalball')}
                                         >
-                                        Delete
+                                        {t('eos1admin/delete')}
                                         </button>
                                     </div>
                                     </div>
@@ -351,7 +351,7 @@ export default function EOS1MinAdminPage() {
                         <div className="modal-overlay">
                         <div className="modal-content">
                             <div className="modal-header">
-                            <h3>{editingOption ? 'Edit Betting Option' : 'Add New Betting Option'}</h3>
+                            <h3>{editingOption ? t('eos1admin/editBettingOption') : t('eos1admin/addNewBettingOption')}</h3>
                             <button 
                                 className="modal-close"
                                 onClick={() => {
@@ -366,64 +366,64 @@ export default function EOS1MinAdminPage() {
                             
                             <div className="modal-body">
                             <div className="form-group">
-                                <label>Option Name</label>
+                                <label>{t('eos1admin/optionName')}</label>
                                 <input 
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                                placeholder="e.g., Powerball Odd"
+                                placeholder={t('eos1admin/placeholderOptionName')}
                                 />
                             </div>
                             
                             <div className="form-group">
-                                <label>Odds</label>
+                                <label>{t('eos1admin/odds')}</label>
                                 <input 
                                 type="number"
                                 step="0.01"
                                 value={formData.odds}
                                 onChange={(e) => setFormData({...formData, odds: e.target.value})}
-                                placeholder="e.g., 1.95"
+                                placeholder={t('eos1admin/placeholderOdds')}
                                 />
                             </div>
                             
                             <div className="form-group">
-                                <label>Type</label>
+                                <label>{t('eos1admin/type')}</label>
                                 <select 
                                 value={formData.type}
                                 onChange={(e) => setFormData({...formData, type: e.target.value as 'single' | 'combination'})}
                                 >
-                                <option value="single">Single Ball</option>
-                                <option value="combination">Combination</option>
+                                <option value="single">{t('eos1admin/singleBall')}</option>
+                                <option value="combination">{t('eos1admin/combination')}</option>
                                 </select>
                             </div>
                             
                             {formData.type === 'single' ? (
                                 <>
                                 <div className="form-group">
-                                    <label>Ball Color</label>
+                                    <label>{t('eos1admin/ballColor')}</label>
                                     <select 
                                     value={formData.ball}
                                     onChange={(e) => setFormData({...formData, ball: e.target.value as 'blue' | 'red' | 'green'})}
                                     >
-                                    <option value="blue">Blue</option>
-                                    <option value="red">Red</option>
-                                    <option value="green">Green</option>
+                                    <option value="blue">{t("blue")}</option>
+                                    <option value="red">{t("red")}</option>
+                                    <option value="green">{t("green")}</option>
                                     </select>
                                 </div>
                                 
                                 <div className="form-group">
-                                    <label>Ball Text</label>
+                                    <label>{t('eos1admin/ballText')}</label>
                                     <input 
                                     type="text"
                                     value={formData.text}
                                     onChange={(e) => setFormData({...formData, text: e.target.value})}
-                                    placeholder="e.g., Odd, Even, Under, Over"
+                                    placeholder={t('eos1admin/placeholderBallText')}
                                     />
                                 </div>
                                 </>
                             ) : (
                                 <div className="form-group">
-                                <label>Combination Balls</label>
+                                <label>{t('eos1admin/combinationBalls')}</label>
                                 {formData.balls.map((ball, index) => (
                                     <div key={index} className="ball-input-group">
                                     <select 
@@ -461,7 +461,7 @@ export default function EOS1MinAdminPage() {
                                     checked={formData.enabled}
                                     onChange={(e) => setFormData({...formData, enabled: e.target.checked})}
                                 />
-                                Enabled
+                                {t('eos1admin/enabled')}
                                 </label>
                             </div>
                             </div>
@@ -475,14 +475,14 @@ export default function EOS1MinAdminPage() {
                                 setEditingOption(null);
                                 }}
                             >
-                                Cancel
+                                {t('eos1admin/cancel')}
                             </button>
                             <button 
                                 className="btn btn-primary"
                                 onClick={handleSaveOption}
                                 disabled={!formData.name || !formData.odds}
                             >
-                                {editingOption ? 'Update' : 'Add'} Option
+                                {editingOption ? t('eos1admin/update') : t('eos1admin/addOption')}
                             </button>
                             </div>
                         </div>
