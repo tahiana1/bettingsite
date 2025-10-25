@@ -11,7 +11,22 @@ import (
 // Helper function to create a mini game config with default values
 func createMiniGameConfig(gameType string, level int) models.MiniGameConfig {
 	// Base max betting value increases with level
-	baseMaxBetting := float64(level) * 1000.0
+	var baseMaxBetting float64
+
+	// Different multipliers based on level type
+	if level <= 12 {
+		// Regular levels (1-12)
+		baseMaxBetting = float64(level) * 1000.0
+	} else if level == 13 {
+		// VIP 1 - significantly higher limits
+		baseMaxBetting = 50000.0
+	} else if level == 14 {
+		// VIP 2 - even higher limits
+		baseMaxBetting = 100000.0
+	} else if level == 15 {
+		// Premium - highest limits
+		baseMaxBetting = 200000.0
+	}
 
 	// Different game types can have different multipliers
 	var multiplier float64
@@ -94,7 +109,9 @@ func AutoSeedMiniGameConfigs() {
 		fmt.Println("✅ Successfully seeded mini game configurations!")
 		fmt.Println("📊 Created configurations for:")
 		fmt.Println("   - 5 game types (eos1min, eos2min, eos3min, eos4min, eos5min)")
-		fmt.Println("   - 15 levels each (Level 1-15)")
+		fmt.Println("   - 12 Regular levels (Level 1-12)")
+		fmt.Println("   - 2 VIP levels (VIP 1-2)")
+		fmt.Println("   - 1 Premium level")
 		fmt.Printf("   - Total: %d configurations\n", expectedCount)
 	} else {
 		fmt.Printf("ℹ️ Mini game configs already have %d records, skipping seeding\n", count)

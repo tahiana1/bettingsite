@@ -116,7 +116,22 @@ export default function EOS1MinAdminPage() {
                 setMaxBettingValue(configs[0].maxBettingValue.toString());
             } else {
                 // Set default max betting value based on level if no config found
-                const defaultMaxBetting = selectedLevel * 1000;
+                let defaultMaxBetting = 0;
+                
+                if (selectedLevel <= 12) {
+                    // Regular levels (1-12)
+                    defaultMaxBetting = selectedLevel * 1000;
+                } else if (selectedLevel === 13) {
+                    // VIP 1
+                    defaultMaxBetting = 50000;
+                } else if (selectedLevel === 14) {
+                    // VIP 2
+                    defaultMaxBetting = 100000;
+                } else if (selectedLevel === 15) {
+                    // Premium
+                    defaultMaxBetting = 200000;
+                }
+                
                 setMaxBettingValue(defaultMaxBetting.toString());
             }
         } catch (error) {
@@ -317,10 +332,22 @@ export default function EOS1MinAdminPage() {
                 
                 {!loading && (
                     <>
-                        {/* level option buttons with level 1 to 10 */}
+                        {/* level option buttons with level 1 to 15 */}
                         <div className="level-buttons-container">
                             {Array.from({ length: 15 }, (_, index) => {
                                 const level = index + 1;
+                                let levelName = '';
+                                
+                                if (level <= 12) {
+                                    levelName = `${t('eos1admin/level')} ${level}`;
+                                } else if (level === 13) {
+                                    levelName = 'VIP 1';
+                                } else if (level === 14) {
+                                    levelName = 'VIP 2';
+                                } else if (level === 15) {
+                                    levelName = 'Premium';
+                                }
+                                
                                 return (
                                     <Button
                                         key={level}
@@ -329,7 +356,7 @@ export default function EOS1MinAdminPage() {
                                         onClick={() => handleLevelChange(level)}
                                         style={{ marginRight: 4, marginBottom: 4 }}
                                     >
-                                        {t('eos1admin/level')} {level}
+                                        {levelName}
                                     </Button>
                                 );
                             })}
