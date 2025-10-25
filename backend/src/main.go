@@ -28,6 +28,9 @@ func init() {
 
 	// Auto-seed levels if table is empty
 	seeders.AutoSeedLevels()
+
+	// Auto-seed mini game configs if incomplete
+	seeders.AutoSeedMiniGameConfigs()
 }
 
 func main() {

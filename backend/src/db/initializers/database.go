@@ -136,6 +136,8 @@ func ConnectDB() {
 		models.Level{},
 		models.SurpriseBonus{},
 		models.ChargeBonusTableLevel{},
+		models.MiniBetOption{},
+		models.MiniGameConfig{},
 	)
 
 	if err != nil {

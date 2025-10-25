@@ -153,4 +153,22 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		transactionRouter.POST("/deposit", controllers.Deposit)
 		transactionRouter.POST("/withdrawal", controllers.Withdrawal)
 	}
+
+	// Mini bet options admin routes
+	miniRouter := r.Group("/mini")
+	{
+		// Mini bet options CRUD
+		miniRouter.GET("/options", controllers.AdminGetMiniBetOptions)
+		miniRouter.GET("/options/:id", controllers.AdminGetMiniBetOption)
+		miniRouter.POST("/options", controllers.AdminCreateMiniBetOption)
+		miniRouter.PUT("/options/:id", controllers.AdminUpdateMiniBetOption)
+		miniRouter.DELETE("/options/:id", controllers.AdminDeleteMiniBetOption)
+		miniRouter.PATCH("/options/:id/toggle", controllers.AdminToggleMiniBetOption)
+		miniRouter.PUT("/options/bulk-update", controllers.AdminBulkUpdateMiniBetOptions)
+		miniRouter.POST("/options/initialize-defaults", controllers.AdminInitializeDefaultMiniBetOptions)
+
+		// Mini game configs
+		miniRouter.GET("/configs", controllers.AdminGetMiniGameConfigs)
+		miniRouter.PUT("/configs", controllers.AdminUpdateMiniGameConfig)
+	}
 }
