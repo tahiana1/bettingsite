@@ -559,7 +559,6 @@ const [loading, setLoading] = useState(false);
                         <span className="curr-bet">Current Betting【0】</span>
                       </div>
                     </div>
-
                     {/* 
                       Betting Form - User input and confirmation section
                       Displays selected bet details, balance, and amount input controls
