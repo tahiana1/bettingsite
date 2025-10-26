@@ -56,7 +56,7 @@ func createMiniGameConfig(gameType string, level int) models.MiniGameConfig {
 
 // SeedMiniGameConfigs creates default mini game configurations for all levels and game types
 func SeedMiniGameConfigs() error {
-	gameTypes := []string{"eos1min", "eos2min", "eos3min", "eos4min", "eos5min"}
+	gameTypes := []string{"eos1min", "eos2min", "eos3min", "eos4min", "eos5min", "pbg", "eos", "dhpowerball", "bepick"}
 	levels := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
 
 	var configs []models.MiniGameConfig

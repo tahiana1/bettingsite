@@ -15,17 +15,17 @@ import (
 // AdminCreateMiniBetOption creates a new mini bet option (admin only)
 func AdminCreateMiniBetOption(c *gin.Context) {
 	var userInput struct {
-		Name     string                 `json:"name" binding:"required,min=2,max=100"`
-		Odds     string                 `json:"odds" binding:"required"`
-		Type     string                 `json:"type" binding:"required,oneof=single combination"`
-		Ball     *string                `json:"ball,omitempty"`
-		Text     *string                `json:"text,omitempty"`
-		Balls    []models.BallOption    `json:"balls,omitempty"`
-		GameType string                 `json:"gameType" binding:"required"`
-		Category string                 `json:"category" binding:"required,oneof=powerball normalball"`
-		Level    int                    `json:"level" binding:"required,min=1,max=15"`
-		Enabled  bool                   `json:"enabled"`
-		OrderNum int                    `json:"orderNum"`
+		Name     string              `json:"name" binding:"required,min=2,max=100"`
+		Odds     string              `json:"odds" binding:"required"`
+		Type     string              `json:"type" binding:"required,oneof=single combination"`
+		Ball     *string             `json:"ball,omitempty"`
+		Text     *string             `json:"text,omitempty"`
+		Balls    []models.BallOption `json:"balls,omitempty"`
+		GameType string              `json:"gameType" binding:"required"`
+		Category string              `json:"category" binding:"required,oneof=powerball normalball normalballsection oddeven threecombination"`
+		Level    int                 `json:"level" binding:"required,min=1,max=15"`
+		Enabled  bool                `json:"enabled"`
+		OrderNum int                 `json:"orderNum"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -91,7 +91,7 @@ func AdminCreateMiniBetOption(c *gin.Context) {
 // AdminGetMiniBetOptions gets all mini bet options with admin privileges
 func AdminGetMiniBetOptions(c *gin.Context) {
 	var miniBetOptions []models.MiniBetOption
-	
+
 	// Get query parameters for filtering
 	gameType := c.Query("gameType")
 	category := c.Query("category")
@@ -167,17 +167,17 @@ func AdminUpdateMiniBetOption(c *gin.Context) {
 
 	// Get update data from request body
 	var userInput struct {
-		Name     string                 `json:"name" binding:"required,min=2,max=100"`
-		Odds     string                 `json:"odds" binding:"required"`
-		Type     string                 `json:"type" binding:"required,oneof=single combination"`
-		Ball     *string                `json:"ball,omitempty"`
-		Text     *string                `json:"text,omitempty"`
-		Balls    []models.BallOption    `json:"balls,omitempty"`
-		GameType string                 `json:"gameType" binding:"required"`
-		Category string                 `json:"category" binding:"required,oneof=powerball normalball"`
-		Level    int                    `json:"level" binding:"required,min=1,max=15"`
-		Enabled  bool                   `json:"enabled"`
-		OrderNum int                    `json:"orderNum"`
+		Name     string              `json:"name" binding:"required,min=2,max=100"`
+		Odds     string              `json:"odds" binding:"required"`
+		Type     string              `json:"type" binding:"required,oneof=single combination"`
+		Ball     *string             `json:"ball,omitempty"`
+		Text     *string             `json:"text,omitempty"`
+		Balls    []models.BallOption `json:"balls,omitempty"`
+		GameType string              `json:"gameType" binding:"required"`
+		Category string              `json:"category" binding:"required,oneof=powerball normalball normalballsection oddeven threecombination"`
+		Level    int                 `json:"level" binding:"required,min=1,max=15"`
+		Enabled  bool                `json:"enabled"`
+		OrderNum int                 `json:"orderNum"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -295,10 +295,10 @@ func AdminToggleMiniBetOption(c *gin.Context) {
 func AdminBulkUpdateMiniBetOptions(c *gin.Context) {
 	var userInput struct {
 		Options []struct {
-			ID       uint  `json:"id" binding:"required"`
-			Enabled  bool  `json:"enabled"`
+			ID       uint   `json:"id" binding:"required"`
+			Enabled  bool   `json:"enabled"`
 			Odds     string `json:"odds"`
-			OrderNum int   `json:"orderNum"`
+			OrderNum int    `json:"orderNum"`
 		} `json:"options" binding:"required"`
 	}
 
@@ -342,7 +342,7 @@ func AdminBulkUpdateMiniBetOptions(c *gin.Context) {
 // AdminGetMiniGameConfigs gets mini game configurations (admin)
 func AdminGetMiniGameConfigs(c *gin.Context) {
 	var configs []models.MiniGameConfig
-	
+
 	gameType := c.Query("gameType")
 	levelStr := c.Query("level")
 
@@ -452,7 +452,7 @@ func AdminInitializeDefaultMiniBetOptions(c *gin.Context) {
 	// Check if options already exist for this game type and level
 	var existingCount int64
 	initializers.DB.Model(&models.MiniBetOption{}).Where("game_type = ? AND level = ?", userInput.GameType, userInput.Level).Count(&existingCount)
-	
+
 	if existingCount > 0 {
 		c.JSON(http.StatusConflict, gin.H{
 			"error": "Default options already exist for this game type and level",
@@ -506,4 +506,3 @@ func AdminInitializeDefaultMiniBetOptions(c *gin.Context) {
 func stringPtr(s string) *string {
 	return &s
 }
-

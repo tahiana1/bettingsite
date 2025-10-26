@@ -33,7 +33,7 @@ type MiniBetOption struct {
 
 	// Game and category information
 	GameType string `json:"gameType" gorm:"size:50;not null"` // "eos1min", "eos2min", etc.
-	Category string `json:"category" gorm:"size:50;not null"` // "powerball", "normalball"
+	Category string `json:"category" gorm:"size:50;not null"` // "powerball", "normalball", "normalballsection", "oddeven", "threecombination"
 	Level    int    `json:"level" gorm:"not null;default:1"`  // Level 1-15
 
 	// Status and configuration
