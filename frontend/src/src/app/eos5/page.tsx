@@ -24,7 +24,7 @@ export default function EOS5Page() {
   const [activeTab, setActiveTab] = useState('EOS5'); // Currently selected game tab
   const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display
   const [iframeVisible, setIframeVisible] = useState(true); // Controls iframe visibility toggle
-  const [selectedPick, setSelectedPick] = useState<{name: string, odds: string}>({name: '', odds: ''}); // Selected betting option
+  const [selectedPick, setSelectedPick] = useState<{name: string, odds: string, category?: string}>({name: '', odds: ''}); // Selected betting option
   const [betAmount, setBetAmount] = useState<string>(''); // User's bet amount input
   const [balance] = useState<string>('300,000 Won'); // User's current balance (static for demo)
   const [winAmount] = useState<string>('292,500'); // Potential win amount (static for demo)
