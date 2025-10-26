@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
+import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
 
 export default function EOS4Page() {
   // State management for component functionality
@@ -29,7 +30,59 @@ export default function EOS4Page() {
     updateTime(); // Initial time update
     const interval = setInterval(updateTime, 1000); // Update every second
     return () => clearInterval(interval); // Cleanup on unmount
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'eos4min',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
   }, []);
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'eos4min',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
 
   const handleTabClick = (tabName: string) => {
     if (tabName !== 'EOS4') {
@@ -44,8 +97,8 @@ export default function EOS4Page() {
     setBetAmount('');
   };
 
-  const handlePickSelection = (pickName: string, odds: string) => {
-    setSelectedPick({name: pickName, odds: odds});
+  const handlePickSelection = (pickName: string, odds: string, category: string) => {
+    setSelectedPick({name: pickName, odds: odds, category: category});
   };
 
   const handleAmountClick = (amount: string) => {
@@ -83,6 +136,9 @@ export default function EOS4Page() {
   const [pickSectionPower, setPickSectionPower] = useState(true);
   const [pickSectionNormal, setPickSectionNormal] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+const [loading, setLoading] = useState(false);
+  const [powerballOptions, setPowerballOptions] = useState<MiniBetOption[]>([]);
+  const [normalballOptions, setNormalballOptions] = useState<MiniBetOption[]>([]);
 
   const handlePickSectionToggle = () => {
     if (isAnimating) return; // Prevent rapid clicking during animation

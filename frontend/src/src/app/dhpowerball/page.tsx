@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
+import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
 
 /**
  * DhpowerballPage Component - Powerball Betting Interface
@@ -49,7 +50,59 @@ export default function DhpowerballPage() {
     updateTime(); // Initial time update
     const interval = setInterval(updateTime, 1000); // Update every second
     return () => clearInterval(interval); // Cleanup on unmount
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'dhpowerball',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
   }, []);
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'dhpowerball',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
 
   /**
    * Handles tab navigation between different game types
@@ -77,8 +130,8 @@ export default function DhpowerballPage() {
    * @param pickName - The name of the selected betting option
    * @param odds - The odds for the selected option
    */
-  const handlePickSelection = (pickName: string, odds: string) => {
-    setSelectedPick({name: pickName, odds: odds});
+  const handlePickSelection = (pickName: string, odds: string, category: string) => {
+    setSelectedPick({name: pickName, odds: odds, category: category});
   };
 
   /**
@@ -137,6 +190,9 @@ export default function DhpowerballPage() {
   const [normalballCombinationsOpen, setNormalballCombinationsOpen] = useState(true);
   const [newCombinationOpen, setNewCombinationOpen] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+const [loading, setLoading] = useState(false);
+  const [powerballOptions, setPowerballOptions] = useState<MiniBetOption[]>([]);
+  const [normalballOptions, setNormalballOptions] = useState<MiniBetOption[]>([]);
   
   // State for the new combination selection
   const [selectedNewCombination, setSelectedNewCombination] = useState<{name: string, odds: string}>({name: '', odds: ''});
@@ -152,7 +208,7 @@ export default function DhpowerballPage() {
     setSelectedPick({name: '', odds: ''});
   };
   const handleSelectedPick = (pickName: string, odds: string) => {
-    setSelectedPick({name: pickName, odds: odds});
+    setSelectedPick({name: pickName, odds: odds, category: category});
     setSelectedNewCombination({name: '', odds: ''});
   };
   /**

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
+import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
 
 /**
  * EOS5Page Component - Powerball Betting Interface
@@ -48,7 +49,59 @@ export default function EOS5Page() {
     updateTime(); // Initial time update
     const interval = setInterval(updateTime, 1000); // Update every second
     return () => clearInterval(interval); // Cleanup on unmount
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'eos5min',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
   }, []);
+
+// Load betting options from API
+useEffect(() => {
+const loadBettingOptions = async () => {
+setLoading(true);
+try {
+const options = await MiniBetOptionsAPI.getOptions({
+gameType: 'eos5min',
+level: 1,
+enabled: true
+});
+
+const powerball = options.filter(opt => opt.category === 'powerball');
+const normalball = options.filter(opt => opt.category === 'normalball');
+
+setPowerballOptions(powerball);
+setNormalballOptions(normalball);
+} catch (error) {
+console.error('Error loading betting options:', error);
+} finally {
+setLoading(false);
+}
+};
+
+loadBettingOptions();
+}, []);
 
   /**
    * Handles tab navigation between different game types
@@ -76,8 +129,8 @@ export default function EOS5Page() {
    * @param pickName - The name of the selected betting option
    * @param odds - The odds for the selected option
    */
-  const handlePickSelection = (pickName: string, odds: string) => {
-    setSelectedPick({name: pickName, odds: odds});
+  const handlePickSelection = (pickName: string, odds: string, category: string) => {
+    setSelectedPick({name: pickName, odds: odds, category: category});
     // Clear other combination selections
     setSelectedPowerballPick({name: '', odds: ''});
     setSelectedOddEvenPick({powerball: '', normalball: '', odds: ''});
@@ -200,6 +253,9 @@ export default function EOS5Page() {
   const [normalballCombinationsOpen, setNormalballCombinationsOpen] = useState(true);
   const [threeCombinationOpen, setThreeCombinationOpen] = useState(true);
   const [isAnimating, setIsAnimating] = useState(false);
+const [loading, setLoading] = useState(false);
+  const [powerballOptions, setPowerballOptions] = useState<MiniBetOption[]>([]);
+  const [normalballOptions, setNormalballOptions] = useState<MiniBetOption[]>([]);
   const [selectedPowerballPick, setSelectedPowerballPick] = useState<{name: string, odds: string}>({name: '', odds: ''});
 
   // Separate state for Powerball + Normal Ball Odd/Even Combinations section
