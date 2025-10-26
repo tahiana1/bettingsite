@@ -49,59 +49,33 @@ export default function PBGPage() {
     updateTime(); // Initial time update
     const interval = setInterval(updateTime, 1000); // Update every second
     return () => clearInterval(interval); // Cleanup on unmount
-
-// Load betting options from API
-useEffect(() => {
-const loadBettingOptions = async () => {
-setLoading(true);
-try {
-const options = await MiniBetOptionsAPI.getOptions({
-gameType: 'pbg',
-level: 1,
-enabled: true
-});
-
-const powerball = options.filter(opt => opt.category === 'powerball');
-const normalball = options.filter(opt => opt.category === 'normalball');
-
-setPowerballOptions(powerball);
-setNormalballOptions(normalball);
-} catch (error) {
-console.error('Error loading betting options:', error);
-} finally {
-setLoading(false);
-}
-};
-
-loadBettingOptions();
-}, []);
   }, []);
 
-// Load betting options from API
-useEffect(() => {
-const loadBettingOptions = async () => {
-setLoading(true);
-try {
-const options = await MiniBetOptionsAPI.getOptions({
-gameType: 'pbg',
-level: 1,
-enabled: true
-});
+  // Load betting options from API
+  useEffect(() => {
+    const loadBettingOptions = async () => {
+      setLoading(true);
+      try {
+        const options = await MiniBetOptionsAPI.getOptions({
+          gameType: 'pbg',
+          level: 1,
+          enabled: true
+        });
 
-const powerball = options.filter(opt => opt.category === 'powerball');
-const normalball = options.filter(opt => opt.category === 'normalball');
+        const powerball = options.filter(opt => opt.category === 'powerball');
+        const normalball = options.filter(opt => opt.category === 'normalball');
 
-setPowerballOptions(powerball);
-setNormalballOptions(normalball);
-} catch (error) {
-console.error('Error loading betting options:', error);
-} finally {
-setLoading(false);
-}
-};
+        setPowerballOptions(powerball);
+        setNormalballOptions(normalball);
+      } catch (error) {
+        console.error('Error loading betting options:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-loadBettingOptions();
-}, []);
+    loadBettingOptions();
+  }, []);
 
   /**
    * Handles tab navigation between different game types
@@ -436,7 +410,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Odd', '1.95')}
+                        onClick={() => handlePickSelection('Powerball Odd', '1.95', 'powerball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -445,7 +419,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Even bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Even', '1.95')}
+                        onClick={() => handlePickSelection('Powerball Even', '1.95', 'powerball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -454,7 +428,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Under bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Under', '1.95')}
+                        onClick={() => handlePickSelection('Powerball Under', '1.95', 'powerball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -463,7 +437,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Over bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Powerball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Powerball Over', '1.95')}
+                        onClick={() => handlePickSelection('Powerball Over', '1.95', 'powerball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
@@ -482,7 +456,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Odd bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Normalball Odd' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Odd', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Odd', '1.95', 'normalball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Odd</div>
@@ -491,7 +465,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Even bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Normalball Even' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Even', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Even', '1.95', 'normalball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Even</div>
@@ -500,7 +474,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Under bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Normalball Under' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Under', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Under', '1.95', 'normalball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball blue">Under</div>
@@ -509,7 +483,7 @@ const [loading, setLoading] = useState(false);
                       {/* Single Powerball Over bet option */}
                       <button 
                         className={`pick-btn ${selectedPick.name === 'Normalball Over' ? 'selected' : ''}`}
-                        onClick={() => handlePickSelection('Normalball Over', '1.95')}
+                        onClick={() => handlePickSelection('Normalball Over', '1.95', 'normalball')}
                       >
                         <span className="odds">1.95</span>
                         <div className="ball red">Over</div>
