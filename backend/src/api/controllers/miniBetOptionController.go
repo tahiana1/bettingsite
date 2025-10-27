@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -15,17 +17,17 @@ import (
 // CreateMiniBetOption creates a new mini bet option
 func CreateMiniBetOption(c *gin.Context) {
 	var userInput struct {
-		Name     string                 `json:"name" binding:"required,min=2,max=100"`
-		Odds     string                 `json:"odds" binding:"required"`
-		Type     string                 `json:"type" binding:"required,oneof=single combination"`
-		Ball     *string                `json:"ball,omitempty"`
-		Text     *string                `json:"text,omitempty"`
-		Balls    []models.BallOption    `json:"balls,omitempty"`
-		GameType string                 `json:"gameType" binding:"required"`
-		Category string                 `json:"category" binding:"required,oneof=powerball normalball"`
-		Level    int                    `json:"level" binding:"required,min=1,max=15"`
-		Enabled  bool                   `json:"enabled"`
-		OrderNum int                    `json:"orderNum"`
+		Name     string              `json:"name" binding:"required,min=2,max=100"`
+		Odds     string              `json:"odds" binding:"required"`
+		Type     string              `json:"type" binding:"required,oneof=single combination"`
+		Ball     *string             `json:"ball,omitempty"`
+		Text     *string             `json:"text,omitempty"`
+		Balls    []models.BallOption `json:"balls,omitempty"`
+		GameType string              `json:"gameType" binding:"required"`
+		Category string              `json:"category" binding:"required,oneof=powerball normalball"`
+		Level    int                 `json:"level" binding:"required,min=1,max=15"`
+		Enabled  bool                `json:"enabled"`
+		OrderNum int                 `json:"orderNum"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -91,7 +93,7 @@ func CreateMiniBetOption(c *gin.Context) {
 // GetMiniBetOptions gets all mini bet options with optional filtering
 func GetMiniBetOptions(c *gin.Context) {
 	var miniBetOptions []models.MiniBetOption
-	
+
 	// Get query parameters for filtering
 	gameType := c.Query("gameType")
 	category := c.Query("category")
@@ -167,17 +169,17 @@ func UpdateMiniBetOption(c *gin.Context) {
 
 	// Get update data from request body
 	var userInput struct {
-		Name     string                 `json:"name" binding:"required,min=2,max=100"`
-		Odds     string                 `json:"odds" binding:"required"`
-		Type     string                 `json:"type" binding:"required,oneof=single combination"`
-		Ball     *string                `json:"ball,omitempty"`
-		Text     *string                `json:"text,omitempty"`
-		Balls    []models.BallOption    `json:"balls,omitempty"`
-		GameType string                 `json:"gameType" binding:"required"`
-		Category string                 `json:"category" binding:"required,oneof=powerball normalball"`
-		Level    int                    `json:"level" binding:"required,min=1,max=15"`
-		Enabled  bool                   `json:"enabled"`
-		OrderNum int                    `json:"orderNum"`
+		Name     string              `json:"name" binding:"required,min=2,max=100"`
+		Odds     string              `json:"odds" binding:"required"`
+		Type     string              `json:"type" binding:"required,oneof=single combination"`
+		Ball     *string             `json:"ball,omitempty"`
+		Text     *string             `json:"text,omitempty"`
+		Balls    []models.BallOption `json:"balls,omitempty"`
+		GameType string              `json:"gameType" binding:"required"`
+		Category string              `json:"category" binding:"required,oneof=powerball normalball"`
+		Level    int                 `json:"level" binding:"required,min=1,max=15"`
+		Enabled  bool                `json:"enabled"`
+		OrderNum int                 `json:"orderNum"`
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -295,10 +297,10 @@ func ToggleMiniBetOption(c *gin.Context) {
 func BulkUpdateMiniBetOptions(c *gin.Context) {
 	var userInput struct {
 		Options []struct {
-			ID       uint  `json:"id" binding:"required"`
-			Enabled  bool  `json:"enabled"`
+			ID       uint   `json:"id" binding:"required"`
+			Enabled  bool   `json:"enabled"`
 			Odds     string `json:"odds"`
-			OrderNum int   `json:"orderNum"`
+			OrderNum int    `json:"orderNum"`
 		} `json:"options" binding:"required"`
 	}
 
@@ -342,7 +344,7 @@ func BulkUpdateMiniBetOptions(c *gin.Context) {
 // GetMiniGameConfigs gets mini game configurations
 func GetMiniGameConfigs(c *gin.Context) {
 	var configs []models.MiniGameConfig
-	
+
 	gameType := c.Query("gameType")
 	levelStr := c.Query("level")
 
@@ -428,3 +430,49 @@ func UpdateMiniGameConfig(c *gin.Context) {
 	})
 }
 
+// GetGameDistribution fetches game distribution data from ntry.com
+func GetGameDistribution(c *gin.Context) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://ntry.com/data/json/games/dist.json", nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to create request",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to fetch game distribution",
+			"details": err.Error(),
+		})
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to read response body",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	var gameData map[string]interface{}
+	err = json.Unmarshal(body, &gameData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Failed to parse game distribution data",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    gameData,
+	})
+}

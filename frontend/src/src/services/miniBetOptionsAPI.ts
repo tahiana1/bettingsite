@@ -184,6 +184,17 @@ export class MiniBetOptionsAPI {
       throw error;
     }
   }
+
+  // Get game distribution data from ntry.com (via backend proxy)
+  static async getGameDistribution(): Promise<Record<string, any>> {
+    try {
+      const response = await api('mini/game-distribution');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching game distribution:', error);
+      throw error;
+    }
+  }
 }
 
 // Admin API Service (for admin-specific operations)

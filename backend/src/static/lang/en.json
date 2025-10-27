@@ -2286,5 +2286,8 @@
   "pbgadmin/vip1" : "VIP 1",
   "pbgadmin/vip2" : "VIP 2",
   "pbgadmin/premium" : "Premium",
-  "pbgPowerballAdminManagement" : "PBG - Admin Management"
+  "pbgPowerballAdminManagement" : "PBG - Admin Management",
+  "normalballCombinations" : "Normalball Combinations",
+  "powerballCombinations" : "Powerball Combinations",
+  "currentRound" : "Current Round"
 } 

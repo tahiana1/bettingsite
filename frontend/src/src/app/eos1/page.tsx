@@ -3,24 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
-
-/**
- * EOS1Page Component - Powerball Betting Interface
- * 
- * This component provides a comprehensive betting interface for EOS1 Min Powerball game.
- * It includes real-time game display, betting options, bet history, and amount management.
- * 
- * Features:
- * - Multi-game tab navigation (EOS1-5, Bepick, EOS, PBG, Dhpowerball)
- * - Real-time clock display
- * - Embedded iframe for live game visualization
- * - Powerball betting combinations (Odd/Even, Over/Under, Combinations)
- * - Bet amount management with quick selection buttons
- * - Betting history table with pagination
- * - Current round information and statistics
- */
+import { useTranslations } from 'next-intl';
 export default function EOS1Page() {
-  // State management for component functionality
+  const t = useTranslations();
   const [activeTab, setActiveTab] = useState('EOS1'); // Currently selected game tab
   const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display
   const [iframeVisible, setIframeVisible] = useState(true); // Controls iframe visibility toggle
@@ -28,12 +13,8 @@ export default function EOS1Page() {
   const [betAmount, setBetAmount] = useState<string>(''); // User's bet amount input
   const [balance] = useState<string>('300,000 Won'); // User's current balance (static for demo)
   const [winAmount] = useState<string>('292,500'); // Potential win amount (static for demo)
+  // const [currentRound, setCurrentRound] = useState<string>('');
 
-  /**
-   * Real-time clock effect hook
-   * Updates the current time display every second in HH:MM:SS format
-   * Cleans up the interval when component unmounts to prevent memory leaks
-   */
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -50,6 +31,26 @@ export default function EOS1Page() {
     const interval = setInterval(updateTime, 1000); // Update every second
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
+
+  // Fetch current round from API every 1 second
+  // useEffect(() => {
+  //   const fetchCurrentRound = async () => {
+  //     try {
+  //       const data = await MiniBetOptionsAPI.getGameDistribution();
+        
+  //       // Extract rd value from eos_powerball_1
+  //       if (data.eos_powerball_1 && data.eos_powerball_1.rd) {
+  //         setCurrentRound(data.eos_powerball_1.rd);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching current round:', error);
+  //     }
+  //   };
+
+  //   fetchCurrentRound(); // Initial fetch
+  //   const interval = setInterval(fetchCurrentRound, 1000); // Update every second
+  //   return () => clearInterval(interval); // Cleanup on unmount
+  // }, []);
 
   // Load betting options from API
   useEffect(() => {
@@ -334,7 +335,7 @@ export default function EOS1Page() {
                     <div className="iframe-wrapper flex items-center justify-center"> 
                       <iframe
                         src={getIframeSrc(activeTab)}
-                        className="game-iframe !z-10 opacity-0 m-auto"
+                        className="game-iframe !z-10 !opacity-0 m-auto"
                         scrolling="no"
                       />
                     </div>
@@ -418,7 +419,7 @@ export default function EOS1Page() {
                 <div className="pick-wrap">
 
                 <div className="pick-header">
-                      <span>Powerball Combinations</span>
+                      <span>{t('powerballCombinations')}</span>
                       <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionPower ? 'rotated' : ''}`} onClick={() => setPickSectionPower(!pickSectionPower)}></i>
                     </div>
                 
@@ -435,7 +436,7 @@ export default function EOS1Page() {
                 <div className="pick-wrap">
 
                 <div className="pick-header">
-                      <span>Normalball Combinations</span>
+                      <span>{t('normalballCombinations')}</span>
                         <i className={`fa fa-chevron-down cursor-pointer w-5 h-5 chevron-icon ${pickSectionNormal ? 'rotated' : ''}`} onClick={() => setPickSectionNormal(!pickSectionNormal)}></i>
                     </div>
                 
@@ -448,90 +449,75 @@ export default function EOS1Page() {
                         normalballOptions.map(option => renderBettingOption(option, 'normalball'))
                       )}
                     </div>
+                  </div>
                 </div>
-               </div>
-              <div className="bet-sidebar">
-                    <div className="current-round-info">
-                      <div className="round-header">
-                        <span className="round-title">Current Round [1257]</span>
-                        <span className="countdown">03:45</span>
-                      </div>
-                      <div className="round-details">
-                        EOS1Min3310226871BE2E (1256) Round
-                      </div>
-                      {/* Visual representation of current game results */}
-                      <div className="ball-display">
-                        <span>Powerball</span>
-                        <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
-                        <span>Normal Ball</span>
-                        <div className="ball blue">Odd</div>
-                        <div className="ball blue">Under</div>
-                      </div>
-                      {/* Betting statistics for current session */}
-                      <div className="betting-stats">
-                        <span className="prev-bet">Previous Betting【0】</span>
-                        <span className="prev-win">Previous Win【0】</span>
-                        <span className="curr-bet">Current Betting【0】</span>
-                      </div>
+                <div className="bet-sidebar">
+                  {/* <div className="current-round-info"> */}
+                    {/* <div className="round-header">
+                      <span className="round-title">{t('currentRound')} [{currentRound || 'Loading...'}]</span>
+                    </div> */}
+                    {/* Betting statistics for current session */}
+                    {/* <div className="betting-stats">
+                      <span className="prev-bet">Previous Betting【0】</span>
+                      <span className="prev-win">Previous Win【0】</span>
+                      <span className="curr-bet">Current Betting【0】</span>
+                    </div> */}
+                  {/* </div> */}
+
+                  {/* 
+                    Betting Form - User input and confirmation section
+                    Displays selected bet details, balance, and amount input controls
+                  */}
+                  <div className="betinfo-stats">
+                    {/* Display selected betting option */}
+                    <div className="stat-item">
+                      <span className="label">Pick Selection</span>
+                      <span className="value pick-selection">{selectedPick.name || ''}</span>
+                    </div>
+                    {/* Display odds for selected option */}
+                    <div className="stat-item">
+                      <span className="label">Odds</span>
+                      <span className="value odds-display">{selectedPick.odds || ''}</span>
+                    </div>
+                    {/* Display user's current balance */}
+                    <div className="stat-item">
+                      <span className="label">Balance</span>
+                      <span className="value myCash">{balance}</span>
+                    </div>
+                    {/* Display potential win amount */}
+                    <div className="stat-item">
+                      <span className="label">Win Amount</span>
+                      <span className="value win-amount">{winAmount}</span>
                     </div>
 
-                    {/* 
-                      Betting Form - User input and confirmation section
-                      Displays selected bet details, balance, and amount input controls
-                    */}
-                    <div className="betinfo-stats">
-                      {/* Display selected betting option */}
-                      <div className="stat-item">
-                        <span className="label">Pick Selection</span>
-                        <span className="value pick-selection">{selectedPick.name || ''}</span>
-                      </div>
-                      {/* Display odds for selected option */}
-                      <div className="stat-item">
-                        <span className="label">Odds</span>
-                        <span className="value odds-display">{selectedPick.odds || ''}</span>
-                      </div>
-                      {/* Display user's current balance */}
-                      <div className="stat-item">
-                        <span className="label">Balance</span>
-                        <span className="value myCash">{balance}</span>
-                      </div>
-                      {/* Display potential win amount */}
-                      <div className="stat-item">
-                        <span className="label">Win Amount</span>
-                        <span className="value win-amount">{winAmount}</span>
-                      </div>
-
-                      {/* Bet amount input field */}
-                      <div className="amount-input-row">
-                        <span className="label">Betting Amount</span>
-                        <input 
-                          type="number"
-                          min="0"
-                          className="amount-input" 
-                          placeholder="Numbers only"
-                          value={betAmount}
-                          onChange={(e) => setBetAmount(e.target.value)}
-                        />
-                      </div>
+                    {/* Bet amount input field */}
+                    <div className="amount-input-row">
+                      <span className="label">Betting Amount</span>
+                      <input 
+                        type="number"
+                        min="0"
+                        className="amount-input" 
+                        placeholder="Numbers only"
+                        value={betAmount}
+                        onChange={(e) => setBetAmount(e.target.value)}
+                      />
                     </div>
-                    {/* Quick amount selection buttons and betting confirmation */}
-                    <div className="amount-buttons">
-                        <button className="amount-btn" onClick={() => handleAmountClick('10000')}>10K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('20000')}>20K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('30000')}>30K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('50000')}>50K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('100000')}>100K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('300000')}>300K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('500000')}>500K</button>
-                        <button className="amount-btn" onClick={() => handleAmountClick('1000000')}>1M</button>
-                        <button className="amount-btn clear" onClick={() => handleAmountClick('Reset')}>Reset</button>
-                        <button className="amount-btn max" onClick={() => handleAmountClick('Max')}>Max</button>
-                        <button className="amount-btn confirm">Betting</button>
-                      </div>
-              </div>
-              
-               
+                  </div>
+                  {/* Quick amount selection buttons and betting confirmation */}
+                  <div className="amount-buttons">
+                      <button className="amount-btn" onClick={() => handleAmountClick('10000')}>10K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('20000')}>20K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('30000')}>30K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('50000')}>50K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('100000')}>100K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('300000')}>300K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('500000')}>500K</button>
+                      <button className="amount-btn" onClick={() => handleAmountClick('1000000')}>1M</button>
+                      <button className="amount-btn clear" onClick={() => handleAmountClick('Reset')}>Reset</button>
+                      <button className="amount-btn max" onClick={() => handleAmountClick('Max')}>Max</button>
+                      <button className="amount-btn confirm">Betting</button>
+                  </div>
+                </div>   
               </div>
             </div>
           </div>

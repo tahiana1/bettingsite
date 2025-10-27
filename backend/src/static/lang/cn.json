@@ -2288,5 +2288,8 @@
   "pbgadmin/vip1" : "VIP 1",
   "pbgadmin/vip2" : "VIP 2",
   "pbgadmin/premium" : "Premium",
-  "pbgPowerballAdminManagement" : "PBG - 管理界面"
+  "pbgPowerballAdminManagement" : "PBG - 管理界面",
+  "normalballCombinations" : "普通球组合",
+  "powerballCombinations" : "强力球组合",
+  "currentRound" : "当前轮次"
 } 

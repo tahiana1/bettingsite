@@ -11,6 +11,7 @@ func GetMiniBetOptionRoute(r *gin.RouterGroup) {
 	r.GET("/options", controllers.GetMiniBetOptions)
 	r.GET("/options/:id", controllers.GetMiniBetOption)
 	r.GET("/configs", controllers.GetMiniGameConfigs)
+	r.GET("/game-distribution", controllers.GetGameDistribution)
 
 	// Protected routes (require auth)
 	r.Use(middleware.RequireAuth)
