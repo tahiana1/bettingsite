@@ -242,6 +242,15 @@ export default function EOS1Page() {
         loadBettingHistory();
     }, []);
 
+    // Auto-refresh betting history every 10 seconds
+    useEffect(() => {
+        const interval = setInterval(() => {
+            loadBettingHistory(currentPage);
+        }, 10000); // 10 seconds
+        
+        return () => clearInterval(interval); // Cleanup on unmount
+    }, [currentPage]); // Re-run when currentPage changes
+
     /**
      * Maps tab names to their corresponding iframe URLs for live game display
      * @param tab - The tab identifier
