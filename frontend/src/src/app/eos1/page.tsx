@@ -252,7 +252,7 @@ export default function EOS1Page() {
         const interval = setInterval(() => {
             loadBettingHistory(currentPage);
         }, 10000); // 10 seconds
-        
+        loadUserBalance();
         return () => clearInterval(interval); // Cleanup on unmount
     }, [currentPage]); // Re-run when currentPage changes
 
@@ -263,15 +263,15 @@ export default function EOS1Page() {
      */
     const getIframeSrc = (tab: string) => {
         const iframeSrcs: {[key: string]: string} = {
-        'EOS1': 'https://ntry.com/scores/eos_powerball/1min/main.php',
-        'EOS2': 'https://ntry.com/scores/eos_powerball/2min/main.php',
-        'EOS3': 'https://ntry.com/scores/eos_powerball/3min/main.php',
-        'EOS4': 'https://ntry.com/scores/eos_powerball/4min/main.php',
-        'EOS5': 'https://ntry.com/scores/eos_powerball/5min/main.php',
-        'Bepick': 'https://ntry.com/scores/bepick/main.php',
-        'EOS': 'https://ntry.com/scores/eos/main.php',
-        'PBG': 'https://ntry.com/scores/pbg/main.php',
-        'Dhpowerball': 'https://ntry.com/scores/dhpowerball/main.php'
+            'EOS1': 'https://ntry.com/scores/eos_powerball/1min/main.php',
+            'EOS2': 'https://ntry.com/scores/eos_powerball/2min/main.php',
+            'EOS3': 'https://ntry.com/scores/eos_powerball/3min/main.php',
+            'EOS4': 'https://ntry.com/scores/eos_powerball/4min/main.php',
+            'EOS5': 'https://ntry.com/scores/eos_powerball/5min/main.php',
+            'Bepick': 'https://ntry.com/scores/bepick/main.php',
+            'EOS': 'https://ntry.com/scores/eos/main.php',
+            'PBG': 'https://ntry.com/scores/pbg/main.php',
+            'Dhpowerball': 'https://ntry.com/scores/dhpowerball/main.php'
         };
         return iframeSrcs[tab] || '';
     };
