@@ -2302,5 +2302,6 @@
   "pleaseSelectOption" : "请选择投注选项",
   "round" : "轮次",
   "betTypeOdds" : "投注类型/赔率",
-  "betAmount" : "投注金额"
+  "betAmount" : "投注金额",
+  "lost" : "输"
 }

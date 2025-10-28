@@ -190,10 +190,8 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
     for i := range pendingBets {
         bet := &pendingBets[i]
 
-        // Determine win based on category and pick
+        // Determine win based on bet option structure
         won := false
-        // Translate English pick selection to Korean for comparison
-        translatedPick := translatePick(bet.PickSelection)
         
         // Helper to check if a value is odd/even type
         isOddEvenValue := func(val string) bool {
@@ -205,10 +203,62 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
             return val == "언더" || val == "오버"
         }
         
-        switch bet.Category {
-        case "powerball":
-            // Powerball: Odd/Even bets check PowBallOE, Under/Over bets check PowBallUnover
-            if isOddEvenValue(translatedPick) {
+        // Check if we have structured bet option data
+        if bet.BetType != "" {
+            // Use structured bet option for comparison
+            if bet.BetType == "single" && bet.BetText != nil {
+                // Single bet: translate and compare
+                translatedText := translatePick(*bet.BetText)
+                
+                if bet.Category == "powerball" {
+                    if isOddEvenValue(translatedText) && translatedText == result.PowBallOE {
+                        won = true
+                    } else if isUnderOverValue(translatedText) && translatedText == result.PowBallUnover {
+                        won = true
+                    }
+                } else if bet.Category == "normalball" {
+                    if isOddEvenValue(translatedText) && translatedText == result.DefBallOE {
+                        won = true
+                    } else if isUnderOverValue(translatedText) && translatedText == result.DefBallUnover {
+                        won = true
+                    }
+                }
+            } else if bet.BetType == "combination" && len(bet.BetBalls) > 0 {
+                // Combination bet: all conditions must be met
+                won = true
+                for _, ball := range bet.BetBalls {
+                    translatedText := translatePick(ball.Text)
+                    ballWon := false
+                    
+                    if bet.Category == "powerball" {
+                        if isOddEvenValue(translatedText) && translatedText == result.PowBallOE {
+                            ballWon = true
+                        } else if isUnderOverValue(translatedText) && translatedText == result.PowBallUnover {
+                            ballWon = true
+                        }
+                    } else if bet.Category == "normalball" {
+                        if isOddEvenValue(translatedText) && translatedText == result.DefBallOE {
+                            ballWon = true
+                        } else if isUnderOverValue(translatedText) && translatedText == result.DefBallUnover {
+                            ballWon = true
+                        }
+                    }
+                    
+                    if !ballWon {
+                        won = false
+                        break
+                    }
+                }
+            }
+        } else {
+            // Fallback to old string-based comparison if no structured data
+            // Translate English pick selection to Korean for comparison
+            translatedPick := translatePick(bet.PickSelection)
+            
+            switch bet.Category {
+            case "powerball":
+                // Powerball: Odd/Even bets check PowBallOE, Under/Over bets check PowBallUnover
+                if isOddEvenValue(translatedPick) {
                 // Bet is on Odd/Even - check the Odd/Even result field
                 if translatedPick == result.PowBallOE {
                     won = true
@@ -245,6 +295,7 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
                 if translatedPick == overUnder(pwr) {
                     won = true
                 }
+            }
             }
         }
 
@@ -283,13 +334,36 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
             var profile models.Profile
             if err := tx.Where("user_id = ?", bet.UserID).First(&profile).Error; err == nil {
                 payout := bet.Amount * bet.Odds
+                balanceBefore := profile.Balance
+                balanceAfter := profile.Balance + payout
+                
                 if err := tx.Model(&profile).Updates(map[string]interface{}{
-                    "balance": profile.Balance + payout,
+                    "balance": balanceAfter,
                 }).Error; err != nil {
                     tx.Rollback()
                     fmt.Printf("❌ Failed to credit user %d for bet %d: %v\n", bet.UserID, bet.ID, err)
                     continue
                 }
+                
+                // Save transaction for the win
+                transaction := models.Transaction{
+                    UserID:        bet.UserID,
+                    Type:          "minigame_Win",
+                    Amount:        payout,
+                    BalanceBefore: balanceBefore,
+                    BalanceAfter:  balanceAfter,
+                    Explation:     fmt.Sprintf("%d", bet.ID),
+                    Status:        "success",
+                }
+                
+                if err := tx.Create(&transaction).Error; err != nil {
+                    tx.Rollback()
+                    fmt.Printf("❌ Failed to create transaction for bet %d: %v\n", bet.ID, err)
+                    continue
+                }
+                
+                fmt.Printf("✅ Transaction created for bet %d: payout=%.2f, balance %.2f -> %.2f\n", 
+                    bet.ID, payout, balanceBefore, balanceAfter)
             }
         }
 

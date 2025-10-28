@@ -13,7 +13,7 @@ export default function EOS1Page() {
     const [activeTab, setActiveTab] = useState('EOS1'); // Currently selected game tab
     const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display
     const [iframeVisible, setIframeVisible] = useState(true); // Controls iframe visibility toggle
-    const [selectedPick, setSelectedPick] = useState<{name: string, odds: string, category?: string}>({name: '', odds: ''}); // Selected betting option
+    const [selectedPick, setSelectedPick] = useState<{name: string, odds: string, category?: string, id?: number}>({name: '', odds: ''}); // Selected betting option
     const [betAmount, setBetAmount] = useState<string>(''); // User's bet amount input
     // Calculate win amount as selected odds * betting amount
     const winAmount = React.useMemo(() => {
@@ -62,7 +62,8 @@ export default function EOS1Page() {
                 category: selectedPick.category,
                 pick: selectedPick.name,
                 odds: selectedPick.odds,
-                amount: betAmount
+                amount: betAmount,
+                betOptionId: selectedPick.id || 0
             }
         }).then((res: any) => {
             console.log(res.data);
@@ -158,9 +159,11 @@ export default function EOS1Page() {
      * Handles selection of betting options (Powerball Odd/Even, Over/Under, etc.)
      * @param pickName - The name of the selected betting option
      * @param odds - The odds for the selected option
+     * @param category - The category of the bet
+     * @param id - The ID of the bet option
      */
-    const handlePickSelection = (pickName: string, odds: string, category: string) => {
-        setSelectedPick({name: pickName, odds: odds, category: category});
+    const handlePickSelection = (pickName: string, odds: string, category: string, id?: number) => {
+        setSelectedPick({name: pickName, odds: odds, category: category, id: id});
     };
 
     /**
@@ -284,7 +287,7 @@ export default function EOS1Page() {
         <button 
             key={option.id}
             className={`pick-btn ${isSelected ? 'selected' : ''}`}
-            onClick={() => handlePickSelection(option.name, option.odds, category)}
+            onClick={() => handlePickSelection(option.name, option.odds, category, option.id)}
         >
             <span className="odds">{option.odds}</span>
             {option.type === 'single' ? (
@@ -437,24 +440,28 @@ export default function EOS1Page() {
                                     <td>{bet.round}</td>
                                     <td>{bet.pickSelection}/{bet.odds}</td>
                                     <td>{bet.amount.toLocaleString()}</td>
-                                    <td>{(bet.amount * bet.odds).toLocaleString()}</td>
+                                    {
+                                        bet.result === "lose"
+                                        ? <td>0</td>
+                                        : <td>{(bet.amount * bet.odds).toLocaleString()}</td>
+                                    }
                                     <td>
                                         {/* pending, won, lost */}
                                         <span className={
                                             `status-badge ` +
                                             (bet.result === 'pending'
-                                                ? 'status-active'
-                                                : bet.result === 'won'
-                                                ? 'status-won'
-                                                : bet.result === 'lost'
-                                                ? 'status-lost'
-                                                : 'status-inactive')
+                                                ? 'badge-blue'
+                                                : bet.result === 'win'
+                                                ? 'badge-green'
+                                                : bet.result === 'lose'
+                                                ? 'badge-danger'
+                                                : 'badge-default')
                                         }>
                                             {bet.result === 'pending'
                                                 ? t('pending')
-                                                : bet.result === 'won'
+                                                : bet.result === 'win'
                                                 ? t('won')
-                                                : bet.result === 'lost'
+                                                : bet.result === "lose"
                                                 ? t('lost')
                                                 : bet.result}
                                         </span>

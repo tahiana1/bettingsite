@@ -667,3 +667,23 @@ body {
 .holdem-right-animation {
   animation: holdem-move-right 6s ease-in-out infinite;
 }
+
+.badge-blue {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.badge-green {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.badge-danger { 
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.badge-default {
+  background-color: #6b7280;
+  color: #ffffff;
+}

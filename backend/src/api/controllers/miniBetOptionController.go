@@ -442,11 +442,12 @@ func PlaceMiniBet(c *gin.Context) {
 	}
 
 	var betInput struct {
-		GameType string `json:"gameType" binding:"required"`
-		Category string `json:"category" binding:"required"`
-		Pick     string `json:"pick" binding:"required"`
-		Odds     string `json:"odds" binding:"required"`
-		Amount   string `json:"amount" binding:"required"`
+		GameType    string `json:"gameType" binding:"required"`
+		Category    string `json:"category" binding:"required"`
+		Pick        string `json:"pick" binding:"required"`
+		Odds        string `json:"odds" binding:"required"`
+		Amount      string `json:"amount" binding:"required"`
+		BetOptionID uint   `json:"betOptionId"` // ID of the MiniBetOption
 	}
 
 	if err := c.ShouldBindJSON(&betInput); err != nil {
@@ -590,6 +591,18 @@ func PlaceMiniBet(c *gin.Context) {
 		Result:        "pending",
 		Status:        "pending",
 		Round:         currentRound,
+		BetOptionID:   &betInput.BetOptionID,
+	}
+
+	// Fetch and store bet option details if BetOptionID is provided
+	if betInput.BetOptionID > 0 {
+		var betOption models.MiniBetOption
+		if err := initializers.DB.First(&betOption, betInput.BetOptionID).Error; err == nil {
+			powerballBet.BetType = betOption.Type
+			powerballBet.BetBall = betOption.Ball
+			powerballBet.BetText = betOption.Text
+			powerballBet.BetBalls = betOption.Balls
+		}
 	}
 
 	// Start transaction

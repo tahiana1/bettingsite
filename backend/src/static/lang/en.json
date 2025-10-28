@@ -2300,5 +2300,6 @@
   "pleaseSelectOption" : "Please select an option",
   "round" : "Round",
   "betTypeOdds" : "Bet Type/Odds",
-  "betAmount" : "Bet Amount"
+  "betAmount" : "Bet Amount",
+  "lost" : "Lost"
 } 
