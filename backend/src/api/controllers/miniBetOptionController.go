@@ -519,52 +519,107 @@ func PlaceMiniBet(c *gin.Context) {
 		return
 	}
 
-	// Map internal game types to API keys
-	gameTypeMap := map[string]string{
-		"eos1min": "eos_powerball_1",
-		"eos2min": "eos_powerball_2",
-		"eos3min": "eos_powerball_3",
-		"eos4min": "eos_powerball_4",
-		"eos5min": "eos_powerball_5",
+	// Map internal game types to result JSON API URLs
+	resultURLMap := map[string]string{
+		"eos1min": "https://ntry.com/data/json/games/eos_powerball/1min/result.json",
+		"eos2min": "https://ntry.com/data/json/games/eos_powerball/2min/result.json",
+		"eos3min": "https://ntry.com/data/json/games/eos_powerball/3min/result.json",
+		"eos4min": "https://ntry.com/data/json/games/eos_powerball/4min/result.json",
+		"eos5min": "https://ntry.com/data/json/games/eos_powerball/5min/result.json",
 	}
 
-	// Get the API key for the game type
-	apiKey := gameTypeMap[betInput.GameType]
-	if apiKey == "" {
-		apiKey = betInput.GameType
-	}
-
-	// Extract current round for the specific game type
+	// Get the result URL for the game type
+	resultURL := resultURLMap[betInput.GameType]
 	var currentRound uint
 
-	// Try to get round from game distribution data (field name is "rd" not "round")
-	if gameInfo, exists := gameData[apiKey].(map[string]interface{}); exists {
-		if roundValue, ok := gameInfo["rd"]; ok {
-			// Handle different possible types for round value
-			switch v := roundValue.(type) {
-			case float64:
-				currentRound = uint(v)
-			case int:
-				currentRound = uint(v)
-			case string:
-				// Try to parse string to uint
-				if parsed, parseErr := strconv.ParseUint(v, 10, 64); parseErr == nil {
-					currentRound = uint(parsed)
+	// Fetch from result.json to get current date_round
+	if resultURL != "" {
+		resultReq, err := http.NewRequest("GET", resultURL, nil)
+		if err == nil {
+			if resultResp, err := client.Do(resultReq); err == nil {
+				defer resultResp.Body.Close()
+				resultBody, err := io.ReadAll(resultResp.Body)
+				if err == nil {
+					var resultData map[string]interface{}
+					if err := json.Unmarshal(resultBody, &resultData); err == nil {
+						if dateRound, ok := resultData["date_round"]; ok {
+							// Parse date_round which can be int or string
+							switch v := dateRound.(type) {
+							case float64:
+								currentRound = uint(v)
+							case int:
+								currentRound = uint(v)
+							case string:
+								// Parse string to int, removing leading zeros (e.g., "092" -> 92, "0122" -> 122)
+								if parsed, parseErr := strconv.ParseUint(v, 10, 64); parseErr == nil {
+									currentRound = uint(parsed)
+								} else {
+									currentRound = uint(time.Now().Unix())
+								}
+							default:
+								currentRound = uint(time.Now().Unix())
+							}
+						} else {
+							currentRound = uint(time.Now().Unix())
+						}
+					} else {
+						currentRound = uint(time.Now().Unix())
+					}
 				} else {
-					// If parsing fails, use timestamp as round
 					currentRound = uint(time.Now().Unix())
 				}
-			default:
-				// Use timestamp as fallback round
+			} else {
 				currentRound = uint(time.Now().Unix())
 			}
 		} else {
-			// No round found in game data, use timestamp
 			currentRound = uint(time.Now().Unix())
 		}
 	} else {
-		// Game type not found, use timestamp as fallback
-		currentRound = uint(time.Now().Unix())
+		// Fallback to dist.json for other game types
+		// Map internal game types to API keys
+		gameTypeMap := map[string]string{
+			"eos1min": "eos_powerball_1",
+			"eos2min": "eos_powerball_2",
+			"eos3min": "eos_powerball_3",
+			"eos4min": "eos_powerball_4",
+			"eos5min": "eos_powerball_5",
+		}
+
+		// Get the API key for the game type
+		apiKey := gameTypeMap[betInput.GameType]
+		if apiKey == "" {
+			apiKey = betInput.GameType
+		}
+
+		// Try to get round from game distribution data (field name is "rd" not "round")
+		if gameInfo, exists := gameData[apiKey].(map[string]interface{}); exists {
+			if roundValue, ok := gameInfo["rd"]; ok {
+				// Handle different possible types for round value
+				switch v := roundValue.(type) {
+				case float64:
+					currentRound = uint(v)
+				case int:
+					currentRound = uint(v)
+				case string:
+					// Try to parse string to uint
+					if parsed, parseErr := strconv.ParseUint(v, 10, 64); parseErr == nil {
+						currentRound = uint(parsed)
+					} else {
+						// If parsing fails, use timestamp as round
+						currentRound = uint(time.Now().Unix())
+					}
+				default:
+					// Use timestamp as fallback round
+					currentRound = uint(time.Now().Unix())
+				}
+			} else {
+				// No round found in game data, use timestamp
+				currentRound = uint(time.Now().Unix())
+			}
+		} else {
+			// Game type not found, use timestamp as fallback
+			currentRound = uint(time.Now().Unix())
+		}
 	}
 
 	// Check user balance

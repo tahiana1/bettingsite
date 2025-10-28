@@ -16,7 +16,7 @@ import (
 type EOSPowerballResult struct {
 	Date           string        `json:"date"`
 	Times          int64         `json:"times"`
-	DateRound      int           `json:"date_round"`
+	DateRound      interface{}   `json:"date_round"`      // Can be int or string
 	Ball           []interface{} `json:"ball"`            // Can be numbers or string
 	PowBallOE      string        `json:"pow_ball_oe"`     // 홀 (odd) / 짝 (even)
 	PowBallUnover  string        `json:"pow_ball_unover"` // 오버 (over) / 언더 (under)
@@ -29,13 +29,55 @@ type EOSPowerballResult struct {
 }
 
 type EOSPowerballFetcher struct {
-	BaseURL string
-	Client  *http.Client
+	BaseURL  string
+	Client   *http.Client
+	GameType string // eos1min, eos2min, etc.
 }
 
 func NewEOS1MinPowerballFetcher() *EOSPowerballFetcher {
 	return &EOSPowerballFetcher{
-		BaseURL: "https://ntry.com/data/json/games/eos_powerball/1min/result.json",
+		BaseURL:  "https://ntry.com/data/json/games/eos_powerball/1min/result.json",
+		GameType: "eos1min",
+		Client: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+	}
+}
+
+func NewEOS2MinPowerballFetcher() *EOSPowerballFetcher {
+	return &EOSPowerballFetcher{
+		BaseURL:  "https://ntry.com/data/json/games/eos_powerball/2min/result.json",
+		GameType: "eos2min",
+		Client: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+	}
+}
+
+func NewEOS3MinPowerballFetcher() *EOSPowerballFetcher {
+	return &EOSPowerballFetcher{
+		BaseURL:  "https://ntry.com/data/json/games/eos_powerball/3min/result.json",
+		GameType: "eos3min",
+		Client: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+	}
+}
+
+func NewEOS4MinPowerballFetcher() *EOSPowerballFetcher {
+	return &EOSPowerballFetcher{
+		BaseURL:  "https://ntry.com/data/json/games/eos_powerball/4min/result.json",
+		GameType: "eos4min",
+		Client: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+	}
+}
+
+func NewEOS5MinPowerballFetcher() *EOSPowerballFetcher {
+	return &EOSPowerballFetcher{
+		BaseURL:  "https://ntry.com/data/json/games/eos_powerball/5min/result.json",
+		GameType: "eos5min",
 		Client: &http.Client{
 			Timeout: 30 * time.Second,
 		},
@@ -112,21 +154,33 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
 		return
 	}
 
+	// Parse date_round which can be int or string
+	round := 0
+	switch v := result.DateRound.(type) {
+	case float64:
+		round = int(v)
+	case int:
+		round = v
+	case string:
+		// Parse string to int, removing leading zeros
+		fmt.Sscanf(v, "%d", &round)
+	}
+
 	// Settle pending bets for this round if not already settled
     var alreadySettled int64
     today := time.Now().Format("2006-01-02")
     initializers.DB.Model(&models.PowerballHistory{}).
-        Where("round = ? AND status = ? AND DATE(created_at) = ?", result.DateRound, "done", today).
+        Where("round = ? AND game_type = ? AND status = ? AND DATE(created_at) = ?", round, e.GameType, "done", today).
         Count(&alreadySettled)
     if alreadySettled > 0 {
-        fmt.Printf("⏭️  Powerball round %d already settled today (%d done)\n", result.DateRound, alreadySettled)
+        fmt.Printf("⏭️  Powerball %s round %d already settled today (%d done)\n", e.GameType, round, alreadySettled)
         return
     }
 
 	// Log the results
-	fmt.Printf("✅ EOS Powerball Result:\n")
+	fmt.Printf("✅ EOS Powerball %s Result:\n", e.GameType)
 	fmt.Printf("   Date: %s\n", result.Date)
-	fmt.Printf("   Round: %d\n", result.DateRound)
+	fmt.Printf("   Round: %d\n", round)
 	fmt.Printf("   Times: %d\n", result.Times)
 	fmt.Printf("   Balls: %v\n", result.Ball)
 	fmt.Printf("   Power Ball OE: %s, Unover: %s\n", result.PowBallOE, result.PowBallUnover)
@@ -182,7 +236,7 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
 
     // Settle all pending bets for this round created today
     var pendingBets []models.PowerballHistory
-    if err := initializers.DB.Where("round = ? AND status = ? AND DATE(created_at) = ?", result.DateRound, "pending", today).Find(&pendingBets).Error; err != nil {
+    if err := initializers.DB.Where("round = ? AND game_type = ? AND status = ? AND DATE(created_at) = ?", round, e.GameType, "pending", today).Find(&pendingBets).Error; err != nil {
         fmt.Printf("❌ Failed to load pending bets: %v\n", err)
         return
     }
