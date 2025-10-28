@@ -13,6 +13,13 @@ const nextConfig = {
     NEXT_PUBLIC_PORT: process.env.PORT,
   },
   output: "standalone",
+  webpackDevMiddleware: (config) => {
+    config.watchOptions = {
+      poll: 1000,
+      aggregateTimeout: 300,
+    };
+    return config;
+  },
 };
 
 export default withNextIntl(nextConfig);

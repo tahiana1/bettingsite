@@ -4,11 +4,13 @@ services:
       context: ./frontend/src
       dockerfile: Dockerfile
     container_name: betting-frontend
-    # ports:
-    #   - "3000:3000"
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend/src:/app  
       - /app/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
     # depends_on:
       # backend:
       #   condition: service_healthy

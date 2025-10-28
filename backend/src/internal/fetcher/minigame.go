@@ -166,6 +166,20 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
     overUnder := func(n int) string { if n >= 5 { return "오버" } ; return "언더" } // for powerball size threshold guess
     // Sum and derived values from API already provided for default balls
 
+    // Translation map for English pick selections to Korean API results
+    translatePick := func(pick string) string {
+        translation := map[string]string{
+            "Odd":   "홀",
+            "Even":  "짝",
+            "Under": "언더",
+            "Over":  "오버",
+        }
+        if translated, ok := translation[pick]; ok {
+            return translated
+        }
+        return pick // Return as-is if already in Korean or unknown
+    }
+
     // Settle all pending bets for this round created today
     var pendingBets []models.PowerballHistory
     if err := initializers.DB.Where("round = ? AND status = ? AND DATE(created_at) = ?", result.DateRound, "pending", today).Find(&pendingBets).Error; err != nil {
@@ -178,21 +192,59 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
 
         // Determine win based on category and pick
         won := false
+        // Translate English pick selection to Korean for comparison
+        translatedPick := translatePick(bet.PickSelection)
+        
+        // Helper to check if a value is odd/even type
+        isOddEvenValue := func(val string) bool {
+            return val == "홀" || val == "짝"
+        }
+        
+        // Helper to check if a value is under/over type
+        isUnderOverValue := func(val string) bool {
+            return val == "언더" || val == "오버"
+        }
+        
         switch bet.Category {
         case "powerball":
-            // PickSelection can be values like "홀", "짝", "오버", "언더"
-            if bet.PickSelection == result.PowBallOE || bet.PickSelection == result.PowBallUnover {
-                won = true
+            // Powerball: Odd/Even bets check PowBallOE, Under/Over bets check PowBallUnover
+            if isOddEvenValue(translatedPick) {
+                // Bet is on Odd/Even - check the Odd/Even result field
+                if translatedPick == result.PowBallOE {
+                    won = true
+                }
+            } else if isUnderOverValue(translatedPick) {
+                // Bet is on Under/Over - check the Under/Over result field
+                if translatedPick == result.PowBallUnover {
+                    won = true
+                }
             }
         case "normalball":
-            // Compare against default ball derived metrics: sum, odd/even, under/over, size, section
-            if bet.PickSelection == result.DefBallOE || bet.PickSelection == result.DefBallUnover || bet.PickSelection == result.DefBallSize || bet.PickSelection == result.DefBallSection || bet.PickSelection == result.DefBallSum {
+            // Normalball can bet on various metrics - check the appropriate result field
+            if isOddEvenValue(translatedPick) {
+                // Odd/Even bet
+                if translatedPick == result.DefBallOE {
+                    won = true
+                }
+            } else if isUnderOverValue(translatedPick) {
+                // Under/Over bet
+                if translatedPick == result.DefBallUnover {
+                    won = true
+                }
+            } else if translatedPick == result.DefBallSize || translatedPick == result.DefBallSection || (result.DefBallSum != "" && translatedPick == result.DefBallSum) {
+                // Size, Section, or Sum bet
                 won = true
             }
         default:
-            // Fallback simple checks on powerball odd/even or under/over
-            if bet.PickSelection == isOdd(pwr) || bet.PickSelection == overUnder(pwr) {
-                won = true
+            // Fallback: check against computed powerball odd/even or under/over
+            if isOddEvenValue(translatedPick) {
+                if translatedPick == isOdd(pwr) {
+                    won = true
+                }
+            } else if isUnderOverValue(translatedPick) {
+                if translatedPick == overUnder(pwr) {
+                    won = true
+                }
             }
         }
 

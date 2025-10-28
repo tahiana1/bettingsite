@@ -6,6 +6,8 @@ import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsA
 import { useTranslations } from 'next-intl';
 import api from '@/api';
 import { message, Spin } from 'antd';
+import dayjs from 'dayjs';
+
 export default function EOS1Page() {
     const t = useTranslations();
     const [activeTab, setActiveTab] = useState('EOS1'); // Currently selected game tab
@@ -419,6 +421,7 @@ export default function EOS1Page() {
                             <th>{t("betAmount")}</th>
                             <th>{t("winAmount")}</th>
                             <th>{t("status")}</th>
+                            <th>{t("createdAt")}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -456,6 +459,7 @@ export default function EOS1Page() {
                                                 : bet.result}
                                         </span>
                                     </td>
+                                    <td>{dayjs(bet.createdAt).format('YYYY-MM-DD HH:mm:ss')}</td>
                                 </tr>
                             ))
                         )}

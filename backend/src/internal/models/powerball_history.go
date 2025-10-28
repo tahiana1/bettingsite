@@ -15,6 +15,9 @@ type PowerballHistory struct {
 	Amount        float64 `json:"amount"`
 	Odds          float64 `json:"odds"`
 	PickSelection string  `json:"pickSelection"`
+
+	// 
+
 	Result        string  `json:"result"`
 	Status        string  `json:"status"`
 	Round         uint    `json:"round"`
