@@ -353,7 +353,7 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
                     BalanceBefore: balanceBefore,
                     BalanceAfter:  balanceAfter,
                     Explation:     fmt.Sprintf("%d", bet.ID),
-                    Status:        "success",
+                    Status:        "A",
                 }
                 
                 if err := tx.Create(&transaction).Error; err != nil {

@@ -479,15 +479,58 @@ export default function EOS1Page() {
                             onClick={() => handlePageChange(currentPage - 1)} 
                             disabled={currentPage === 1}
                         >‹</button>
-                        {Array.from({ length: Math.ceil(totalCount / pageSize) }, (_, i) => i + 1).map((page) => (
-                            <button 
-                                key={page}
-                                className={currentPage === page ? 'active' : ''}
-                                onClick={() => handlePageChange(page)}
-                            >
-                                {page}
-                            </button>
-                        ))}
+                        {(() => {
+                            const totalPages = Math.ceil(totalCount / pageSize);
+                            const pages: (number | string)[] = [];
+                            
+                            if (totalPages <= 7) {
+                                // Show all pages if 7 or less
+                                for (let i = 1; i <= totalPages; i++) {
+                                    pages.push(i);
+                                }
+                            } else {
+                                // More than 7 pages - show ellipsis
+                                if (currentPage <= 4) {
+                                    // Near the beginning
+                                    for (let i = 1; i <= 5; i++) {
+                                        pages.push(i);
+                                    }
+                                    pages.push('...');
+                                    pages.push(totalPages);
+                                } else if (currentPage >= totalPages - 3) {
+                                    // Near the end
+                                    pages.push(1);
+                                    pages.push('...');
+                                    for (let i = totalPages - 4; i <= totalPages; i++) {
+                                        pages.push(i);
+                                    }
+                                } else {
+                                    // In the middle
+                                    pages.push(1);
+                                    pages.push('...');
+                                    for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                                        pages.push(i);
+                                    }
+                                    pages.push('...');
+                                    pages.push(totalPages);
+                                }
+                            }
+                            
+                            return pages.map((page, index) => {
+                                if (page === '...') {
+                                    return <span key={`ellipsis-${index}`} className="ellipsis">...</span>;
+                                }
+                                return (
+                                    <button 
+                                        key={page}
+                                        className={currentPage === page ? 'active' : ''}
+                                        onClick={() => handlePageChange(page as number)}
+                                    >
+                                        {page}
+                                    </button>
+                                );
+                            });
+                        })()}
                         <button 
                             onClick={() => handlePageChange(currentPage + 1)} 
                             disabled={currentPage === Math.ceil(totalCount / pageSize) || totalCount === 0}

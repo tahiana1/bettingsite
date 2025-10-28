@@ -321,6 +321,17 @@
     background: #3b82f6;
 }
 
+.minigame-app .pagination .ellipsis {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 14px;
+    user-select: none;
+}
+
 /* Betting panel */
 .minigame-app .betting-panel {
     background: #1e293b;

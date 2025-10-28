@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -610,6 +611,22 @@ func PlaceMiniBet(c *gin.Context) {
 
 	// Save bet to database
 	if err := tx.Create(&powerballBet).Error; err != nil {
+		tx.Rollback()
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Save transaction for the bet
+	transaction := models.Transaction{
+		UserID:        user.ID,
+		Type:          "minigame_place",
+		Amount:        amount,
+		BalanceBefore: profile.Balance,
+		BalanceAfter:  profile.Balance - amount,
+		Explation:     fmt.Sprintf("%d", powerballBet.ID),
+		Status:        "A",
+	}
+	if err := tx.Create(&transaction).Error; err != nil {
 		tx.Rollback()
 		format_errors.InternalServerError(c, err)
 		return
