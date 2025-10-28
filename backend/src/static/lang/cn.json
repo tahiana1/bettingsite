@@ -2291,5 +2291,13 @@
   "pbgPowerballAdminManagement" : "PBG - 管理界面",
   "normalballCombinations" : "普通球组合",
   "powerballCombinations" : "强力球组合",
-  "currentRound" : "当前轮次"
+  "currentRound" : "当前轮次",
+  "pickSelection" : "Pick Selection",
+  "odds" : "赔率",
+  "winAmount" : "赢金额",
+  "loadingBettingOptions" : "加载投注选项...",
+  "numbersOnly" : "仅数字",
+  "max" : "最大",
+  "copyRight" : "ToToClub. 版权所有。",
+  "pleaseSelectOption" : "请选择投注选项"
 } 

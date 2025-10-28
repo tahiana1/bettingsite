@@ -2289,5 +2289,13 @@
   "pbgPowerballAdminManagement" : "PBG - Admin Management",
   "normalballCombinations" : "Normalball Combinations",
   "powerballCombinations" : "Powerball Combinations",
-  "currentRound" : "Current Round"
+  "currentRound" : "Current Round",
+  "pickSelection" : "Pick Selection",
+  "odds" : "Odds",
+  "winAmount" : "Win Amount",
+  "loadingBettingOptions" : "Loading Betting Options...",
+  "numbersOnly" : "Numbers only",
+  "max" : "Max",
+  "copyRight" : "ToToClub. All rights reserved.",
+  "pleaseSelectOption" : "Please select an option"
 } 

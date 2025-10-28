@@ -5,11 +5,13 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
+	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
 )
@@ -427,6 +429,255 @@ func UpdateMiniGameConfig(c *gin.Context) {
 		"success": true,
 		"data":    config,
 		"message": "Mini game configuration updated successfully",
+	})
+}
+
+// PlaceMiniBet creates a new mini bet
+func PlaceMiniBet(c *gin.Context) {
+	// Get authenticated user
+	user, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.UnauthorizedError(c, err)
+		return
+	}
+
+	var betInput struct {
+		GameType string `json:"gameType" binding:"required"`
+		Category string `json:"category" binding:"required"`
+		Pick     string `json:"pick" binding:"required"`
+		Odds     string `json:"odds" binding:"required"`
+		Amount   string `json:"amount" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&betInput); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"validations": validations.FormatValidationErrors(errs),
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Parse odds to float64
+	odds, err := strconv.ParseFloat(betInput.Odds, 64)
+	if err != nil || odds <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid odds value",
+		})
+		return
+	}
+
+	// Parse amount to float64
+	amount, err := strconv.ParseFloat(betInput.Amount, 64)
+	if err != nil || amount <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid amount value",
+		})
+		return
+	}
+
+	// Fetch game distribution to get current round
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://ntry.com/data/json/games/dist.json", nil)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch game distribution",
+		})
+		return
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to fetch game distribution",
+		})
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to read game distribution data",
+		})
+		return
+	}
+
+	var gameData map[string]interface{}
+	err = json.Unmarshal(body, &gameData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to parse game distribution data",
+		})
+		return
+	}
+
+	// Extract current round for the specific game type
+	var currentRound uint
+
+	// Try to get round from game distribution data
+	if gameInfo, exists := gameData[betInput.GameType].(map[string]interface{}); exists {
+		if roundValue, ok := gameInfo["round"]; ok {
+			// Handle different possible types for round value
+			switch v := roundValue.(type) {
+			case float64:
+				currentRound = uint(v)
+			case int:
+				currentRound = uint(v)
+			case string:
+				// Try to parse string to uint
+				if parsed, parseErr := strconv.ParseUint(v, 10, 64); parseErr == nil {
+					currentRound = uint(parsed)
+				} else {
+					// If parsing fails, use timestamp as round
+					currentRound = uint(time.Now().Unix())
+				}
+			default:
+				// Use timestamp as fallback round
+				currentRound = uint(time.Now().Unix())
+			}
+		} else {
+			// No round found in game data, use timestamp
+			currentRound = uint(time.Now().Unix())
+		}
+	} else {
+		// Game type not found, use timestamp as fallback
+		currentRound = uint(time.Now().Unix())
+	}
+
+	// Check user balance
+	var profile models.Profile
+	if err := initializers.DB.Where("user_id = ?", user.ID).First(&profile).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	if profile.Balance < amount {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Insufficient balance",
+		})
+		return
+	}
+
+	// Create the bet record
+	powerballBet := models.PowerballHistory{
+		GameType:      betInput.GameType,
+		UserID:        user.ID,
+		Amount:        amount,
+		Odds:          odds,
+		PickSelection: betInput.Pick,
+		Result:        "pending",
+		Status:        "pending",
+		Round:         currentRound,
+	}
+
+	// Start transaction
+	tx := initializers.DB.Begin()
+
+	// Save bet to database
+	if err := tx.Create(&powerballBet).Error; err != nil {
+		tx.Rollback()
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Deduct amount from user balance
+	profile.Balance -= amount
+	if err := tx.Model(&profile).Updates(map[string]interface{}{
+		"balance": profile.Balance,
+	}).Error; err != nil {
+		tx.Rollback()
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Commit transaction
+	tx.Commit()
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    powerballBet,
+		"message": "Bet placed successfully",
+	})
+}
+
+// GetMiniBetHistory gets betting history for authenticated user
+func GetMiniBetHistory(c *gin.Context) {
+	// Get authenticated user
+	user, err := helpers.GetGinAuthUser(c)
+	if err != nil {
+		format_errors.UnauthorizedError(c, err)
+		return
+	}
+
+	// Get query parameters
+	gameType := c.Query("gameType")
+	status := c.Query("status")
+
+	// Build query
+	query := initializers.DB.Model(&models.PowerballHistory{}).
+		Where("user_id = ?", user.ID)
+
+	// Apply filters
+	if gameType != "" {
+		query = query.Where("game_type = ?", gameType)
+	}
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	// Get pagination parameters - default page to 1
+	page := 1
+	limit := 20
+	if pageStr := c.Query("page"); pageStr != "" {
+		if p, parseErr := strconv.Atoi(pageStr); parseErr == nil && p > 0 {
+			page = p
+		}
+	}
+	if limitStr := c.Query("limit"); limitStr != "" {
+		if l, parseErr := strconv.Atoi(limitStr); parseErr == nil && l > 0 {
+			limit = l
+		}
+	}
+
+	// Get total count
+	var totalCount int64
+	countQuery := initializers.DB.Model(&models.PowerballHistory{}).
+		Where("user_id = ?", user.ID)
+
+	if gameType != "" {
+		countQuery = countQuery.Where("game_type = ?", gameType)
+	}
+	if status != "" {
+		countQuery = countQuery.Where("status = ?", status)
+	}
+
+	if err := countQuery.Count(&totalCount).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	// Get betting history with pagination
+	var betHistory []models.PowerballHistory
+	result := query.Order("created_at DESC").Limit(limit).Offset(offset).Find(&betHistory)
+
+	if result.Error != nil {
+		format_errors.InternalServerError(c, result.Error)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    betHistory,
+		"count":   totalCount,
 	})
 }
 

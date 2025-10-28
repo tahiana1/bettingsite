@@ -46,3 +46,8 @@ type PowerballHistory struct {
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
 }
+
+// TableName returns the table name for the model
+func (PowerballHistory) TableName() string {
+	return "powerball_histories"
+}

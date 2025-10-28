@@ -16,6 +16,8 @@ func GetMiniBetOptionRoute(r *gin.RouterGroup) {
 	// Protected routes (require auth)
 	r.Use(middleware.RequireAuth)
 	{
+		r.GET("/history", controllers.GetMiniBetHistory)
+		r.POST("/bet", controllers.PlaceMiniBet)
 		r.POST("/options", controllers.CreateMiniBetOption)
 		r.PUT("/options/:id", controllers.UpdateMiniBetOption)
 		r.DELETE("/options/:id", controllers.DeleteMiniBetOption)

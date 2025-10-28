@@ -138,6 +138,7 @@ func ConnectDB() {
 		models.ChargeBonusTableLevel{},
 		models.MiniBetOption{},
 		models.MiniGameConfig{},
+		models.PowerballHistory{},
 	)
 
 	if err != nil {

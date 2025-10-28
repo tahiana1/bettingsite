@@ -48,6 +48,9 @@ func main() {
 		models.Contact{},
 		models.Level{},
 		models.ChargeBonusTableLevel{},
+		models.MiniBetOption{},
+		models.MiniGameConfig{},
+		models.PowerballHistory{},
 	)
 
 	if err != nil {
