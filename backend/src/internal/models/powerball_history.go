@@ -10,6 +10,7 @@ type PowerballHistory struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 
 	GameType      string  `json:"gameType"`
+    Category      string  `json:"category"`
 	UserID        uint    `json:"userId"`
 	Amount        float64 `json:"amount"`
 	Odds          float64 `json:"odds"`

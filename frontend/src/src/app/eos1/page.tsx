@@ -439,21 +439,21 @@ export default function EOS1Page() {
                                         {/* pending, won, lost */}
                                         <span className={
                                             `status-badge ` +
-                                            (bet.status === 'pending'
+                                            (bet.result === 'pending'
                                                 ? 'status-active'
-                                                : bet.status === 'won'
+                                                : bet.result === 'won'
                                                 ? 'status-won'
-                                                : bet.status === 'lost'
+                                                : bet.result === 'lost'
                                                 ? 'status-lost'
                                                 : 'status-inactive')
                                         }>
-                                            {bet.status === 'pending'
+                                            {bet.result === 'pending'
                                                 ? t('pending')
-                                                : bet.status === 'won'
+                                                : bet.result === 'won'
                                                 ? t('won')
-                                                : bet.status === 'lost'
+                                                : bet.result === 'lost'
                                                 ? t('lost')
-                                                : bet.status}
+                                                : bet.result}
                                         </span>
                                     </td>
                                 </tr>

@@ -582,6 +582,7 @@ func PlaceMiniBet(c *gin.Context) {
 	// Create the bet record
 	powerballBet := models.PowerballHistory{
 		GameType:      betInput.GameType,
+		Category:      betInput.Category,
 		UserID:        user.ID,
 		Amount:        amount,
 		Odds:          odds,

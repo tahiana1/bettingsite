@@ -112,12 +112,16 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
 		return
 	}
 
-	// filter the data from database (powerball_histories) where date is today and round is today
-	var existingHistory models.PowerballHistory
-	if err := initializers.DB.Where("drawing_date = ? AND round = ?", result.Date, result.DateRound).First(&existingHistory).Error; err == nil {
-		fmt.Printf("⏭️  Powerball result already exists in database (Date: %s, Round: %d)\n", result.Date, result.DateRound)
-		return
-	}
+	// Settle pending bets for this round if not already settled
+    var alreadySettled int64
+    today := time.Now().Format("2006-01-02")
+    initializers.DB.Model(&models.PowerballHistory{}).
+        Where("round = ? AND status = ? AND DATE(created_at) = ?", result.DateRound, "done", today).
+        Count(&alreadySettled)
+    if alreadySettled > 0 {
+        fmt.Printf("⏭️  Powerball round %d already settled today (%d done)\n", result.DateRound, alreadySettled)
+        return
+    }
 
 	// Log the results
 	fmt.Printf("✅ EOS Powerball Result:\n")
@@ -128,7 +132,115 @@ func (e *EOSPowerballFetcher) fetchAndLogResult() {
 	fmt.Printf("   Power Ball OE: %s, Unover: %s\n", result.PowBallOE, result.PowBallUnover)
 	fmt.Printf("   Def Ball Sum: %s, OE: %s, Unover: %s, Size: %s, Section: %s\n",
 		result.DefBallSum, result.DefBallOE, result.DefBallUnover, result.DefBallSize, result.DefBallSection)
-	fmt.Printf("   Fixed Date Round: %s\n", result.FixedDateRound)
+    fmt.Printf("   Fixed Date Round: %s\n", result.FixedDateRound)
 	fmt.Printf("   Fetched at: %s\n", time.Now().Format("2006-01-02 15:04:05"))
 	fmt.Println("   " + strings.Repeat("-", 50))
+
+    // Parse balls
+    var d1, d2, d3, d4, d5, pwr int
+    if len(result.Ball) >= 6 {
+        toInt := func(v interface{}) int {
+            switch t := v.(type) {
+            case float64:
+                return int(t)
+            case int:
+                return t
+            case string:
+                var iv int
+                fmt.Sscanf(t, "%d", &iv)
+                return iv
+            default:
+                return 0
+            }
+        }
+        d1 = toInt(result.Ball[0])
+        d2 = toInt(result.Ball[1])
+        d3 = toInt(result.Ball[2])
+        d4 = toInt(result.Ball[3])
+        d5 = toInt(result.Ball[4])
+        pwr = toInt(result.Ball[5])
+    }
+
+    // Compute helpers
+    isOdd := func(n int) string { if n%2 != 0 { return "홀" } ; return "짝" }
+    overUnder := func(n int) string { if n >= 5 { return "오버" } ; return "언더" } // for powerball size threshold guess
+    // Sum and derived values from API already provided for default balls
+
+    // Settle all pending bets for this round created today
+    var pendingBets []models.PowerballHistory
+    if err := initializers.DB.Where("round = ? AND status = ? AND DATE(created_at) = ?", result.DateRound, "pending", today).Find(&pendingBets).Error; err != nil {
+        fmt.Printf("❌ Failed to load pending bets: %v\n", err)
+        return
+    }
+
+    for i := range pendingBets {
+        bet := &pendingBets[i]
+
+        // Determine win based on category and pick
+        won := false
+        switch bet.Category {
+        case "powerball":
+            // PickSelection can be values like "홀", "짝", "오버", "언더"
+            if bet.PickSelection == result.PowBallOE || bet.PickSelection == result.PowBallUnover {
+                won = true
+            }
+        case "normalball":
+            // Compare against default ball derived metrics: sum, odd/even, under/over, size, section
+            if bet.PickSelection == result.DefBallOE || bet.PickSelection == result.DefBallUnover || bet.PickSelection == result.DefBallSize || bet.PickSelection == result.DefBallSection || bet.PickSelection == result.DefBallSum {
+                won = true
+            }
+        default:
+            // Fallback simple checks on powerball odd/even or under/over
+            if bet.PickSelection == isOdd(pwr) || bet.PickSelection == overUnder(pwr) {
+                won = true
+            }
+        }
+
+        // Begin transaction per bet to avoid partial updates
+        tx := initializers.DB.Begin()
+        // Update drawing/result fields
+        update := map[string]interface{}{
+            "drawing_date":     result.Date,
+            "times":            result.Times,
+            "fixed_date_round": result.FixedDateRound,
+            "ball1":            d1,
+            "ball2":            d2,
+            "ball3":            d3,
+            "ball4":            d4,
+            "ball5":            d5,
+            "power_ball":       pwr,
+            "pow_ball_oe":      result.PowBallOE,
+            "pow_ball_unover":  result.PowBallUnover,
+            "def_ball_sum":     result.DefBallSum,
+            "def_ball_oe":      result.DefBallOE,
+            "def_ball_unover":  result.DefBallUnover,
+            "def_ball_size":    result.DefBallSize,
+            "def_ball_section": result.DefBallSection,
+            "status":           "done",
+            "result":           func() string { if won { return "win" } ; return "lose" }(),
+        }
+
+        if err := tx.Model(bet).Where("id = ?", bet.ID).Updates(update).Error; err != nil {
+            tx.Rollback()
+            fmt.Printf("❌ Failed to update bet %d: %v\n", bet.ID, err)
+            continue
+        }
+
+        if won {
+            // Credit winnings: payout = amount * odds
+            var profile models.Profile
+            if err := tx.Where("user_id = ?", bet.UserID).First(&profile).Error; err == nil {
+                payout := bet.Amount * bet.Odds
+                if err := tx.Model(&profile).Updates(map[string]interface{}{
+                    "balance": profile.Balance + payout,
+                }).Error; err != nil {
+                    tx.Rollback()
+                    fmt.Printf("❌ Failed to credit user %d for bet %d: %v\n", bet.UserID, bet.ID, err)
+                    continue
+                }
+            }
+        }
+
+        tx.Commit()
+    }
 }
