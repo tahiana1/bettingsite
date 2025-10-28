@@ -259,7 +259,7 @@ export default function EOS1Page() {
     /**
      * Maps tab names to their corresponding iframe URLs for live game display
      * @param tab - The tab identifier
-     * @returns The iframe source URL for the selected game
+     * @returns The iframe sourcel URL for the selected game
      */
     const getIframeSrc = (tab: string) => {
         const iframeSrcs: {[key: string]: string} = {
@@ -409,7 +409,7 @@ export default function EOS1Page() {
                         <div className="iframe-wrapper flex items-center justify-center"> 
                         <iframe
                             src={getIframeSrc(activeTab)}
-                            className="game-iframe !z-10 !opacity-0 m-auto"
+                            className="game-iframe !z-10 !opacity-100 m-auto"
                             scrolling="no"
                         />
                         </div>

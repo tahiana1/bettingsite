@@ -189,6 +189,7 @@
 .minigame-app .iframe-section {
     background: #0f172a;
     border: 1px solid #374151;
+    padding: 40px;
     border-radius: 8px;
     margin-bottom: 16px;
     overflow: hidden;
