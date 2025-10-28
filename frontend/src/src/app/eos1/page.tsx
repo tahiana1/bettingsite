@@ -5,7 +5,7 @@ import '../minigame.css';
 import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
 import { useTranslations } from 'next-intl';
 import api from '@/api';
-import { message } from 'antd';
+import { message, Spin } from 'antd';
 export default function EOS1Page() {
     const t = useTranslations();
     const [activeTab, setActiveTab] = useState('EOS1'); // Currently selected game tab
@@ -52,6 +52,7 @@ export default function EOS1Page() {
             message.error(t('balanceNotEnough'));
             return;
         }
+        setBettingLoading(true);
         api("mini/bet", {
             method: "POST",
             data: {
@@ -72,14 +73,19 @@ export default function EOS1Page() {
             loadUserBalance();
         }).catch((err: any) => {
             message.error(err.response?.data?.error || 'Failed to place bet');
+        }).finally(() => {
+            setBettingLoading(false);
         });
     }
 
     const loadBettingHistory = async (page: number = 1) => {
         try {
             const response = await api(`mini/history?gameType=eos1min&page=${page}&limit=${pageSize}`);
-            setBettingHistory(response.data.data || []);
-            setTotalCount(response.data.count || 0);
+            console.log('Full API response:', response);
+            console.log('Response data:', response.data);
+            console.log('Response data.data:', response.data?.data);
+            setBettingHistory(response.data || []);
+            setTotalCount(response.count || 0);
         } catch (error) {
             console.error('Error loading betting history:', error);
         }
@@ -210,6 +216,7 @@ export default function EOS1Page() {
     const [pickSectionNormal, setPickSectionNormal] = useState(true);
     const [isAnimating, setIsAnimating] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [bettingLoading, setBettingLoading] = useState(false);
     const [powerballOptions, setPowerballOptions] = useState<MiniBetOption[]>([]);
     const [normalballOptions, setNormalballOptions] = useState<MiniBetOption[]>([]);
 
@@ -398,12 +405,11 @@ export default function EOS1Page() {
                     <table>
                         <thead>
                         <tr>
-                            <th>Round</th>
-                            <th>Bet/Odds</th>
-                            <th>Bet Amount</th>
-                            <th>Win Amount</th>
-                            <th>Status</th>
-                            <th>-</th>
+                            <th>{t("round")}</th>
+                            <th>{t("betTypeOdds")}</th>
+                            <th>{t("betAmount")}</th>
+                            <th>{t("winAmount")}</th>
+                            <th>{t("status")}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -421,13 +427,26 @@ export default function EOS1Page() {
                                     <td>{bet.amount.toLocaleString()}</td>
                                     <td>{(bet.amount * bet.odds).toLocaleString()}</td>
                                     <td>
-                                        <span className={`status-badge ${
-                                            bet.status === 'pending' ? 'status-active' : 'status-inactive'
-                                        }`}>
-                                            {bet.status === 'pending' ? 'Pending' : bet.status}
+                                        {/* pending, won, lost */}
+                                        <span className={
+                                            `status-badge ` +
+                                            (bet.status === 'pending'
+                                                ? 'status-active'
+                                                : bet.status === 'won'
+                                                ? 'status-won'
+                                                : bet.status === 'lost'
+                                                ? 'status-lost'
+                                                : 'status-inactive')
+                                        }>
+                                            {bet.status === 'pending'
+                                                ? t('pending')
+                                                : bet.status === 'won'
+                                                ? t('won')
+                                                : bet.status === 'lost'
+                                                ? t('lost')
+                                                : bet.status}
                                         </span>
                                     </td>
-                                    <td><i className="fa fa-trash text-red cursor-pointer"></i></td>
                                 </tr>
                             ))
                         )}
@@ -562,7 +581,13 @@ export default function EOS1Page() {
                         <button className="amount-btn" onClick={() => handleAmountClick('1000000')}>1M</button>
                         <button className="amount-btn clear" onClick={() => handleAmountClick('Reset')}>{t('reset')}</button>
                         <button className="amount-btn max" onClick={() => handleAmountClick('Max')}>{t('max')}</button>
-                        <button className="amount-btn confirm" onClick={() => handleBettingClick()}>{t('betting')}</button>
+                        <button 
+                            className="amount-btn confirm" 
+                            onClick={() => handleBettingClick()}
+                            disabled={bettingLoading}
+                        >
+                            {bettingLoading ? <Spin size="small" /> : t('betting')}
+                        </button>
                     </div>
                     </div>   
                 </div>

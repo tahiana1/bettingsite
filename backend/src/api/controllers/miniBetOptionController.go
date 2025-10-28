@@ -517,12 +517,27 @@ func PlaceMiniBet(c *gin.Context) {
 		return
 	}
 
+	// Map internal game types to API keys
+	gameTypeMap := map[string]string{
+		"eos1min": "eos_powerball_1",
+		"eos2min": "eos_powerball_2",
+		"eos3min": "eos_powerball_3",
+		"eos4min": "eos_powerball_4",
+		"eos5min": "eos_powerball_5",
+	}
+
+	// Get the API key for the game type
+	apiKey := gameTypeMap[betInput.GameType]
+	if apiKey == "" {
+		apiKey = betInput.GameType
+	}
+
 	// Extract current round for the specific game type
 	var currentRound uint
 
-	// Try to get round from game distribution data
-	if gameInfo, exists := gameData[betInput.GameType].(map[string]interface{}); exists {
-		if roundValue, ok := gameInfo["round"]; ok {
+	// Try to get round from game distribution data (field name is "rd" not "round")
+	if gameInfo, exists := gameData[apiKey].(map[string]interface{}); exists {
+		if roundValue, ok := gameInfo["rd"]; ok {
 			// Handle different possible types for round value
 			switch v := roundValue.(type) {
 			case float64:

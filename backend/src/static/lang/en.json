@@ -2297,5 +2297,8 @@
   "numbersOnly" : "Numbers only",
   "max" : "Max",
   "copyRight" : "ToToClub. All rights reserved.",
-  "pleaseSelectOption" : "Please select an option"
+  "pleaseSelectOption" : "Please select an option",
+  "round" : "Round",
+  "betTypeOdds" : "Bet Type/Odds",
+  "betAmount" : "Bet Amount"
 } 
