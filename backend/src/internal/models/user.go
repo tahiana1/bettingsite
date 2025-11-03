@@ -42,6 +42,8 @@ type User struct {
 
 	Status string `json:"status" gorm:"size:10;default:'P'"`
 
+	OnlineStatus bool `json:"onlineStatus" gorm:"default:false"`
+
 	BlackMemo bool `json:"blackMemo" gorm:"default:false"`
 
 	CurrentIP   string `gorm:"column:current_ip;size:45" json:"currentIP"`

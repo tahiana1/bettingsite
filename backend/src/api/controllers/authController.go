@@ -211,6 +211,7 @@ func Login(c *gin.Context) {
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 
 	user.CurrentIP = c.ClientIP()
+	user.OnlineStatus = true
 	initializers.DB.Save(&user)
 	l.Phone = user.Profile.Phone
 	l.Status = "success"
@@ -227,6 +228,14 @@ func Login(c *gin.Context) {
 
 // Logout function is used to log out a user
 func Logout(c *gin.Context) {
+	// Get the authenticated user before clearing the cookie
+	user, err := helpers.GetGinAuthUser(c)
+	if err == nil && user != nil {
+		// Set user offline
+		user.OnlineStatus = false
+		initializers.DB.Save(&user)
+	}
+
 	// Clear the cookie
 	c.SetCookie("Authorization", "", 0, "", "", false, true)
 

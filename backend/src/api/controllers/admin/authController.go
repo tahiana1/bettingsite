@@ -157,6 +157,11 @@ func Login(c *gin.Context) {
 	// Set expiry time and send the token back
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
+	
+	// Set user online status
+	user.OnlineStatus = true
+	initializers.DB.Save(&user)
+	
 	c.JSON(http.StatusOK, responses.Status{
 		Token:       tokenString,
 		Data:        user,
@@ -167,6 +172,14 @@ func Login(c *gin.Context) {
 
 // Logout function is used to log out a user
 func Logout(c *gin.Context) {
+	// Get the authenticated user before clearing the cookie
+	user, err := helpers.GetGinAuthUser(c)
+	if err == nil && user != nil {
+		// Set user offline
+		user.OnlineStatus = false
+		initializers.DB.Save(&user)
+	}
+
 	// Clear the cookie
 	c.SetCookie("Authorization", "", 0, "", "", false, true)
 

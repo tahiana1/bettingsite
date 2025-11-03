@@ -72,6 +72,10 @@ func RequireAdminAuth(c *gin.Context) {
 		}
 
 		if user.Role == "A" {
+			// Update online status
+			user.CurrentIP = c.ClientIP()
+			user.OnlineStatus = true
+			initializers.DB.Save(&user)
 
 			// Attach the user to request
 			c.Set("authUser", user)
@@ -80,6 +84,11 @@ func RequireAdminAuth(c *gin.Context) {
 			// Continue
 			c.Next()
 		} else if user.Role == "P" {
+			// Update online status
+			user.CurrentIP = c.ClientIP()
+			user.OnlineStatus = true
+			initializers.DB.Save(&user)
+			
 			c.Set("authUser", user)
 			fmt.Println("✅ Partner Auth Passed!")
 			c.Next()

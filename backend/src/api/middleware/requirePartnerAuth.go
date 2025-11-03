@@ -66,6 +66,11 @@ func RequirePartnerAuth(c *gin.Context) {
 			return
 		}
 		if user.Role == "P" {
+			// Update online status
+			user.CurrentIP = c.ClientIP()
+			user.OnlineStatus = true
+			initializers.DB.Save(&user)
+			
 			// Attach the user to request
 			c.Set("authUser", user)
 

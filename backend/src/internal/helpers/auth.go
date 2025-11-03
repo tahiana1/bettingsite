@@ -42,6 +42,21 @@ func GetGinAuthUser(c *gin.Context) (*models.User, error) {
 	return user.(*models.User), nil
 }
 
+// UpdateUserOnlineStatus updates the online status of a user
+func UpdateUserOnlineStatus(userID uint, onlineStatus bool) error {
+	return initializers.DB.Model(&models.User{}).Where("id = ?", userID).Update("online_status", onlineStatus).Error
+}
+
+// SetUserOnline sets the user's online status to true
+func SetUserOnline(userID uint) error {
+	return UpdateUserOnlineStatus(userID, true)
+}
+
+// SetUserOffline sets the user's online status to false
+func SetUserOffline(userID uint) error {
+	return UpdateUserOnlineStatus(userID, false)
+}
+
 //func getAuthId(c *gin.Context) (uint, bool) {
 //user, ok := GetAuthUser(c)
 //

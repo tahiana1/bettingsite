@@ -72,6 +72,7 @@ func RequireAuth(c *gin.Context) {
 			}
 		}
 		user.CurrentIP = c.ClientIP()
+		user.OnlineStatus = true // Keep user online on authenticated requests
 		initializers.DB.Save(&user)
 
 		// Attach the user to request
