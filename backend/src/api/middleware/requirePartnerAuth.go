@@ -65,6 +65,14 @@ func RequirePartnerAuth(c *gin.Context) {
 			format_errors.ForbbidenError(c, fmt.Errorf("❌ Unauthorized"))
 			return
 		}
+
+		// Check if user's OnlineStatus is manually set to false (admin forced logout)
+		if !user.OnlineStatus {
+			fmt.Println("❌ Auth Failed: User is offline (OnlineStatus = false)")
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ You have been logged out by administrator"))
+			return
+		}
+
 		if user.Role == "P" {
 			// Update online status
 			user.CurrentIP = c.ClientIP()

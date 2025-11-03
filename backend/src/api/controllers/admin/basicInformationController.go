@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
+	"github.com/hotbrainy/go-betting/backend/internal/helpers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	"gorm.io/gorm"
 )
@@ -569,6 +570,36 @@ func UpdateBasicInformation(c *gin.Context) {
 		user.AdminMemo2 = value
 	case "xxx":
 		user.AllowedIPAddress = value
+	case "onlineStatus":
+		// Convert string value to boolean
+		oldStatus := user.OnlineStatus
+		newStatus := (value == "true" || value == "1")
+		
+		// If changing from true to false, notify user to logout
+		if oldStatus && !newStatus {
+			user.OnlineStatus = newStatus
+			// Save first to update the status
+			if err := initializers.DB.Save(&user).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error": "Failed to update user",
+				})
+				return
+			}
+			// Notify user via Redis to logout
+			if err := helpers.NotifyUserLogout(user.ID); err != nil {
+				// Log error but don't fail the request since status is already updated
+				fmt.Printf("Warning: Failed to notify user logout via Redis: %v\n", err)
+			}
+			
+			c.JSON(http.StatusOK, gin.H{
+				"message": "User online status updated and logout notification sent",
+				"field":   field,
+				"value":   value,
+			})
+			return
+		}
+		
+		user.OnlineStatus = newStatus
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Unknown field: " + field,

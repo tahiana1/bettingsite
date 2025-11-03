@@ -71,6 +71,14 @@ func RequireAdminAuth(c *gin.Context) {
 			}
 		}
 
+		// Check if user's OnlineStatus is manually set to false (admin forced logout)
+		// Note: Admins might still need access even if OnlineStatus is false, but we'll check it anyway
+		if !user.OnlineStatus && user.Role != "A" {
+			fmt.Println("❌ Auth Failed: User is offline (OnlineStatus = false)")
+			format_errors.UnauthorizedError(c, fmt.Errorf("❌ You have been logged out by administrator"))
+			return
+		}
+
 		if user.Role == "A" {
 			// Update online status
 			user.CurrentIP = c.ClientIP()

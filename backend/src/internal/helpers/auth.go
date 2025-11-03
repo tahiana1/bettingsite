@@ -2,11 +2,13 @@ package helpers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	"github.com/hotbrainy/go-betting/backend/internal/redis"
 )
 
 // GetAuthUser returns the authenticated user details from the Gin context
@@ -55,6 +57,35 @@ func SetUserOnline(userID uint) error {
 // SetUserOffline sets the user's online status to false
 func SetUserOffline(userID uint) error {
 	return UpdateUserOnlineStatus(userID, false)
+}
+
+// NotifyUserLogout sends a logout notification to a user via Redis
+// This allows the frontend to detect when an admin has forced the user to logout
+func NotifyUserLogout(userID uint) error {
+	ctx := context.Background()
+	
+	// Create logout message
+	logoutMessage := map[string]interface{}{
+		"type":    "logout",
+		"message": "You have been logged out by administrator",
+		"userId":  userID,
+	}
+	
+	// Marshal to JSON
+	messageBytes, err := json.Marshal(logoutMessage)
+	if err != nil {
+		return fmt.Errorf("failed to marshal logout message: %v", err)
+	}
+	
+	// Publish to user's private channel
+	userIDStr := fmt.Sprintf("%d", userID)
+	channel := "private:" + userIDStr
+	
+	if err := redis.Client.Publish(ctx, channel, messageBytes).Err(); err != nil {
+		return fmt.Errorf("failed to publish logout message: %v", err)
+	}
+	
+	return nil
 }
 
 //func getAuthId(c *gin.Context) (uint, bool) {
