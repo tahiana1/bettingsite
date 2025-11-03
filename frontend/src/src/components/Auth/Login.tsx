@@ -9,10 +9,14 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import modalImage from '@/assets/img/main/modal-head.png'
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 interface User {
   userid: string;
   password: string;
+  os?: string;
+  device?: string;
+  fingerPrint?: string;
 }
 
 interface LoginProps {
@@ -26,8 +30,19 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
   const [form] = Form.useForm();
   const [notiApi, contextHolder] = notification.useNotification();
   const [loading, setLoading] = useState(false);
-  const onSubmit = (data: User) => {
+  const onSubmit = async (data: User) => {
     setLoading(true);
+    
+    // Get device information
+    try {
+      const deviceInfo = await getDeviceInfo();
+      data.os = deviceInfo.os;
+      data.device = deviceInfo.device;
+      data.fingerPrint = deviceInfo.fingerPrint;
+    } catch (error) {
+      console.error("Error getting device info:", error);
+    }
+    
     api("auth/login", { method: "POST", data })
       .then((result) => {
         setUser(result.data);

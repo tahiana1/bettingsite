@@ -34,6 +34,9 @@ func SignUp(c *gin.Context) {
 		Phone         string    `json:"phone"`
 		Referral      string    `json:"referral"`
 		Favorites     string    `json:"favorites"`
+		OS            string    `json:"os"`          // Optional: OS from frontend
+		Device        string    `json:"device"`      // Optional: Device from frontend
+		FingerPrint   string    `json:"fingerPrint"` // Optional: FingerPrint from frontend
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -59,12 +62,55 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	// Get client IP
+	clientIP := c.ClientIP()
+
+	// Parse OS and Device from User-Agent if not provided in request
+	var osValue, deviceValue string
+	if userInput.OS != "" {
+		osValue = userInput.OS
+	} else {
+		// Parse from User-Agent
+		uaString := c.GetHeader("User-Agent")
+		if uaString != "" {
+			ua := helpers.ParseClient(uaString)
+			osValue = ua.OS
+			if userInput.Device == "" {
+				deviceValue = ua.BrowserName + " " + ua.BrowserVersion
+				if ua.Platform != "" {
+					deviceValue = ua.Platform + " - " + deviceValue
+				}
+			}
+		}
+	}
+
+	if userInput.Device != "" {
+		deviceValue = userInput.Device
+	}
+
 	user := models.User{
 		Name:        userInput.Name,
 		Userid:      userInput.Userid,
 		Password:    string(hashPassword),
 		SecPassword: userInput.SecPassword,
 		USDTAddress: userInput.USDTAddress,
+		IP:          clientIP,
+		CurrentIP:   clientIP,
+	}
+
+	// Set OS if we have a value
+	if osValue != "" {
+		user.OS = osValue
+	}
+
+	// Set Device if we have a value
+	if deviceValue != "" {
+		user.Device = deviceValue
+	}
+
+	// Set FingerPrint if provided
+	if userInput.FingerPrint != "" {
+		user.FingerPrint = userInput.FingerPrint
 	}
 
 	// Create the user
@@ -106,8 +152,11 @@ func SignUp(c *gin.Context) {
 func Login(c *gin.Context) {
 	// Get the userid and password from the request
 	var userInput struct {
-		Userid   string `json:"userid" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Userid      string `json:"userid" binding:"required"`
+		Password    string `json:"password" binding:"required"`
+		OS          string `json:"os"`          // Optional: OS from frontend
+		Device      string `json:"device"`      // Optional: Device from frontend
+		FingerPrint string `json:"fingerPrint"` // Optional: FingerPrint from frontend
 	}
 
 	if c.ShouldBindJSON(&userInput) != nil {
@@ -139,11 +188,57 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	// Get client IP
+	clientIP := c.ClientIP()
+
+	// Parse OS and Device from User-Agent if not provided in request
+	var osValue, deviceValue string
+	if userInput.OS != "" {
+		osValue = userInput.OS
+	} else {
+		// Parse from User-Agent
+		uaString := c.GetHeader("User-Agent")
+		if uaString != "" {
+			ua := helpers.ParseClient(uaString)
+			osValue = ua.OS
+			if userInput.Device == "" {
+				deviceValue = ua.BrowserName + " " + ua.BrowserVersion
+				if ua.Platform != "" {
+					deviceValue = ua.Platform + " - " + deviceValue
+				}
+			}
+		}
+	}
+
+	if userInput.Device != "" {
+		deviceValue = userInput.Device
+	}
+
+	// Update user information with login details
+	user.IP = clientIP        // Update IP with current login IP
+	user.CurrentIP = clientIP // Update CurrentIP
+	user.OnlineStatus = true
+
+	// Update OS if we have a value
+	if osValue != "" {
+		user.OS = osValue
+	}
+
+	// Update Device if we have a value
+	if deviceValue != "" {
+		user.Device = deviceValue
+	}
+
+	// Update FingerPrint if provided
+	if userInput.FingerPrint != "" {
+		user.FingerPrint = userInput.FingerPrint
+	}
+
 	// Generate a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.ID,
 		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
-		"ip":  c.ClientIP(),
+		"ip":  clientIP,
 	})
 
 	// Sign in and get the complete encoded token as a string using the .env secret
@@ -158,8 +253,7 @@ func Login(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	
-	// Set user online status
-	user.OnlineStatus = true
+	// Save user with updated information
 	initializers.DB.Save(&user)
 	
 	c.JSON(http.StatusOK, responses.Status{

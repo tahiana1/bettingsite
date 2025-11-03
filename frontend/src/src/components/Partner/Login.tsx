@@ -9,9 +9,13 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/routes";
 import { parseError } from "@/lib";
+import { getDeviceInfo } from "@/lib/deviceInfo";
 const UserSchema = z.object({
   userid: z.string().optional(),
   password: z.string().optional(),
+  os: z.string().optional(),
+  device: z.string().optional(),
+  fingerPrint: z.string().optional(),
 });
 type User = z.infer<typeof UserSchema>;
 const Login: React.FC = () => {
@@ -23,7 +27,17 @@ const Login: React.FC = () => {
 
   const [notiApi, contextHolder] = notification.useNotification();
 
-  const onSubmit: SubmitHandler<User> = (data) => {
+  const onSubmit: SubmitHandler<User> = async (data) => {
+    // Get device information
+    try {
+      const deviceInfo = await getDeviceInfo();
+      data.os = deviceInfo.os;
+      data.device = deviceInfo.device;
+      data.fingerPrint = deviceInfo.fingerPrint;
+    } catch (error) {
+      console.error("Error getting device info:", error);
+    }
+    
     api("admin/auth/login", { method: "POST", data })
       .then((result) => {
         console.log({ result });

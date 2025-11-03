@@ -18,6 +18,7 @@ import api from "@/api";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import modalImage from '@/assets/img/main/modal-head.png';
+import { getDeviceInfo } from "@/lib/deviceInfo";
 
 interface SignUpProps {
   onClose?: () => void;
@@ -30,14 +31,28 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
   const [notiApi, contextHolder] = notification.useNotification();
   const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
     setLoading(true);
+    
+    // Get device information
+    let deviceInfo = null;
+    try {
+      deviceInfo = await getDeviceInfo();
+    } catch (error) {
+      console.error("Error getting device info:", error);
+    }
+    
     const data = {
       ...values,
       phone: values.phone_prefix + values.phone,
       birthday: values.birthday.toJSON(),
       favorites: values.favorites.toString(),
+      ...(deviceInfo && {
+        os: deviceInfo.os,
+        device: deviceInfo.device,
+        fingerPrint: deviceInfo.fingerPrint,
+      }),
     };
     api("auth/signup", {
       method: "POST",
