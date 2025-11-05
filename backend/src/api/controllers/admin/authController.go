@@ -37,6 +37,7 @@ func SignUp(c *gin.Context) {
 		OS            string    `json:"os"`          // Optional: OS from frontend
 		Device        string    `json:"device"`      // Optional: Device from frontend
 		FingerPrint   string    `json:"fingerPrint"` // Optional: FingerPrint from frontend
+		Domain        string    `json:"domain" binding:"required"` // Domain from frontend
 	}
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
@@ -51,6 +52,13 @@ func SignUp(c *gin.Context) {
 	// Userid unique validation
 	if validations.IsUniqueValue("users", "userid", userInput.Userid) {
 		format_errors.ConflictError(c, fmt.Errorf("The userid is already existed!"))
+		return
+	}
+
+	// Validate domain exists in domain table
+	var domain models.Domain
+	if err := initializers.DB.Where("name = ? AND status = ?", userInput.Domain, true).First(&domain).Error; err != nil {
+		format_errors.BadRequestError(c, fmt.Errorf("The domain is not exist."))
 		return
 	}
 
@@ -96,6 +104,7 @@ func SignUp(c *gin.Context) {
 		USDTAddress: userInput.USDTAddress,
 		IP:          clientIP,
 		CurrentIP:   clientIP,
+		DomainIDs:   []uint{domain.ID}, // Store the domain ID in user's domain array
 	}
 
 	// Set OS if we have a value
@@ -157,10 +166,18 @@ func Login(c *gin.Context) {
 		OS          string `json:"os"`          // Optional: OS from frontend
 		Device      string `json:"device"`      // Optional: Device from frontend
 		FingerPrint string `json:"fingerPrint"` // Optional: FingerPrint from frontend
+		Domain      string `json:"domain" binding:"required"` // Domain from frontend
 	}
 
 	if c.ShouldBindJSON(&userInput) != nil {
 		format_errors.BadRequestError(c, fmt.Errorf("Failed to read data from request!"))
+		return
+	}
+
+	// Validate domain exists in domain table
+	var domain models.Domain
+	if err := initializers.DB.Where("name = ? AND status = ?", userInput.Domain, true).First(&domain).Error; err != nil {
+		format_errors.BadRequestError(c, fmt.Errorf("The domain is not exist."))
 		return
 	}
 
@@ -180,6 +197,23 @@ func Login(c *gin.Context) {
 	if user.Role == "U" {
 		format_errors.ForbbidenError(c, fmt.Errorf("Access denied!"))
 		return
+	}
+
+	// Check if user has access to this domain
+	// Empty DomainIDs array means access to all domains
+	// Non-empty array means access only to specified domains
+	if len(user.DomainIDs) > 0 {
+		hasAccess := false
+		for _, domainID := range user.DomainIDs {
+			if domainID == domain.ID {
+				hasAccess = true
+				break
+			}
+		}
+		if !hasAccess {
+			format_errors.ForbbidenError(c, fmt.Errorf("You do not have access to this domain"))
+			return
+		}
 	}
 	// Compare the password with user hashed password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))

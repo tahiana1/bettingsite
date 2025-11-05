@@ -13,6 +13,7 @@ import { getDeviceInfo } from "@/lib/deviceInfo";
 const UserSchema = z.object({
   userid: z.string().optional(),
   password: z.string().optional(),
+  domain: z.string().optional(),
   os: z.string().optional(),
   device: z.string().optional(),
   fingerPrint: z.string().optional(),
@@ -38,7 +39,13 @@ const Login: React.FC = () => {
       console.error("Error getting device info:", error);
     }
     
-    api("admin/auth/login", { method: "POST", data })
+    // Add domain from current URL
+    const loginData = {
+      ...data,
+      domain: window.location.hostname, // Get domain from current URL
+    };
+    
+    api("admin/auth/login", { method: "POST", data: loginData })
       .then((result) => {
         console.log({ result });
         notiApi.success({
@@ -62,9 +69,10 @@ const Login: React.FC = () => {
       })
       .catch((err) => {
         const errData = parseError(err);
+        const errorMessage = errData.error || errData.Error || errData.message || "An error occurred";
         notiApi.error({
-          message: errData.message,
-          description: errData.error,
+          message: errData.message || "Error",
+          description: errorMessage,
           placement: "topRight",
         });
       });

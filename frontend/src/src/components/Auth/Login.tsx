@@ -14,6 +14,7 @@ import { getDeviceInfo } from "@/lib/deviceInfo";
 interface User {
   userid: string;
   password: string;
+  domain?: string;
   os?: string;
   device?: string;
   fingerPrint?: string;
@@ -43,7 +44,13 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
       console.error("Error getting device info:", error);
     }
     
-    api("auth/login", { method: "POST", data })
+    // Add domain from current URL
+    const loginData = {
+      ...data,
+      domain: window.location.hostname, // Get domain from current URL
+    };
+    
+    api("auth/login", { method: "POST", data: loginData })
       .then((result) => {
         setUser(result.data);
         localStorage.setItem("token", result.token);
@@ -55,7 +62,8 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
       })
       .catch((err) => {
         console.log({err})
-        if (err.status == "403") {
+        const errorMessage = err.response?.data?.error || err.response?.data?.Error || err.message || "Some error occurred!";
+        if (err.status == "403" || err.response?.status == 403) {
           notiApi.error({
             message: t("auth/noallow"),
             description: t("auth/noallow"),
@@ -64,7 +72,7 @@ const Login: React.FC<LoginProps> = ({ onClose }) => {
         } else {
           notiApi.error({
             message: "Error",
-            description: `Some error occurred! ${err}`,
+            description: errorMessage,
             placement: "topRight",
           });
         }

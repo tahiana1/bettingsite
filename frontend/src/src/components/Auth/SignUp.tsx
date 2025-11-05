@@ -48,6 +48,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       phone: values.phone_prefix + values.phone,
       birthday: values.birthday.toJSON(),
       favorites: values.favorites.toString(),
+      domain: window.location.hostname, // Get domain from current URL
       ...(deviceInfo && {
         os: deviceInfo.os,
         device: deviceInfo.device,
@@ -81,9 +82,10 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       .catch((err) => {
         console.log(err);
         setLoading(false);
+        const errorMessage = err.response?.data?.error || err.response?.data?.Error || err.message || "Some error occurred!";
         notiApi.error({
           message: "Error",
-          description: `Some error occurred! ${err}`,
+          description: errorMessage,
           placement: "topRight",
         });
       });
