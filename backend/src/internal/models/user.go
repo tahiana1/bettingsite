@@ -234,6 +234,11 @@ type User struct {
 	PartnershipRolling     float64 `json:"partnershipRolling" gorm:"default:0"`
 	PartnershipMoneyInHand float64 `json:"partnershipMoneyInHand" gorm:"default:0"`
 
+	// Domain access control - array of domain IDs
+	// Empty array means access to all domains
+	// Non-empty array means access only to specified domains
+	DomainIDs []uint `json:"domainIds" gorm:"type:integer[]"`
+
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
