@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -130,6 +132,20 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	// Parse favorites string into integer array
+	var favorites []int
+	if userInput.Favorites != "" {
+		favStrings := strings.Split(userInput.Favorites, ",")
+		for _, favStr := range favStrings {
+			favStr = strings.TrimSpace(favStr)
+			if favStr != "" {
+				if favInt, err := strconv.Atoi(favStr); err == nil {
+					favorites = append(favorites, favInt)
+				}
+			}
+		}
+	}
+
 	// Return the user
 	//user.Password = ""
 	profile := &models.Profile{
@@ -141,7 +157,7 @@ func SignUp(c *gin.Context) {
 		AccountNumber: userInput.AccountNumber,
 		Birthday:      userInput.Birthday,
 		Phone:         userInput.Phone,
-		Favorites:     userInput.Favorites,
+		Favorites:     favorites,
 		Referral:      userInput.Referral,
 	}
 

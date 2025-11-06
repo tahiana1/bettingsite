@@ -47,6 +47,7 @@ type ResolverRoot interface {
 	Log() LogResolver
 	Mutation() MutationResolver
 	Notification() NotificationResolver
+	Profile() ProfileResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 	User() UserResolver
@@ -589,6 +590,7 @@ type ComplexityRoot struct {
 		Name                    func(childComplexity int) int
 		NumberOfMembers         func(childComplexity int) int
 		OS                      func(childComplexity int) int
+		OnlineStatus            func(childComplexity int) int
 		OrderNum                func(childComplexity int) int
 		Parent                  func(childComplexity int) int
 		ParentID                func(childComplexity int) int
@@ -740,6 +742,9 @@ type NotificationResolver interface {
 	ShowFrom(ctx context.Context, obj *models.Notification) (*time.Time, error)
 
 	ShowTo(ctx context.Context, obj *models.Notification) (*time.Time, error)
+}
+type ProfileResolver interface {
+	Favorites(ctx context.Context, obj *models.Profile) (*string, error)
 }
 type QueryResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
@@ -4193,6 +4198,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.OS(childComplexity), true
 
+	case "User.onlineStatus":
+		if e.complexity.User.OnlineStatus == nil {
+			break
+		}
+
+		return e.complexity.User.OnlineStatus(childComplexity), true
+
 	case "User.orderNum":
 		if e.complexity.User.OrderNum == nil {
 			break
@@ -5996,6 +6008,7 @@ type User {
   profile: Profile
   status: UserStatus!
   blackMemo: Boolean!
+  onlineStatus: Boolean!
   orderNum: Uint
   os: String
   device: String
@@ -9359,6 +9372,8 @@ func (ec *executionContext) fieldContext_AdminPermission_user(_ context.Context,
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -10453,6 +10468,8 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -12323,6 +12340,8 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -13069,6 +13088,8 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -14990,6 +15011,8 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -15250,6 +15273,8 @@ func (ec *executionContext) fieldContext_Inbox_FromUser(_ context.Context, field
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -16097,6 +16122,8 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -25600,7 +25627,7 @@ func (ec *executionContext) _Profile_favorites(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Favorites, nil
+		return ec.resolvers.Profile().Favorites(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -25609,17 +25636,17 @@ func (ec *executionContext) _Profile_favorites(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Profile_favorites(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Profile",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
 		},
@@ -26201,6 +26228,8 @@ func (ec *executionContext) fieldContext_Qna_user(_ context.Context, field graph
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -29372,6 +29401,8 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -29615,6 +29646,8 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -30031,6 +30064,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -31389,6 +31424,8 @@ func (ec *executionContext) fieldContext_Setting_user(_ context.Context, field g
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -32451,6 +32488,8 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -32752,6 +32791,8 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -34056,6 +34097,8 @@ func (ec *executionContext) fieldContext_User_root(_ context.Context, field grap
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -34310,6 +34353,8 @@ func (ec *executionContext) fieldContext_User_parent(_ context.Context, field gr
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -34523,6 +34568,8 @@ func (ec *executionContext) fieldContext_User_children(_ context.Context, field 
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -34882,6 +34929,50 @@ func (ec *executionContext) _User_blackMemo(ctx context.Context, field graphql.C
 }
 
 func (ec *executionContext) fieldContext_User_blackMemo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _User_onlineStatus(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_onlineStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OnlineStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_onlineStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -37761,6 +37852,8 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_status(ctx, field)
 			case "blackMemo":
 				return ec.fieldContext_User_blackMemo(ctx, field)
+			case "onlineStatus":
+				return ec.fieldContext_User_onlineStatus(ctx, field)
 			case "orderNum":
 				return ec.fieldContext_User_orderNum(ctx, field)
 			case "os":
@@ -46224,22 +46317,22 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Profile_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "userId":
 			out.Values[i] = ec._Profile_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Profile_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "nickname":
 			out.Values[i] = ec._Profile_nickname(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "bankName":
 			out.Values[i] = ec._Profile_bankName(ctx, field, obj)
@@ -46256,40 +46349,71 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "phoneVerified":
 			out.Values[i] = ec._Profile_phoneVerified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "balance":
 			out.Values[i] = ec._Profile_balance(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "roll":
 			out.Values[i] = ec._Profile_roll(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "point":
 			out.Values[i] = ec._Profile_point(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "comp":
 			out.Values[i] = ec._Profile_comp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "level":
 			out.Values[i] = ec._Profile_level(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "coupon":
 			out.Values[i] = ec._Profile_coupon(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "favorites":
-			out.Values[i] = ec._Profile_favorites(ctx, field, obj)
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Profile_favorites(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "referral":
 			out.Values[i] = ec._Profile_referral(ctx, field, obj)
 		case "avatarUrl":
@@ -46307,12 +46431,12 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "createdAt":
 			out.Values[i] = ec._Profile_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Profile_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Profile_deletedAt(ctx, field, obj)
@@ -47757,6 +47881,11 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "blackMemo":
 			out.Values[i] = ec._User_blackMemo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "onlineStatus":
+			out.Values[i] = ec._User_onlineStatus(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

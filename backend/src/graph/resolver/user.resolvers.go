@@ -91,6 +91,11 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id uint) (bool, error
 	return true, nil
 }
 
+// Favorites is the resolver for the favorites field.
+func (r *profileResolver) Favorites(ctx context.Context, obj *models.Profile) (*string, error) {
+	panic(fmt.Errorf("not implemented: Favorites - favorites"))
+}
+
 // Profile is the resolver for the profile field.
 func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
 	authUser, err := helpers.GetAuthUser(ctx)
@@ -203,7 +208,11 @@ func (r *userResolver) NumberOfMembers(ctx context.Context, obj *models.User) (*
 	panic(fmt.Errorf("not implemented: NumberOfMembers - numberOfMembers"))
 }
 
+// Profile returns generated.ProfileResolver implementation.
+func (r *Resolver) Profile() generated.ProfileResolver { return &profileResolver{r} }
+
 // User returns generated.UserResolver implementation.
 func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 
+type profileResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
