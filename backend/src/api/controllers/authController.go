@@ -163,7 +163,7 @@ func SignUp(c *gin.Context) {
 	}
 
 	// Parse favorites string into integer array
-	var favorites []int
+	var favorites models.IntArray
 	if userInput.Favorites != "" {
 		favStrings := strings.Split(userInput.Favorites, ",")
 		for _, favStr := range favStrings {

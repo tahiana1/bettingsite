@@ -142,7 +142,7 @@ func (pr *profileReader) UpdateProfile(ctx context.Context, userID uint, updates
 
 	if updates.Favorites != nil {
 		// Parse favorites string into integer array
-		var favorites []int
+		var favorites models.IntArray
 		if *updates.Favorites != "" {
 			favStrings := strings.Split(*updates.Favorites, ",")
 			for _, favStr := range favStrings {
