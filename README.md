@@ -65,6 +65,11 @@ docker compose up --build
 
 # Update graphql model
 ```bash
+# Option 1: Run inside Docker container (recommended if Go is not installed locally)
+docker compose exec backend go run github.com/99designs/gqlgen generate
+
+# Option 2: Run locally (requires Go 1.24.2 installed)
+cd backend/src
 go run github.com/99designs/gqlgen generate
 ```
 

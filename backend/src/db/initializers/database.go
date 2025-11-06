@@ -100,6 +100,12 @@ func ConnectDB() {
 
 	fmt.Println("✅ Successfully connected to the database!")
 
+	// Migrate favorites column from string to integer array if needed
+	if err := migrateFavoritesColumn(); err != nil {
+		log.Printf("⚠️ Warning: Failed to migrate favorites column: %v", err)
+		// Don't fail completely, continue with migration
+	}
+
 	err = DB.AutoMigrate(
 		models.User{},
 		models.Profile{},
@@ -147,4 +153,82 @@ func ConnectDB() {
 		fmt.Println("🟢 Successfully migrated!")
 	}
 
+}
+
+// migrateFavoritesColumn migrates the favorites column from string to integer array
+func migrateFavoritesColumn() error {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		return err
+	}
+
+	// Check if favorites column exists and its current type
+	var columnType string
+	err = sqlDB.QueryRow(`
+		SELECT data_type 
+		FROM information_schema.columns 
+		WHERE table_name = 'profiles' AND column_name = 'favorites'
+	`).Scan(&columnType)
+
+	if err != nil {
+		// Column might not exist yet, which is fine - GORM will create it
+		return nil
+	}
+
+	// If already integer array, no migration needed
+	if columnType == "ARRAY" {
+		// Check if it's integer array specifically
+		var udtName string
+		err = sqlDB.QueryRow(`
+			SELECT udt_name 
+			FROM information_schema.columns 
+			WHERE table_name = 'profiles' AND column_name = 'favorites'
+		`).Scan(&udtName)
+		if err == nil && udtName == "_int4" {
+			return nil // Already integer array
+		}
+	}
+
+	// If column is text/varchar, we need to convert it
+	if columnType == "character varying" || columnType == "text" {
+		// First, create a helper function to convert string to integer array
+		// This handles comma-separated strings like "1,2,3" or single values like "1"
+		_, err = sqlDB.Exec(`
+			CREATE OR REPLACE FUNCTION text_to_int_array(text_val text)
+			RETURNS integer[] AS $$
+			BEGIN
+				IF text_val IS NULL OR trim(text_val) = '' THEN
+					RETURN NULL;
+				END IF;
+				RETURN (
+					SELECT array_agg(trim_val::int)
+					FROM unnest(string_to_array(trim(text_val), ',')) AS trim_val
+					WHERE trim(trim_val) ~ '^[0-9]+$'
+				);
+			END;
+			$$ LANGUAGE plpgsql IMMUTABLE;
+		`)
+		if err != nil {
+			return fmt.Errorf("failed to create conversion function: %w", err)
+		}
+
+		// Now alter the column using the function
+		_, err = sqlDB.Exec(`
+			ALTER TABLE profiles 
+			ALTER COLUMN favorites TYPE integer[] 
+			USING text_to_int_array(favorites)
+		`)
+		if err != nil {
+			// Clean up function if migration fails
+			sqlDB.Exec(`DROP FUNCTION IF EXISTS text_to_int_array(text)`)
+			return fmt.Errorf("failed to alter favorites column type: %w", err)
+		}
+
+		// Clean up the helper function after migration
+		sqlDB.Exec(`DROP FUNCTION IF EXISTS text_to_int_array(text)`)
+
+		fmt.Println("✅ Successfully migrated favorites column to integer array")
+	}
+
+	return nil
 }

@@ -40,7 +40,9 @@ const DistStatusPage: React.FC = () => {
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, data, refetch } = useQuery(CONNECTED_USERS);
+  const { loading, data, refetch } = useQuery(CONNECTED_USERS, {
+    pollInterval: 10000, // Poll every 10 seconds
+  });
 
   const onSearchUser = (v: string) => {
     let filters: any[] = tableOptions?.filters ?? [];
@@ -326,27 +328,30 @@ const DistStatusPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setUsers(
-      data?.users?.map((u: any) => {
+    const filteredUsers = (data?.response?.users ?? [])
+      .filter((u: any) => u.role === "P" && u.onlineStatus === true)
+      .map((u: any) => {
         return { ...u, key: u.id };
-      }) ?? []
-    );
+      });
+    setUsers(filteredUsers);
+    setTotal(filteredUsers.length);
   }, [data]);
 
   useEffect(() => {
     refetch(tableOptions ?? undefined)
       .then((res) => {
-        setUsers(
-          res.data?.response?.users?.map((u: any) => {
+        const filteredUsers = (res.data?.response?.users ?? [])
+          .filter((u: any) => u.role === "P" && u.onlineStatus === true)
+          .map((u: any) => {
             return { ...u, key: u.id };
-          }) ?? []
-        );
-        setTotal(res.data?.response?.total);
+          });
+        setUsers(filteredUsers);
+        setTotal(filteredUsers.length);
       })
       .catch((err) => {
         console.log({ err });
       });
-  }, [tableOptions]);
+  }, [tableOptions, refetch]);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">

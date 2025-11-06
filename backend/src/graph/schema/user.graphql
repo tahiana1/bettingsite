@@ -32,6 +32,7 @@ type User {
   profile: Profile
   status: UserStatus!
   blackMemo: Boolean!
+  onlineStatus: Boolean!
   orderNum: Uint
   os: String
   device: String

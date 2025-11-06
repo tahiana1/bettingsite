@@ -74,6 +74,7 @@ export const CONNECTED_USERS = gql`
         createdAt
         updatedAt
         status
+        onlineStatus
         profile {
           id
           userId

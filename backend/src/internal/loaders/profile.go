@@ -4,6 +4,8 @@ package loaders
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	"github.com/hotbrainy/go-betting/backend/graph/model"
@@ -136,6 +138,23 @@ func (pr *profileReader) UpdateProfile(ctx context.Context, userID uint, updates
 
 	if updates.Level != nil {
 		profile.Level = *updates.Level
+	}
+
+	if updates.Favorites != nil {
+		// Parse favorites string into integer array
+		var favorites []int
+		if *updates.Favorites != "" {
+			favStrings := strings.Split(*updates.Favorites, ",")
+			for _, favStr := range favStrings {
+				favStr = strings.TrimSpace(favStr)
+				if favStr != "" {
+					if favInt, err := strconv.Atoi(favStr); err == nil {
+						favorites = append(favorites, favInt)
+					}
+				}
+			}
+		}
+		profile.Favorites = favorites
 	}
 
 	pr.db.Save(profile)

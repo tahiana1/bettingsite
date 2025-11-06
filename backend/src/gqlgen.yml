@@ -185,6 +185,9 @@ models:
   Profile:
     model:
     - github.com/hotbrainy/go-betting/backend/internal/models.Profile
+    fields:
+      favorites:
+        resolver: true
 
   Transaction:
     model:
