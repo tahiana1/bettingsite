@@ -117,7 +117,9 @@ const DistStatusPage: React.FC = () => {
       dataIndex: "root_dist",
       key: "root_dist",
       render(_, record) {
-        return record.root?.userid;
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(Number(record?.root?.userid))}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record?.root?.userid}</p>
+        </div> 
       },
     },
     {
@@ -125,7 +127,9 @@ const DistStatusPage: React.FC = () => {
       dataIndex: "top_dist",
       key: "top_dist",
       render(_, record) {
-        return record.parent?.userid;
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(Number(record?.parent?.userid))}>
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record?.parent?.userid}</p>
+        </div> 
       },
     },
     {
