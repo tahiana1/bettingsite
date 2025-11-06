@@ -273,7 +273,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
             label={t("phone")}
             rules={[{ required: true }]}
           >
-            <Input.Search enterButton={"SendSMS"} style={{ width: "100%" }} className="custom-white-input" />
+            <Input className="custom-white-input" />
           </Form.Item>
           <Form.Item
             className="w-full"
