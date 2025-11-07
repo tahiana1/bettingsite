@@ -67,7 +67,6 @@ interface CasinoBet {
       point: number;
       comp: number;
       level: number;
-      favorites: string;
       referral: string;
       lastDeposit: string;
       lastWithdraw: string;

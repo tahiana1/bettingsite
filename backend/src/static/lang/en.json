@@ -2301,5 +2301,6 @@
   "round" : "Round",
   "betTypeOdds" : "Bet Type/Odds",
   "betAmount" : "Bet Amount",
-  "lost" : "Lost"
+  "lost" : "Lost",
+  "REGISTER" : "REGISTER"
 } 

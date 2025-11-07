@@ -47,7 +47,6 @@ type ResolverRoot interface {
 	Log() LogResolver
 	Mutation() MutationResolver
 	Notification() NotificationResolver
-	Profile() ProfileResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 	User() UserResolver
@@ -389,7 +388,6 @@ type ComplexityRoot struct {
 		Coupon        func(childComplexity int) int
 		CreatedAt     func(childComplexity int) int
 		DeletedAt     func(childComplexity int) int
-		Favorites     func(childComplexity int) int
 		HolderName    func(childComplexity int) int
 		ID            func(childComplexity int) int
 		LastDeposit   func(childComplexity int) int
@@ -742,9 +740,6 @@ type NotificationResolver interface {
 	ShowFrom(ctx context.Context, obj *models.Notification) (*time.Time, error)
 
 	ShowTo(ctx context.Context, obj *models.Notification) (*time.Time, error)
-}
-type ProfileResolver interface {
-	Favorites(ctx context.Context, obj *models.Profile) (*string, error)
 }
 type QueryResolver interface {
 	Time(ctx context.Context) (*time.Time, error)
@@ -2921,13 +2916,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Profile.DeletedAt(childComplexity), true
-
-	case "Profile.favorites":
-		if e.complexity.Profile.Favorites == nil {
-			break
-		}
-
-		return e.complexity.Profile.Favorites(childComplexity), true
 
 	case "Profile.holderName":
 		if e.complexity.Profile.HolderName == nil {
@@ -6113,7 +6101,6 @@ type Profile {
   comp: Int!
   level: Int!
   coupon: Int!
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String
@@ -6141,7 +6128,6 @@ input NewProfile {
   point: Int
   comp: Int
   level: Int
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String
@@ -6163,7 +6149,6 @@ input UpdateProfile {
   point: Int
   comp: Int
   level: Int
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String
@@ -22642,8 +22627,6 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 				return ec.fieldContext_Profile_level(ctx, field)
 			case "coupon":
 				return ec.fieldContext_Profile_coupon(ctx, field)
-			case "favorites":
-				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
 				return ec.fieldContext_Profile_referral(ctx, field)
 			case "avatarUrl":
@@ -25608,47 +25591,6 @@ func (ec *executionContext) fieldContext_Profile_coupon(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Profile_favorites(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_favorites(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Profile().Favorites(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Profile_favorites(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -29277,8 +29219,6 @@ func (ec *executionContext) fieldContext_Query_profile(_ context.Context, field 
 				return ec.fieldContext_Profile_level(ctx, field)
 			case "coupon":
 				return ec.fieldContext_Profile_coupon(ctx, field)
-			case "favorites":
-				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
 				return ec.fieldContext_Profile_referral(ctx, field)
 			case "avatarUrl":
@@ -34824,8 +34764,6 @@ func (ec *executionContext) fieldContext_User_profile(_ context.Context, field g
 				return ec.fieldContext_Profile_level(ctx, field)
 			case "coupon":
 				return ec.fieldContext_Profile_coupon(ctx, field)
-			case "favorites":
-				return ec.fieldContext_Profile_favorites(ctx, field)
 			case "referral":
 				return ec.fieldContext_Profile_referral(ctx, field)
 			case "avatarUrl":
@@ -41843,7 +41781,7 @@ func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userId", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks"}
+	fieldsInOrder := [...]string{"userId", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "referral", "avatarUrl", "bio", "socialLinks"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -41948,13 +41886,6 @@ func (ec *executionContext) unmarshalInputNewProfile(ctx context.Context, obj an
 				return it, err
 			}
 			it.Level = data
-		case "favorites":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("favorites"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Favorites = data
 		case "referral":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("referral"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -43550,7 +43481,7 @@ func (ec *executionContext) unmarshalInputUpdateProfile(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"userid", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "favorites", "referral", "avatarUrl", "bio", "socialLinks", "currentPassword", "confirmPassword", "newPassword"}
+	fieldsInOrder := [...]string{"userid", "name", "nickname", "bankName", "holderName", "accountNumber", "birthday", "phone", "mobile", "balance", "roll", "point", "comp", "level", "referral", "avatarUrl", "bio", "socialLinks", "currentPassword", "confirmPassword", "newPassword"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -43655,13 +43586,6 @@ func (ec *executionContext) unmarshalInputUpdateProfile(ctx context.Context, obj
 				return it, err
 			}
 			it.Level = data
-		case "favorites":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("favorites"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Favorites = data
 		case "referral":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("referral"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -46317,22 +46241,22 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Profile_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "userId":
 			out.Values[i] = ec._Profile_userId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "name":
 			out.Values[i] = ec._Profile_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "nickname":
 			out.Values[i] = ec._Profile_nickname(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "bankName":
 			out.Values[i] = ec._Profile_bankName(ctx, field, obj)
@@ -46349,71 +46273,38 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "phoneVerified":
 			out.Values[i] = ec._Profile_phoneVerified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "balance":
 			out.Values[i] = ec._Profile_balance(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "roll":
 			out.Values[i] = ec._Profile_roll(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "point":
 			out.Values[i] = ec._Profile_point(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "comp":
 			out.Values[i] = ec._Profile_comp(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "level":
 			out.Values[i] = ec._Profile_level(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "coupon":
 			out.Values[i] = ec._Profile_coupon(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
-		case "favorites":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Profile_favorites(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "referral":
 			out.Values[i] = ec._Profile_referral(ctx, field, obj)
 		case "avatarUrl":
@@ -46431,12 +46322,12 @@ func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, 
 		case "createdAt":
 			out.Values[i] = ec._Profile_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Profile_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+				out.Invalids++
 			}
 		case "deletedAt":
 			out.Values[i] = ec._Profile_deletedAt(ctx, field, obj)

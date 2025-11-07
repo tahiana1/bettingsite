@@ -6,7 +6,6 @@ import {
   DatePicker,
   DatePickerProps,
   Form,
-  GetProp,
   Input,
   notification,
   Select,
@@ -47,7 +46,6 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       ...values,
       phone: values.phone_prefix + values.phone,
       birthday: values.birthday.toJSON(),
-      favorites: values.favorites.toString(),
       domain: window.location.hostname, // Get domain from current URL
       ...(deviceInfo && {
         os: deviceInfo.os,
@@ -91,26 +89,12 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
       });
   };
 
-  const options = [
-    { label: "Live", value: 1 },
-    { label: "Sports", value: 2 },
-    { label: "Special", value: 3 },
-    { label: "National", value: 4 },
-    { label: "eSport", value: 5 },
-    { label: "Casino", value: 6 },
-  ];
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
 
   const onDOBChange: DatePickerProps["onChange"] = (date, dateString) => {
     console.log(date, dateString);
-  };
-
-  const onChange: GetProp<typeof Checkbox.Group, "onChange"> = (
-    checkedValues
-  ) => {
-    console.log("checked = ", checkedValues);
   };
 
   return (
@@ -319,18 +303,6 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
         </Space.Compact>
 
         <Space.Compact className="w-full gap-2">
-          <Form.Item
-            className="w-full"
-            name="favorites"
-            label="Favourite Items"
-            rules={[{ required: true }]}
-          >
-            <Checkbox.Group
-              options={options}
-              defaultValue={[]}
-              onChange={onChange}
-            />
-          </Form.Item>
           <Form.Item
             className="w-full"
             name="usdtAddres"

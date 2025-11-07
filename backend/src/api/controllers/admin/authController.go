@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +33,6 @@ func SignUp(c *gin.Context) {
 		Birthday      time.Time `json:"birthday"`
 		Phone         string    `json:"phone"`
 		Referral      string    `json:"referral"`
-		Favorites     string    `json:"favorites"`
 		OS            string    `json:"os"`          // Optional: OS from frontend
 		Device        string    `json:"device"`      // Optional: Device from frontend
 		FingerPrint   string    `json:"fingerPrint"` // Optional: FingerPrint from frontend
@@ -54,13 +51,6 @@ func SignUp(c *gin.Context) {
 	// Userid unique validation
 	if validations.IsUniqueValue("users", "userid", userInput.Userid) {
 		format_errors.ConflictError(c, fmt.Errorf("The userid is already existed!"))
-		return
-	}
-
-	// Validate domain exists in domain table
-	var domain models.Domain
-	if err := initializers.DB.Where("name = ? AND status = ?", userInput.Domain, true).First(&domain).Error; err != nil {
-		format_errors.BadRequestError(c, fmt.Errorf("The domain is not exist."))
 		return
 	}
 
@@ -106,7 +96,7 @@ func SignUp(c *gin.Context) {
 		USDTAddress: userInput.USDTAddress,
 		IP:          clientIP,
 		CurrentIP:   clientIP,
-		DomainIDs:   []uint{domain.ID}, // Store the domain ID in user's domain array
+		Domain:      userInput.Domain, // Store the domain string
 	}
 
 	// Set OS if we have a value
@@ -132,20 +122,6 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	// Parse favorites string into integer array
-	var favorites models.IntArray
-	if userInput.Favorites != "" {
-		favStrings := strings.Split(userInput.Favorites, ",")
-		for _, favStr := range favStrings {
-			favStr = strings.TrimSpace(favStr)
-			if favStr != "" {
-				if favInt, err := strconv.Atoi(favStr); err == nil {
-					favorites = append(favorites, favInt)
-				}
-			}
-		}
-	}
-
 	// Return the user
 	//user.Password = ""
 	profile := &models.Profile{
@@ -157,7 +133,6 @@ func SignUp(c *gin.Context) {
 		AccountNumber: userInput.AccountNumber,
 		Birthday:      userInput.Birthday,
 		Phone:         userInput.Phone,
-		Favorites:     favorites,
 		Referral:      userInput.Referral,
 	}
 
@@ -190,13 +165,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Validate domain exists in domain table
-	var domain models.Domain
-	if err := initializers.DB.Where("name = ? AND status = ?", userInput.Domain, true).First(&domain).Error; err != nil {
-		format_errors.BadRequestError(c, fmt.Errorf("The domain is not exist."))
-		return
-	}
-
 	// Find the user by userid
 	var user models.User
 	initializers.DB.First(&user, "userid = ?", userInput.Userid)
@@ -215,22 +183,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Check if user has access to this domain
-	// Empty DomainIDs array means access to all domains
-	// Non-empty array means access only to specified domains
-	if len(user.DomainIDs) > 0 {
-		hasAccess := false
-		for _, domainID := range user.DomainIDs {
-			if domainID == domain.ID {
-				hasAccess = true
-				break
-			}
-		}
-		if !hasAccess {
-			format_errors.ForbbidenError(c, fmt.Errorf("You do not have access to this domain"))
-			return
-		}
-	}
 	// Compare the password with user hashed password
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
 	if err != nil {

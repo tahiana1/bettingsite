@@ -91,11 +91,6 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, id uint) (bool, error
 	return true, nil
 }
 
-// Favorites is the resolver for the favorites field.
-func (r *profileResolver) Favorites(ctx context.Context, obj *models.Profile) (*string, error) {
-	panic(fmt.Errorf("not implemented: Favorites - favorites"))
-}
-
 // Profile is the resolver for the profile field.
 func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
 	authUser, err := helpers.GetAuthUser(ctx)
@@ -208,11 +203,18 @@ func (r *userResolver) NumberOfMembers(ctx context.Context, obj *models.User) (*
 	panic(fmt.Errorf("not implemented: NumberOfMembers - numberOfMembers"))
 }
 
-// Profile returns generated.ProfileResolver implementation.
-func (r *Resolver) Profile() generated.ProfileResolver { return &profileResolver{r} }
-
 // User returns generated.UserResolver implementation.
 func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 
-type profileResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *Resolver) Profile() generated.ProfileResolver { return &profileResolver{r} }
+type profileResolver struct{ *Resolver }
+*/

@@ -57,7 +57,6 @@ export const GET_TRANSACTIONS = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
@@ -134,7 +133,6 @@ export const FILTER_TRANSACTIONS = gql`
             point
             comp
             level
-            favorites
             referral
             coupon
             lastDeposit
@@ -239,7 +237,6 @@ export const UPDATE_TRANSACTION = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
