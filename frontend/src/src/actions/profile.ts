@@ -17,7 +17,6 @@ export const GET_PROFILE = gql`
       roll
       point
       comp
-      favorites
       coupon
       lastDeposit
       lastWithdraw
@@ -43,7 +42,6 @@ export const UPDATE_PROFILE = gql`
       point
       comp
       level
-      favorites
       referral
       avatarUrl
       bio

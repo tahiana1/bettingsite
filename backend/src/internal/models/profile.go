@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -36,8 +34,6 @@ type Profile struct {
 	Level   int32   `json:"level" gorm:"default:1"`
 	Coupon  int32   `json:"coupon" gorm:"default:0"`
 
-	Favorites []int `json:"favorites" gorm:"type:integer[]"`
-
 	Referral string `json:"referral" gorm:"size:50"`
 
 	AvatarURL   string `json:"avatarUrl,omitempty" gorm:"size:255"`
@@ -51,16 +47,4 @@ type Profile struct {
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
-}
-
-// FavoritesString returns the favorites as a comma-separated string for GraphQL
-func (p *Profile) FavoritesString() string {
-	if len(p.Favorites) == 0 {
-		return ""
-	}
-	strValues := make([]string, len(p.Favorites))
-	for i, v := range p.Favorites {
-		strValues[i] = fmt.Sprintf("%d", v)
-	}
-	return strings.Join(strValues, ",")
 }

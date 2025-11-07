@@ -137,7 +137,6 @@ type Profile {
   comp: Int!
   level: Int!
   coupon: Int!
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String
@@ -165,7 +164,6 @@ input NewProfile {
   point: Int
   comp: Int
   level: Int
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String
@@ -187,7 +185,6 @@ input UpdateProfile {
   point: Int
   comp: Int
   level: Int
-  favorites: String
   referral: String
   avatarUrl: String
   bio: String

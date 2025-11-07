@@ -30,7 +30,6 @@ export const GET_USERS = gql`
         point
         comp
         level
-        favorites
         referral
         coupon
         lastDeposit
@@ -90,7 +89,6 @@ export const CONNECTED_USERS = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
@@ -158,7 +156,6 @@ export const GET_DISTRIBUTORS = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
@@ -220,7 +217,6 @@ export const FILTER_USERS = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
@@ -392,7 +388,6 @@ export const GET_DISTRIBUTORSDETAILS = gql`
           point
           comp
           level
-          favorites
           referral
           lastDeposit
           lastWithdraw

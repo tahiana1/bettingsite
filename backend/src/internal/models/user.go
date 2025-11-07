@@ -239,6 +239,9 @@ type User struct {
 	// Non-empty array means access only to specified domains
 	DomainIDs []uint `json:"domainIds" gorm:"type:integer[]"`
 
+	// Domain string from signup
+	Domain string `json:"domain" gorm:"size:255"`
+
 	CreatedAt time.Time       `json:"createdAt"`
 	UpdatedAt time.Time       `json:"updatedAt"`
 	DeletedAt *gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`

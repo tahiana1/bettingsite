@@ -51,7 +51,6 @@ interface User {
         point: number;
         comp: number;
         level: number;
-        favorites: string;
         referral: string;
         coupon: number;
         lastDeposit: string | null;

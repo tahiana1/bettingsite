@@ -231,7 +231,6 @@ type NewProfile struct {
 	Point         *int32     `json:"point,omitempty"`
 	Comp          *int32     `json:"comp,omitempty"`
 	Level         *int32     `json:"level,omitempty"`
-	Favorites     *string    `json:"favorites,omitempty"`
 	Referral      *string    `json:"referral,omitempty"`
 	AvatarURL     *string    `json:"avatarUrl,omitempty"`
 	Bio           *string    `json:"bio,omitempty"`
@@ -540,7 +539,6 @@ type UpdateProfile struct {
 	Point           *int32     `json:"point,omitempty"`
 	Comp            *int32     `json:"comp,omitempty"`
 	Level           *int32     `json:"level,omitempty"`
-	Favorites       *string    `json:"favorites,omitempty"`
 	Referral        *string    `json:"referral,omitempty"`
 	AvatarURL       *string    `json:"avatarUrl,omitempty"`
 	Bio             *string    `json:"bio,omitempty"`

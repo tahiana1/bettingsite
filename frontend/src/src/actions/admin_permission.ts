@@ -86,7 +86,6 @@ export const FILTER_ADMIN_PERMISSIONS = gql`
           point
           comp
           level
-          favorites
           referral
           coupon
           lastDeposit
