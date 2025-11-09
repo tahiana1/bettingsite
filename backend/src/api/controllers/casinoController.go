@@ -443,6 +443,8 @@ func checkUserExists(username string) (bool, error) {
 	switch resp.StatusCode {
 	case 200:
 		return true, nil
+	case 404:
+		return false, nil
 	case 403:
 		return false, nil
 	default:
@@ -456,6 +458,7 @@ func createUser(username string) error {
 
 	requestBody := map[string]string{
 		"username": username,
+		"nickname": username,
 	}
 	jsonBody, err := json.Marshal(requestBody)
 	if err != nil {

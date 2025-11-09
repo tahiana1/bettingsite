@@ -44,7 +44,7 @@ const SignUp: React.FC<SignUpProps> = ({ onClose }) => {
     
     const data = {
       ...values,
-      phone: values.phone_prefix + values.phone,
+      phone: values.phone,
       birthday: values.birthday.toJSON(),
       domain: window.location.hostname, // Get domain from current URL
       ...(deviceInfo && {
