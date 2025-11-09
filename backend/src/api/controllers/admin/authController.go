@@ -16,6 +16,10 @@ import (
 	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
 	"golang.org/x/crypto/bcrypt"
+	"net/url"
+	"io"
+	"bytes"
+	"encoding/json"
 )
 
 // API configuration
