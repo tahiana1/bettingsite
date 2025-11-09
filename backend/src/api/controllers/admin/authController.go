@@ -143,6 +143,20 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	// checking the user status on the honorlink api, then if it is not exist, creating the honorlink user account.
+	// if the user is exist, skip the creating the honorlink user account.
+	userExists, err := checkUserExists(userInput.Userid)
+	if err != nil {
+		// Log error but don't fail the signup process
+		fmt.Printf("Error checking Honorlink user: %v\n", err)
+	} else if !userExists {
+		// User doesn't exist, create it
+		if err := createUser(userInput.Userid); err != nil {
+			// Log error but don't fail the signup process
+			fmt.Printf("Error creating Honorlink user: %v\n", err)
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"user": user,
 	})
