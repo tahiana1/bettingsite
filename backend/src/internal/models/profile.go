@@ -12,7 +12,7 @@ type Profile struct {
 	UserID uint `json:"userId"`
 
 	Name     string `json:"name"`
-	Nickname string `json:"nickname" gorm:"unique;not null"`
+	Nickname string `json:"nickname"`
 
 	BankName string `json:"bankName"`
 	BankID   uint   `json:"bankId"`
