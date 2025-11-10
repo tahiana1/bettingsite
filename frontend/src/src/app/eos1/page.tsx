@@ -344,30 +344,6 @@ export default function EOS1Page() {
                 >
                 EOS5 Min
                 </div>
-                <div 
-                className={`tab-item ${activeTab === 'Bepick' ? 'active' : ''}`} 
-                onClick={() => handleTabClick('Bepick')}
-                >
-                Bepick
-                </div>
-                <div 
-                className={`tab-item ${activeTab === 'EOS' ? 'active' : ''}`} 
-                onClick={() => handleTabClick('EOS')}
-                >
-                EOS
-                </div>
-                <div 
-                className={`tab-item ${activeTab === 'PBG' ? 'active' : ''}`} 
-                onClick={() => handleTabClick('PBG')}
-                >
-                PBG
-                </div>
-                <div 
-                className={`tab-item ${activeTab === 'Dhpowerball' ? 'active' : ''}`} 
-                onClick={() => handleTabClick('Dhpowerball')}
-                >
-                Dhpowerball
-                </div>
             </div>
             </div>
         </header>

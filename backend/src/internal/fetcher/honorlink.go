@@ -87,7 +87,7 @@ func NewHonorLinkFetcher() *HonorLinkFetcher {
 		BaseURL: "https://api.honorlink.org/api/transactions",
 		Token:   token,
 		Client: &http.Client{
-			Timeout: 900 * time.Second, // Increased timeout to 60 seconds
+			Timeout: 40 * time.Second, // Increased timeout to 60 seconds
 		},
 	}
 }

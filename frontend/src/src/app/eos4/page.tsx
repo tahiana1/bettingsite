@@ -344,7 +344,7 @@ export default function EOS4Page() {
                 >
                 EOS5 Min
                 </div>
-                <div 
+                {/* <div 
                 className={`tab-item ${activeTab === 'Bepick' ? 'active' : ''}`} 
                 onClick={() => handleTabClick('Bepick')}
                 >
@@ -367,7 +367,7 @@ export default function EOS4Page() {
                 onClick={() => handleTabClick('Dhpowerball')}
                 >
                 Dhpowerball
-                </div>
+                </div> */}
             </div>
             </div>
         </header>
