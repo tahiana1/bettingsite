@@ -2314,5 +2314,6 @@
   "casinoLiveBettingStatus" : "Casino Live Betting Status",
   "casinoSlotBettingStatus" : "Casino Slot Betting Status",
   "pleaseEnterPhoneNumber" : "Please enter phone number",
-  "pleaseEnterValidPhoneNumber" : "Please enter a valid phone number"
+  "pleaseEnterValidPhoneNumber" : "Please enter a valid phone number",
+  "popupCreatedSuccessfully" : "Popup created successfully"
 } 

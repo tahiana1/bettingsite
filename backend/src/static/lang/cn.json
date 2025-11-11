@@ -2316,5 +2316,6 @@
   "casinoLiveBettingStatus" : "赌场现场投注状态",
   "casinoSlotBettingStatus" : "赌场老虎机投注状态",
   "pleaseEnterPhoneNumber" : "请输入手机号码",
-  "pleaseEnterValidPhoneNumber" : "请输入有效的手机号码"
+  "pleaseEnterValidPhoneNumber" : "请输入有效的手机号码",
+  "popupCreatedSuccessfully" : "弹窗创建成功"
 }
