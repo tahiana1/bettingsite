@@ -7,6 +7,16 @@ export interface CasinoBetFilters {
   status?: string;
   date_from?: string;
   date_to?: string;
+  search?: string;
+}
+
+export interface MiniGameBetFilters {
+  limit?: number;
+  offset?: number;
+  status?: string;
+  date_from?: string;
+  date_to?: string;
+  search?: string;
 }
 
 export const fetchCasinoBets = async (filters: CasinoBetFilters = {}) => {
@@ -20,6 +30,7 @@ export const fetchCasinoBets = async (filters: CasinoBetFilters = {}) => {
         status: filters.status || "",
         date_from: filters.date_from || "",
         date_to: filters.date_to || "",
+        search: filters.search || "",
       },
     });
 
@@ -36,6 +47,37 @@ export const fetchCasinoBets = async (filters: CasinoBetFilters = {}) => {
       total: 0,
       status: false,
       message: "Error fetching casino bets",
+    };
+  }
+};
+
+export const fetchMiniGameBets = async (filters: MiniGameBetFilters = {}) => {
+  try {
+    const response = await api("bets/get-all-miniGameBets", {
+      method: "POST",
+      data: {
+        limit: filters.limit || 25,
+        offset: filters.offset || 0,
+        status: filters.status || "",
+        date_from: filters.date_from || "",
+        date_to: filters.date_to || "",
+        search: filters.search || "",
+      },
+    });
+
+    return {
+      casinoBets: response.data || [],
+      total: response.total || 0,
+      status: response.status || false,
+      message: response.message || "",
+    };
+  } catch (error) {
+    console.error("Error fetching mini game bets:", error);
+    return {
+      casinoBets: [],
+      total: 0,
+      status: false,
+      message: "Error fetching mini game bets",
     };
   }
 };

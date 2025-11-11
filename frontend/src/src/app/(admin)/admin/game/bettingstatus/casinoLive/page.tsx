@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as XLSX from 'xlsx';
 
 import {
@@ -21,25 +21,28 @@ import { useFormatter, useTranslations } from "next-intl";
 import { fetchCasinoBets, CasinoBetFilters } from "@/actions/betLog";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
 interface CasinoBet {
   id: string;
-  type: string;
   userId: string;
   gameId: string;
-  amount: number;
-  status: string;
   gameName: string;
   transId: string;
-  winningAmount: number;
   bettingTime: number;
   details: any;
-  beforeAmount: number;
-  afterAmount: number;
+  betAmount: number;        // Original bet amount (negative)
+  winAmount: number;        // Win amount (0 for loss, positive for win)
+  netAmount: number;        // Net change (winAmount - abs(betAmount))
+  resultStatus: string;     // "won", "lost", or "pending"
+  beforeAmount: number;     // Balance before bet
+  afterAmount: number;      // Balance after win
+  status: string;           // Original status from bet record
   createdAt: string;
   updatedAt: string;
-  deletedAt?: string;
+  betId: string;            // ID of bet record
+  winId: string;            // ID of win record
   user: {
     id: string;
     name: string;
@@ -82,6 +85,9 @@ const CasinoLive: React.FC = () => {
   const [total, setTotal] = useState<number>(0);
   const [casinoBets, setCasinoBets] = useState<CasinoBet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("entire");
+  const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
@@ -95,11 +101,31 @@ const CasinoLive: React.FC = () => {
     offset: 0,
   });
 
+  const filtersRef = useRef(filters);
+  const searchValueRef = useRef(searchValue);
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
+
+  useEffect(() => {
+    searchValueRef.current = searchValue;
+  }, [searchValue]);
+
   const loadCasinoBets = async () => {
+    const currentFilters = filtersRef.current;
+    const currentSearchValue = searchValueRef.current;
+    
     setLoading(true);
     try {
-      const result = await fetchCasinoBets(filters);
-      setCasinoBets(result.casinoBets.map((bet: any) => ({ ...bet, key: bet.id })));
+      const filtersWithSearch = {
+        ...currentFilters,
+        search: currentSearchValue.trim() || "",
+      };
+      const result = await fetchCasinoBets(filtersWithSearch);
+      const filteredBets = result.casinoBets.map((bet: any) => ({ ...bet, key: bet.id }));
+      
+      setCasinoBets(filteredBets);
       setTotal(result.total);
     } catch (error) {
       console.error("Error loading casino bets:", error);
@@ -110,16 +136,17 @@ const CasinoLive: React.FC = () => {
 
   useEffect(() => {
     loadCasinoBets();
-  }, [filters]);
+  }, [filters, searchValue]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       loadCasinoBets();
     }, 5000);
     return () => clearInterval(interval);
-  }, [filters]);
+  }, []);
 
   const onStatusChange = (v: string = "") => {
+    setStatusFilter(v);
     setFilters(prev => ({
       ...prev,
       status: v && v !== "entire" ? v : "",
@@ -165,7 +192,7 @@ const CasinoLive: React.FC = () => {
       },
     },
     {
-      title: "Level",
+      title: t("userid"),
       dataIndex: "level",
       key: "level",
       fixed: "left",
@@ -187,65 +214,73 @@ const CasinoLive: React.FC = () => {
       dataIndex: "profile.phone",
       key: "profile.phone",
       render: (_, record) => record.user?.profile?.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
-      title: "Game ID",
-      dataIndex: "gameId",
-      key: "gameId",
-      render: (_, record) => record.gameId,
-    },
-    {
-      title: "Game Name",
+      title: t("gameName"),
       dataIndex: "gameName",
       key: "gameName",
-      render: (_, record) => record.gameName,
+      render: (_, record) => {
+        // Remove "|slot" or any part after "|"
+        const gameName = record.gameName || "";
+        return gameName.split("|")[0];
+      },
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      render: (_, record) => record.type,
-    },
-    {
-      title: "Transaction ID",
+      title: t("transId"),
       dataIndex: "transId",
       key: "transId",
       render: (_, record) => record.transId,
     },
     {
-      title: t("amount"),
-      dataIndex: "amount",
-      key: "amount",
-      render: (_, record) => f.number(record.amount),
+      title: t("betAmount"),
+      dataIndex: "betAmount",
+      key: "betAmount",
+      render: (_, record) => (
+        <span className="text-red-500">{f.number(Math.abs(record.betAmount))}</span>
+      ),
     },
     {
-      title: "Winning Amount",
-      dataIndex: "winningAmount",
-      key: "winningAmount",
-      render: (_, record) => f.number(record.winningAmount),
+      title: t("winAmount"),
+      dataIndex: "winAmount",
+      key: "winAmount",
+      render: (_, record) => (
+        <span className={record.winAmount > 0 ? "text-green-500" : "text-gray-500"}>
+          {f.number(record.winAmount)}
+        </span>
+      ),
     },
     {
-      title: "Before Amount",
+      title: t("netAmount"),
+      dataIndex: "netAmount",
+      key: "netAmount",
+      render: (_, record) => (
+        <span className={record.netAmount > 0 ? "text-green-500" : record.netAmount < 0 ? "text-red-500" : "text-gray-500"}>
+          {f.number(record.netAmount)}
+        </span>
+      ),
+    },
+    {
+      title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
       render: (_, record) => f.number(record.beforeAmount),
     },
     {
-      title: "After Amount",
+      title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
       render: (_, record) => f.number(record.afterAmount),
     },
     {
-      title: "Betting Time",
+      title: t("bettingTime"),
       dataIndex: "bettingTime",
       key: "bettingTime",
-      render: (_, record) => record.bettingTime,
+      render: (_, record) => {
+        if (!record.bettingTime) return "-";
+        // Convert Unix timestamp (seconds) to milliseconds and format
+        const date = dayjs(record.bettingTime * 1000);
+        return date.format("YYYY/MM/DD HH:mm:ss");
+      },
     },
     {
       title: "Details",
@@ -271,16 +306,18 @@ const CasinoLive: React.FC = () => {
     },
     {
       title: t("status"),
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "resultStatus",
+      key: "resultStatus",
       fixed: "right",
       render: (_, record) => {
         return <div className="text-xs">
-          {record.status === "won" && <span className="bg-green-500 text-white px-2 py-1 rounded">Won</span>}
-          {record.status === "lost" && <span className="bg-red-500 text-white px-2 py-1 rounded">Lost</span>}
-          {record.status === "pending" && <span className="bg-yellow-500 text-white px-2 py-1 rounded">Pending</span>}
-          {record.status === "cancelled" && <span className="bg-gray-500 text-white px-2 py-1 rounded">Cancelled</span>}
-          {!["won", "lost", "pending", "cancelled"].includes(record.status) && <span className="bg-blue-500 text-white px-2 py-1 rounded">{record.status}</span>}
+          {record.resultStatus === "won" && <span className="bg-green-500 text-white px-2 py-1 rounded">{t("won")}</span>}
+          {record.resultStatus === "lost" && <span className="bg-red-500 text-white px-2 py-1 rounded">{t("lost")}</span>}
+          {record.resultStatus === "pending" && <span className="bg-yellow-500 text-white px-2 py-1 rounded">{t("pending")}</span>}
+          {record.status === "cancelled" && <span className="bg-gray-500 text-white px-2 py-1 rounded">{t("cancelled")}</span>}
+          {!["won", "lost", "pending"].includes(record.resultStatus) && record.status !== "cancelled" && (
+            <span className="bg-blue-500 text-white px-2 py-1 rounded">{record.resultStatus || record.status}</span>
+          )}
         </div>
       }
     },
@@ -317,6 +354,7 @@ const CasinoLive: React.FC = () => {
     dateStrings: string[]
   ) => {
     setRange(dateStrings);
+    setDateRange(dates ? [dates[0], dates[1]] : null);
     
     if (dates?.[0] && dates?.[1]) {
       const startDate = dates[0].startOf('day').toISOString();
@@ -340,51 +378,74 @@ const CasinoLive: React.FC = () => {
     setCurrentPage(1);
   };
 
-
   const onSearch = (value: string) => {
-    // Search functionality would need to be implemented in the backend API
-    // For now, we'll skip this functionality
-    console.log("Search not yet implemented:", value);
+    setSearchValue(value);
+    setCurrentPage(1);
+    // Reset offset when searching
+    setFilters(prev => ({
+      ...prev,
+      search: value.trim() || "",
+      offset: 0,
+    }));
   };
 
-  const handleDownload = () => {
-    // Create worksheet from casino bets data
-    const worksheet = XLSX.utils.json_to_sheet(
-      casinoBets.map((bet) => ({
-        ID: bet.id,
-        "User ID": bet.userId,
-        "Game ID": bet.gameId,
-        "Game Name": bet.gameName,
-        Type: bet.type,
-        "Transaction ID": bet.transId,
-        Amount: bet.amount,
-        "Winning Amount": bet.winningAmount,
-        "Before Amount": bet.beforeAmount,
-        "After Amount": bet.afterAmount,
-        "Betting Time": bet.bettingTime,
-        Status: bet.status,
-        [t("nickname")]: bet.user?.profile?.nickname,
-        [t("phone")]: bet.user?.profile?.phone,
-        [t("level")]: bet.user?.profile?.level,
-        [t("createdAt")]: bet.createdAt ? f.dateTime(new Date(bet.createdAt)) : "",
-        [t("updatedAt")]: bet.updatedAt ? f.dateTime(new Date(bet.updatedAt)) : "",
-        Details: bet.details ? JSON.stringify(bet.details) : "",
-      }))
-    );
+  const handleDownload = async () => {
+    setLoading(true);
+    try {
+      // Fetch all data without pagination for download
+      const downloadFilters = {
+        ...filtersRef.current,
+        limit: 10000, // Large limit to get all data
+        offset: 0,
+        search: searchValueRef.current.trim() || "",
+      };
+      
+      const result = await fetchCasinoBets(downloadFilters);
+      const allBets = result.casinoBets;
 
-    // Create workbook and append worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Casino Live Bets");
+      // Create worksheet from all casino bets data
+      const worksheet = XLSX.utils.json_to_sheet(
+        allBets.map((bet: any) => ({
+          [t("number")]: bet.id,
+          [t("root_dist")]: bet.user?.root?.userid,
+          [t("top_dist")]: bet.user?.parent?.userid,
+          [t("level")]: `${bet.user?.profile?.level} ${bet.user?.profile?.name}`,
+          [t("nickname")]: bet.user?.profile?.nickname,
+          [t("phone")]: bet.user?.profile?.phone,
+          [t("gameName")]: bet.gameName?.split("|")[0] || bet.gameName,
+          [t("transId")]: bet.transId,
+          [t("betAmount")]: Math.abs(bet.betAmount),
+          [t("winAmount")]: bet.winAmount,
+          [t("netAmount")]: bet.netAmount,
+          "Result Status": bet.resultStatus,
+          [t("beforeAmount")]: bet.beforeAmount,
+          [t("afterAmount")]: bet.afterAmount,
+          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("YYYY/MM/DD HH:mm:ss") : "",
+          Status: bet.status,
+          [t("createdAt")]: bet.createdAt ? f.dateTime(new Date(bet.createdAt)) : "",
+          [t("updatedAt")]: bet.updatedAt ? f.dateTime(new Date(bet.updatedAt)) : "",
+          Details: bet.details ? JSON.stringify(bet.details) : "",
+        }))
+      );
 
-    // Generate Excel file and trigger download
-    XLSX.writeFile(workbook, "casino_live_bets.xlsx");
+      // Create workbook and append worksheet
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Casino Live Bets");
+
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, "casino_live_bets.xlsx");
+    } catch (error) {
+      console.error("Error downloading casino bets:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title="Casino Live Betting Status"
+          title={t("casinoLiveBettingStatus")}
           classNames={{
             body: "!p-0",
           }}
@@ -395,29 +456,29 @@ const CasinoLive: React.FC = () => {
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
+                value={statusFilter}
                 options={[
                   {
                     label: t("entire"),
                     value: "entire",
                   },
                   {
-                    label: "Won",
+                    label: t("won"),
                     value: "won",
                   },
                   {
-                    label: "Lost",
+                    label: t("lost"),
                     value: "lost",
                   },
                   {
-                    label: "Pending",
+                    label: t("pending"),
                     value: "pending",
                   },
                   {
-                    label: "Cancelled",
+                    label: t("cancelled"),
                     value: "cancelled",
                   },
                 ]}
-                defaultValue={"entire"}
                 onChange={(e) => onStatusChange(e.target.value)}
               />
             </Space>
@@ -425,11 +486,21 @@ const CasinoLive: React.FC = () => {
               <Space>
                 <DatePicker.RangePicker
                   size="small"
+                  value={dateRange}
                   onChange={onRangerChange}
                 />
                 <Input.Search
                   size="small"
                   placeholder="Nickname, Phone, Transaction ID"
+                  value={searchValue}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchValue(value);
+                    // If cleared, trigger search immediately
+                    if (!value) {
+                      onSearch("");
+                    }
+                  }}
                   suffix={
                     <Button
                       size="small"
@@ -439,20 +510,11 @@ const CasinoLive: React.FC = () => {
                   }
                   enterButton={t("search")}
                   onSearch={onSearch}
-                />
-                <Select
-                  size="small"
-                  placeholder="By Level"
-                  className="min-w-28"
                   allowClear
-                  onClear={onLevelChange}
-                  options={levelOption}
-                  labelRender={labelRenderer}
-                  onChange={onLevelChange}
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={handleDownload}>
+                <Button size="small" type="primary" onClick={handleDownload} loading={loading}>
                   {t("download")}
                 </Button>
               </Space.Compact>

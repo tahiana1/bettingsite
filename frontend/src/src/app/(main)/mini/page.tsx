@@ -55,22 +55,22 @@ const MiniPage: React.FC = () => {
             name: "EOS 5min",
             logo: eos5pb
         },
-        {
-            name: "Bepick PBG",
-            logo: bepick
-        },
-        {
-            name: "Powerball",
-            logo: powerball
-        },
-        {
-            name: "Poverball Game",
-            logo: poverballgame
-        },
-        {
-            name: "Dhpowerball",
-            logo: dhpowerball
-        }
+        // {
+        //     name: "Bepick PBG",
+        //     logo: bepick
+        // },
+        // {
+        //     name: "Powerball",
+        //     logo: powerball
+        // },
+        // {
+        //     name: "Poverball Game",
+        //     logo: poverballgame
+        // },
+        // {
+        //     name: "Dhpowerball",
+        //     logo: dhpowerball
+        // }
     ]; 
 
     // Check if user is logged in

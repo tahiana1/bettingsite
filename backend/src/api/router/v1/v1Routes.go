@@ -89,6 +89,9 @@ func GetV1Route(r *gin.RouterGroup) {
 	transactionRouter.GetTransactionRoute(r.Group("/transactions"))
 
 	bettingRouter.GetBettingRoute(r.Group("/bets"))
+	
+	// Mini game betting routes
+	bettingRouter.GetMiniGameRoute(r.Group("/bets"))
 
 	// Mini bet options routes
 	miniRouter.GetMiniBetOptionRoute(r.Group("/mini"))
