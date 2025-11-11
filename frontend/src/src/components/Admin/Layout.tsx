@@ -515,41 +515,41 @@ export default function AdminRootLayout({
     //   ],
     // },
 
-    {
-      key: "admin/game/api",
-      label: t("admin/menu/gameapi"),
-      icon: <FaFootball />,
-      children: [
-        // {
-        //   key: "admin/game/api/honorlink",
-        //   label: t("admin/menu/gameapi/honorlink"),
-        // },
-        // {
-        //   key: "admin/game/api/khan",
-        //   label: t("admin/menu/gameapi/khan"),
-        // },
-        // {
-        //   key: "admin/game/api/redfox",
-        //   label: t("admin/menu/gameapi/redfox"),
-        // },
-        // {
-        //   key: "admin/game/api/revolution",
-        //   label: t("admin/menu/gameapi/revolution"),
-        // },
-        // {
-        //   key: "admin/game/api/slotcity",
-        //   label: t("admin/menu/gameapi/slotcity"),
-        // },
-        // {
-        //   key: "admin/game/api/swix",
-        //   label: t("admin/menu/gameapi/swix"),
-        // },
-        // {
-        //   key: "admin/game/api/wildgames",
-        //   label: t("admin/menu/gameapi/wildgames"),
-        // },
-      ],
-    },
+    // {
+    //   key: "admin/game/api",
+    //   label: t("admin/menu/gameapi"),
+    //   icon: <FaFootball />,
+    //   children: [
+    //     // {
+    //     //   key: "admin/game/api/honorlink",
+    //     //   label: t("admin/menu/gameapi/honorlink"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/khan",
+    //     //   label: t("admin/menu/gameapi/khan"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/redfox",
+    //     //   label: t("admin/menu/gameapi/redfox"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/revolution",
+    //     //   label: t("admin/menu/gameapi/revolution"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/slotcity",
+    //     //   label: t("admin/menu/gameapi/slotcity"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/swix",
+    //     //   label: t("admin/menu/gameapi/swix"),
+    //     // },
+    //     // {
+    //     //   key: "admin/game/api/wildgames",
+    //     //   label: t("admin/menu/gameapi/wildgames"),
+    //     // },
+    //   ],
+    // },
     {
       key: "admin/game/mini",
       label: t("admin/menu/miniManagement"),
@@ -575,22 +575,22 @@ export default function AdminRootLayout({
           key: "admin/game/mini/eos5min",
           label: t("admin/menu/miniManagement/eos5min"),
         },
-        {
-          key: "admin/game/mini/bepick",
-          label: t("admin/menu/miniManagement/bepick"),
-        },
-        {
-          key: "admin/game/mini/eos",
-          label: t("admin/menu/miniManagement/eos"),
-        },
-        {
-          key: "admin/game/mini/pbg",
-          label: t("admin/menu/miniManagement/pbg"),
-        },
-        {
-          key: "admin/game/mini/dhpowerball",
-          label: t("admin/menu/miniManagement/dhpowerball"),
-        },
+        // {
+        //   key: "admin/game/mini/bepick",
+        //   label: t("admin/menu/miniManagement/bepick"),
+        // },
+        // {
+        //   key: "admin/game/mini/eos",
+        //   label: t("admin/menu/miniManagement/eos"),
+        // },
+        // {
+        //   key: "admin/game/mini/pbg",
+        //   label: t("admin/menu/miniManagement/pbg"),
+        // },
+        // {
+        //   key: "admin/game/mini/dhpowerball",
+        //   label: t("admin/menu/miniManagement/dhpowerball"),
+        // },
       ],
     },
     // {
@@ -720,6 +720,10 @@ export default function AdminRootLayout({
         {
           key: "admin/game/bettingstatus/casinoSlot",
           label: t("admin/menu/bettingStatus/casinoSlot"),
+        },
+        {
+          key: "admin/game/bettingstatus/miniGame",
+          label: t("admin/menu/bettingStatus/miniGame"),
         },
       ],
     },

@@ -1484,7 +1484,7 @@
   "levelPremium" : "Premium",
   "level1Setting" : "Level 1 Setting",
   "minimumDepositAmount" : "Minimum Deposit Amount",
-  "won" : "won",
+  "won" : "Won",
   "minimumWithdrawalAmount" : "Minimum Withdrawal Amount",
   "maximumDepositAmount" : "Maximum Deposit Amount",
   "maximumWithdrawalAmount" : "Maximum Withdrawal Amount",
@@ -2302,5 +2302,17 @@
   "betTypeOdds" : "Bet Type/Odds",
   "betAmount" : "Bet Amount",
   "lost" : "Lost",
-  "REGISTER" : "REGISTER"
+  "REGISTER" : "REGISTER",
+  "transId" : "Transaction ID",
+  "netAmount" : "Net Amount",
+  "resultStatus" : "Result Status",
+  "betId" : "Bet ID",
+  "winId" : "Win ID",
+  "admin/menu/bettingStatus/miniGame" : "Mini Game",
+  "cancelled" : "Cancelled",
+  "miniGameBettingStatus" : "Mini Game Betting Status",
+  "casinoLiveBettingStatus" : "Casino Live Betting Status",
+  "casinoSlotBettingStatus" : "Casino Slot Betting Status",
+  "pleaseEnterPhoneNumber" : "Please enter phone number",
+  "pleaseEnterValidPhoneNumber" : "Please enter a valid phone number"
 } 

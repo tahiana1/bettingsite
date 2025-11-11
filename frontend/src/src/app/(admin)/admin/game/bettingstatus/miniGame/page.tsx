@@ -18,31 +18,30 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { fetchCasinoBets, CasinoBetFilters } from "@/actions/betLog";
+import { useQuery } from "@apollo/client";
+import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
-interface CasinoBet {
+interface Transaction {
   id: string;
   userId: string;
-  gameId: string;
-  gameName: string;
-  transId: string;
-  bettingTime: number;
-  details: any;
-  betAmount: number;        // Original bet amount (negative)
-  winAmount: number;        // Win amount (0 for loss, positive for win)
-  netAmount: number;        // Net change (winAmount - abs(betAmount))
-  resultStatus: string;     // "won", "lost", or "pending"
-  beforeAmount: number;     // Balance before bet
-  afterAmount: number;      // Balance after win
-  status: string;           // Original status from bet record
+  type: string;
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  pointBefore: number;
+  pointAfter: number;
+  status: string;
+  shortcut: string;
+  usdtDesc: string;
+  transactionAt: string;
+  approvedAt: string;
   createdAt: string;
   updatedAt: string;
-  betId: string;            // ID of bet record
-  winId: string;            // ID of win record
+  deletedAt?: string;
   user: {
     id: string;
     name: string;
@@ -77,82 +76,101 @@ interface CasinoBet {
   };
 }
 
-const CasinoSlot: React.FC = () => {
+const MiniGame: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
 
   const [range, setRange] = useState<any[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [casinoBets, setCasinoBets] = useState<CasinoBet[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("entire");
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
+  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(25);
-  const [filters, setFilters] = useState<CasinoBetFilters>({
-    game_name_filter: "slot",
-    limit: 25,
-    offset: 0,
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        and: [
+          {
+            field: "transactions.type",
+            value: "minigame_place",
+            op: "eq",
+          },
+        ],
+      },
+    ],
   });
 
-  const filtersRef = useRef(filters);
-  const searchValueRef = useRef(searchValue);
+  const tableOptionsRef = useRef(tableOptions);
 
   useEffect(() => {
-    filtersRef.current = filters;
-  }, [filters]);
+    tableOptionsRef.current = tableOptions;
+  }, [tableOptions]);
 
-  useEffect(() => {
-    searchValueRef.current = searchValue;
-  }, [searchValue]);
-
-  const loadCasinoBets = async () => {
-    const currentFilters = filtersRef.current;
-    const currentSearchValue = searchValueRef.current;
-    
-    setLoading(true);
-    try {
-      const filtersWithSearch = {
-        ...currentFilters,
-        search: currentSearchValue.trim() || "",
-      };
-      const result = await fetchCasinoBets(filtersWithSearch);
-      const filteredBets = result.casinoBets.map((bet: any) => ({ ...bet, key: bet.id }));
-      
-      setCasinoBets(filteredBets);
-      setTotal(result.total);
-    } catch (error) {
-      console.error("Error loading casino bets:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadCasinoBets();
-  }, [filters, searchValue]);
+  const { loading, data, refetch } = useQuery(FILTER_TRANSACTIONS, {
+    variables: {
+      filters: tableOptions?.filters,
+      orders: tableOptions?.orders,
+      pagination: tableOptions?.pagination,
+    },
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      loadCasinoBets();
+      refetch({
+        filters: tableOptionsRef.current?.filters,
+        orders: tableOptionsRef.current?.orders,
+        pagination: tableOptionsRef.current?.pagination,
+      });
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [refetch]);
+
+  useEffect(() => {
+    setTransactions(
+      data?.response?.transactions?.map((u: any) => {
+        return { ...u, key: u.id };
+      }) ?? []
+    );
+    setTotal(data?.response?.total || 0);
+  }, [data]);
+
+  useEffect(() => {
+    refetch({
+      filters: tableOptions?.filters,
+      orders: tableOptions?.orders,
+      pagination: tableOptions?.pagination,
+    });
+  }, [tableOptions]);
 
   const onStatusChange = (v: string = "") => {
     setStatusFilter(v);
-    setFilters(prev => ({
-      ...prev,
-      status: v && v !== "entire" ? v : "",
-      offset: 0,
-    }));
-    setCurrentPage(1);
+    let filters: any[] = [
+      {
+        and: [
+          {
+            field: "transactions.type",
+            value: "minigame_place",
+            op: "eq",
+          },
+        ],
+      },
+    ];
+
+    if (v && v !== "entire") {
+      filters[0].and.push({
+        field: "transactions.status",
+        value: v,
+        op: "eq",
+      });
+    }
+
+    setTableOptions({ ...tableOptions, filters });
   };
 
   const labelRenderer = (props: any) =>
@@ -168,7 +186,7 @@ const CasinoSlot: React.FC = () => {
     label: i == 100 ? "Premium" : (i > 100 ? "VIP " : "Level ") + i,
   }));
 
-  const columns: TableProps<CasinoBet>["columns"] = [
+  const columns: TableProps<Transaction>["columns"] = [
     {
       title: t("number"),
       dataIndex: "id", 
@@ -192,7 +210,7 @@ const CasinoSlot: React.FC = () => {
       },
     },
     {
-      title: t("userid"),
+      title: "Level",
       dataIndex: "level",
       key: "level",
       fixed: "left",
@@ -214,79 +232,51 @@ const CasinoSlot: React.FC = () => {
       dataIndex: "profile.phone",
       key: "profile.phone",
       render: (_, record) => record.user?.profile?.phone,
-    },
-    // {
-    //   title: t("id"),
-    //   dataIndex: "gameId",
-    //   key: "gameId",
-    //   render: (_, record) => record.id,
-    // },
-    {
-      title: t("gameName"),
-      dataIndex: "gameName",
-      key: "gameName",
-      render: (_, record) => {
-        // Remove "|slot" or any part after "|"
-        const gameName = record.gameName || "";
-        return gameName.split("|")[0];
-      },
-    },
-    {
-      title: t("transId"),
-      dataIndex: "transId",
-      key: "transId",
-      render: (_, record) => record.transId,
-    },
-    {
-      title: t("betAmount"),
-      dataIndex: "betAmount",
-      key: "betAmount",
-      render: (_, record) => (
-        <span className="text-red-500">{f.number(Math.abs(record.betAmount))}</span>
+      filterDropdown: (props) => (
+        <FilterDropdown {...props}>
+          <Input className="w-full" />
+        </FilterDropdown>
       ),
     },
     {
-      title: t("winAmount"),
-      dataIndex: "winAmount",
-      key: "winAmount",
-      render: (_, record) => (
-        <span className={record.winAmount > 0 ? "text-green-500" : "text-gray-500"}>
-          {f.number(record.winAmount)}
-        </span>
-      ),
+      title: "Transaction ID",
+      dataIndex: "id",
+      key: "id",
+      render: (_, record) => record.id,
     },
     {
-      title: t("netAmount"),
-      dataIndex: "netAmount",
-      key: "netAmount",
-      render: (_, record) => (
-        <span className={record.netAmount > 0 ? "text-green-500" : record.netAmount < 0 ? "text-red-500" : "text-gray-500"}>
-          {f.number(record.netAmount)}
-        </span>
-      ),
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
+      render: (_, record) => f.number(Math.abs(record.amount)),
     },
     {
-      title: t("beforeAmount"),
-      dataIndex: "beforeAmount",
-      key: "beforeAmount",
-      render: (_, record) => f.number(record.beforeAmount),
+      title: "Before Amount",
+      dataIndex: "balanceBefore",
+      key: "balanceBefore",
+      render: (_, record) => f.number(record.balanceBefore),
     },
     {
-      title: t("afterAmount"),
-      dataIndex: "afterAmount",
-      key: "afterAmount",
-      render: (_, record) => f.number(record.afterAmount),
+      title: "After Amount",
+      dataIndex: "balanceAfter",
+      key: "balanceAfter",
+      render: (_, record) => f.number(record.balanceAfter),
     },
     {
-      title: t("bettingTime"),
-      dataIndex: "bettingTime",
-      key: "bettingTime",
-      render: (_, record) => {
-        if (!record.bettingTime) return "-";
-        // Convert Unix timestamp (seconds) to milliseconds and format
-        const date = dayjs(record.bettingTime * 1000);
-        return date.format("YYYY/MM/DD HH:mm:ss");
-      },
+      title: t("transactionAt"),
+      dataIndex: "transactionAt",
+      key: "transactionAt",
+      render: (v) =>
+        isValidDate(v)
+          ? f.dateTime(new Date(v), {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            })
+          : "",
     },
     {
       title: t("createdAt"),
@@ -302,41 +292,25 @@ const CasinoSlot: React.FC = () => {
     },
     {
       title: t("status"),
-      dataIndex: "resultStatus",
-      key: "resultStatus",
+      dataIndex: "status",
+      key: "status",
       fixed: "right",
       render: (_, record) => {
         return <div className="text-xs">
-          {record.resultStatus === "won" && <span className="bg-green-500 text-white px-2 py-1 rounded">{t("won")}</span>}
-          {record.resultStatus === "lost" && <span className="bg-red-500 text-white px-2 py-1 rounded">{t("lost")}</span>}
-          {record.resultStatus === "pending" && <span className="bg-yellow-500 text-white px-2 py-1 rounded">{t("pending")}</span>}
-          {record.status === "cancelled" && <span className="bg-gray-500 text-white px-2 py-1 rounded">{t("cancelled")}</span>}
-          {!["won", "lost", "pending"].includes(record.resultStatus) && record.status !== "cancelled" && (
-            <span className="bg-blue-500 text-white px-2 py-1 rounded">{record.resultStatus || record.status}</span>
-          )}
+          {record.balanceAfter > record.balanceBefore && <span className="bg-green-500 text-white px-2 py-1 rounded">{t("won")}</span>}
+          {record.balanceAfter < record.balanceBefore && <span className="bg-red-500 text-white px-2 py-1 rounded">{t("lost")}</span>}
         </div>
       }
     },
   ];
 
-  const onChange: TableProps<CasinoBet>["onChange"] = (
+  const onChange: TableProps<Transaction>["onChange"] = (
     pagination,
     filters,
     sorter,
     extra
   ) => {
-    if (pagination) {
-      const newPage = pagination.current || 1;
-      const newPageSize = pagination.pageSize || 25;
-      
-      setCurrentPage(newPage);
-      setPageSize(newPageSize);
-      setFilters(prev => ({
-        ...prev,
-        limit: newPageSize,
-        offset: (newPage - 1) * newPageSize,
-      }));
-    }
+    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
 
   const onLevelChange = (v: string = "") => {
@@ -351,90 +325,161 @@ const CasinoSlot: React.FC = () => {
   ) => {
     setRange(dateStrings);
     setDateRange(dates ? [dates[0], dates[1]] : null);
+    let filters: any[] = [
+      {
+        and: [
+          {
+            field: "transactions.type",
+            value: "minigame_place",
+            op: "eq",
+          },
+        ],
+      },
+    ];
     
+    // Add status filter if set
+    if (statusFilter && statusFilter !== "entire") {
+      filters[0].and.push({
+        field: "transactions.status",
+        value: statusFilter,
+        op: "eq",
+      });
+    }
+    
+    // Only add date filters if both dates are selected and valid
     if (dates?.[0] && dates?.[1]) {
       const startDate = dates[0].startOf('day').toISOString();
       const endDate = dates[1].endOf('day').toISOString();
       
-      setFilters(prev => ({
-        ...prev,
-        date_from: startDate,
-        date_to: endDate,
-        offset: 0,
-      }));
-    } else {
-      setFilters(prev => ({
-        ...prev,
-        date_from: "",
-        date_to: "",
-        offset: 0,
-      }));
+      // Create OR condition for date range
+      const dateOrCondition = {
+        or: [
+          {
+            field: "transactions.created_at",
+            value: startDate,
+            op: "gte",
+          },
+          {
+            field: "transactions.created_at",
+            value: endDate,
+            op: "lte",
+          },
+        ]
+      };
+
+      filters[0].and.push(dateOrCondition);
     }
     
-    setCurrentPage(1);
+    setTableOptions({ ...tableOptions, filters });
   };
-
 
   const onSearch = (value: string) => {
     setSearchValue(value);
-    setCurrentPage(1);
-    // Reset offset when searching
-    setFilters(prev => ({
-      ...prev,
-      search: value.trim() || "",
-      offset: 0,
-    }));
+    let filters: any[] = [
+      {
+        and: [
+          {
+            field: "transactions.type",
+            value: "minigame_place",
+            op: "eq",
+          },
+        ],
+      },
+    ];
+
+    // Add status filter if set
+    if (statusFilter && statusFilter !== "entire") {
+      filters[0].and.push({
+        field: "transactions.status",
+        value: statusFilter,
+        op: "eq",
+      });
+    }
+
+    if (value) {
+      // Determine the search operator based on case sensitivity
+      const searchOp = caseSensitive ? "like" : "ilike";
+      
+      // Create OR condition for multiple search fields
+      const searchOrCondition = {
+        or: [
+          {
+            field: "profiles.nickname",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "profiles.phone",
+            value: value,
+            op: searchOp,
+          },
+          {
+            field: "transactions.id",
+            value: value,
+            op: searchOp,
+          },
+        ]
+      };
+
+      filters[0].and.push(searchOrCondition);
+    }
+
+    setTableOptions({ ...tableOptions, filters });
   };
 
+  const [downloading, setDownloading] = useState(false);
+
   const handleDownload = async () => {
-    setLoading(true);
+    setDownloading(true);
     try {
       // Fetch all data without pagination for download
       const downloadFilters = {
-        ...filtersRef.current,
-        limit: 10000, // Large limit to get all data
-        offset: 0,
-        search: searchValueRef.current.trim() || "",
+        ...tableOptionsRef.current,
+        pagination: {
+          ...tableOptionsRef.current?.pagination,
+          limit: 10000, // Large limit to get all data
+          offset: 0,
+        },
       };
       
-      const result = await fetchCasinoBets(downloadFilters);
-      const allBets = result.casinoBets;
+      const result = await refetch({
+        filters: downloadFilters.filters,
+        orders: downloadFilters.orders,
+        pagination: downloadFilters.pagination,
+      });
 
-      // Create worksheet from all casino bets data
+      const allTransactions = result.data?.response?.transactions || [];
+
+      // Create worksheet from all transactions data
       const worksheet = XLSX.utils.json_to_sheet(
-        allBets.map((bet: any) => ({
-          [t("number")]: bet.id,
-          [t("root_dist")]: bet.user?.root?.userid,
-          [t("top_dist")]: bet.user?.parent?.userid,
-          [t("level")]: `${bet.user?.profile?.level} ${bet.user?.profile?.name}`,
-          [t("nickname")]: bet.user?.profile?.nickname,
-          [t("phone")]: bet.user?.profile?.phone,
-          [t("gameName")]: bet.gameName?.split("|")[0] || bet.gameName,
-          [t("transId")]: bet.transId,
-          [t("betAmount")]: Math.abs(bet.betAmount),
-          [t("winAmount")]: bet.winAmount,
-          [t("netAmount")]: bet.netAmount,
-          "Result Status": bet.resultStatus,
-          [t("beforeAmount")]: bet.beforeAmount,
-          [t("afterAmount")]: bet.afterAmount,
-          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("YYYY/MM/DD HH:mm:ss") : "",
-          Status: bet.status,
-          [t("createdAt")]: bet.createdAt ? f.dateTime(new Date(bet.createdAt)) : "",
-          [t("updatedAt")]: bet.updatedAt ? f.dateTime(new Date(bet.updatedAt)) : "",
-          Details: bet.details ? JSON.stringify(bet.details) : "",
+        allTransactions.map((transaction: any) => ({
+          [t("number")]: transaction.id,
+          [t("root_dist")]: transaction.user?.root?.userid,
+          [t("top_dist")]: transaction.user?.parent?.userid,
+          [t("level")]: `${transaction.user?.profile?.level} ${transaction.user?.profile?.name}`,
+          [t("nickname")]: transaction.user?.profile?.nickname,
+          [t("phone")]: transaction.user?.profile?.phone,
+          "Transaction ID": transaction.id,
+          [t("amount")]: Math.abs(transaction.amount),
+          "Before Amount": transaction.balanceBefore,
+          "After Amount": transaction.balanceAfter,
+          [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
+          [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+          [t("updatedAt")]: transaction.updatedAt ? f.dateTime(new Date(transaction.updatedAt)) : "",
+          [t("status")]: transaction.status,
         }))
       );
 
       // Create workbook and append worksheet
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Casino Slot Bets");
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Mini Game Bets");
 
       // Generate Excel file and trigger download
-      XLSX.writeFile(workbook, "casino_slot_bets.xlsx");
+      XLSX.writeFile(workbook, "mini_game_bets.xlsx");
     } catch (error) {
-      console.error("Error downloading casino bets:", error);
+      console.error("Error downloading mini game bets:", error);
     } finally {
-      setLoading(false);
+      setDownloading(false);
     }
   };
 
@@ -442,14 +487,14 @@ const CasinoSlot: React.FC = () => {
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
         <Card
-          title={t("casinoSlotBettingStatus")}
+          title={t("miniGameBettingStatus")}
           classNames={{
             body: "!p-0",
           }}
         >
           <Space className="p-2 !w-full" direction="vertical">
             <Space wrap>
-              <Radio.Group
+              {/* <Radio.Group
                 size="small"
                 optionType="button"
                 buttonStyle="solid"
@@ -477,7 +522,7 @@ const CasinoSlot: React.FC = () => {
                   },
                 ]}
                 onChange={(e) => onStatusChange(e.target.value)}
-              />
+              /> */}
             </Space>
             <Space className="!w-full justify-between">
               <Space>
@@ -503,6 +548,12 @@ const CasinoSlot: React.FC = () => {
                       size="small"
                       type="text"
                       icon={<RxLetterCaseToggle />}
+                      onClick={() => setCaseSensitive(!caseSensitive)}
+                      style={{
+                        backgroundColor: caseSensitive ? '#1677ff' : 'transparent',
+                        color: caseSensitive ? 'white' : 'inherit'
+                      }}
+                      title={caseSensitive ? t("caseSensitiveOn") : t("caseSensitiveOff")}
                     />
                   }
                   enterButton={t("search")}
@@ -511,17 +562,17 @@ const CasinoSlot: React.FC = () => {
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={handleDownload} loading={loading}>
+                <Button size="small" type="primary" onClick={handleDownload} loading={downloading || loading}>
                   {t("download")}
                 </Button>
               </Space.Compact>
             </Space>
           </Space>
 
-          <Table<CasinoBet>
+          <Table<Transaction>
             columns={columns}
             loading={loading}
-            dataSource={casinoBets ?? []}
+            dataSource={transactions ?? []}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}
@@ -535,9 +586,8 @@ const CasinoSlot: React.FC = () => {
                 });
               },
               total: total,
-              current: currentPage,
-              pageSize: pageSize,
               showSizeChanger: true,
+              defaultPageSize: 25,
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
@@ -547,4 +597,4 @@ const CasinoSlot: React.FC = () => {
   );
 };
 
-export default CasinoSlot;
+export default MiniGame;

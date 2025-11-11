@@ -111,7 +111,7 @@ const ContactSettingPage: React.FC = () => {
           {/* Main Form Card */}
           <Card 
             className="shadow-lg border-0"
-            bodyStyle={{ padding: "32px" }}
+            styles={{ body: { padding: "32px" } }}
             loading={initialLoading}
           >
             <Form
@@ -140,8 +140,8 @@ const ContactSettingPage: React.FC = () => {
                     }
                     name="phoneNumber"
                     rules={[
-                      { required: true, message: "Please enter phone number" },
-                      { pattern: /^[\+]?[1-9][\d]{0,15}$/, message: "Please enter a valid phone number" }
+                      { required: true, message: t("pleaseEnterPhoneNumber") },
+                      { pattern: /^[\+]?[1-9][\d]{0,15}$/, message: t("pleaseEnterValidPhoneNumber") }
                     ]}
                   >
                     <Input
@@ -243,7 +243,7 @@ const ContactSettingPage: React.FC = () => {
           {/* Additional Info Card */}
           <Card 
             className="mt-6 shadow-lg border-0 dark:bg-gray-800"
-            bodyStyle={{ padding: "24px" }}
+            styles={{ body: { padding: "24px" } }}
           >
             <Title level={4} className="!mb-4 dark:text-white">
               <InfoCircleOutlined className="mr-2 text-blue-500" />
