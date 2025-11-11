@@ -132,7 +132,7 @@ func GetAllMiniGameBetting(c *gin.Context) {
 			ID:            tx.ID,
 			Type:          tx.Type,
 			UserID:        tx.UserID,
-			User:          tx.User,
+			User:          &tx.User,
 			GameID:        gameID,
 			Amount:        tx.Amount,
 			Status:        tx.Status,
