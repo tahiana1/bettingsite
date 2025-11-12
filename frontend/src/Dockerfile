@@ -1,6 +1,7 @@
 FROM node:22-slim
 
 # Install curl for healthchecks
+# Note: If DNS resolution fails, configure Docker daemon DNS by running: ./fix-docker-dns.sh
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

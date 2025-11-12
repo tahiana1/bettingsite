@@ -11,28 +11,28 @@ type PowerballHistory struct {
 	ID uint `json:"id" gorm:"primaryKey"`
 
 	GameType      string  `json:"gameType"`
-    Category      string  `json:"category"`
+	Category      string  `json:"category"`
 	UserID        uint    `json:"userId"`
 	Amount        float64 `json:"amount"`
 	Odds          float64 `json:"odds"`
 	PickSelection string  `json:"pickSelection"`
 
 	// Bet option reference and details
-	BetOptionID   *uint   `json:"betOptionId" gorm:"column:bet_option_id"`
-	BetType       string  `json:"betType" gorm:"size:20"` // "single" or "combination"
-	BetBall       *string `json:"betBall" gorm:"size:20"`      // For single bets
-	BetText       *string `json:"betText" gorm:"size:50"`      // For single bets
-	BetBallsJSON  string  `json:"-" gorm:"type:text"`          // For combination bets
-	BetBalls      []BallOption `json:"betBalls" gorm:"-"`      // Not stored in DB, populated from JSON
+	BetOptionID  *uint        `json:"betOptionId" gorm:"column:bet_option_id"`
+	BetType      string       `json:"betType" gorm:"size:20"` // "single" or "combination"
+	BetBall      *string      `json:"betBall" gorm:"size:20"` // For single bets
+	BetText      *string      `json:"betText" gorm:"size:50"` // For single bets
+	BetBallsJSON string       `json:"-" gorm:"type:text"`     // For combination bets
+	BetBalls     []BallOption `json:"betBalls" gorm:"-"`      // Not stored in DB, populated from JSON
 
-	Result        string  `json:"result"`
-	Status        string  `json:"status"`
-	Round         uint    `json:"round"`
+	Result string `json:"result"`
+	Status string `json:"status"`
+	Round  uint   `json:"round"`
 
 	// Drawing result fields
-	DrawingDate    string `json:"date"`
+	DrawingDate    string `json:"date" gorm:"column:drawing_date"`
 	Times          uint64 `json:"times"`
-	FixedDateRound string `json:"fixedDateRound"`
+	FixedDateRound string `json:"fixedDateRound" gorm:"column:fixed_date_round"`
 
 	// Ball numbers (first 5 are default balls, last is powerball)
 	Ball1     int `json:"ball1"`
@@ -40,7 +40,7 @@ type PowerballHistory struct {
 	Ball3     int `json:"ball3"`
 	Ball4     int `json:"ball4"`
 	Ball5     int `json:"ball5"`
-	PowerBall int `json:"powerBall"`
+	PowerBall int `json:"powerBall" gorm:"column:power_ball"`
 
 	// Powerball characteristics
 	PowBallOddEven   string `json:"powBallOe" gorm:"column:pow_ball_oe"`

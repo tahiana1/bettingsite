@@ -12,7 +12,7 @@ type IntArray []int
 
 // Value implements the driver.Valuer interface for database writes
 func (a IntArray) Value() (driver.Value, error) {
-	if a == nil || len(a) == 0 {
+	if len(a) == 0 {
 		return "{}", nil
 	}
 	// Format as PostgreSQL array: {1,2,3}
@@ -99,4 +99,3 @@ func (a IntArray) String() string {
 	}
 	return strings.Join(strValues, ",")
 }
-
