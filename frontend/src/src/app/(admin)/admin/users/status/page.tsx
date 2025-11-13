@@ -15,6 +15,7 @@ import {
   Select,
   Modal,
   Form,
+  message,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -26,6 +27,7 @@ import { useQuery } from "@apollo/client";
 import { CONNECTED_USERS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { AiOutlineDisconnect } from "react-icons/ai";
+import api from "@/api";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
@@ -39,12 +41,24 @@ import { USER_STATUS } from "@/constants";
 const UserStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>(null);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [tableOptions, setTableOptions] = useState<any>({
+    filters: [
+      {
+        field: "role",
+        value: "U",
+        op: "eq",
+      },
+      {
+        field: "online_status",
+        value: "true",
+        op: "eq",
+      },
+    ],
+  });
 
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
   const { loading, error, data, refetch } = useQuery(CONNECTED_USERS);
   const [colorModal, setColorModal] = useState<boolean>(false);
 
@@ -52,36 +66,108 @@ const UserStatusPage: React.FC = () => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
 
-  const onDisconnect = (user: User) => {
-    console.log({ user });
-    /*  blockUser({ variables: { id: user.id } })
-      .then((res) => {
-        if (res.data?.success) {
-        }
-        refetch(tableOptions);
-      })
-      .catch((err) => {
-        console.log({ err });
-      }); */
+  const onDisconnect = async (user: User) => {
+    try {
+      const response = await api(`admin/basic-information/${user.userid}/update`, {
+        method: "PUT",
+        data: {
+          field: "onlineStatus",
+          value: "false",
+        },
+      });
+      
+      if (response.message) {
+        message.success(response.message);
+        // Refresh the table data
+        refetch(tableOptions ?? undefined)
+          .then((res) => {
+            setUsers(
+              res.data?.response?.users?.map((u: any) => {
+                return { ...u, key: u.id };
+              }) ?? []
+            );
+            setTotal(res.data?.response?.total);
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
+    } catch (error: any) {
+      console.error("Failed to disconnect user:", error);
+      message.error(`Failed to disconnect user: ${error.message || 'Unknown error'}`);
+    }
+  };
+
+  const onDisconnectAll = async () => {
+    // Get all users that match the criteria (role == "U" and online_status == true)
+    // These are already filtered in the current users array
+    const usersToDisconnect = users.filter(
+      (u: any) => u.role === "U" && u.onlineStatus === true
+    );
+
+    if (usersToDisconnect.length === 0) {
+      message.info("No users to disconnect");
+      return;
+    }
+
+    try {
+      // Show loading message
+      const hide = message.loading(`Disconnecting ${usersToDisconnect.length} user(s)...`, 0);
+      
+      // Disconnect all users in parallel
+      const disconnectPromises = usersToDisconnect.map((user: User) =>
+        api(`admin/basic-information/${user.userid}/update`, {
+          method: "PUT",
+          data: {
+            field: "onlineStatus",
+            value: "false",
+          },
+        }).catch((error: any) => {
+          console.error(`Failed to disconnect user ${user.userid}:`, error);
+          return { error: true, userid: user.userid, errorMessage: error.message };
+        })
+      );
+
+      const results = await Promise.all(disconnectPromises);
+      hide();
+
+      // Count successes and failures
+      const successes = results.filter((r) => !r.error).length;
+      const failures = results.filter((r) => r.error).length;
+
+      if (failures === 0) {
+        message.success(`Successfully disconnected ${successes} user(s)`);
+      } else {
+        message.warning(`Disconnected ${successes} user(s), ${failures} failed`);
+      }
+
+      // Refresh the table data
+      refetch(tableOptions ?? undefined)
+        .then((res) => {
+          setUsers(
+            res.data?.response?.users?.map((u: any) => {
+              return { ...u, key: u.id };
+            }) ?? []
+          );
+          setTotal(res.data?.response?.total);
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
+    } catch (error: any) {
+      console.error("Failed to disconnect all users:", error);
+      message.error(`Failed to disconnect all users: ${error.message || 'Unknown error'}`);
+    }
   };
 
   const columns: TableProps<User>["columns"] = [
     {
-      title: t("id"),
-      dataIndex: "id",
-      key: "id",
+      title: "ID",
+      dataIndex: "userid",
+      key: "userid",
       fixed: "left",
-      render: (_, record, index) => {
-        return index + 1;
-      },
-    },
-    {
-      title: t("userid"),
-      dataIndex: ["user", "userid"],
-      key: '"User"."userid"',
-      fixed: "left",
-      render(_, record) {
-        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.id)}>
+      render: (_, record) => {
+        return <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.id)}> 
           <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">{record.profile?.level}</p>
           <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.userid}</p>
         </div>
@@ -97,11 +183,21 @@ const UserStatusPage: React.FC = () => {
       title: t("root_dist"),
       dataIndex: "root_dist",
       key: "root_dist",
+      render(_, record) {
+        return record.root?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.root.id)}> 
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.root?.userid}</p>
+        </div> : "";
+      },
     },
     {
       title: t("top_dist"),
       dataIndex: "top_dist",
       key: "top_dist",
+      render(_, record) {
+        return record.parent?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.parent.id)}> 
+          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.parent?.userid}</p>
+        </div> : "";
+      },
     },
     {
       title: t("nickname"),
@@ -171,6 +267,7 @@ const UserStatusPage: React.FC = () => {
       title: t("usdtAddress"),
       dataIndex: "usdtAddress",
       key: "usdtAddress",
+      render: (_, { usdtAddress }) => usdtAddress,
     },
     {
       title: t("currentIP"),
@@ -293,50 +390,82 @@ const UserStatusPage: React.FC = () => {
     sorter,
     extra
   ) => {
-    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
+    const parsedOptions = parseTableOptions(pagination, filters, sorter, extra);
+    // Always preserve base filters (role and online_status)
+    const baseFilters = [
+      {
+        field: "role",
+        value: "U",
+        op: "eq",
+      },
+      {
+        field: "online_status",
+        value: "true",
+        op: "eq",
+      },
+    ];
+    // Merge base filters with parsed filters, avoiding duplicates
+    const mergedFilters = [
+      ...baseFilters,
+      ...(parsedOptions.filters || []).filter((f: any) => 
+        f.field !== "role" && f.field !== "online_status"
+      ),
+    ];
+    setTableOptions({
+      ...parsedOptions,
+      filters: mergedFilters,
+    });
   };
 
-  const onSearch = (value: string) => {
-    setSearchTerm(value);
-    if (value.trim()) {
-      // Determine the search operator based on case sensitivity
-      const searchOp = caseSensitive ? "like" : "ilike";
-      
-      // Create search filters for multiple fields using correct field names
-      const searchFilters = [
-        { field: "users.userid", value: value, op: searchOp },
-        { field: '"Profile"."nickname"', value: value, op: searchOp },
-        { field: '"Profile"."holder_name"', value: value, op: searchOp },
-        { field: '"Profile"."phone"', value: value, op: searchOp }
-      ];
-      
-      // Remove existing search filters and add new ones
-      let filters = tableOptions?.filters?.filter((f: any) => 
-        f.field !== "users.userid" &&
-        f.field !== '"Profile"."nickname"' &&
-        f.field !== '"Profile"."holder_name"' &&
-        f.field !== '"Profile"."phone"'
-      ) ?? [];
-      
-      filters = [...filters, ...searchFilters];
-      setTableOptions({ ...tableOptions, filters });
+  const onSearchUser = (v: string) => {
+    let filters: any[] = tableOptions?.filters ?? [];
+    // Remove existing search filters (userid, nickname, holderName, phone)
+    // Keep role and online_status filters
+    const f = filters.filter((f) => 
+      f.field !== "userid" && 
+      f.field !== '"Profile"."nickname"' && 
+      f.field !== '"Profile"."holder_name"' && 
+      f.field !== '"Profile"."phone"' && 
+      !f.or
+    );
+
+    filters = [...f];
+    if (v && v.trim()) {
+      setTableOptions({
+        ...tableOptions,
+        filters: [
+          ...filters,
+          {
+            or: [
+              {
+                field: "userid",
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."nickname"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."holder_name"',
+                value: v.trim(),
+                op: "ilike",
+              },
+              {
+                field: '"Profile"."phone"',
+                value: v.trim(),
+                op: "ilike",
+              },
+            ],
+          },
+        ],
+      });
     } else {
-      // Remove search filters when search term is empty
-      let filters = tableOptions?.filters?.filter((f: any) => 
-        f.field !== "users.userid" &&
-        f.field !== '"Profile"."nickname"' &&
-        f.field !== '"Profile"."holder_name"' &&
-        f.field !== '"Profile"."phone"'
-      ) ?? [];
-      setTableOptions({ ...tableOptions, filters });
-    }
-  };
-
-  const toggleCaseSensitivity = () => {
-    setCaseSensitive(!caseSensitive);
-    // Re-trigger search with new case sensitivity setting
-    if (searchTerm.trim()) {
-      onSearch(searchTerm);
+      setTableOptions({
+        ...tableOptions,
+        filters: filters,
+      });
     }
   };
 
@@ -346,10 +475,8 @@ const UserStatusPage: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log({ loading, error, data });
-    console.log({ data });
     setUsers(
-      data?.users?.map((u: any) => {
+      data?.response?.users?.map((u: any) => {
         return { ...u, key: u.id };
       }) ?? []
     );
@@ -396,30 +523,38 @@ const UserStatusPage: React.FC = () => {
               defaultValue={""}
             />
             <Space>
-              <Input.Search
-                size="small"
-                placeholder="ID,Nickname,Account Holder,Phone Number"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onSearch={onSearch}
-                suffix={
-                  <Button
-                    size="small"
-                    type="text"
-                    icon={<RxLetterCaseToggle />}
-                    onClick={toggleCaseSensitivity}
-                    title={caseSensitive ? "Case Sensitive" : "Case Insensitive"}
-                    style={{ 
-                      color: caseSensitive ? '#1677ff' : '#8c8c8c',
-                      backgroundColor: caseSensitive ? '#e6f7ff' : 'transparent'
-                    }}
-                  />
-                }
-                enterButton={t("search")}
-              />
-              <Button size="small" color="danger" variant="outlined">
-                {t("disconnectAll")}
-              </Button>
+              <Space.Compact size="small">
+                <Input
+                  size="small"
+                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onPressEnter={() => onSearchUser(searchValue)}
+                />
+                <Button
+                  size="small"
+                  type="text"
+                  icon={<RxLetterCaseToggle />}
+                />
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => onSearchUser(searchValue)}
+                >
+                  {t("search")}
+                </Button>
+              </Space.Compact>
+              <Popconfirm
+                title={t("confirmSure")}
+                description={`Are you sure you want to disconnect all ${users.filter((u: any) => u.role === "U" && u.onlineStatus === true).length} online user(s)?`}
+                onConfirm={onDisconnectAll}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button size="small" color="danger" variant="outlined">
+                  {t("disconnectAll")}
+                </Button>
+              </Popconfirm>
             </Space>
           </Space>
           <Table<User>

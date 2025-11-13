@@ -11,6 +11,8 @@ import {
   Input,
   DatePicker,
   Radio,
+  Popconfirm,
+  message,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -21,6 +23,8 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
 import { CONNECTED_USERS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
+import { AiOutlineDisconnect } from "react-icons/ai";
+import api from "@/api";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
@@ -34,11 +38,17 @@ import { USER_STATUS } from "@/constants";
 const AdminStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
+  const [searchValue, setSearchValue] = useState<string>("");
   const [tableOptions, setTableOptions] = useState<any>({
     filters: [
       {
         field: "role",
         value: "A",
+        op: "eq",
+      },
+      {
+        field: "online_status",
+        value: "true",
         op: "eq",
       },
     ],
@@ -51,6 +61,7 @@ const AdminStatusPage: React.FC = () => {
   const onSearchUser = (v: string) => {
     let filters: any[] = tableOptions?.filters ?? [];
     // Remove existing search filters (userid, nickname, holderName, phone)
+    // Keep role and online_status filters
     const f = filters.filter((f) => 
       f.field !== "userid" && 
       f.field !== '"Profile"."nickname"' && 
@@ -103,6 +114,100 @@ const AdminStatusPage: React.FC = () => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   }
 
+  const onDisconnect = async (user: User) => {
+    try {
+      const response = await api(`admin/basic-information/${user.userid}/update`, {
+        method: "PUT",
+        data: {
+          field: "onlineStatus",
+          value: "false",
+        },
+      });
+      
+      if (response.message) {
+        message.success(response.message);
+        // Refresh the table data
+        refetch(tableOptions ?? undefined)
+          .then((res) => {
+            setUsers(
+              res.data?.response?.users?.map((u: any) => {
+                return { ...u, key: u.id };
+              }) ?? []
+            );
+            setTotal(res.data?.response?.total);
+          })
+          .catch((err) => {
+            console.log({ err });
+          });
+      }
+    } catch (error: any) {
+      console.error("Failed to disconnect user:", error);
+      message.error(`Failed to disconnect user: ${error.message || 'Unknown error'}`);
+    }
+  };
+
+  const onDisconnectAll = async () => {
+    // Get all users that match the criteria (role == "A" and online_status == true)
+    // These are already filtered in the current users array
+    const usersToDisconnect = users.filter(
+      (u: any) => u.role === "A" && u.onlineStatus === true
+    );
+
+    if (usersToDisconnect.length === 0) {
+      message.info("No users to disconnect");
+      return;
+    }
+
+    try {
+      // Show loading message
+      const hide = message.loading(`Disconnecting ${usersToDisconnect.length} user(s)...`, 0);
+      
+      // Disconnect all users in parallel
+      const disconnectPromises = usersToDisconnect.map((user: User) =>
+        api(`admin/basic-information/${user.userid}/update`, {
+          method: "PUT",
+          data: {
+            field: "onlineStatus",
+            value: "false",
+          },
+        }).catch((error: any) => {
+          console.error(`Failed to disconnect user ${user.userid}:`, error);
+          return { error: true, userid: user.userid, errorMessage: error.message };
+        })
+      );
+
+      const results = await Promise.all(disconnectPromises);
+      hide();
+
+      // Count successes and failures
+      const successes = results.filter((r) => !r.error).length;
+      const failures = results.filter((r) => r.error).length;
+
+      if (failures === 0) {
+        message.success(`Successfully disconnected ${successes} user(s)`);
+      } else {
+        message.warning(`Disconnected ${successes} user(s), ${failures} failed`);
+      }
+
+      // Refresh the table data
+      refetch(tableOptions ?? undefined)
+        .then((res) => {
+          setUsers(
+            res.data?.response?.users?.map((u: any) => {
+              return { ...u, key: u.id };
+            }) ?? []
+          );
+          setTotal(res.data?.response?.total);
+        })
+        .catch((err) => {
+          console.log({ err });
+        });
+    } catch (error: any) {
+      console.error("Failed to disconnect all users:", error);
+      message.error(`Failed to disconnect all users: ${error.message || 'Unknown error'}`);
+    }
+  };
+
   const columns: TableProps<User>["columns"] = [
     {
       title: "ID",
@@ -127,7 +232,10 @@ const AdminStatusPage: React.FC = () => {
       dataIndex: "root_dist",
       key: "root_dist",
       render(_, record) {
-        return record.root?.userid;
+        return record.root?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(Number(record.root?.userid))}> 
+        <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.root?.userid}</p>
+      </div> : "";
+        // return record.root?.userid;
       },
     },
     {
@@ -135,7 +243,9 @@ const AdminStatusPage: React.FC = () => {
       dataIndex: "top_dist",
       key: "top_dist",
       render(_, record) {
-        return record.parent?.userid;
+        return record.parent?.userid ? <div className="flex items-center cursor-pointer" onClick={() => popupWindow(Number(record.parent?.userid))}> 
+        <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.parent?.userid}</p>
+      </div> : "";
       },
     },
     {
@@ -206,6 +316,7 @@ const AdminStatusPage: React.FC = () => {
       title: t("usdtAddress"),
       dataIndex: "usdtAddress",
       key: "usdtAddress",
+      render: (_, { usdtAddress }) => usdtAddress,
     },
     {
       title: t("currentIP"),
@@ -223,22 +334,22 @@ const AdminStatusPage: React.FC = () => {
       key: "profile.coupon",
       render: (_, { profile }) => profile.coupon,
     },
-    {
-      title: t("lastDeposit"),
-      dataIndex: "profile.lastDeposit",
-      key: "lastDeposit",
-      render: (_, { profile }) =>
-        profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
-    },
-    {
-      title: t("lastWithdraw"),
-      dataIndex: "profile.lastWithdraw",
-      key: "lastWithdraw",
-      render: (_, { profile }) =>
-        profile.lastWithdraw
-          ? f.dateTime(new Date(profile.lastWithdraw))
-          : null,
-    },
+    // {
+    //   title: t("lastDeposit"),
+    //   dataIndex: "profile.lastDeposit",
+    //   key: "lastDeposit",
+    //   render: (_, { profile }) =>
+    //     profile.lastDeposit ? f.dateTime(new Date(profile.lastDeposit)) : null,
+    // },
+    // {
+    //   title: t("lastWithdraw"),
+    //   dataIndex: "profile.lastWithdraw",
+    //   key: "lastWithdraw",
+    //   render: (_, { profile }) =>
+    //     profile.lastWithdraw
+    //       ? f.dateTime(new Date(profile.lastWithdraw))
+    //       : null,
+    // },
     {
       title: t("role"),
       key: "role",
@@ -298,7 +409,7 @@ const AdminStatusPage: React.FC = () => {
       key: "createdAt",
       render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
     },
-    /*  {
+    {
       title: t("action"),
       key: "action",
       fixed: "right",
@@ -319,7 +430,7 @@ const AdminStatusPage: React.FC = () => {
           </Popconfirm>
         </Space.Compact>
       ),
-    }, */
+    }, 
   ];
 
   const onChange: TableProps<User>["onChange"] = (
@@ -328,7 +439,31 @@ const AdminStatusPage: React.FC = () => {
     sorter,
     extra
   ) => {
-    setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
+    const parsedOptions = parseTableOptions(pagination, filters, sorter, extra);
+    // Always preserve base filters (role and online_status)
+    const baseFilters = [
+      {
+        field: "role",
+        value: "A",
+        op: "eq",
+      },
+      {
+        field: "online_status",
+        value: "true",
+        op: "eq",
+      },
+    ];
+    // Merge base filters with parsed filters, avoiding duplicates
+    const mergedFilters = [
+      ...baseFilters,
+      ...(parsedOptions.filters || []).filter((f: any) => 
+        f.field !== "role" && f.field !== "online_status"
+      ),
+    ];
+    setTableOptions({
+      ...parsedOptions,
+      filters: mergedFilters,
+    });
   };
 
   useEffect(() => {
@@ -380,22 +515,38 @@ const AdminStatusPage: React.FC = () => {
               defaultValue={""}
             />
             <Space>
-              <Input.Search
-                size="small"
-                placeholder="ID,Nickname,Account Holder,Phone Number"
-                suffix={
-                  <Button
-                    size="small"
-                    type="text"
-                    icon={<RxLetterCaseToggle />}
-                  />
-                }
-                enterButton="Search"
-                onSearch={onSearchUser}
-              />
-              <Button size="small" color="danger" variant="outlined">
-                {t("disconnectAll")}
-              </Button>
+              <Space.Compact size="small">
+                <Input
+                  size="small"
+                  placeholder="ID,Nickname,Account Holder,Phone Number"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  onPressEnter={() => onSearchUser(searchValue)}
+                />
+                <Button
+                  size="small"
+                  type="text"
+                  icon={<RxLetterCaseToggle />}
+                />
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => onSearchUser(searchValue)}
+                >
+                  Search
+                </Button>
+              </Space.Compact>
+              <Popconfirm
+                title={t("confirmSure")}
+                description={`Are you sure you want to disconnect all ${users.filter((u: any) => u.role === "A" && u.onlineStatus === true).length} online admin user(s)?`}
+                onConfirm={onDisconnectAll}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button size="small" color="danger" variant="outlined">
+                  {t("disconnectAll")}
+                </Button>
+              </Popconfirm>
             </Space>
           </Space>
           <Table<User>
