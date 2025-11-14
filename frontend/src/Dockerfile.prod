@@ -1,18 +1,23 @@
 FROM node:22-slim
 
+
 WORKDIR /app
+
 
 # Declare the NODE_ENV
 ENV NODE_ENV=production
 # Add the Environment Port Variable
 ENV PORT=3000
 
-# Add the Group and User to Container 
+
+# Add the Group and User to Container
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+
 # Copy package files first for better layer caching
-COPY --chown=nextjs:nodejs package.json yarn.lock* package-lock.json* ./
+COPY package.json yarn.lock* package-lock.json* ./
+
 
 # Install dependencies (production only since .next is pre-built)
 # Using network-timeout to handle slow connections
@@ -21,26 +26,32 @@ RUN \
         yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1 || \
         (echo "Yarn install failed, retrying..." && sleep 5 && yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1); \
     elif [ -f package-lock.json ]; then \
-        npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps || \
-        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps); \
+        npm ci --only=production --prefer-offline --no-audit || \
+        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit); \
     else \
         echo "Lock file not found." && exit 1; \
     fi
 
-# Copy the pre-built application files with proper ownership
-COPY --chown=nextjs:nodejs .next ./.next
-COPY --chown=nextjs:nodejs public ./public
-COPY --chown=nextjs:nodejs next.config.mjs* ./
-COPY --chown=nextjs:nodejs postcss.config.mjs* ./
-COPY --chown=nextjs:nodejs tailwind.config.ts* ./
-COPY --chown=nextjs:nodejs tsconfig.json* ./
 
-# Note: node_modules permissions are handled by npm/yarn and should be readable by default
+# Copy the pre-built application files
+COPY .next ./.next
+COPY public ./public
+COPY next.config.mjs* ./
+COPY postcss.config.mjs* ./
+COPY tailwind.config.ts* ./
+COPY tsconfig.json* ./
+
+
+# Set proper ownership
+RUN chown -R nextjs:nodejs /app
+
 
 USER nextjs
 
-# Expose the Application Port 
+
+# Expose the Application Port
 EXPOSE 3000
+
 
 # Run the Application
 CMD ["yarn", "start"]

@@ -1,27 +1,33 @@
 name: Deploy Betting Site
 
+
 on:
   push:
     branches:
     - main
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
 
     - name: Setup Golang
       uses: actions/setup-go@v5
       with:
         go-version: '1.24.2'
 
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '22' # or whatever version your Next.js app uses
+
 
     - name: Build Go Backend
       working-directory: backend/src
@@ -31,33 +37,42 @@ jobs:
         GOOS=linux GOARCH=amd64 go build main.go
         GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
+
     # Create .env file for frontend
     - name: Create .env for frontend
       working-directory: frontend/src
       run: |
         echo "${{ secrets.FRONTEND_ENV }}" > .env
 
+
     - name: Install frontend dependencies
       working-directory: frontend/src
-      run: npm install --legacy-peer-deps
+      run: yarn install
+
 
     - name: Build frontend
       working-directory: frontend/src
-      run: npm run build
+      run: yarn build
+
 
     - name: Create frontend artifact
       run: |
         mkdir deploy
         mkdir deploy/frontend deploy/backend
 
-        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/package-lock.json frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts frontend/src/.dockerignore deploy/frontend 2>/dev/null || true
+
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts frontend/src/.dockerignore deploy/frontend 2>/dev/null || true
+
 
         cp -r backend/src/main backend/src/migrate backend/src/static backend/src/Dockerfile.prod backend/src/.dockerignore deploy/backend 2>/dev/null || true
 
+
         cp docker-compose.prod.yaml deploy/
+
 
         cd deploy
         zip -r ../artifact.zip .
+
 
     - name: Upload artifact to VPS
       uses: appleboy/scp-action@v0.1.4
@@ -68,46 +83,55 @@ jobs:
         source: artifact.zip
         target: /root
 
+
     - name: SSH and Deploy
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
-        timeout: 60m
+        timeout: 30m
         script: |
           set -e
           cd /root
-          
+         
           # Clean up old deployment
           rm -rf frontend backend docker-compose.prod.yaml || true
+
 
           # Extract artifact
           unzip -o artifact.zip
           rm -rf artifact.zip || true
 
+
           # Create .env files from secrets
-          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 
-          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env 
+          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env
+          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env
+
 
           # Stop existing containers
           cd /root
           docker compose -f docker-compose.prod.yaml down || true
 
+
           # Clean up Docker system (optional, can be removed if causing issues)
           docker system prune -f || true
 
+
           # Build and start containers with increased timeout
           DOCKER_BUILDKIT=1 COMPOSE_HTTP_TIMEOUT=600 docker compose -f docker-compose.prod.yaml build --no-cache
-          
+         
           # Start containers
           docker compose -f docker-compose.prod.yaml up -d
+
 
           # Wait for services to be healthy
           echo "Waiting for services to start..."
           sleep 10
 
+
           # Check container status
           docker compose -f docker-compose.prod.yaml ps
+
 
           echo "🚀 Server is running!!!"
