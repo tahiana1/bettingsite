@@ -21,8 +21,8 @@ RUN \
         yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1 || \
         (echo "Yarn install failed, retrying..." && sleep 5 && yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1); \
     elif [ -f package-lock.json ]; then \
-        npm ci --only=production --prefer-offline --no-audit || \
-        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit); \
+        npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps || \
+        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps); \
     else \
         echo "Lock file not found." && exit 1; \
     fi
