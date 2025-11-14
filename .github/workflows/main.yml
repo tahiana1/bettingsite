@@ -38,19 +38,33 @@ jobs:
           GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
 
-      - name: Create .env for frontend
+      - name: Create .env for frontend (used for build)
         working-directory: frontend/src
         run: |
-          printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > .env
+          # Ensure FRONTEND_ENV is provided; write to frontend/src/.env so next build can see it
+          if [ -z "${{ secrets.FRONTEND_ENV }}" ]; then
+            echo "FRONTEND_ENV secret is empty or not set; continuing without .env for build"
+          else
+            printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > .env
+            echo "Wrote frontend .env"
+          fi
 
 
-      - name: Install frontend dependencies (retry)
+      - name: Install frontend dependencies (retry, tolerant to missing yarn.lock)
         working-directory: frontend/src
         run: |
+          set -euo pipefail
           n=0
+          # If project uses yarn.lock, prefer frozen lockfile. If not, install normally.
           until [ $n -ge 2 ]
           do
-            yarn install --frozen-lockfile --network-timeout 300000 && break
+            if [ -f yarn.lock ]; then
+              echo "Found yarn.lock -> using --frozen-lockfile"
+              yarn install --frozen-lockfile --network-timeout 300000 --network-concurrency 1 && break
+            else
+              echo "yarn.lock not found -> running yarn install without --frozen-lockfile"
+              yarn install --network-timeout 300000 --network-concurrency 1 && break
+            fi
             n=$((n+1))
             echo "yarn install failed, retrying ($n)..."
             sleep 5
@@ -63,41 +77,114 @@ jobs:
 
       - name: Build frontend
         working-directory: frontend/src
-        run: yarn build
+        run: |
+          set -euo pipefail
+          yarn build
+
+
+      - name: Verify frontend build artifacts
+        run: |
+          set -euo pipefail
+          # Determine frontend root (frontend/src is preferred)
+          if [ -d frontend/src ]; then
+            FE_ROOT=frontend/src
+          elif [ -d frontend ]; then
+            FE_ROOT=frontend
+          else
+            echo "ERROR: frontend directory not found" >&2
+            exit 1
+          fi
+
+
+          echo "Frontend root: ${FE_ROOT}"
+          if [ ! -d "${FE_ROOT}/.next" ]; then
+            echo "ERROR: .next directory not found at ${FE_ROOT}/.next" >&2
+            ls -la "${FE_ROOT}" || true
+            exit 1
+          fi
+
+
+          # If using standalone output, ensure .next/standalone exists. If not, warn but continue (some Dockerfiles expect .next)
+          if [ ! -d "${FE_ROOT}/.next/standalone" ]; then
+            echo "Warning: ${FE_ROOT}/.next/standalone not found. Dockerfile may expect a standalone build. Listing .next:"
+            ls -la "${FE_ROOT}/.next" || true
+          else
+            echo ".next/standalone found."
+          fi
 
 
       - name: Create frontend+backend artifact (tar.gz, exclude caches)
         run: |
+          set -euo pipefail
           rm -rf deploy || true
           mkdir -p deploy/frontend deploy/backend
 
 
-          # Copy only needed files and exclude caches/node_modules
-          rsync -a --delete \
-            --exclude='.next/cache' \
-            --exclude='node_modules' \
-            frontend/src/.next/standalone deploy/frontend/.next/standalone || true
+          # Choose frontend root
+          if [ -d frontend/src ]; then
+            FE_ROOT=frontend/src
+          elif [ -d frontend ]; then
+            FE_ROOT=frontend
+          else
+            echo "ERROR: frontend directory not found" >&2
+            exit 1
+          fi
 
 
-          rsync -a --delete \
-            --exclude='node_modules' \
-            frontend/src/public deploy/frontend/public
+          BE_ROOT=backend/src
 
 
-          rsync -a --delete \
-            frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend/ || true
+          # Ensure .next exists
+          if [ ! -d "${FE_ROOT}/.next" ]; then
+            echo "ERROR: .next not found at ${FE_ROOT}/.next" >&2
+            exit 1
+          fi
 
 
-          rsync -a --delete backend/src/main backend/src/migrate backend/src/static backend/src/Dockerfile.prod deploy/backend || true
+          # Create target .next/standalone path and rsync contents (use trailing slashes to copy contents)
+          mkdir -p deploy/frontend/.next/standalone
+          # If standalone exists, copy it. Otherwise copy entire .next directory.
+          if [ -d "${FE_ROOT}/.next/standalone" ]; then
+            rsync -a --delete --exclude='.next/cache' --exclude='node_modules' "${FE_ROOT}/.next/standalone/" deploy/frontend/.next/standalone/
+          else
+            echo "No .next/standalone. Copying full .next directory instead."
+            mkdir -p deploy/frontend/.next
+            rsync -a --delete --exclude='.next/cache' --exclude='node_modules' "${FE_ROOT}/.next/" deploy/frontend/.next/
+          fi
 
 
-          cp docker-compose.prod.yaml deploy/
+          # Public
+          if [ -d "${FE_ROOT}/public" ]; then
+            rsync -a --delete --exclude='node_modules' "${FE_ROOT}/public/" deploy/frontend/public/
+          fi
 
 
-          # Create a compressed tarball (handles long paths better than zip)
+          # Copy common frontend config files if they exist (supports both frontend/src and frontend layouts)
+          for f in package.json yarn.lock next.config.mjs postcss.config.mjs Dockerfile.prod tailwind.config.ts tsconfig.json .eslintrc.json next-env.d.ts; do
+            if [ -f "${FE_ROOT}/${f}" ]; then
+              cp "${FE_ROOT}/${f}" deploy/frontend/
+            fi
+          done
+
+
+          # Backend files (tolerant to missing ones)
+          mkdir -p deploy/backend
+          rsync -a --delete --exclude='node_modules' "${BE_ROOT}/main" "${BE_ROOT}/migrate" "${BE_ROOT}/static" "${BE_ROOT}/Dockerfile.prod" deploy/backend || true
+
+
+          # Copy docker-compose if present
+          if [ -f docker-compose.prod.yaml ]; then
+            cp docker-compose.prod.yaml deploy/
+          fi
+
+
+          # Create a compressed tarball
           cd deploy
           tar -czf ../artifact.tar.gz .
           cd ..
+
+
+          ls -lh artifact.tar.gz
 
 
       - name: Upload artifact to VPS
@@ -125,7 +212,7 @@ jobs:
             rm -rf frontend backend docker-compose.prod.yaml || true
 
 
-            # Ensure tar exists (should on ubuntu)
+            # Ensure tar exists
             if ! command -v tar >/dev/null 2>&1; then
               apt-get update && apt-get install -y tar
             fi
@@ -148,11 +235,6 @@ jobs:
 
             # Take down compose, build and bring up
             docker compose -f docker-compose.prod.yaml down --remove-orphans || true
-
-
-            # Optional: targeted cleanup only for images built by project (avoid full prune)
-            # Example: docker image prune -f --filter "label=your_project_label"
-            # Avoid docker system prune -a -f unless you understand the consequences.
 
 
             docker compose -f docker-compose.prod.yaml up -d --build
