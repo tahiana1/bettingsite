@@ -44,108 +44,34 @@ jobs:
       run: |
         echo "${{ secrets.FRONTEND_ENV }}" > .env
 
-    # Clean frontend build artifacts and dependencies
-    - name: Clean frontend build files
-      working-directory: frontend/src
-      run: |
-        rm -rf node_modules .next .next/standalone || true
 
-    # Determine package manager and ensure consistent lockfile
-    - name: Setup package manager
-      working-directory: frontend/src
-      run: |
-        # If yarn.lock exists, use yarn and remove package-lock.json
-        if [ -f yarn.lock ]; then
-          echo "Using Yarn (yarn.lock found)"
-          rm -f package-lock.json || true
-          corepack enable
-          corepack prepare yarn@stable --activate
-        # If only package-lock.json exists, use npm
-        elif [ -f package-lock.json ]; then
-          echo "Using NPM (package-lock.json found)"
-          rm -f yarn.lock || true
-        # If neither exists, default to yarn and generate lockfile
-        else
-          echo "No lockfile found, using Yarn and will generate yarn.lock"
-          corepack enable
-          corepack prepare yarn@stable --activate
-        fi
-
-    # Install frontend dependencies
     - name: Install frontend dependencies
       working-directory: frontend/src
-      run: |
-        if [ -f yarn.lock ]; then
-          yarn install --frozen-lockfile --network-timeout 300000 --ignore-engines || yarn install --frozen-lockfile --network-timeout 300000
-        else
-          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-        fi
+      run: yarn install
 
-    # Build frontend
+
     - name: Build frontend
       working-directory: frontend/src
-      run: |
-        if [ -f yarn.lock ]; then
-          yarn build
-        else
-          npm run build
-        fi
+      run: yarn build
 
 
     - name: Create frontend artifact
       run: |
-        mkdir -p deploy/frontend deploy/backend
-        
-        # Copy frontend files (handle missing yarn.lock gracefully)
-        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json deploy/frontend/ 2>/dev/null || true
-        
-        # Copy lockfile (yarn.lock or package-lock.json, whichever exists)
-        if [ -f frontend/src/yarn.lock ]; then
-          cp frontend/src/yarn.lock deploy/frontend/ 2>/dev/null || true
-        elif [ -f frontend/src/package-lock.json ]; then
-          cp frontend/src/package-lock.json deploy/frontend/ 2>/dev/null || true
-        fi
-        
-        # Copy optional files if they exist
-        [ -f frontend/src/.eslintrc.json ] && cp frontend/src/.eslintrc.json deploy/frontend/ || true
-        [ -f frontend/src/next-env.d.ts ] && cp frontend/src/next-env.d.ts deploy/frontend/ || true
-        [ -f frontend/src/.dockerignore ] && cp frontend/src/.dockerignore deploy/frontend/ || true
+        mkdir deploy
+        mkdir deploy/frontend deploy/backend
 
 
-        cp -r backend/src/main backend/src/migrate backend/src/static backend/src/Dockerfile.prod backend/src/.dockerignore deploy/backend 2>/dev/null || true
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
+
+
+        cp -r backend/src/main backend/src/migrate  backend/src/static backend/src/Dockerfile.prod deploy/backend
 
 
         cp docker-compose.prod.yaml deploy/
 
 
         cd deploy
-        # Verify critical files exist before zipping
-        if [ ! -d "frontend/.next" ]; then
-          echo "ERROR: frontend/.next directory not found!"
-          exit 1
-        fi
-        if [ ! -f "frontend/package.json" ]; then
-          echo "ERROR: frontend/package.json not found!"
-          exit 1
-        fi
-        if [ ! -f "backend/main" ]; then
-          echo "ERROR: backend/main binary not found!"
-          exit 1
-        fi
-        
-        echo "Creating artifact.zip..."
-        zip -r ../artifact.zip . || {
-          echo "ERROR: Failed to create artifact.zip"
-          exit 1
-        }
-        
-        # Verify artifact was created
-        if [ ! -f "../artifact.zip" ]; then
-          echo "ERROR: artifact.zip was not created!"
-          exit 1
-        fi
-        
-        echo "Artifact created successfully: $(du -h ../artifact.zip | cut -f1)"
+        zip -r ../artifact.zip .
 
 
     - name: Upload artifact to VPS
@@ -164,53 +90,38 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SERVER_PASSWORD }}
-        timeout: 30m
         script: |
-          set -e
           cd /root
-         
-          # Clean up old deployment
           rm -rf frontend backend docker-compose.prod.yaml || true
 
 
-          # Extract artifact with error handling
-          echo "Extracting artifact..."
-          if ! unzip -o artifact.zip; then
-            echo "ERROR: Failed to extract artifact.zip"
-            exit 1
-          fi
+          unzip -o artifact.zip
+
+
           rm -rf artifact.zip || true
-          echo "Artifact extracted successfully"
 
 
-          # Create .env files from secrets
-          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env
-          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env
+          # Create .env file for backend from secrets
+          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 
 
 
-          # Stop existing containers
+          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env 
+
+
+
+
+
+
           cd /root
-          docker compose -f docker-compose.prod.yaml down || true
 
 
-          # Clean up Docker system (optional, can be removed if causing issues)
-          docker system prune -f || true
+          docker compose -f docker-compose.prod.yaml down 
 
 
-          # Build and start containers with increased timeout
-          DOCKER_BUILDKIT=1 COMPOSE_HTTP_TIMEOUT=600 docker compose -f docker-compose.prod.yaml build --no-cache
-         
-          # Start containers
-          docker compose -f docker-compose.prod.yaml up -d
+          docker system prune -a -f
 
 
-          # Wait for services to be healthy
-          echo "Waiting for services to start..."
-          sleep 10
-
-
-          # Check container status
-          docker compose -f docker-compose.prod.yaml ps
+          docker compose -f docker-compose.prod.yaml up -d --build
 
 
           echo "🚀 Server is running!!!"
