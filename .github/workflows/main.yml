@@ -4,7 +4,7 @@ name: Deploy Betting Site
 on:
   push:
     branches:
-    - main
+      - main
 
 
 jobs:
@@ -13,115 +13,151 @@ jobs:
 
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
 
-    - name: Setup Golang
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.24.2'
+      - name: Setup Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.2'
 
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22' # or whatever version your Next.js app uses
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
 
-    - name: Build Go Backend
-      working-directory: backend/src
-      run: |
-        go mod tidy
-        GOOS=linux GOARCH=amd64 go run github.com/99designs/gqlgen generate
-        GOOS=linux GOARCH=amd64 go build main.go
-        GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
+      - name: Build Go Backend
+        working-directory: backend/src
+        run: |
+          go mod tidy
+          GOOS=linux GOARCH=amd64 go run github.com/99designs/gqlgen generate
+          GOOS=linux GOARCH=amd64 go build main.go
+          GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
 
-    # Create .env file for frontend
-    - name: Create .env for frontend
-      working-directory: frontend/src
-      run: |
-        echo "${{ secrets.FRONTEND_ENV }}" > .env
+      - name: Create .env for frontend
+        working-directory: frontend/src
+        run: |
+          printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > .env
 
 
-    - name: Install frontend dependencies
-      working-directory: frontend/src
-      run: yarn install
+      - name: Install frontend dependencies (retry)
+        working-directory: frontend/src
+        run: |
+          n=0
+          until [ $n -ge 2 ]
+          do
+            yarn install --frozen-lockfile --network-timeout 300000 && break
+            n=$((n+1))
+            echo "yarn install failed, retrying ($n)..."
+            sleep 5
+          done
+          if [ $n -ge 2 ]; then
+            echo "yarn install failed after retries" >&2
+            exit 1
+          fi
 
 
-    - name: Build frontend
-      working-directory: frontend/src
-      run: yarn build
+      - name: Build frontend
+        working-directory: frontend/src
+        run: yarn build
 
 
-    - name: Create frontend artifact
-      run: |
-        mkdir deploy
-        mkdir deploy/frontend deploy/backend
+      - name: Create frontend+backend artifact (tar.gz, exclude caches)
+        run: |
+          rm -rf deploy || true
+          mkdir -p deploy/frontend deploy/backend
 
 
-        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
+          # Copy only needed files and exclude caches/node_modules
+          rsync -a --delete \
+            --exclude='.next/cache' \
+            --exclude='node_modules' \
+            frontend/src/.next/standalone deploy/frontend/.next/standalone || true
 
 
-        cp -r backend/src/main backend/src/migrate  backend/src/static backend/src/Dockerfile.prod deploy/backend
+          rsync -a --delete \
+            --exclude='node_modules' \
+            frontend/src/public deploy/frontend/public
 
 
-        cp docker-compose.prod.yaml deploy/
+          rsync -a --delete \
+            frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend/ || true
 
 
-        cd deploy
-        zip -r ../artifact.zip .
+          rsync -a --delete backend/src/main backend/src/migrate backend/src/static backend/src/Dockerfile.prod deploy/backend || true
 
 
-    - name: Upload artifact to VPS
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        source: artifact.zip
-        target: /root
+          cp docker-compose.prod.yaml deploy/
 
 
-    - name: SSH and Deploy
-      uses: appleboy/ssh-action@v0.1.10
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        password: ${{ secrets.SERVER_PASSWORD }}
-        script: |
-          cd /root
-          rm -rf frontend backend docker-compose.prod.yaml || true
+          # Create a compressed tarball (handles long paths better than zip)
+          cd deploy
+          tar -czf ../artifact.tar.gz .
+          cd ..
 
 
-          unzip -o artifact.zip
+      - name: Upload artifact to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: artifact.tar.gz
+          target: /root
 
 
-          rm -rf artifact.zip || true
+      - name: SSH and Deploy (extract tar, safer docker)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            set -euo pipefail
+            cd /root
 
 
-          # Create .env file for backend from secrets
-          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 
+            # Clean previous deployment directories (but keep images)
+            rm -rf frontend backend docker-compose.prod.yaml || true
 
 
-          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env 
+            # Ensure tar exists (should on ubuntu)
+            if ! command -v tar >/dev/null 2>&1; then
+              apt-get update && apt-get install -y tar
+            fi
 
 
+            # Extract the artifact
+            if [ -f artifact.tar.gz ]; then
+              tar -xzf artifact.tar.gz
+              rm -f artifact.tar.gz
+            else
+              echo "artifact.tar.gz not found" >&2
+              exit 1
+            fi
 
 
+            # Create .env files for backend/frontend (use printf to avoid extra newlines)
+            printf '%s\n' "${{ secrets.BACKEND_ENV }}" > /root/backend/.env || true
+            printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env || true
 
 
-          cd /root
+            # Take down compose, build and bring up
+            docker compose -f docker-compose.prod.yaml down --remove-orphans || true
 
 
-          docker compose -f docker-compose.prod.yaml down 
+            # Optional: targeted cleanup only for images built by project (avoid full prune)
+            # Example: docker image prune -f --filter "label=your_project_label"
+            # Avoid docker system prune -a -f unless you understand the consequences.
 
 
-          docker system prune -a -f
+            docker compose -f docker-compose.prod.yaml up -d --build
 
 
-          docker compose -f docker-compose.prod.yaml up -d --build
+            echo "🚀 Server is running!!!"
 
 
-          echo "🚀 Server is running!!!"
