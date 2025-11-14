@@ -18,8 +18,8 @@ COPY package.json package-lock.json* ./
 # Using npm ci for faster, reliable, reproducible builds
 RUN \
     if [ -f package-lock.json ]; then \
-        npm ci --only=production --prefer-offline --no-audit || \
-        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit); \
+        npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps || \
+        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps); \
     else \
         echo "package-lock.json not found." && exit 1; \
     fi
