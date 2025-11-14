@@ -12,7 +12,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy package files first for better layer caching
-COPY package.json yarn.lock* package-lock.json* ./
+COPY --chown=nextjs:nodejs package.json yarn.lock* package-lock.json* ./
 
 # Install dependencies (production only since .next is pre-built)
 # Using network-timeout to handle slow connections
@@ -27,16 +27,15 @@ RUN \
         echo "Lock file not found." && exit 1; \
     fi
 
-# Copy the pre-built application files
-COPY .next ./.next
-COPY public ./public
-COPY next.config.mjs* ./
-COPY postcss.config.mjs* ./
-COPY tailwind.config.ts* ./
-COPY tsconfig.json* ./
+# Copy the pre-built application files with proper ownership
+COPY --chown=nextjs:nodejs .next ./.next
+COPY --chown=nextjs:nodejs public ./public
+COPY --chown=nextjs:nodejs next.config.mjs* ./
+COPY --chown=nextjs:nodejs postcss.config.mjs* ./
+COPY --chown=nextjs:nodejs tailwind.config.ts* ./
+COPY --chown=nextjs:nodejs tsconfig.json* ./
 
-# Set proper ownership
-RUN chown -R nextjs:nodejs /app
+# Note: node_modules permissions are handled by npm/yarn and should be readable by default
 
 USER nextjs
 
