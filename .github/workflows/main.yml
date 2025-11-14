@@ -76,7 +76,7 @@ jobs:
       working-directory: frontend/src
       run: |
         if [ -f yarn.lock ]; then
-          yarn install --frozen-lockfile --network-timeout 300000
+          yarn install --frozen-lockfile --network-timeout 300000 --ignore-engines || yarn install --frozen-lockfile --network-timeout 300000
         else
           npm ci --legacy-peer-deps || npm install --legacy-peer-deps
         fi
