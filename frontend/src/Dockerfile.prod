@@ -14,12 +14,19 @@ RUN adduser --system --uid 1001 nextjs
 # Copy package files first for better layer caching
 COPY package.json package-lock.json* ./
 
+# Configure npm for faster installs
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm config set fetch-timeout 300000 && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-mintimeout 20000 && \
+    npm config set fetch-retry-maxtimeout 120000
+
 # Install dependencies (production only since .next is pre-built)
 # Using npm ci for faster, reliable, reproducible builds
 RUN \
     if [ -f package-lock.json ]; then \
-        npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps || \
-        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit --legacy-peer-deps); \
+        npm ci --omit=dev --prefer-offline --no-audit --legacy-peer-deps --maxsockets=1 || \
+        (echo "NPM install failed, retrying..." && sleep 5 && npm ci --omit=dev --prefer-offline --no-audit --legacy-peer-deps --maxsockets=1); \
     else \
         echo "package-lock.json not found." && exit 1; \
     fi
