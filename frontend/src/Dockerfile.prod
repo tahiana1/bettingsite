@@ -12,19 +12,16 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy package files first for better layer caching
-COPY package.json yarn.lock* package-lock.json* ./
+COPY package.json package-lock.json* ./
 
 # Install dependencies (production only since .next is pre-built)
-# Using network-timeout to handle slow connections
+# Using npm ci for faster, reliable, reproducible builds
 RUN \
-    if [ -f yarn.lock ]; then \
-        yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1 || \
-        (echo "Yarn install failed, retrying..." && sleep 5 && yarn install --frozen-lockfile --production --network-timeout 300000 --network-concurrency 1); \
-    elif [ -f package-lock.json ]; then \
+    if [ -f package-lock.json ]; then \
         npm ci --only=production --prefer-offline --no-audit || \
         (echo "NPM install failed, retrying..." && sleep 5 && npm ci --only=production --prefer-offline --no-audit); \
     else \
-        echo "Lock file not found." && exit 1; \
+        echo "package-lock.json not found." && exit 1; \
     fi
 
 # Copy the pre-built application files
@@ -44,4 +41,4 @@ USER nextjs
 EXPOSE 3000
 
 # Run the Application
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
