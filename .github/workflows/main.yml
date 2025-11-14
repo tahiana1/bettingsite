@@ -4,7 +4,7 @@ name: Deploy Betting Site
 on:
   push:
     branches:
-      - main
+    - main
 
 
 jobs:
@@ -13,233 +13,115 @@ jobs:
 
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
 
-      - name: Setup Golang
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24.2'
+    - name: Setup Golang
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24.2'
 
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22' # or whatever version your Next.js app uses
 
 
-      - name: Build Go Backend
-        working-directory: backend/src
-        run: |
-          go mod tidy
-          GOOS=linux GOARCH=amd64 go run github.com/99designs/gqlgen generate
-          GOOS=linux GOARCH=amd64 go build main.go
-          GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
+    - name: Build Go Backend
+      working-directory: backend/src
+      run: |
+        go mod tidy
+        GOOS=linux GOARCH=amd64 go run github.com/99designs/gqlgen generate
+        GOOS=linux GOARCH=amd64 go build main.go
+        GOOS=linux GOARCH=amd64 go build db/migrate/migrate.go
 
 
-      - name: Create .env for frontend (used for build)
-        working-directory: frontend/src
-        run: |
-          # Ensure FRONTEND_ENV is provided; write to frontend/src/.env so next build can see it
-          if [ -z "${{ secrets.FRONTEND_ENV }}" ]; then
-            echo "FRONTEND_ENV secret is empty or not set; continuing without .env for build"
-          else
-            printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > .env
-            echo "Wrote frontend .env"
-          fi
+    # Create .env file for frontend
+    - name: Create .env for frontend
+      working-directory: frontend/src
+      run: |
+        echo "${{ secrets.FRONTEND_ENV }}" > .env
 
 
-      - name: Install frontend dependencies (retry, tolerant to missing yarn.lock)
-        working-directory: frontend/src
-        run: |
-          set -euo pipefail
-          n=0
-          # If project uses yarn.lock, prefer frozen lockfile. If not, install normally.
-          until [ $n -ge 2 ]
-          do
-            if [ -f yarn.lock ]; then
-              echo "Found yarn.lock -> using --frozen-lockfile"
-              yarn install --frozen-lockfile --network-timeout 300000 --network-concurrency 1 && break
-            else
-              echo "yarn.lock not found -> running yarn install without --frozen-lockfile"
-              yarn install --network-timeout 300000 --network-concurrency 1 && break
-            fi
-            n=$((n+1))
-            echo "yarn install failed, retrying ($n)..."
-            sleep 5
-          done
-          if [ $n -ge 2 ]; then
-            echo "yarn install failed after retries" >&2
-            exit 1
-          fi
+    - name: Install frontend dependencies
+      working-directory: frontend/src
+      run: yarn install
 
 
-      - name: Build frontend
-        working-directory: frontend/src
-        run: |
-          set -euo pipefail
-          yarn build
+    - name: Build frontend
+      working-directory: frontend/src
+      run: yarn build
 
 
-      - name: Verify frontend build artifacts
-        run: |
-          set -euo pipefail
-          # Determine frontend root (frontend/src is preferred)
-          if [ -d frontend/src ]; then
-            FE_ROOT=frontend/src
-          elif [ -d frontend ]; then
-            FE_ROOT=frontend
-          else
-            echo "ERROR: frontend directory not found" >&2
-            exit 1
-          fi
+    - name: Create frontend artifact
+      run: |
+        mkdir deploy
+        mkdir deploy/frontend deploy/backend
 
 
-          echo "Frontend root: ${FE_ROOT}"
-          if [ ! -d "${FE_ROOT}/.next" ]; then
-            echo "ERROR: .next directory not found at ${FE_ROOT}/.next" >&2
-            ls -la "${FE_ROOT}" || true
-            exit 1
-          fi
+        cp -r frontend/src/.next frontend/src/public frontend/src/package.json frontend/src/yarn.lock frontend/src/next.config.mjs frontend/src/postcss.config.mjs frontend/src/Dockerfile.prod frontend/src/tailwind.config.ts frontend/src/tsconfig.json frontend/src/.eslintrc.json frontend/src/next-env.d.ts deploy/frontend
 
 
-          # If using standalone output, ensure .next/standalone exists. If not, warn but continue (some Dockerfiles expect .next)
-          if [ ! -d "${FE_ROOT}/.next/standalone" ]; then
-            echo "Warning: ${FE_ROOT}/.next/standalone not found. Dockerfile may expect a standalone build. Listing .next:"
-            ls -la "${FE_ROOT}/.next" || true
-          else
-            echo ".next/standalone found."
-          fi
+        cp -r backend/src/main backend/src/migrate  backend/src/static backend/src/Dockerfile.prod deploy/backend
 
 
-      - name: Create frontend+backend artifact (tar.gz, exclude caches)
-        run: |
-          set -euo pipefail
-          rm -rf deploy || true
-          mkdir -p deploy/frontend deploy/backend
+        cp docker-compose.prod.yaml deploy/
 
 
-          # Choose frontend root
-          if [ -d frontend/src ]; then
-            FE_ROOT=frontend/src
-          elif [ -d frontend ]; then
-            FE_ROOT=frontend
-          else
-            echo "ERROR: frontend directory not found" >&2
-            exit 1
-          fi
+        cd deploy
+        zip -r ../artifact.zip .
 
 
-          BE_ROOT=backend/src
+    - name: Upload artifact to VPS
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        source: artifact.zip
+        target: /root
 
 
-          # Ensure .next exists
-          if [ ! -d "${FE_ROOT}/.next" ]; then
-            echo "ERROR: .next not found at ${FE_ROOT}/.next" >&2
-            exit 1
-          fi
+    - name: SSH and Deploy
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        script: |
+          cd /root
+          rm -rf frontend backend docker-compose.prod.yaml || true
 
 
-          # Create target .next/standalone path and rsync contents (use trailing slashes to copy contents)
-          mkdir -p deploy/frontend/.next/standalone
-          # If standalone exists, copy it. Otherwise copy entire .next directory.
-          if [ -d "${FE_ROOT}/.next/standalone" ]; then
-            rsync -a --delete --exclude='.next/cache' --exclude='node_modules' "${FE_ROOT}/.next/standalone/" deploy/frontend/.next/standalone/
-          else
-            echo "No .next/standalone. Copying full .next directory instead."
-            mkdir -p deploy/frontend/.next
-            rsync -a --delete --exclude='.next/cache' --exclude='node_modules' "${FE_ROOT}/.next/" deploy/frontend/.next/
-          fi
+          unzip -o artifact.zip
 
 
-          # Public
-          if [ -d "${FE_ROOT}/public" ]; then
-            rsync -a --delete --exclude='node_modules' "${FE_ROOT}/public/" deploy/frontend/public/
-          fi
+          rm -rf artifact.zip || true
 
 
-          # Copy common frontend config files if they exist (supports both frontend/src and frontend layouts)
-          for f in package.json yarn.lock next.config.mjs postcss.config.mjs Dockerfile.prod tailwind.config.ts tsconfig.json .eslintrc.json next-env.d.ts; do
-            if [ -f "${FE_ROOT}/${f}" ]; then
-              cp "${FE_ROOT}/${f}" deploy/frontend/
-            fi
-          done
+          # Create .env file for backend from secrets
+          echo "${{ secrets.BACKEND_ENV }}" > /root/backend/.env 
 
 
-          # Backend files (tolerant to missing ones)
-          mkdir -p deploy/backend
-          rsync -a --delete --exclude='node_modules' "${BE_ROOT}/main" "${BE_ROOT}/migrate" "${BE_ROOT}/static" "${BE_ROOT}/Dockerfile.prod" deploy/backend || true
+          echo "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env 
 
 
-          # Copy docker-compose if present
-          if [ -f docker-compose.prod.yaml ]; then
-            cp docker-compose.prod.yaml deploy/
-          fi
 
 
-          # Create a compressed tarball
-          cd deploy
-          tar -czf ../artifact.tar.gz .
-          cd ..
 
 
-          ls -lh artifact.tar.gz
+          cd /root
 
 
-      - name: Upload artifact to VPS
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          source: artifact.tar.gz
-          target: /root
+          docker compose -f docker-compose.prod.yaml down 
 
 
-      - name: SSH and Deploy (extract tar, safer docker)
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          script: |
-            set -euo pipefail
-            cd /root
+          docker system prune -a -f
 
 
-            # Clean previous deployment directories (but keep images)
-            rm -rf frontend backend docker-compose.prod.yaml || true
+          docker compose -f docker-compose.prod.yaml up -d --build
 
 
-            # Ensure tar exists
-            if ! command -v tar >/dev/null 2>&1; then
-              apt-get update && apt-get install -y tar
-            fi
-
-
-            # Extract the artifact
-            if [ -f artifact.tar.gz ]; then
-              tar -xzf artifact.tar.gz
-              rm -f artifact.tar.gz
-            else
-              echo "artifact.tar.gz not found" >&2
-              exit 1
-            fi
-
-
-            # Create .env files for backend/frontend (use printf to avoid extra newlines)
-            printf '%s\n' "${{ secrets.BACKEND_ENV }}" > /root/backend/.env || true
-            printf '%s\n' "${{ secrets.FRONTEND_ENV }}" > /root/frontend/.env || true
-
-
-            # Take down compose, build and bring up
-            docker compose -f docker-compose.prod.yaml down --remove-orphans || true
-
-
-            docker compose -f docker-compose.prod.yaml up -d --build
-
-
-            echo "🚀 Server is running!!!"
-
-
+          echo "🚀 Server is running!!!"
