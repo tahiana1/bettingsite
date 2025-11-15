@@ -371,7 +371,7 @@ export default function EOS1Page() {
                         <div className="iframe-wrapper flex items-center justify-center"> 
                         <iframe
                             src={getIframeSrc(activeTab)}
-                            className="game-iframe !z-10 !opacity-0 m-auto"
+                            className="game-iframe !z-10 !opacity-100 m-auto"
                             scrolling="no"
                         />
                         </div>
