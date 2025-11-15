@@ -2315,5 +2315,9 @@
   "casinoSlotBettingStatus" : "Casino Slot Betting Status",
   "pleaseEnterPhoneNumber" : "Please enter phone number",
   "pleaseEnterValidPhoneNumber" : "Please enter a valid phone number",
-  "popupCreatedSuccessfully" : "Popup created successfully"
+  "popupCreatedSuccessfully" : "Popup created successfully",
+  "miniGamePlace" : "Mini Game Place",
+  "miniGameWin" : "Mini Game Win",
+  "directDeposit" : "Direct Deposit",
+  "directWithdraw" : "Direct Withdrawal"
 } 

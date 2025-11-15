@@ -66,7 +66,12 @@ const IntegratedTransferPage: React.FC = () => {
               },
               {
                 field: "transactions.type",
-                value: "withdrawal",
+                value: "minigame_place",
+                op: "eq",
+              },
+              {
+                field: "transactions.type",
+                value: "minigame_Win",
                 op: "eq",
               },
               {
@@ -201,54 +206,119 @@ const IntegratedTransferPage: React.FC = () => {
       dataIndex: "shortcut",
       key: "explation",
       render: (text, record) => {
+        const getTypeColor = (type: string) => {
+          const colorMap: { [key: string]: { bg: string; text: string } } = {
+            deposit: { bg: "#10b981", text: "#ffffff" }, // green
+            withdrawal: { bg: "#ef4444", text: "#ffffff" }, // red
+            transfer: { bg: "#3b82f6", text: "#ffffff" }, // blue
+            bettingSettlement: { bg: "#8b5cf6", text: "#ffffff" }, // purple
+            "betting/placingBet": { bg: "#f59e0b", text: "#ffffff" }, // amber
+            DepositCasino: { bg: "#06b6d4", text: "#ffffff" }, // cyan
+            WithdrawalCasino: { bg: "#ec4899", text: "#ffffff" }, // pink
+            point: { bg: "#84cc16", text: "#ffffff" }, // lime
+            rollingExchange: { bg: "#f97316", text: "#ffffff" }, // orange
+            pointDeposit: { bg: "#14b8a6", text: "#ffffff" }, // teal
+            Rolling: { bg: "#a855f7", text: "#ffffff" }, // violet
+            bet: { bg: "#dc2626", text: "#ffffff" }, // red-600
+            win: { bg: "#16a34a", text: "#ffffff" }, // green-600
+            directDeposit: { bg: "#059669", text: "#ffffff" }, // emerald-600
+            directWithdraw: { bg: "#be123c", text: "#ffffff" }, // rose-700
+            minigame_place: { bg: "#ea580c", text: "#ffffff" }, // orange-600
+            minigame_Win: { bg: "#65a30d", text: "#ffffff" }, // lime-600
+          };
+          return colorMap[type] || { bg: "#6b7280", text: "#ffffff" }; // default gray
+        };
+
+        const color = getTypeColor(record.type);
+        
         return (
           <div>
             {record.type === "deposit" && (
-              <span>{t("deposit")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("deposit")}
+              </span>
             )}
             {record.type === "withdrawal" && (
-              <span>{t("withdrawal")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("withdrawal")}
+              </span>
             )}
             {record.type === "transfer" && (
-              <span>{t("transfer")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("transfer")}
+              </span>
             )}
             {record.type === "bettingSettlement" && (
-              <span>{t("bettingSettlement")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("bettingSettlement")}
+              </span>
             )}
             {record.type === "betting/placingBet" && (
-              <span>{t("bettingPlacement")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("bettingPlacement")}
+              </span>
             )}
             {record.type === "DepositCasino" && (
-              <span>{t("depositCasino")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("depositCasino")}
+              </span>
             )}
             {record.type === "WithdrawalCasino" && (
-              <span>{t("withdrawalCasino")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("withdrawalCasino")}
+              </span>
             )}
             {record.type === "point" && (
-              <span>{t("point")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("point")}
+              </span>
             )}
             {record.type === "rollingExchange" && (
-              <span>{t("rollingExchange")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("rollingExchange")}
+              </span>
             )}
             {record.type === "pointDeposit" && (
-              <span>{t("pointDeposit")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("pointDeposit")}
+              </span>
             )}
             {
               record.type === "Rolling" && (
-                <span>{t("rolling")}</span>
+                <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                  {t("rolling")}
+                </span>
               )
             }
             {record.type === "bet" && (
-              <span>{t("casinoBet")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("casinoBet")}
+              </span>
             )}
             {record.type === "win" && (
-              <span>{t("casinoWin")}</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("casinoWin")}
+              </span>
             )}
             {record.type === "directDeposit" && (
-              <span>Direct Deposit</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("directDeposit")}
+              </span>
             )}
             {record.type === "directWithdraw" && (
-              <span>Direct Withdrawal</span>
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("directWithdraw")}
+              </span>
+            )}
+            {record.type === "minigame_place" && (
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("miniGamePlace")}
+              </span>
+            )}
+            {record.type === "minigame_Win" && (
+              <span style={{ backgroundColor: color.bg, color: color.text }} className="px-2 py-1 rounded text-xs font-medium">
+                {t("miniGameWin")}
+              </span>
             )}
           </div>
         );

@@ -2317,5 +2317,9 @@
   "casinoSlotBettingStatus" : "赌场老虎机投注状态",
   "pleaseEnterPhoneNumber" : "请输入手机号码",
   "pleaseEnterValidPhoneNumber" : "请输入有效的手机号码",
-  "popupCreatedSuccessfully" : "弹窗创建成功"
+  "popupCreatedSuccessfully" : "弹窗创建成功",
+  "miniGamePlace" : "小游戏投注",
+  "miniGameWin" : "小游戏赢",
+  "directDeposit" : "直接存款",
+  "directWithdraw" : "直接提款"
 }

@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import * as XLSX from 'xlsx';
 
 import {
   Layout,
@@ -32,8 +33,6 @@ import {
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
-import { BsCardChecklist } from "react-icons/bs";
-import * as XLSX from 'xlsx';
 import api from "@/api";
 
 const MemberDWPage: React.FC = () => {
@@ -101,19 +100,19 @@ const MemberDWPage: React.FC = () => {
   const [approveTransaction] = useMutation(APPROVE_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
+  const tableOptionsRef = useRef<any>(null);
 
+  // Keep ref in sync with tableOptions so interval always uses latest filters
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
+    tableOptionsRef.current = tableOptions;
   }, [tableOptions]);
 
-  // Auto-refetch data every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      refetch(tableOptions ?? undefined);
-    }, 5000);
-
+      refetch(tableOptionsRef.current ?? undefined);
+    }, 2000);
     return () => clearInterval(interval);
-  }, [tableOptions, refetch]);
+  }, [refetch]);
 
   const onApproveTransaction = (transaction: Transaction) => {
     if (transaction.type == "deposit" || transaction.type == "withdrawal") {
@@ -320,10 +319,7 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "root.transactionid",
       key: "root.transactionid",
       render(_, record) {
-        return record.user?.root?.userid ? (
-          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.root?.id)}>
-          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.root?.userid}</p>
-        </div>) : ""
+        return record.user?.root?.userid;
       },
     },
     {
@@ -331,10 +327,7 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "top_dist",
       key: "top_dist",
       render(_, record) {
-        return record.user?.parent?.userid ? (
-          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(record.user?.parent?.id)}>
-          <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">{record.user?.parent?.userid}</p>
-        </div>) : ""
+        return record.user?.parent?.userid;
       },
     },
     {
@@ -342,22 +335,12 @@ const MemberDWPage: React.FC = () => {
       dataIndex: "profile.nickname",
       key: '"Profile"."nickname"',
       render: (_, record) => record.user?.profile?.nickname,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
     },
     {
       title: t("phone"),
       dataIndex: "profile.phone",
       key: '"Profile"."phone"',
-      render: (_, record) => record.user?.profile?.phone,
-      filterDropdown: (props) => (
-        <FilterDropdown {...props}>
-          <Input className="w-full" />
-        </FilterDropdown>
-      ),
+      render: (_, record) => record.user?.profile?.phone || "",
     },
     {
       title: t('userid'),
@@ -452,16 +435,19 @@ const MemberDWPage: React.FC = () => {
       title: t("pointAfter"),
       dataIndex: "pointAfter",
       key: "pointAfter",
-      render: (_, record) => record.type == "point" ? record.user?.profile?.point - record.amount  : record.user?.profile?.point,
-    },
-    {
-      title: t("usdtDesc"),
-      dataIndex: "usdtDesc",
-      key: "usdtDesc",
+      render: (_, record) => {
+        if (record.type == "point") {
+          return record.user?.profile?.point - record.amount;
+        } else if (record.type == "pointDeposit") {
+          return record.user?.profile?.point + record.amount;
+        }
+        return record.user?.profile?.point;
+      },
     },
     {
       title: t("shortcut"),
       dataIndex: "shortcut",
+      width: 150,
       key: "shortcut",
       render: (_, record) => (
         <>
@@ -497,13 +483,33 @@ const MemberDWPage: React.FC = () => {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) =>
+        isValidDate(v)
+          ? f.dateTime(new Date(v), {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            })
+          : "",
     },
     {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      title: t("updatedAt"),
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (v) =>
+        isValidDate(v)
+          ? f.dateTime(new Date(v), {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit"
+            })
+          : "",
     },
     {
       title: t("status"),
@@ -593,73 +599,6 @@ const MemberDWPage: React.FC = () => {
     }
     setTableOptions({ ...tableOptions, filters });
   };
-
-  const onUSDTStatusChange = (v: string) => {
-    let filters: any[] = tableOptions?.filters ?? [];
-
-    // Remove any existing USDT filters
-    filters = filters.filter((f) => {
-      if (f.and) {
-        f.and = f.and.filter((andItem: any) => {
-          if (andItem.field === "transactions.usdt_desc") {
-            return false;
-          }
-          return true;
-        });
-        return f.and.length > 0;
-      }
-      return true;
-    });
-
-    if (v === "true") {
-      // Add USDT filter for not null
-      if (filters.length > 0 && filters[0].and) {
-        filters[0].and.push({
-          field: "transactions.usdt_desc",
-          value: null,
-          op: "is_not_null",
-        });
-      } else {
-        filters = [
-          {
-            and: [
-              {
-                field: "transactions.usdt_desc",
-                value: null,
-                op: "is_not_null",
-              },
-            ],
-          },
-        ];
-      }
-    } else if (v === "false") {
-      // Add USDT filter for null
-      if (filters.length > 0 && filters[0].and) {
-        filters[0].and.push({
-          field: "transactions.usdt_desc",
-          value: null,
-          op: "is_null",
-        });
-      } else {
-        filters = [
-          {
-            and: [
-              {
-                field: "transactions.usdt_desc",
-                value: null,
-                op: "is_null",
-              },
-            ],
-          },
-        ];
-      }
-    }
-
-    setTableOptions({ ...tableOptions, filters });
-    refetch({ options: { filters } });
-  };
-
-
 
   const onLevelChange = (v: string = "") => {
     updateFilter(`profiles.level`, v, "eq");
@@ -823,6 +762,19 @@ const MemberDWPage: React.FC = () => {
     refetch({ options: { filters } });
   };
 
+  useEffect(() => {
+    setTransactions(
+      data?.response?.transactions?.map((u: any) => {
+        return { ...u, key: u.id };
+      }) ?? []
+    );
+    setTotal(data?.response?.total);
+  }, [data]);
+
+  useEffect(() => {
+    refetch(tableOptions ?? undefined);
+  }, [tableOptions]);
+
   const handleDownload = () => {
     // Create worksheet from transactions data
     const worksheet = XLSX.utils.json_to_sheet(
@@ -841,7 +793,7 @@ const MemberDWPage: React.FC = () => {
         [t("amount")]: transaction.amount,
         [t("balanceAfter")]: transaction.balanceAfter,
         [t("pointBefore")]: transaction.pointBefore,
-        [t("point")]: 0,
+        [t("point")]: transaction.type == "point" ? transaction.amount : 0,
         [t("pointAfter")]: transaction.pointAfter,
         [t("usdtDesc")]: transaction.usdtDesc,
         [t("shortcut")]: transaction.shortcut,
@@ -857,17 +809,8 @@ const MemberDWPage: React.FC = () => {
     XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
 
     // Generate Excel file and trigger download
-    XLSX.writeFile(workbook, "member_transactions.xlsx");
+    XLSX.writeFile(workbook, "transactions.xlsx");
   };
-
-  useEffect(() => {
-    setTransactions(
-      data?.response?.transactions?.map((u: any) => {
-        return { ...u, key: u.id };
-      }) ?? []
-    );
-    setTotal(data?.response?.total);
-  }, [data]);
   return (
     <Layout>
       {contextHolder}
