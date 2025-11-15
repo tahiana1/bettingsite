@@ -3,14 +3,11 @@
   "home/todaysMatch": "오늘의 경기",
   "home/title": "안녕하세요!",
   "home/hideToday": "오늘 이 대화상자를 다시 표시하지 않습니다.",
-
   "partnerPage": "파트너 페이지",
-
   "lang/th": "TH ภาษาไทย",
   "lang/cn": "CN 中文",
   "lang/en": "EN English",
   "lang/label": "언어",
-
   "menu/international": "해외",
   "menu/national": "국내",
   "menu/live": "라이브",
@@ -22,16 +19,12 @@
   "menu/events": "이벤트",
   "menu/notifications": "알림",
   "menu/livechat": "고객지원",
-
   "americanFootball": "미식축구",
   "volleyball": "배구",
-
   "auth/login": "로그인",
   "auth/register": "회원가입",
   "auth/logout": "로그아웃",
-
   "REGISTER": "등록",
-
   "billing/depositRequest": "입금 신청",
   "billing/withdrawRequest": "출금 신청",
   "billing/depositAmount": "입금액",
@@ -40,7 +33,6 @@
   "billing/applyDeposit": "입금 신청",
   "billing/applyWithdraw": "출금 신청",
   "billing/withdrawAmount": "출금액",
-
   "profile": "내 프로필",
   "profile/balance": "잔액",
   "profile/xp": "경험치",
@@ -48,7 +40,6 @@
   "profile/attends": "출석",
   "profile/roulette": "룰렛",
   "profile/inbox": "쪽지함",
-
   "betting/cart": "베팅 카트",
   "betting/singleMaxBettingAmount": "단폴 최대 베팅 금액",
   "betting/singleMaxWinningAmount": "단폴 최대 당첨 금액",
@@ -57,10 +48,8 @@
   "betting/amount": "베팅 금액",
   "betting/placeBet": "베팅하기",
   "betting/expectedWinningAmount": "예상 당첨 금액",
-
   "admin/menu/administrations": "관리",
   "admin/menu/settlements": "정산",
-
   "admin/menu/settlements/rollingconversionhistory": "롤링 전환 내역",
   "admin/menu/settlements/fullpointshistory": "전체 포인트 내역",
   "admin/menu/settlements/fullcoupondetail": "전체 쿠폰 내역",
@@ -69,15 +58,12 @@
   "admin/menu/settlements/losingdetail": "루징 상세",
   "admin/menu/settlements/distributorStatistics": "총판 통계",
   "admin/menu/settlements/distributorStatisticsDetail": "총판 통계 상세",
-
   "admin/menu/financals": "재정관리",
-
   "admin/menu/generaldwdetail": "일반 입출금 상세",
   "admin/menu/memberdwhistory": "회원 입출금 내역",
   "admin/menu/totaltransferhistory": "전체 이체 내역",
   "admin/menu/membertransferhistory": "회원 이체 내역",
   "admin/menu/integratedtransferhistory": "통합 이체 내역",
-
   "admin/menu/generals": "일반 관리자",
   "admin/menu/users": "사용자",
   "admin/menu/pendings": "대기중",
@@ -105,7 +91,6 @@
   "admin/menu/admin": "관리자",
   "admin/menu/adminStatus": "접속 상태",
   "admin/menu/adminLog": "관리자 로그",
-
   "admin/menu/game": "게임",
   "admin/menu/casino": "카지노 게임 관리",
   "admin/menu/gameapi": "게임 API 관리",
@@ -115,7 +100,6 @@
   "admin/menu/mgm": "MGM 게임 관리",
   "admin/menu/touch": "터치 게임 관리",
   "admin/menu/bettingStatus": "베팅 상태",
-
   "admin/menu/sports": "스포츠",
   "admin/menu/sportsSettings": "스포츠 설정",
   "admin/menu/sportsBettingInformation": "스포츠 베팅 정보 설정",
@@ -136,7 +120,6 @@
   "admin/menu/listCountrys": "국가 목록",
   "admin/menu/listLeagues": "리그 목록",
   "admin/menu/listTeams": "팀 목록",
-
   "admin/menu/board": "게시판",
   "admin/menu/bulletins": "공지사항 게시판 관리",
   "admin/menu/notifications": "알림 게시판",
@@ -150,12 +133,10 @@
   "admin/menu/p2p": "실시간 채팅",
   "admin/menu/inbox": "쪽지 관리",
   "admin/menu/statistical": "통계",
-
   "admin/todayStatistics": "오늘 통계",
   "admin/todayDepositWithdraw": "오늘 입출금",
   "Recent user deposits and withdrawals": "최근 사용자 입출금",
   "admin/users": "전체 사용자",
-
   "userStatus": "사용자 상태",
   "pendingUsers": "대기 사용자",
   "setting": "설정",
@@ -237,7 +218,6 @@
   "blocked": "차단됨",
   "inactive": "비활성",
   "active": "활성",
-
   "reset_all_coupon": "모든 쿠폰 초기화",
   "change_color_in_batches": "일괄 색상 변경",
   "change_password_in_bulk": "일괄 비밀번호 변경",
@@ -312,7 +292,6 @@
   "link": "링크",
   "memberLevelUponSignup": "가입시 회원 레벨",
   "distributorLevelUponSignup": "가입시 총판 레벨",
-
   "company": "회사",
   "url": "URL",
   "agent": "에이전트",
@@ -340,7 +319,6 @@
   "firstChargeEveryday": "매일 첫 충전",
   "redeposit": "재입금",
   "download": "다운로드",
-
   "inquiry": "문의",
   "rollingTransition": "롤링 전환",
   "nonMember": "비회원",
@@ -396,7 +374,6 @@
   "close": "닫기",
   "pay": "지급",
   "payment": "지급",
-
   "abroad": "해외",
   "domestic": "국내",
   "inPlay": "인플레이",
@@ -426,12 +403,10 @@
   "roulette": "룰렛",
   "children": "하위",
   "qna": "고객지원센터",
-
   "announcements": "공지사항",
   "announcement": "공지",
   "events": "이벤트",
   "Real-time deposit/withdraw status": "실시간 입출금 상태",
-
   "dashboard": "대시보드",
   "home": "홈",
   "admin": "관리자",
@@ -457,7 +432,6 @@
   "checked": "확인됨",
   "select_dist": "총판 선택",
   "rolling": "롤링",
-
   "times": "회",
   "search": "검색",
   "block": "차단",
@@ -471,7 +445,6 @@
   "waiting": "대기중",
   "delete": "삭제",
   "deleteAll": "모두 삭제",
-
   "event-period": "이벤트 기간",
   "views": "조회수",
   "event-category": "이벤트 카테고리",
@@ -483,11 +456,8 @@
   "notice-type": "공지",
   "gameRules": "게임 규칙",
   "selectType": "타입 선택",
-
   "newPost": "새 게시글",
-
   "memberId": "회원 아이디",
-
   "level1": "레벨 1",
   "level2": "레벨 2",
   "level3": "레벨 3",
@@ -503,24 +473,18 @@
   "vip1": "VIP 1",
   "vip2": "VIP 2",
   "premium": "프리미엄",
-
   "recommend": "추천",
   "notrecommend": "비추천",
-
   "topfixed": "상단 고정",
-
   "eventCategory": "이벤트 카테고리",
-
   "number": "번호",
   "depositAmount": "입금액",
   "applicationDate": "신청일",
   "situation": "상황",
-
   "rechargeBonusError": "충전 보너스를 선택해주세요",
   "depositAmountError": "입금액을 입력해주세요",
   "depositSuccess": "입금 신청이 성공적으로 전송되었습니다",
   "depositFailed": "입금 신청이 실패했습니다",
-
   "bankName": "은행명",
   "accountName": "예금주명",
   "depositorName": "입금자명",
@@ -530,9 +494,7 @@
   "minimumWithdrawError": "최소 출금액을 입력해주세요",
   "withdrawSuccess": "출금 신청이 성공적으로 전송되었습니다",
   "withdrawFailed": "출금 신청이 실패했습니다",
-
   "withdrawAmount": "출금액",
-
   "waitForMemberApproval": "회원 승인 대기",
   "depositRequest": "입금 신청",
   "withdrawRequest": "출금 신청",
@@ -540,7 +502,6 @@
   "rollingConversion": "롤링 전환",
   "partnerWithdraw": "파트너 출금",
   "partnerDeposit": "파트너 입금",
-
   "sportsCategorySettings": "스포츠 카테고리 설정(디자인별)",
   "sportsGameSettings": "스포츠 게임 설정(전체)",
   "sportsBettingLimits": "스포츠 베팅 제한(전체)",
@@ -548,7 +509,6 @@
   "listCountries": "국가 목록",
   "listLeague": "리그 목록",
   "listTeams": "팀 목록",
-
   "sportsBettingInformationSettings": "스포츠 베팅 정보 설정",
   "overseas": "해외",
   "singlePolerollingApplication": "단폴 롤링 적용",
@@ -595,7 +555,6 @@
   "matchesStartWithinSetTimeInSchedule": "일정 목록에서 설정 시간 내 시작하는 경기만 표시",
   "changeLevelButton": "레벨 변경",
   "applyToAllLevels": "모든 레벨에 한번에 적용",
-
   "code": "코드",
   "sportsList": "스포츠 목록",
   "prematchBookmarker": "프리매치 북마커",
@@ -603,7 +562,6 @@
   "listDisplay": "목록 표시",
   "countryName": "국가명",
   "englishName": "영어명",
-
   "listMainEvents": "주요 경기 목록",
   "change": "변경",
   "combine": "조합",
@@ -613,7 +571,6 @@
   "nation": "국가",
   "leagueName": "리그명",
   "leagueList": "리그 목록",
-
   "marketName": "마켓명",
   "marketCode": "마켓 코드",
   "marketlist": "마켓 목록",
@@ -636,7 +593,6 @@
   "notPossibleSingleBetting": "단폴 베팅 불가",
   "bulkIncreaseDecrease": "일괄 증감 (홈, 무승부, 원정):",
   "bettingCombination": "베팅 조합",
-
   "bettingNumber": "베팅 번호",
   "bettingDetailsNumber": "베팅 상세 번호",
   "marketID": "마켓 ID",
@@ -649,7 +605,6 @@
   "AfterBettingResults": "이후 베팅 결과",
   "appliedArea": "적용 영역",
   "idNicknameAccount": "ID/닉네임/계정",
-
   "registrationNumber": "등록 번호",
   "marketNumber": "마켓 번호",
   "fixtureID": "픽스처 ID",
@@ -661,7 +616,6 @@
   "league": "리그",
   "team": "팀",
   "refresh": "새로고침",
-
   "leagueNumber": "리그 번호",
   "homeTeam": "홈팀",
   "VS": "VS",
@@ -671,7 +625,6 @@
   "ignoreAPIsignal": "API 신호 무시",
   "ignoreAPIstartTime": "API 시작 시간 무시",
   "waitingOrRelease": "대기/릴리즈",
-
   "particulate": "미립자",
   "update": "업데이트",
   "apply": "적용",
@@ -695,7 +648,6 @@
   "registerForEvents": "스포츠 이벤트 등록",
   "marketCombinationRegistration": "마켓 조합 등록",
   "manualMatchExcelRegistration": "수동 경기 엑셀 등록",
-
   "manualMatch": "수동 경기",
   "autoMatch": "자동 경기",
   "matchNumber": "경기 번호",
@@ -709,21 +661,18 @@
   "gameChangeDetails": "게임 변경 상세",
   "marketChangeHistory": "마켓 변경 내역",
   "user/home/search/placeholder": "팀명 또는 리그명을 입력하세요",
-
   "sportsGameName": "스포츠 게임명",
   "presentOrNot": "표시 여부",
   "whetherToCheck": "검수 여부",
   "InstantMsg": "검수 메시지",
   "inspectionMessage": "검수 메시지",
   "order": "순서",
-
   "loginYn": "로그인/로그아웃 (데이터 표시)",
   "useInquiry": "베팅시 문의 사용",
   "matchesNum": "한 페이지에 표시할 경기 수",
   "startSetTime": "로그아웃시 설정 시간 내 게임 시작",
   "matchScheduleYn": "경기 일정 표시",
   "image": "이미지",
-
   "domesticLanguageRestrictions": "국내형 언어/언더오버 제한",
   "domesticHandicapRestrictions ": "국내형 핸디캡 제한",
   "overseasLanguageRestrictions": "해외형 언어 제한",
@@ -748,7 +697,6 @@
   "combinationBettingList": "조합 베팅 목록",
   "combinationHint": "힌트: 무승부 배당: x 언더: u 오버: o 무승부: p 마핸: m",
   "sameMatchAllowed": "동일 경기 허용",
-
   "home/majorEventnu/betlog": "베팅 내역",
   "realTime": "실시간",
   "minigame": "미니게임",
@@ -796,7 +744,6 @@
   "admin/recentUserDepositsAndWithdrawals": "최근 사용자 입출금",
   "admin/bettingWinning": "베팅 당첨",
   "admin/betWinning": "베팅 당첨",
-
   "partner/menu/manage": "관리",
   "partner/menu/myAccountManagement": "내 계정 관리",
   "partner/menu/myDepositWidthdrawal": "내 입출금",
@@ -833,7 +780,6 @@
   "partner/menu/connectedMember": "연결된 회원",
   "partner/menu/waitingForMemberApproval": "회원 승인 대기",
   "partner/menu/pleaseLogin": "베팅하려면 먼저 로그인하세요",
-
   "user/menu/betlog": "베팅 내역",
   "Status": "상태",
   "Show From": "시작일",
@@ -844,7 +790,6 @@
   "userId": "사용자 아이디",
   "answerContent": "답변 내용",
   "selectSample": "샘플 선택",
-
   "basicInformation": "기본 정보",
   "blackSearch": "블랙 검색",
   "bettingSettings": "베팅 설정",
@@ -863,7 +808,6 @@
   "activityHistory": "활동 내역",
   "informationChangeHistory": "정보 변경 내역",
   "generalStatistics": "일반 통계",
-
   "exchangePassword": "환전 비밀번호",
   "alias": "별칭",
   "residentRegNumber": "주민등록번호",
@@ -916,7 +860,6 @@
   "regDate": "등록일",
   "prohibition": "금지",
   "color": "색상",
-
   "admin/menu/casinoLive": "카지노 라이브",
   "admin/menu/casinoSlot": "카지노 슬롯",
   "admin/menu/casinoPoker": "카지노 포커",
@@ -1082,7 +1025,6 @@
   "touchWinning": "터치 당첨",
   "holdemBetting": "홀덤 베팅",
   "holdemWinning": "홀덤 당첨",
-
   "ratePercentage": "비율 퍼센트",
   "rollingtransition": "롤링 전환",
   "miniDanpol": "미니 단폴",
@@ -1119,7 +1061,6 @@
   "rolling(Lotus/MGM)": "롤링(로터스/MGM)",
   "rolling(Touch/Game)": "롤링(터치/게임)",
   "rollingOption(Video)": "롤링 옵션(비디오)",
-
   "algCasino": "알지 카지노",
   "ejugi": "에주기",
   "TVBet": "TV베트",
@@ -1287,7 +1228,6 @@
   "Linder": "린더",
   "SVR Gaming": "SVR 게이밍",
   "Nagagames": "나가게임즈",
-
   "Sure Powerball 3 minutes (Sureman)": "슈어 파워볼 3분 (슈어맨)",
   "Sure Powerball 2 minutes (Sureman)": "슈어 파워볼 2분 (슈어맨)",
   "N Powerball 3 minutes (named)": "N 파워볼 3분 (네임드)",
@@ -1489,10 +1429,8 @@
   "admin/menu/noteList": "쪽지 목록",
   "admin/menu/groupMessageList": "그룹 메시지 목록",
   "admin/menu/simpleNote": "간단 쪽지",
-
   "user/slot": "슬롯 게임",
   "user/slot/description": "공정성과 재미가 보장된 1,000개 이상의 주요 슬롯 게임",
-
   "admin/menu/levelSetting": "레벨",
   "admin/menu/levelSettingTitle": "레벨 설정",
   "levelVIP1": "VIP 1",
@@ -1669,7 +1607,6 @@
   "admin/menu/bettingStatus/casinoLive": "카지노 라이브",
   "admin/menu/bettingStatus/casinoSlot": "카지노 슬롯",
   "admin/menu/bettingStatus/miniGame": "미니게임",
-
   "casinoLiveBettingStatus": "카지노 라이브 베팅 상태",
   "casinoSlotBettingStatus": "카지노 슬롯 베팅 상태",
   "miniGameBettingStatus": "미니게임 베팅 상태",
@@ -1717,7 +1654,6 @@
   "viewQuestion": "질문 보기",
   "replyToQuestion": "질문에 답변",
   "reply": "답변",
-
   "rolling/exchangeRequest": "롤링 전환 신청",
   "profile/rollingAmount": "롤링 금액",
   "WhenYouConvertRolling,TheyWillBeMobedToYourBalance": "롤링을 전환하면 잔액으로 이동됩니다.",
@@ -2325,5 +2261,15 @@
   "betTypeOdds": "베팅 유형/배당",
   "betAmount": "베팅 금액",
   "betId": "베팅 ID",
-  "lost": "패"
+  "lost": "패",
+  "directDeposit": "직접 입금",
+  "directWithdraw": "직접 출금",
+  "lossingRate": "루징 비율",
+  "miniGamePlace": "미니게임 베팅",
+  "miniGameWin": "미니게임 당첨",
+  "pleaseSelectRole": "역할을 선택해주세요",
+  "pointsManagement": "포인트 관리",
+  "processStatus": "처리 상태",
+  "selectDomains": "도메인 선택",
+  "subtract": "차감"
 }

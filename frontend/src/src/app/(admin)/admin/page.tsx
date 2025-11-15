@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { Layout, Statistic, Space, Card, Divider, Table, Tag } from "antd";
+import { Layout, Statistic, Space, Card, Divider, Table, Tag, Button } from "antd";
 import type { TableProps } from "antd"; 
 
 import {
@@ -153,10 +153,19 @@ const Dashboard: React.FC = () => {
     {
       title: t("admin/type"),
       dataIndex: "type",
-      key: "type"
+      key: "type",
+      render: (text: string) => {
+        if (text === "withdrawal") {
+          return <Button danger>{text}</Button>;
+        }
+        if (text === "deposit") {
+          return <Button type="primary" style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}>{text}</Button>;
+        }
+        return text;
+      }
     },
     {
-      title: t("admin/name"),
+      title: t("userid"),
       dataIndex: "name",
       key: "name",
     },
@@ -193,11 +202,11 @@ const Dashboard: React.FC = () => {
       key: "applicationDate",
       dataIndex: "applicationDate",
     },
-    {
-      title: t("admin/processDate"),
-      key: "applicationDate",
-      dataIndex: "applicationDate",
-    }
+    // {
+    //   title: t("admin/processDate"),
+    //   key: "applicationDate",
+    //   dataIndex: "applicationDate",
+    // }
   ];
   const [mount, setMount] = useState<boolean>(false);
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);

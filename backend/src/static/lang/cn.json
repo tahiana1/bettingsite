@@ -2325,5 +2325,7 @@
   "directDeposit" : "直接存款",
   "directWithdraw" : "直接提款",
   "subtract" : "减去",
-  "pleaseSelectRole" : "请选择角色"
+  "pleaseSelectRole" : "请选择角色",
+  "lossingRate" : "亏损率",
+  "processStatus" : "处理状态"
 }

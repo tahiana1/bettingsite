@@ -2323,5 +2323,7 @@
   "directDeposit" : "Direct Deposit",
   "directWithdraw" : "Direct Withdrawal",
   "subtract" : "Subtract",
-  "pleaseSelectRole" : "Please Select Role"
+  "pleaseSelectRole" : "Please Select Role",
+  "lossingRate" : "Lossing Rate",
+  "processStatus" : "Process Status"
 } 
