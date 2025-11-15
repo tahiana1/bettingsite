@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import * as XLSX from 'xlsx';
 
 import {
@@ -51,6 +51,7 @@ const GeneralDWPage: React.FC = () => {
   // const [blockTransaction] = useMutation(BLOCK_TRANSACTION);
   const [cancelTransaction] = useMutation(CANCEL_TRANSACTION);
   const [waitingTransaction] = useMutation(WAITING_TRANSACTION);
+  const tableOptionsRef = useRef<any>(null);
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
@@ -106,12 +107,18 @@ const GeneralDWPage: React.FC = () => {
       },
     ],
   });
+  
+  // Keep ref in sync with tableOptions so interval always uses latest filters
+  useEffect(() => {
+    tableOptionsRef.current = tableOptions;
+  }, [tableOptions]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      refetch(tableOptions ?? undefined);
+      refetch(tableOptionsRef.current ?? undefined);
     }, 2000);
     return () => clearInterval(interval);
-  }, []);
+  }, [refetch]);
   // const onBlockTransaction = (transaction: Transaction) => {
   //   blockTransaction({ variables: { id: transaction.id } })
   //     .then((res) => {
@@ -462,11 +469,11 @@ const GeneralDWPage: React.FC = () => {
         return record.user?.profile?.point;
       },
     },
-    {
-      title: t("usdtDesc"),
-      dataIndex: "usdtDesc",
-      key: "usdtDesc",
-    },
+    // {
+    //   title: t("usdtDesc"),
+    //   dataIndex: "usdtDesc",
+    //   key: "usdtDesc",
+    // },
     {
       title: t("shortcut"),
       dataIndex: "shortcut",

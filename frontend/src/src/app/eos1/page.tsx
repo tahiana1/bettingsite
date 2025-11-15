@@ -347,26 +347,12 @@ export default function EOS1Page() {
             </div>
             </div>
         </header>
-
-        {/* 
-            Main Content Area
-            Contains the betting interface with two main columns:
-            - Left: Game display, betting history, and current round info
-            - Right: Betting options and amount selection
-        */}
         <main className='mt-[50px]'>
             <div className="container">
             <div className="tab-content active">
                 <div className="content-wrapper">
-                {/* 
-                    Left Column - Game Information and History
-                    Contains real-time game display, betting history table, and current round details
-                */}
+
                 <div className="left-column left-col">
-                    {/* 
-                    Game Info Bar - Top section with time, game name, and iframe toggle
-                    Displays current time, active game name, and controls iframe visibility
-                    */}
                     <div className="game-info-bar info-bar">
                     <div className="time-display">
                         <i className="fa fa-clock-o"></i>
