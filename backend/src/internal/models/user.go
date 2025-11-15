@@ -237,7 +237,7 @@ type User struct {
 	// Domain access control - array of domain IDs
 	// Empty array means access to all domains
 	// Non-empty array means access only to specified domains
-	DomainIDs []uint `json:"domainIds" gorm:"type:integer[]"`
+	DomainIDs UintArray `json:"domainIds" gorm:"type:integer[]"`
 
 	// Domain string from signup
 	Domain string `json:"domain" gorm:"size:255"`

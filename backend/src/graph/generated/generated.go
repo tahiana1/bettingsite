@@ -556,6 +556,7 @@ type ComplexityRoot struct {
 		CurrentIP               func(childComplexity int) int
 		DeletedAt               func(childComplexity int) int
 		Device                  func(childComplexity int) int
+		DomainIds               func(childComplexity int) int
 		EntireLosing            func(childComplexity int) int
 		FingerPrint             func(childComplexity int) int
 		Hold                    func(childComplexity int) int
@@ -786,6 +787,8 @@ type UserResolver interface {
 	Status(ctx context.Context, obj *models.User) (model.UserStatus, error)
 
 	NumberOfMembers(ctx context.Context, obj *models.User) (*int32, error)
+
+	DomainIds(ctx context.Context, obj *models.User) ([]uint, error)
 }
 
 type executableSchema struct {
@@ -3962,6 +3965,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Device(childComplexity), true
 
+	case "User.domainIds":
+		if e.complexity.User.DomainIds == nil {
+			break
+		}
+
+		return e.complexity.User.DomainIds(childComplexity), true
+
 	case "User.entireLosing":
 		if e.complexity.User.EntireLosing == nil {
 			break
@@ -6078,6 +6088,9 @@ type User {
   partnershipRolling: Float
   partnershipMoneyInHand: Float
 
+  # Domain access control
+  domainIds: [ID!]
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -6177,6 +6190,8 @@ input UpdateUser {
   slotLosingBeDang: Float
   holdLosingBeDang: Float
   losingMethod: String
+  
+  domainIds: [ID!]
 }
 
 input NewUser {
@@ -9489,6 +9504,8 @@ func (ec *executionContext) fieldContext_AdminPermission_user(_ context.Context,
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -10585,6 +10602,8 @@ func (ec *executionContext) fieldContext_Announcement_user(_ context.Context, fi
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -12457,6 +12476,8 @@ func (ec *executionContext) fieldContext_Domain_user(_ context.Context, field gr
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -13205,6 +13226,8 @@ func (ec *executionContext) fieldContext_Event_user(_ context.Context, field gra
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -15128,6 +15151,8 @@ func (ec *executionContext) fieldContext_Inbox_user(_ context.Context, field gra
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -15390,6 +15415,8 @@ func (ec *executionContext) fieldContext_Inbox_FromUser(_ context.Context, field
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -16239,6 +16266,8 @@ func (ec *executionContext) fieldContext_Log_user(_ context.Context, field graph
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -26302,6 +26331,8 @@ func (ec *executionContext) fieldContext_Qna_user(_ context.Context, field graph
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -29473,6 +29504,8 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -29718,6 +29751,8 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -30136,6 +30171,8 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -31496,6 +31533,8 @@ func (ec *executionContext) fieldContext_Setting_user(_ context.Context, field g
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -32560,6 +32599,8 @@ func (ec *executionContext) fieldContext_Todo_user(_ context.Context, field grap
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -32863,6 +32904,8 @@ func (ec *executionContext) fieldContext_Transaction_user(_ context.Context, fie
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -34169,6 +34212,8 @@ func (ec *executionContext) fieldContext_User_root(_ context.Context, field grap
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -34425,6 +34470,8 @@ func (ec *executionContext) fieldContext_User_parent(_ context.Context, field gr
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -34640,6 +34687,8 @@ func (ec *executionContext) fieldContext_User_children(_ context.Context, field 
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -37588,6 +37637,47 @@ func (ec *executionContext) fieldContext_User_partnershipMoneyInHand(_ context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _User_domainIds(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_domainIds(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.User().DomainIds(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]uint)
+	fc.Result = res
+	return ec.marshalOID2ᚕuintᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_domainIds(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_createdAt(ctx context.Context, field graphql.CollectedField, obj *models.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_createdAt(ctx, field)
 	if err != nil {
@@ -37922,6 +38012,8 @@ func (ec *executionContext) fieldContext_UserList_users(_ context.Context, field
 				return ec.fieldContext_User_partnershipRolling(ctx, field)
 			case "partnershipMoneyInHand":
 				return ec.fieldContext_User_partnershipMoneyInHand(ctx, field)
+			case "domainIds":
+				return ec.fieldContext_User_domainIds(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_User_createdAt(ctx, field)
 			case "updatedAt":
@@ -44008,7 +44100,7 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "userid", "rootId", "partentId", "type", "role", "usdtAddress", "status", "orderNum", "live", "slot", "hold", "entireLosing", "liveLosingBeDang", "slotLosingBeDang", "holdLosingBeDang", "losingMethod"}
+	fieldsInOrder := [...]string{"name", "userid", "rootId", "partentId", "type", "role", "usdtAddress", "status", "orderNum", "live", "slot", "hold", "entireLosing", "liveLosingBeDang", "slotLosingBeDang", "holdLosingBeDang", "losingMethod", "domainIds"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44134,6 +44226,13 @@ func (ec *executionContext) unmarshalInputUpdateUser(ctx context.Context, obj an
 				return it, err
 			}
 			it.LosingMethod = data
+		case "domainIds":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domainIds"))
+			data, err := ec.unmarshalOID2ᚕuintᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DomainIds = data
 		}
 	}
 
@@ -47941,6 +48040,39 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_partnershipRolling(ctx, field, obj)
 		case "partnershipMoneyInHand":
 			out.Values[i] = ec._User_partnershipMoneyInHand(ctx, field, obj)
+		case "domainIds":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._User_domainIds(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "createdAt":
 			out.Values[i] = ec._User_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -50597,6 +50729,42 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	}
 	res := graphql.MarshalFloat(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOID2ᚕuintᚄ(ctx context.Context, v any) ([]uint, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]uint, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNID2uint(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOID2ᚕuintᚄ(ctx context.Context, sel ast.SelectionSet, v []uint) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNID2uint(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOID2ᚖuint(ctx context.Context, v any) (*uint, error) {

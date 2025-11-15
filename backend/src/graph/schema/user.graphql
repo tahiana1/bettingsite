@@ -114,6 +114,9 @@ type User {
   partnershipRolling: Float
   partnershipMoneyInHand: Float
 
+  # Domain access control
+  domainIds: [ID!]
+
   createdAt: Time!
   updatedAt: Time!
   deletedAt: DeletedAt
@@ -213,6 +216,8 @@ input UpdateUser {
   slotLosingBeDang: Float
   holdLosingBeDang: Float
   losingMethod: String
+  
+  domainIds: [ID!]
 }
 
 input NewUser {

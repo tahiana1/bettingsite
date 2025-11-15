@@ -29,6 +29,7 @@ import {
   GET_DISTRIBUTORS,
   INACTIVATE_USER,
   DELETE_USER,
+  UPDATE_USER,
 } from "@/actions/user";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
@@ -126,6 +127,7 @@ const PartnerPage: React.FC = () => {
   const [blockUser] = useMutation(BLOCK_USER);
   const [inactivateUser] = useMutation(INACTIVATE_USER);
   const [deleteUser] = useMutation(DELETE_USER);
+  const [updateUser] = useMutation(UPDATE_USER);
 
   const onBlockUser = (user: User) => {
     blockUser({ variables: { id: user.id } })
@@ -206,22 +208,89 @@ const PartnerPage: React.FC = () => {
     setDomainModal(true);
   };
 
-  const onUpdateDomain = (v: any) => {
-    console.log({ v });
+  const onUpdateDomain = async (v: any) => {
+    if (!currentUser?.id) {
+      message.error(t("userNotSelected"));
+      return;
+    }
 
-    setDomainModal(false);
+    try {
+      // Get domain IDs from form - they should be numbers from the Select component
+      // GraphQL will convert them to the appropriate type
+      const domainIds = v.domainId || [];
+      
+      console.log("Updating domain IDs:", domainIds, "for user:", currentUser.id);
+      
+      const result = await updateUser({
+        variables: {
+          id: String(currentUser.id),
+          input: {
+            domainIds: domainIds.length > 0 ? domainIds.map((id: any) => String(id)) : [],
+          },
+        },
+      });
+
+      console.log("Update result:", result);
+
+      if (result.data?.success) {
+        message.success(t("domainUpdatedSuccessfully") || "Domain updated successfully");
+        setDomainModal(false);
+        refetch(tableOptions);
+      } else {
+        message.error(t("updateFailed") || "Failed to update domain");
+      }
+    } catch (error: any) {
+      console.error("Update domain error:", error);
+      const errorMessage = error?.graphQLErrors?.[0]?.message || error?.message || t("updateFailed") || "Failed to update domain";
+      message.error(errorMessage);
+    }
   };
 
-  const onRegisterUser = (v: any) => {
-    console.log({ v });
-    createUser({
-      variables: {
-        input: { ...v, role: "P", type: "G", status: "P" },
-      },
-    }).then((result) => {
-      console.log({ result });
-    });
-    setRegModal(false);
+  const onRegisterUser = async (v: any) => {
+    try {
+      console.log("Registering user with data:", v);
+      
+      // Prepare input data according to NewUser schema
+      const input: any = {
+        userid: v.userid,
+        password: v.password,
+        name: v.name,
+        type: v.type || "G", // Default to General
+        role: v.role || "P", // Default to Partner
+        status: "P", // Pending status
+        nickname: v.nickname,
+        phone: v.phone,
+        holderName: v.holderName,
+      };
+
+      // Add optional fields if provided
+      if (v.domainId) input.domainId = String(v.domainId);
+      if (v.bankId) input.bankId = String(v.bankId);
+      if (v.settlementId) input.settlementId = String(v.settlementId);
+      // Note: accountNumber and secPassword are not in NewUser schema
+      // They may need to be handled separately or the backend schema needs to be updated
+
+      const result = await createUser({
+        variables: {
+          input: input,
+        },
+      });
+
+      console.log("Create user result:", result);
+
+      if (result.data?.success) {
+        message.success(t("userCreatedSuccessfully") || "User created successfully");
+        setRegModal(false);
+        form.resetFields();
+        refetch(tableOptions);
+      } else {
+        message.error(t("createFailed") || "Failed to create user");
+      }
+    } catch (error: any) {
+      console.error("Create user error:", error);
+      const errorMessage = error?.graphQLErrors?.[0]?.message || error?.message || t("createFailed") || "Failed to create user";
+      message.error(errorMessage);
+    }
   };
 
   const onPayment = (record: User) => {
@@ -1464,14 +1533,58 @@ const PartnerPage: React.FC = () => {
           <Modal
             title={t("register")}
             open={regModal}
-            onCancel={() => setRegModal(false)}
+            onCancel={() => {
+              setRegModal(false);
+              form.resetFields();
+            }}
             width={800}
             footer={null}
           >
             <Space direction="vertical" className="gap-2 w-full">
-              <Form {...formItemLayout} onFinish={onRegisterUser}>
+              <Form {...formItemLayout} form={form} onFinish={onRegisterUser}>
                 <Form.Item name="domainId" label={t("domain")}>
                   <Select options={domains} />
+                </Form.Item>
+                <Form.Item name="role" label={t("role")} rules={[{ required: true, message: t("pleaseSelectRole") || "Please select a role" }]}>
+                  <Select
+                    options={[
+                      {
+                        label: t("admin") || "Admin",
+                        value: "A",
+                      },
+                      {
+                        label: t("partner") || "Partner",
+                        value: "P",
+                      },
+                      {
+                        label: t("user") || "User",
+                        value: "U",
+                      },
+                    ]}
+                    placeholder={t("selectRole") || "Select role"}
+                  />
+                </Form.Item>
+                <Form.Item name="type" label={t("userType") || "User Type"} initialValue="G">
+                  <Select
+                    options={[
+                      {
+                        label: t("general") || "General",
+                        value: "G",
+                      },
+                      {
+                        label: t("test") || "Test",
+                        value: "T",
+                      },
+                      {
+                        label: t("interest") || "Interest",
+                        value: "I",
+                      },
+                      {
+                        label: t("working") || "Working",
+                        value: "W",
+                      },
+                    ]}
+                  />
                 </Form.Item>
                 <Form.Item name="settlementId" label={t("settlementMethod")}>
                   <Select
@@ -1518,26 +1631,26 @@ const PartnerPage: React.FC = () => {
                       },
                     ]}
                   />
-                </Form.Item>{" "}
-                <Form.Item name="name" label={t("name")}>
+                </Form.Item>
+                <Form.Item name="name" label={t("name")} rules={[{ required: true, message: t("pleaseEnterName") || "Please enter name" }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item name="userid" label={t("userid")}>
+                <Form.Item name="userid" label={t("userid")} rules={[{ required: true, message: t("pleaseEnterUserid") || "Please enter user ID" }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item name="password" label={t("password")}>
+                <Form.Item name="password" label={t("password")} rules={[{ required: true, message: t("pleaseEnterPassword") || "Please enter password" }]}>
                   <Input.Password />
                 </Form.Item>
-                <Form.Item name={"nickname"} label={t("nickname")}>
+                <Form.Item name="nickname" label={t("nickname")} rules={[{ required: true, message: t("pleaseEnterNickname") || "Please enter nickname" }]}>
                   <Input />
                 </Form.Item>
-                <Form.Item name={"phone"} label={t("contact")}>
+                <Form.Item name="phone" label={t("contact")}>
                   <Input />
                 </Form.Item>
-                <Form.Item name={"holderName"} label={t("holderName")}>
+                <Form.Item name="holderName" label={t("holderName")}>
                   <Input />
                 </Form.Item>
-                <Form.Item name={"bankId"} label={t("bank")}>
+                <Form.Item name="bankId" label={t("bank")}>
                   <Select
                     options={bankData?.response?.banks?.map((b: Bank) => ({
                       label: b.name,
@@ -1545,10 +1658,10 @@ const PartnerPage: React.FC = () => {
                     }))}
                   />
                 </Form.Item>
-                <Form.Item label={t("accountNumber")}>
+                <Form.Item name="accountNumber" label={t("accountNumber")}>
                   <Input />
                 </Form.Item>
-                <Form.Item label={t("secPassword")}>
+                <Form.Item name="secPassword" label={t("secPassword")}>
                   <Input.Password />
                 </Form.Item>
                 <Form.Item label={t("bettingHistoryReductionApplied")}>
@@ -1595,26 +1708,18 @@ const PartnerPage: React.FC = () => {
             footer={null}
           >
             <Space direction="vertical" className="gap-2 w-full">
-              <Form
+            <Form
+                key={currentUser?.id} // Force form to reset when user changes
                 initialValues={{
                   userId: currentUser?.userid,
+                  domainId: (currentUser as any)?.domainIds?.map((id: any) => String(id)) || [],
                 }}
                 onFinish={onUpdateDomain}
               >
-                <Form.Item label={t("site")}>
-                  <Select
-                    options={[
-                      {
-                        label: "site2",
-                        value: "site2",
-                      },
-                    ]}
-                  />
-                </Form.Item>
-                <Form.Item name={"userId"} label={t("domain")}>
+                <Form.Item name={"userId"} label={t("userId")}>
                   <Input disabled />
                 </Form.Item>
-                <Form.Item name={"domainId"} label={t("domain")}>
+                <Form.Item name={"domainId"} label={t("selectDomains")}>
                   <Select mode="multiple" options={domains} />
                 </Form.Item>
                 <Form.Item>

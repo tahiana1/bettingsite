@@ -618,6 +618,7 @@ type UpdateUser struct {
 	SlotLosingBeDang *float64    `json:"slotLosingBeDang,omitempty"`
 	HoldLosingBeDang *float64    `json:"holdLosingBeDang,omitempty"`
 	LosingMethod     *string     `json:"losingMethod,omitempty"`
+	DomainIds        []uint      `json:"domainIds,omitempty"`
 }
 
 type UserList struct {

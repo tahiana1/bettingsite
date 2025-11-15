@@ -542,6 +542,7 @@
   "main-image": "Main Image",
   "entire": "Entire",
   "selectDomain": "Select Domain",
+  "selectDomains": "Select Domains",
   "category": "Category",
   "notice-type": "Notice",
   "gameRules": "Game Rules",
@@ -1895,6 +1896,7 @@
   "invalidAmount" : "Invalid amount",
   "currentPoints" : "Current Points",
   "pointManagement" : "Point Management",
+  "pointsManagement" : "Points Management",
   "userDeletedSuccessfully" : "User Deleted Successfully",
   "deleteFailed" : "Delete Failed",
   "userBlockedSuccessfully" : "User Blocked Successfully",
@@ -2319,5 +2321,7 @@
   "miniGamePlace" : "Mini Game Place",
   "miniGameWin" : "Mini Game Win",
   "directDeposit" : "Direct Deposit",
-  "directWithdraw" : "Direct Withdrawal"
+  "directWithdraw" : "Direct Withdrawal",
+  "subtract" : "Subtract",
+  "pleaseSelectRole" : "Please Select Role"
 } 

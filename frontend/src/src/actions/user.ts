@@ -141,6 +141,7 @@ export const GET_DISTRIBUTORS = gql`
         slotLosingBeDang
         holdLosingBeDang
         losingMethod
+        domainIds
         profile {
           id
           userId

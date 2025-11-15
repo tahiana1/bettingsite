@@ -111,7 +111,7 @@ func (pr *userReader) DeleteUser(ctx context.Context, userID uint) error {
 			fmt.Println("Recovered from panic:", r)
 		}
 	}()
-	
+
 	fmt.Println("Permanently deleting user ID:", userID)
 
 	user := models.User{}
@@ -332,9 +332,28 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 		me.LosingMethod = *updates.LosingMethod
 	}
 
+	// Handle domainIds field
+	// Note: GraphQL [ID!] is automatically converted to []uint by gqlgen (see gqlgen.yml)
+	// Convert []uint to UintArray for proper PostgreSQL array encoding
+	if updates.DomainIds != nil {
+		// Update domain IDs (empty array means clear all domain IDs)
+		me.DomainIDs = models.UintArray(updates.DomainIds)
+		fmt.Printf("Updating user %d domain IDs: %v\n", userID, me.DomainIDs)
+	}
+
+	// Save all fields including DomainIDs
 	tx := initializers.DB.Save(&me)
 
-	return tx.Error
+	if tx.Error != nil {
+		fmt.Printf("Error saving user: %v\n", tx.Error)
+		return tx.Error
+	}
+
+	if updates.DomainIds != nil {
+		fmt.Printf("Successfully updated user %d with domain IDs: %v\n", userID, me.DomainIDs)
+	}
+
+	return nil
 }
 
 // GetProfiles returns many profiles by ids efficiently

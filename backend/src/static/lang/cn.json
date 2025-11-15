@@ -542,6 +542,7 @@
   "main-image": "主图",
   "entire": "全部",
   "selectDomain": "选择域名",
+  "selectDomains": "选择域名",
   "category": "类别",
   "notice-type": "通知",
   "gameRules": "游戏规则",
@@ -1897,6 +1898,7 @@
   "invalidAmount" : "无效金额",
   "currentPoints" : "当前点数",
   "pointManagement" : "点数管理",
+  "pointsManagement" : "积分管理",
   "userDeletedSuccessfully" : "用户删除成功",
   "deleteFailed" : "删除失败",
   "yourinformationwasregisteredsuccessfully" : "您的信息已成功注册！",
@@ -2321,5 +2323,7 @@
   "miniGamePlace" : "小游戏投注",
   "miniGameWin" : "小游戏赢",
   "directDeposit" : "直接存款",
-  "directWithdraw" : "直接提款"
+  "directWithdraw" : "直接提款",
+  "subtract" : "减去",
+  "pleaseSelectRole" : "请选择角色"
 }

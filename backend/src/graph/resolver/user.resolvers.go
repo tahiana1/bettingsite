@@ -203,6 +203,12 @@ func (r *userResolver) NumberOfMembers(ctx context.Context, obj *models.User) (*
 	panic(fmt.Errorf("not implemented: NumberOfMembers - numberOfMembers"))
 }
 
+// DomainIds is the resolver for the domainIds field.
+func (r *userResolver) DomainIds(ctx context.Context, obj *models.User) ([]uint, error) {
+	// Convert UintArray to []uint for GraphQL
+	return []uint(obj.DomainIDs), nil
+}
+
 // User returns generated.UserResolver implementation.
 func (r *Resolver) User() generated.UserResolver { return &userResolver{r} }
 

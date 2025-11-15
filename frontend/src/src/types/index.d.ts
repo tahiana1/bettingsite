@@ -50,6 +50,7 @@ interface User {
   live?: number;
   slot?: number;
   hold?: number;
+  domainIds?: string[] | number[];
 }
 
 interface Noti {
