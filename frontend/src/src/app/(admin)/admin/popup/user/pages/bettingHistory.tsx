@@ -194,16 +194,12 @@ const UserBettingHistory: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        const colors: Record<string, string> = {
-          won: "bg-green-500",
-          lost: "bg-red-500", 
-          pending: "bg-yellow-500",
-          cancelled: "bg-gray-500"
-        };
+      render: (_, record) => {
         return (
-          <span className={`${colors[status] || "bg-blue-500"} text-white px-2 py-1 rounded text-xs`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+          <span className={`${record.afterAmount > record.beforeAmount ? "bg-green-500" : "bg-red-500"} text-white px-2 py-1 rounded text-xs`}>
+            {
+              record.afterAmount > record.beforeAmount ? t("win") : t("lose")
+            }
           </span>
         );
       }
@@ -335,16 +331,12 @@ const UserBettingHistory: React.FC = () => {
       title: t("status"),
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        const colors: Record<string, string> = {
-          won: "bg-green-500",
-          lost: "bg-red-500", 
-          pending: "bg-yellow-500",
-          cancelled: "bg-gray-500"
-        };
+      render: (_, record) => {
         return (
-          <span className={`${colors[status] || "bg-blue-500"} text-white px-2 py-1 rounded text-xs`}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+          <span className={`${record.afterAmount > record.beforeAmount ? "bg-green-500" : "bg-red-500"} text-white px-2 py-1 rounded text-xs`}>
+            {
+              record.afterAmount > record.beforeAmount ? t("win") : t("lose")
+            }
           </span>
         );
       }
