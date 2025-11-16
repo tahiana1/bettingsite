@@ -21,6 +21,7 @@ func GetBettingRoute(r *gin.RouterGroup) {
 	{
 		adminGroup.POST("/get-all-casinoBets", controllers.GetAllCasinoBetting)
 		adminGroup.POST("/get-user-betting-history", controllers.GetUserBettingHistory)
+		adminGroup.POST("/get-user-betting-history-v2", controllers.GetUserBettingHistoryV2)
 	}
 
 	// Test endpoint without auth (for debugging)

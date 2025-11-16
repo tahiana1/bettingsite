@@ -127,3 +127,44 @@ export const fetchUserBettingHistory = async (filters: UserBettingHistoryFilters
     };
   }
 };
+
+export const fetchUserBettingHistoryV2 = async (filters: UserBettingHistoryFilters) => {
+  try {
+    const response = await api("bets/get-user-betting-history-v2", {
+      method: "POST",
+      data: {
+        user_id: filters.user_id,
+        limit: filters.limit || 25,
+        offset: filters.offset || 0,
+        status: filters.status || "",
+        date_from: filters.date_from || "",
+        date_to: filters.date_to || "",
+      },
+    });
+
+    return {
+      casinoBets: response.data?.casinoBets || [],
+      slotBets: response.data?.slotBets || [],
+      miniGameBets: response.data?.miniGameBets || [],
+      casinoTotal: response.data?.casinoTotal || 0,
+      slotTotal: response.data?.slotTotal || 0,
+      miniGameTotal: response.data?.miniGameTotal || 0,
+      totalRecords: response.data?.totalRecords || 0,
+      status: response.status || false,
+      message: response.message || "",
+    };
+  } catch (error) {
+    console.error("Error fetching user betting history v2:", error);
+    return {
+      casinoBets: [],
+      slotBets: [],
+      miniGameBets: [],
+      casinoTotal: 0,
+      slotTotal: 0,
+      miniGameTotal: 0,
+      totalRecords: 0,
+      status: false,
+      message: "Error fetching user betting history",
+    };
+  }
+};

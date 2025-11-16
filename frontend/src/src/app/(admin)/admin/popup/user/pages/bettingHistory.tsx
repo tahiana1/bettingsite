@@ -18,7 +18,7 @@ import type { TableProps } from "antd";
 
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
-import { fetchUserBettingHistory } from "@/actions/betLog";
+import { fetchUserBettingHistoryV2 } from "@/actions/betLog";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
@@ -43,27 +43,22 @@ interface CasinoBet {
   deletedAt?: string;
 }
 
-interface SportsBet {
+interface MiniGameBet {
   id: string;
+  type: string;
   userId: string;
-  fixtureId: string;
-  marketId: string;
-  selection: string;
-  odds: number;
-  stake: number;
-  potentialPayout: number;
+  gameId: string;
+  amount: number;
   status: string;
-  placedAt: string;
-  settledAt?: string;
-  fixture?: {
-    id: string;
-    homeTeam?: { name: string };
-    awayTeam?: { name: string };
-    league?: { name: string };
-  };
-  market?: {
-    name: string;
-  };
+  gameName: string;
+  transId: string;
+  winningAmount: number;
+  bettingTime: number;
+  details: any;
+  beforeAmount: number;
+  afterAmount: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const UserBettingHistory: React.FC = () => {
@@ -73,10 +68,12 @@ const UserBettingHistory: React.FC = () => {
   const userId = searchParams.get('id');
 
   const [casinoBets, setCasinoBets] = useState<CasinoBet[]>([]);
-  const [sportsBets, setSportsBets] = useState<SportsBet[]>([]);
+  const [slotBets, setSlotBets] = useState<CasinoBet[]>([]);
+  const [miniGameBets, setMiniGameBets] = useState<MiniGameBet[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [casinoTotal, setCasinoTotal] = useState<number>(0);
-  const [sportsTotal, setSportsTotal] = useState<number>(0);
+  const [slotTotal, setSlotTotal] = useState<number>(0);
+  const [miniGameTotal, setMiniGameTotal] = useState<number>(0);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(25);
@@ -89,7 +86,7 @@ const UserBettingHistory: React.FC = () => {
 
     setLoading(true);
     try {
-      const result = await fetchUserBettingHistory({
+      const result = await fetchUserBettingHistoryV2({
         user_id: Number(userId),
         limit: pageSize,
         offset: (currentPage - 1) * pageSize,
@@ -99,9 +96,11 @@ const UserBettingHistory: React.FC = () => {
       });
 
       setCasinoBets(result.casinoBets.map((bet: any) => ({ ...bet, key: bet.id })));
-      setSportsBets(result.sportsBets.map((bet: any) => ({ ...bet, key: bet.id })));
+      setSlotBets(result.slotBets.map((bet: any) => ({ ...bet, key: bet.id })));
+      setMiniGameBets(result.miniGameBets.map((bet: any) => ({ ...bet, key: bet.id })));
       setCasinoTotal(result.casinoTotal);
-      setSportsTotal(result.sportsTotal);
+      setSlotTotal(result.slotTotal);
+      setMiniGameTotal(result.miniGameTotal);
     } catch (error) {
       console.error("Error loading betting history:", error);
     } finally {
@@ -152,6 +151,10 @@ const UserBettingHistory: React.FC = () => {
       title: "Game Name",
       dataIndex: "gameName",
       key: "gameName",
+      render: (_, record) => {
+        const gameName = record.gameName || "";
+        return gameName.split("|")[0];
+      },
     },
     {
       title: "Type",
@@ -167,22 +170,16 @@ const UserBettingHistory: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (v) => f.number(v),
+      render: (v) => f.number(Math.abs(v)),
     },
     {
-      title: "Winning Amount",
-      dataIndex: "winningAmount",
-      key: "winningAmount",
-      render: (v) => f.number(v),
-    },
-    {
-      title: "Before Amount",
+      title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
       render: (v) => f.number(v),
     },
     {
-      title: "After Amount",
+      title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
       render: (v) => f.number(v),
@@ -213,7 +210,7 @@ const UserBettingHistory: React.FC = () => {
     },
   ];
 
-  const sportsColumns: TableProps<SportsBet>["columns"] = [
+  const slotColumns: TableProps<CasinoBet>["columns"] = [
     {
       title: t("number"),
       dataIndex: "id", 
@@ -221,43 +218,117 @@ const UserBettingHistory: React.FC = () => {
       render: (_, __, index) => (currentPage - 1) * pageSize + index + 1
     },
     {
-      title: "Fixture",
-      dataIndex: "fixture",
-      key: "fixture",
+      title: "Game ID",
+      dataIndex: "gameId",
+      key: "gameId",
+    },
+    {
+      title: "Game Name",
+      dataIndex: "gameName",
+      key: "gameName",
       render: (_, record) => {
-        if (record.fixture) {
-          return `${record.fixture.homeTeam?.name || 'Home'} vs ${record.fixture.awayTeam?.name || 'Away'}`;
-        }
-        return 'N/A';
+        const gameName = record.gameName || "";
+        return gameName.split("|")[0];
       },
     },
     {
-      title: "Selection",
-      dataIndex: "selection",
-      key: "selection",
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
     },
     {
-      title: "Odds",
-      dataIndex: "odds",
-      key: "odds",
-      render: (v) => f.number(v, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      title: "Transaction ID",
+      dataIndex: "transId",
+      key: "transId",
     },
     {
-      title: "Stake",
-      dataIndex: "stake",
-      key: "stake",
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
+      render: (v) => f.number(Math.abs(v)),
+    },
+    {
+      title: t("beforeAmount"),
+      dataIndex: "beforeAmount",
+      key: "beforeAmount",
       render: (v) => f.number(v),
     },
     {
-      title: "Potential Payout",
-      dataIndex: "potentialPayout",
-      key: "potentialPayout",
+      title: t("afterAmount"),
+      dataIndex: "afterAmount",
+      key: "afterAmount",
       render: (v) => f.number(v),
     },
     {
-      title: "Placed At",
-      dataIndex: "placedAt",
-      key: "placedAt",
+      title: t("createdAt"),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
+    },
+    {
+      title: t("status"),
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        const colors: Record<string, string> = {
+          won: "bg-green-500",
+          lost: "bg-red-500", 
+          pending: "bg-yellow-500",
+          cancelled: "bg-gray-500"
+        };
+        return (
+          <span className={`${colors[status] || "bg-blue-500"} text-white px-2 py-1 rounded text-xs`}>
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </span>
+        );
+      }
+    },
+  ];
+
+  const miniGameColumns: TableProps<MiniGameBet>["columns"] = [
+    {
+      title: t("number"),
+      dataIndex: "id", 
+      key: "id",
+      render: (_, __, index) => (currentPage - 1) * pageSize + index + 1
+    },
+    {
+      title: "Transaction ID",
+      dataIndex: "transId",
+      key: "transId",
+    },
+    {
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
+      render: (v) => f.number(Math.abs(v)),
+    },
+    {
+      title: t("beforeAmount"),
+      dataIndex: "beforeAmount",
+      key: "beforeAmount",
+      render: (v) => f.number(v),
+    },
+    {
+      title: t("afterAmount"),
+      dataIndex: "afterAmount",
+      key: "afterAmount",
+      render: (v) => f.number(v),
+    },
+    {
+      title: t("bettingTime"),
+      dataIndex: "bettingTime",
+      key: "bettingTime",
+      render: (v) => {
+        if (!v) return "-";
+        const date = dayjs(v * 1000);
+        return date.format("M/D/YYYY HH:mm:ss");
+      },
+    },
+    {
+      title: t("createdAt"),
+      dataIndex: "createdAt",
+      key: "createdAt",
       render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
@@ -290,49 +361,128 @@ const UserBettingHistory: React.FC = () => {
     }
   };
 
-  const handleCasinoDownload = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      casinoBets.map((bet) => ({
-        ID: bet.id,
-        "Game ID": bet.gameId,
-        "Game Name": bet.gameName,
-        Type: bet.type,
-        "Transaction ID": bet.transId,
-        Amount: bet.amount,
-        "Winning Amount": bet.winningAmount,
-        Status: bet.status,
-        [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
-      }))
-    );
+  const handleCasinoDownload = async () => {
+    setLoading(true);
+    try {
+      // Fetch all casino bets without pagination
+      const result = await fetchUserBettingHistoryV2({
+        user_id: Number(userId),
+        limit: 10000,
+        offset: 0,
+        status: statusFilter,
+        date_from: dateFrom,
+        date_to: dateTo,
+      });
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Casino Bets");
-    XLSX.writeFile(workbook, `user_${userId}_casino_bets.xlsx`);
+      const allBets = result.casinoBets;
+      const worksheet = XLSX.utils.json_to_sheet(
+        allBets.map((bet: any) => ({
+          ID: bet.id,
+          "Game ID": bet.gameId,
+          "Game Name": bet.gameName ? bet.gameName.split("|")[0] : bet.gameName,
+          Type: bet.type,
+          "Transaction ID": bet.transId,
+          Amount: Math.abs(bet.amount),
+          "Winning Amount": bet.winningAmount,
+          "Before Amount": bet.beforeAmount,
+          "After Amount": bet.afterAmount,
+          Status: bet.status,
+          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+        }))
+      );
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Casino Bets");
+      XLSX.writeFile(workbook, `user_${userId}_casino_bets.xlsx`);
+    } catch (error) {
+      console.error("Error downloading casino bets:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSportsDownload = () => {
-    const worksheet = XLSX.utils.json_to_sheet(
-      sportsBets.map((bet) => ({
-        ID: bet.id,
-        Fixture: bet.fixture ? `${bet.fixture.homeTeam?.name || 'Home'} vs ${bet.fixture.awayTeam?.name || 'Away'}` : 'N/A',
-        Selection: bet.selection,
-        Odds: bet.odds,
-        Stake: bet.stake,
-        "Potential Payout": bet.potentialPayout,
-        Status: bet.status,
-        "Placed At": bet.placedAt ? dayjs(bet.placedAt).format("M/D/YYYY HH:mm:ss") : "",
-      }))
-    );
+  const handleSlotDownload = async () => {
+    setLoading(true);
+    try {
+      // Fetch all slot bets without pagination
+      const result = await fetchUserBettingHistoryV2({
+        user_id: Number(userId),
+        limit: 10000,
+        offset: 0,
+        status: statusFilter,
+        date_from: dateFrom,
+        date_to: dateTo,
+      });
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sports Bets");
-    XLSX.writeFile(workbook, `user_${userId}_sports_bets.xlsx`);
+      const allBets = result.slotBets;
+      const worksheet = XLSX.utils.json_to_sheet(
+        allBets.map((bet: any) => ({
+          ID: bet.id,
+          "Game ID": bet.gameId,
+          "Game Name": bet.gameName ? bet.gameName.split("|")[0] : bet.gameName,
+          Type: bet.type,
+          "Transaction ID": bet.transId,
+          Amount: Math.abs(bet.amount),
+          "Winning Amount": bet.winningAmount,
+          "Before Amount": bet.beforeAmount,
+          "After Amount": bet.afterAmount,
+          Status: bet.status,
+          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+        }))
+      );
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Slot Bets");
+      XLSX.writeFile(workbook, `user_${userId}_slot_bets.xlsx`);
+    } catch (error) {
+      console.error("Error downloading slot bets:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMiniGameDownload = async () => {
+    setLoading(true);
+    try {
+      // Fetch all mini game bets without pagination
+      const result = await fetchUserBettingHistoryV2({
+        user_id: Number(userId),
+        limit: 10000,
+        offset: 0,
+        status: statusFilter,
+        date_from: dateFrom,
+        date_to: dateTo,
+      });
+
+      const allBets = result.miniGameBets;
+      const worksheet = XLSX.utils.json_to_sheet(
+        allBets.map((bet: any) => ({
+          ID: bet.id,
+          "Transaction ID": bet.transId,
+          Amount: Math.abs(bet.amount),
+          "Winning Amount": bet.winningAmount,
+          "Before Amount": bet.beforeAmount,
+          "After Amount": bet.afterAmount,
+          "Betting Time": bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm:ss") : "",
+          Status: bet.status,
+          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+        }))
+      );
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Mini Game Bets");
+      XLSX.writeFile(workbook, `user_${userId}_mini_game_bets.xlsx`);
+    } catch (error) {
+      console.error("Error downloading mini game bets:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabItems = [
     {
       key: "casino",
-      label: `Casino Bets (${casinoTotal})`,
+      label: `Casino (${casinoTotal})`,
       children: (
         <div>
           <Space className="p-2 !w-full" direction="vertical">
@@ -360,7 +510,7 @@ const UserBettingHistory: React.FC = () => {
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={handleCasinoDownload}>
+                <Button size="small" type="primary" onClick={handleCasinoDownload} loading={loading}>
                   {t("download")}
                 </Button>
               </Space.Compact>
@@ -394,8 +544,8 @@ const UserBettingHistory: React.FC = () => {
       ),
     },
     {
-      key: "sports",
-      label: `Sports Bets (${sportsTotal})`,
+      key: "slot",
+      label: `Slot (${slotTotal})`,
       children: (
         <div>
           <Space className="p-2 !w-full" direction="vertical">
@@ -423,17 +573,17 @@ const UserBettingHistory: React.FC = () => {
                 />
               </Space>
               <Space.Compact className="gap-1">
-                <Button size="small" type="primary" onClick={handleSportsDownload}>
+                <Button size="small" type="primary" onClick={handleSlotDownload} loading={loading}>
                   {t("download")}
                 </Button>
               </Space.Compact>
             </Space>
           </Space>
 
-          <Table<SportsBet>
-            columns={sportsColumns}
+          <Table<CasinoBet>
+            columns={slotColumns}
             loading={loading}
-            dataSource={sportsBets}
+            dataSource={slotBets}
             className="w-full"
             size="small"
             scroll={{ x: "max-content" }}
@@ -446,7 +596,70 @@ const UserBettingHistory: React.FC = () => {
                   total,
                 });
               },
-              total: sportsTotal,
+              total: slotTotal,
+              current: currentPage,
+              pageSize: pageSize,
+              showSizeChanger: true,
+              pageSizeOptions: [25, 50, 100, 250, 500, 1000],
+            }}
+          />
+        </div>
+      ),
+    },
+    {
+      key: "mini",
+      label: `Mini (${miniGameTotal})`,
+      children: (
+        <div>
+          <Space className="p-2 !w-full" direction="vertical">
+            <Space wrap>
+              <Radio.Group
+                size="small"
+                optionType="button"
+                buttonStyle="solid"
+                options={[
+                  { label: t("entire"), value: "entire" },
+                  { label: "Won", value: "won" },
+                  { label: "Lost", value: "lost" },
+                  { label: "Pending", value: "pending" },
+                  { label: "Cancelled", value: "cancelled" },
+                ]}
+                defaultValue={"entire"}
+                onChange={(e) => onStatusChange(e.target.value)}
+              />
+            </Space>
+            <Space className="!w-full justify-between">
+              <Space>
+                <DatePicker.RangePicker
+                  size="small"
+                  onChange={onRangerChange}
+                />
+              </Space>
+              <Space.Compact className="gap-1">
+                <Button size="small" type="primary" onClick={handleMiniGameDownload} loading={loading}>
+                  {t("download")}
+                </Button>
+              </Space.Compact>
+            </Space>
+          </Space>
+
+          <Table<MiniGameBet>
+            columns={miniGameColumns}
+            loading={loading}
+            dataSource={miniGameBets}
+            className="w-full"
+            size="small"
+            scroll={{ x: "max-content" }}
+            onChange={onTableChange}
+            pagination={{
+              showTotal(total, range) {
+                return t("paginationLabel", {
+                  from: range[0],
+                  to: range[1],
+                  total,
+                });
+              },
+              total: miniGameTotal,
               current: currentPage,
               pageSize: pageSize,
               showSizeChanger: true,
@@ -468,7 +681,6 @@ const UserBettingHistory: React.FC = () => {
 
   return (
     <Card
-    //   title={`User Betting History (ID: ${userId})`}
       classNames={{
         body: "!p-0",
       }}

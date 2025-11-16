@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"sort"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -198,25 +199,25 @@ func GetAllCasinoBetting(c *gin.Context) {
 
 	// Consolidate bet/win pairs
 	type ConsolidatedBet struct {
-		ID            uint            `json:"id"`
-		UserID        uint            `json:"userId"`
-		User          *models.User    `json:"user"`
-		GameID        uint            `json:"gameId"`
-		GameName      string          `json:"gameName"`
-		TransID       string          `json:"transId"`
-		BettingTime   uint            `json:"bettingTime"`
-		Details       interface{}     `json:"details"`
-		BetAmount     float64         `json:"betAmount"`     // Original bet amount (negative)
-		WinAmount     float64         `json:"winAmount"`     // Win amount (0 for loss, positive for win)
-		NetAmount     float64         `json:"netAmount"`     // Net change (winAmount - abs(betAmount))
-		ResultStatus  string          `json:"resultStatus"`  // "won" or "lost"
-		BeforeAmount  float64         `json:"beforeAmount"`  // Balance before bet
-		AfterAmount   float64         `json:"afterAmount"`   // Balance after win
-		Status        string          `json:"status"`        // Original status from bet record
-		CreatedAt     time.Time       `json:"createdAt"`     // Bet creation time
-		UpdatedAt     time.Time       `json:"updatedAt"`     // Win update time
-		BetID         uint            `json:"betId"`         // ID of bet record
-		WinID         uint            `json:"winId"`         // ID of win record
+		ID           uint         `json:"id"`
+		UserID       uint         `json:"userId"`
+		User         *models.User `json:"user"`
+		GameID       uint         `json:"gameId"`
+		GameName     string       `json:"gameName"`
+		TransID      string       `json:"transId"`
+		BettingTime  uint         `json:"bettingTime"`
+		Details      interface{}  `json:"details"`
+		BetAmount    float64      `json:"betAmount"`    // Original bet amount (negative)
+		WinAmount    float64      `json:"winAmount"`    // Win amount (0 for loss, positive for win)
+		NetAmount    float64      `json:"netAmount"`    // Net change (winAmount - abs(betAmount))
+		ResultStatus string       `json:"resultStatus"` // "won" or "lost"
+		BeforeAmount float64      `json:"beforeAmount"` // Balance before bet
+		AfterAmount  float64      `json:"afterAmount"`  // Balance after win
+		Status       string       `json:"status"`       // Original status from bet record
+		CreatedAt    time.Time    `json:"createdAt"`    // Bet creation time
+		UpdatedAt    time.Time    `json:"updatedAt"`    // Win update time
+		BetID        uint         `json:"betId"`        // ID of bet record
+		WinID        uint         `json:"winId"`        // ID of win record
 	}
 
 	var consolidatedBets []ConsolidatedBet
@@ -691,6 +692,210 @@ func GetUserBettingHistory(c *gin.Context) {
 			"casinoTotal":  casinoTotal,
 			"sportsTotal":  sportsTotal,
 			"totalRecords": casinoTotal + sportsTotal,
+		},
+	})
+}
+
+func GetUserBettingHistoryV2(c *gin.Context) {
+	var input struct {
+		UserID   uint   `json:"user_id" binding:"required,min=1"`
+		Limit    int    `json:"limit"`
+		Offset   int    `json:"offset"`
+		Status   string `json:"status"`
+		DateFrom string `json:"date_from"`
+		DateTo   string `json:"date_to"`
+	}
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"validations": validations.FormatValidationErrors(errs),
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// Set default values
+	if input.Limit == 0 {
+		input.Limit = 25
+	}
+
+	// Build query for casino bets (not slot) with preloads
+	casinoQuery := initializers.DB.Model(&models.CasinoBet{}).
+		Where("user_id = ?", input.UserID).
+		Where("game_name NOT LIKE ?", "%slot%")
+
+	// Apply filters for casino bets
+	if input.Status != "" && input.Status != "entire" {
+		casinoQuery = casinoQuery.Where("status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		casinoQuery = casinoQuery.Where("created_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		casinoQuery = casinoQuery.Where("created_at <= ?", input.DateTo)
+	}
+
+	// Get total count for casino bets
+	var casinoTotal int64
+	if err := casinoQuery.Count(&casinoTotal).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated casino bets
+	var casinoBets []models.CasinoBet
+	if err := casinoQuery.
+		Order("created_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&casinoBets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build query for slot bets with preloads
+	slotQuery := initializers.DB.Model(&models.CasinoBet{}).
+		Where("user_id = ?", input.UserID).
+		Where("game_name LIKE ?", "%slot%")
+
+	// Apply filters for slot bets
+	if input.Status != "" && input.Status != "entire" {
+		slotQuery = slotQuery.Where("status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		slotQuery = slotQuery.Where("created_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		slotQuery = slotQuery.Where("created_at <= ?", input.DateTo)
+	}
+
+	// Get total count for slot bets
+	var slotTotal int64
+	if err := slotQuery.Count(&slotTotal).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated slot bets
+	var slotBets []models.CasinoBet
+	if err := slotQuery.
+		Order("created_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&slotBets).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build query for mini game bets (from transactions)
+	miniGameQuery := initializers.DB.Model(&models.Transaction{}).
+		Where("user_id = ?", input.UserID).
+		Where("type = ?", "minigame_place").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Profile").Preload("Root").Preload("Parent")
+		})
+
+	// Apply filters for mini game bets
+	if input.Status != "" && input.Status != "entire" {
+		miniGameQuery = miniGameQuery.Where("status = ?", input.Status)
+	}
+
+	if input.DateFrom != "" {
+		miniGameQuery = miniGameQuery.Where("created_at >= ?", input.DateFrom)
+	}
+
+	if input.DateTo != "" {
+		miniGameQuery = miniGameQuery.Where("created_at <= ?", input.DateTo)
+	}
+
+	// Get total count for mini game bets
+	var miniGameTotal int64
+	if err := miniGameQuery.Count(&miniGameTotal).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Get paginated mini game transactions
+	var miniGameTransactions []models.Transaction
+	if err := miniGameQuery.
+		Order("created_at DESC").
+		Limit(input.Limit).
+		Offset(input.Offset).
+		Find(&miniGameTransactions).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Map transactions to mini game bets format
+	type MiniGameBet struct {
+		ID            uint        `json:"id"`
+		Type          string      `json:"type"`
+		UserID        uint        `json:"userId"`
+		GameID        uint        `json:"gameId"`
+		Amount        float64     `json:"amount"`
+		Status        string      `json:"status"`
+		GameName      string      `json:"gameName"`
+		TransID       string      `json:"transId"`
+		WinningAmount float64     `json:"winningAmount"`
+		BettingTime   uint        `json:"bettingTime"`
+		Details       interface{} `json:"details"`
+		BeforeAmount  float64     `json:"beforeAmount"`
+		AfterAmount   float64     `json:"afterAmount"`
+		CreatedAt     time.Time   `json:"createdAt"`
+		UpdatedAt     time.Time   `json:"updatedAt"`
+	}
+
+	var miniGameBets []MiniGameBet
+	for _, tx := range miniGameTransactions {
+		bettingTime := uint(tx.TransactionAt.Unix())
+		var winningAmount float64
+		if tx.Amount < 0 {
+			winningAmount = 0
+		} else {
+			winningAmount = tx.Amount
+		}
+
+		miniGameBet := MiniGameBet{
+			ID:            tx.ID,
+			Type:          tx.Type,
+			UserID:        tx.UserID,
+			GameID:        0,
+			Amount:        tx.Amount,
+			Status:        tx.Status,
+			GameName:      "",
+			TransID:       strconv.FormatUint(uint64(tx.ID), 10),
+			WinningAmount: winningAmount,
+			BettingTime:   bettingTime,
+			Details:       tx.Explation,
+			BeforeAmount:  tx.BalanceBefore,
+			AfterAmount:   tx.BalanceAfter,
+			CreatedAt:     tx.CreatedAt,
+			UpdatedAt:     tx.UpdatedAt,
+		}
+		miniGameBets = append(miniGameBets, miniGameBet)
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User betting history retrieved successfully",
+		"status":  true,
+		"data": gin.H{
+			"casinoBets":    casinoBets,
+			"slotBets":      slotBets,
+			"miniGameBets":  miniGameBets,
+			"casinoTotal":   casinoTotal,
+			"slotTotal":     slotTotal,
+			"miniGameTotal": miniGameTotal,
+			"totalRecords":  casinoTotal + slotTotal + miniGameTotal,
 		},
 	})
 }
