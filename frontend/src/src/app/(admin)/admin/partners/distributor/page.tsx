@@ -650,7 +650,6 @@ const PartnerPage: React.FC = () => {
       title: t("member_count"),
       dataIndex: "member_count",
       key: "member_count",
-      render: (_, { profile }) => profile.comp,
     },
     {
       title: t("nickname"),
