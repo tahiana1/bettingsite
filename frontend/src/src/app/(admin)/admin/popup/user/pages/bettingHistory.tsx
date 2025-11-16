@@ -21,6 +21,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { fetchUserBettingHistory } from "@/actions/betLog";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate } from "@/lib";
 
 interface CasinoBet {
@@ -190,7 +191,7 @@ const UserBettingHistory: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),
@@ -257,7 +258,7 @@ const UserBettingHistory: React.FC = () => {
       title: "Placed At",
       dataIndex: "placedAt",
       key: "placedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),
@@ -300,7 +301,7 @@ const UserBettingHistory: React.FC = () => {
         Amount: bet.amount,
         "Winning Amount": bet.winningAmount,
         Status: bet.status,
-        [t("createdAt")]: bet.createdAt ? f.dateTime(new Date(bet.createdAt)) : "",
+        [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
       }))
     );
 
@@ -319,7 +320,7 @@ const UserBettingHistory: React.FC = () => {
         Stake: bet.stake,
         "Potential Payout": bet.potentialPayout,
         Status: bet.status,
-        "Placed At": bet.placedAt ? f.dateTime(new Date(bet.placedAt)) : "",
+        "Placed At": bet.placedAt ? dayjs(bet.placedAt).format("M/D/YYYY HH:mm:ss") : "",
       }))
     );
 

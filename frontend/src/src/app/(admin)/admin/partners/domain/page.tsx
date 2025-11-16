@@ -23,6 +23,7 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { parseTableOptions } from "@/lib";
 import { DELETE_DOMAIN, GET_DOMAINS, UPDATE_DOMAIN } from "@/actions/domain";
+import dayjs from "dayjs";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
@@ -187,13 +188,13 @@ const PartnerDomainPage: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("updatedAt"),
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("action"),

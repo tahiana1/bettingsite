@@ -200,7 +200,8 @@ func (r *userResolver) Status(ctx context.Context, obj *models.User) (model.User
 
 // NumberOfMembers is the resolver for the numberOfMembers field.
 func (r *userResolver) NumberOfMembers(ctx context.Context, obj *models.User) (*int32, error) {
-	panic(fmt.Errorf("not implemented: NumberOfMembers - numberOfMembers"))
+	result := int32(obj.NumberOfMembers)
+	return &result, nil
 }
 
 // DomainIds is the resolver for the domainIds field.

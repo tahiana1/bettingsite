@@ -26,6 +26,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { BiEdit, BiTrash } from "react-icons/bi";
 
 import { parseTableOptions } from "@/lib";
+import dayjs from "dayjs";
 import {
   CREATE_MENU,
   DELETE_MENU,
@@ -200,7 +201,7 @@ const MenuPage: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),

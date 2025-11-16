@@ -175,7 +175,7 @@ const RollingAccumulationPage: React.FC = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => {
-        return text ? dayjs(text).format("YYYY-MM-DD HH:mm:ss") : "-";
+        return text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : "-";
       },
     },
   ];

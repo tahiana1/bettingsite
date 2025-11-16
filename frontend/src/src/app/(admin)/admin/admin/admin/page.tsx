@@ -28,6 +28,7 @@ import {
   GET_ADMIN_PERMISSIONS,
   UPDATE_ADMIN_PERMISSION,
 } from "@/actions/admin_permission";
+import dayjs from "dayjs";
 
 const PartnerPage: React.FC = () => {
   const t = useTranslations();
@@ -201,7 +202,7 @@ const PartnerPage: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("action"),

@@ -216,7 +216,7 @@ const MemberTransferPage: React.FC = () => {
       dataIndex: "transactionAt",
       key: "transactionAt",
       render: (_, record) => {
-        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.transactionAt).format("M/D/YYYY HH:mm:ss");
       }
     }
   ];

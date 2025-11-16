@@ -201,7 +201,7 @@ const UserRollingHistory: React.FC = () => {
       dataIndex: "transactionAt",
       key: "transactionAt",
       render: (_, record) => {
-        return dayjs(record.transactionAt).format("YYYY-MM-DD HH:mm:ss");
+        return dayjs(record.transactionAt).format("M/D/YYYY HH:mm:ss");
       }
     }
   ];
@@ -322,9 +322,9 @@ const UserRollingHistory: React.FC = () => {
         [t("pointAfter")]: transaction.pointAfter,
         [t("usdtDesc")]: transaction.usdtDesc,
         [t("shortcut")]: transaction.shortcut,
-        [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
-        [t("approvedAt")]: transaction.approvedAt ? f.dateTime(new Date(transaction.approvedAt)) : "",
-        [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+        [t("transactionAt")]: transaction.transactionAt ? dayjs(transaction.transactionAt).format("M/D/YYYY HH:mm:ss") : "",
+        [t("approvedAt")]: transaction.approvedAt ? dayjs(transaction.approvedAt).format("M/D/YYYY HH:mm:ss") : "",
+        [t("createdAt")]: transaction.createdAt ? dayjs(transaction.createdAt).format("M/D/YYYY HH:mm:ss") : "",
         [t("status")]: transaction.status,
       }))
     );

@@ -650,6 +650,11 @@ const PartnerPage: React.FC = () => {
       title: t("member_count"),
       dataIndex: "member_count",
       key: "member_count",
+      render: (_, record) => {
+        // Count children in the tree structure
+        const childCount = (record as any).children?.length || 0;
+        return childCount > 0 ? childCount : 0;
+      },
     },
     {
       title: t("nickname"),

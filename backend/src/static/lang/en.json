@@ -2325,5 +2325,13 @@
   "subtract" : "Subtract",
   "pleaseSelectRole" : "Please Select Role",
   "lossingRate" : "Lossing Rate",
-  "processStatus" : "Process Status"
+  "processStatus" : "Process Status",
+  "partner" : "Partner",
+  "selectRole" : "Select Role",
+  "userType" : "User Type",
+  "pleaseEnterName" : "Please Enter Name",
+  "pleaseEnterUserid" : "Please Enter User ID",
+  "pleaseEnterPassword" : "Please Enter Password",
+  "pleaseEnterNickname" : "Please Enter Nickname",
+  "dormancyMessage" : "Dormancy Message"
 } 

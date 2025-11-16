@@ -285,20 +285,20 @@ const CasinoSlot: React.FC = () => {
         if (!record.bettingTime) return "-";
         // Convert Unix timestamp (seconds) to milliseconds and format
         const date = dayjs(record.bettingTime * 1000);
-        return date.format("YYYY/MM/DD HH:mm:ss");
+        return date.format("M/D/YYYY HH:mm:ss");
       },
     },
     {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("updatedAt"),
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),
@@ -417,10 +417,10 @@ const CasinoSlot: React.FC = () => {
           "Result Status": bet.resultStatus,
           [t("beforeAmount")]: bet.beforeAmount,
           [t("afterAmount")]: bet.afterAmount,
-          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("YYYY/MM/DD HH:mm:ss") : "",
+          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm:ss") : "",
           Status: bet.status,
-          [t("createdAt")]: bet.createdAt ? f.dateTime(new Date(bet.createdAt)) : "",
-          [t("updatedAt")]: bet.updatedAt ? f.dateTime(new Date(bet.updatedAt)) : "",
+          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+          [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm:ss") : "",
           Details: bet.details ? JSON.stringify(bet.details) : "",
         }))
       );

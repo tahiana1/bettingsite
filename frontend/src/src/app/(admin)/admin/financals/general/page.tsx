@@ -33,6 +33,7 @@ import {
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import api from "@/api";
 
@@ -515,14 +516,7 @@ const GeneralDWPage: React.FC = () => {
       key: "transactionAt",
       render: (v) =>
         isValidDate(v)
-          ? f.dateTime(new Date(v), {
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit"
-            })
+          ? dayjs(v).format("M/D/YYYY HH:mm:ss")
           : "",
     },
     {
@@ -531,14 +525,7 @@ const GeneralDWPage: React.FC = () => {
       key: "updatedAt",
       render: (v) =>
         isValidDate(v)
-          ? f.dateTime(new Date(v), {
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit"
-            })
+          ? dayjs(v).format("M/D/YYYY HH:mm:ss")
           : "",
     },
     {
@@ -827,9 +814,9 @@ const GeneralDWPage: React.FC = () => {
         [t("pointAfter")]: transaction.pointAfter,
         [t("usdtDesc")]: transaction.usdtDesc,
         [t("shortcut")]: transaction.shortcut,
-        [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
-        [t("approvedAt")]: transaction.approvedAt ? f.dateTime(new Date(transaction.approvedAt)) : "",
-        [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
+        [t("transactionAt")]: transaction.transactionAt ? dayjs(transaction.transactionAt).format("M/D/YYYY HH:mm:ss") : "",
+        [t("approvedAt")]: transaction.approvedAt ? dayjs(transaction.approvedAt).format("M/D/YYYY HH:mm:ss") : "",
+        [t("createdAt")]: transaction.createdAt ? dayjs(transaction.createdAt).format("M/D/YYYY HH:mm:ss") : "",
         [t("status")]: transaction.status,
       }))
     );

@@ -18,7 +18,7 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery } from "@apollo/client";
-import { GET_DISTRIBUTORS } from "@/actions/user";
+import { GET_DISTRIBUTORSDETAILS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions, buildTree } from "@/lib";
@@ -34,7 +34,7 @@ const DistributorStatisticsDetailPage: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [treeUsers, setTreeUsers] = useState<any[]>([]);
   const [totals, setTotals] = useState<any>({});
-  const { loading, data, refetch } = useQuery(GET_DISTRIBUTORS, {
+  const { loading, data, refetch } = useQuery(GET_DISTRIBUTORSDETAILS, {
     variables: {
       filters: tableOptions?.filters || [],
       orders: tableOptions?.orders || [],
@@ -43,7 +43,7 @@ const DistributorStatisticsDetailPage: React.FC = () => {
     fetchPolicy: "cache-and-network",
   });
 
-  const { data: childrenData, refetch: refetchChildren } = useQuery(GET_DISTRIBUTORS);
+  const { data: childrenData, refetch: refetchChildren } = useQuery(GET_DISTRIBUTORSDETAILS);
 
   // Calculate totals function
   const calculateTotals = (data: any[]) => {
@@ -74,7 +74,9 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       liveWinning: 0,
       slotBetting: 0,
       slotJackpot: 0,
+      miniDanpolBetting: 0,
       miniDanpolWinning: 0,
+      miniCombinationBetting: 0,
       miniCombinationWinning: 0,
       sportsDanpolWinning: 0,
       sportsDupolWinning: 0,
@@ -139,16 +141,18 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       totals.liveWinning += user.liveWinning || 0;
       totals.slotBetting += user.slotBetting || 0;
       totals.slotJackpot += user.slotJackpot || 0;
-      totals.miniDanpolWinning += user.miniDanpolWinning || 0;
-      totals.miniCombinationWinning += user.miniCombinationWinning || 0;
-      totals.sportsDanpolWinning += user.sportsDanpolWinning || 0;
-      totals.sportsDupolWinning += user.sportsDupolWinning || 0;
-      totals.sports3PoleWinning += user.sports3PoleWinning || 0;
-      totals.sports4PoleWinning += user.sports4PoleWinning || 0;
-      totals.sports5PoleWinning += user.sports5PoleWinning || 0;
-      totals.sportsDapolWinning += user.sportsDapolWinning || 0;
-      totals.virtualGameWinning += user.virtualGameWinning || 0;
-      totals.lotusWinning += user.lotusWinning || 0;
+      totals.miniDanpolWinning += user.miniDanpolWinner || 0;
+      totals.miniCombinationWinning += user.miniCombinationWinnings || 0;
+      totals.miniDanpolBetting += user.miniDanpolBetting || 0;
+      totals.miniCombinationBetting += user.miniCombinationBetting || 0;
+      totals.sportsDanpolWinning += user.sportsDanpolWinner || 0;
+      totals.sportsDupolWinning += user.sportsDupolWinner || 0;
+      totals.sports3PoleWinning += user.sports3poleWinner || 0;
+      totals.sports4PoleWinning += user.sports4poleWinner || 0;
+      totals.sports5PoleWinning += user.sports5poleWinner || 0;
+      totals.sportsDapolWinning += user.sportsDapolWinner || 0;
+      totals.virtualGameWinning += user.virtualGameWinnings || 0;
+      totals.lotusWinning += user.lotusLottery || 0;
       totals.mgmWinning += user.mgmWinning || 0;
       totals.touchWinning += user.touchWinning || 0;
       totals.holdemWinning += user.holdemWinning || 0;
@@ -160,16 +164,16 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       // Add losing calculations
       totals.losingRate += user.losingRate || 0;
       totals.losingSettlement += user.losingSettlement || 0;
-      totals.liveLosing += user.liveLosing || 0;
-      totals.miniDanpolLosing += user.miniDanpolLosing || 0;
-      totals.sportsDanpolLosing += user.sportsDanpolLosing || 0;
-      totals.sports3PoleLosing += user.sports3PoleLosing || 0;
-      totals.sports5PoleLosing += user.sports5PoleLosing || 0;
-      totals.virtualGameLosing += user.virtualGameLosing || 0;
-      totals.lotusLosing += user.lotusLosing || 0;
-      totals.mgmLosing += user.mgmLosing || 0;
-      totals.touchLosing += user.touchLosing || 0;
-      totals.holdemLosing += user.holdemLosing || 0;
+      totals.liveLosing += user.liveLosingBeDang || 0;
+      totals.miniDanpolLosing += 0; // Not available in model
+      totals.sportsDanpolLosing += 0; // Not available in model
+      totals.sports3PoleLosing += 0; // Not available in model
+      totals.sports5PoleLosing += 0; // Not available in model
+      totals.virtualGameLosing += 0; // Not available in model
+      totals.lotusLosing += 0; // Not available in model
+      totals.mgmLosing += 0; // Not available in model
+      totals.touchLosing += 0; // Not available in model
+      totals.holdemLosing += user.holdLosingBeDang || 0;
       
       // Add partnership calculations
       totals.partnershipRolling += user.partnershipRolling || 0;
@@ -215,29 +219,31 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       children: [
         {
           title: t("membershipDeposit"),
+          dataIndex: "membershipDeposit",
           align: "center",
-          children: [
-            {
-              title: t("membershipWithdraw"),
-              dataIndex: "membershipWithdrawal",
-              align: "center",
-              key: "membershipWithdrawal",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "membershipDeposit",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("membershipWithdraw"),
+          dataIndex: "membershipWithdrawal",
+          align: "center",
+          key: "membershipWithdrawal",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("depositOfTheTotalAmount"),
+          dataIndex: "membershipDeposit",
           align: "center",
-          children: [
-            {
-              title: t("totalWithdraw"),
-              dataIndex: "totalWithdrawal",
-              align: "center",
-              key: "totalWithdrawal",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "depositOfTheTotalAmount",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("totalWithdraw"),
+          dataIndex: "totalWithdrawal",
+          align: "center",
+          key: "totalWithdrawal",
+          render: (value) => f.number(value || 0),
         },
       ],
     },
@@ -254,116 +260,44 @@ const DistributorStatisticsDetailPage: React.FC = () => {
         {
           title: t("moneyInHand"),
           align: "center",
-          children: [
-            {
-              title: t("rollingholdings"),
-              dataIndex: "profile",
-              align: "center",
-              key: "balance",
-              render: (profile) => f.number(profile?.balance || 0),
-            },
-          ],
+          key: "moneyInHand",
+          render: (_, record) => f.number(record.profile?.balance || 0),
+        },
+        {
+          title: t("rollingholdings"),
+          dataIndex: "rollingHoldings",
+          align: "center",
+          key: "rollingHoldings",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("liveRolling"),
+          dataIndex: "live",
           align: "center",
-          children: [
-            {
-              title: t("slotRolling"),
-              dataIndex: "slot",
-              align: "center",
-              key: "slot",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "liveRolling",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("slotRolling"),
+          dataIndex: "slot",
+          align: "center",
+          key: "slot",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("miniDanpolRolling"),
           align: "center",
-          children: [
-            {
-              title: t("minCombinationRolling"),
-              dataIndex: "miniCombinationRolling",
-              align: "center",
-              key: "miniCombinationRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sportsDanpololRolling"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDupolRolling"),
-              dataIndex: "sportsDupolRolling",
-              align: "center",
-              key: "sportsDupolRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports3PoleRolling"),
-          align: "center",
-          children: [
-            {
-              title: t("sports4PoleRolling"),
-              dataIndex: "sports4PoleRolling",
-              align: "center",
-              key: "sports4PoleRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports5PoleRolling"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDapololling"),
-              dataIndex: "sportsDapolRolling",
-              align: "center",
-              key: "sportsDapolRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("virtualGameRolling"),
-          dataIndex: "virtualGameRolling",
-          align: "center",
-          key: "virtualGameRolling",
+          dataIndex: "miniDanpolRolling",
+          key: "miniDanpolRolling",
           render: (value) => f.number(value || 0),
         },
         {
-          title: t("lotusRolling"),
-          dataIndex: "lotusRolling",
+          title: t("minCombinationRolling"),
+          dataIndex: "miniCombinationRolling",
           align: "center",
-          key: "lotusRolling",
+          key: "miniCombinationRolling",
           render: (value) => f.number(value || 0),
         },
-        {
-          title: t("mgmRolling"),
-          dataIndex: "mgmRolling",
-          align: "center",
-          key: "mgmRolling",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("touchRolling"),
-          dataIndex: "touchRolling",
-          align: "center",
-          key: "touchRolling",
-          render: (value) => f.number(value || 0),
-        },
-                  {
-            title: t("holdemRolling"),
-            dataIndex: "hold",
-            align: "center",
-            key: "hold",
-            render: (value) => f.number(value || 0),
-          },
       ],
     },
     {
@@ -371,198 +305,59 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       children: [
         {
           title: t("liveBetting"),
+          dataIndex: "liveBetting",
           align: "center",
-          children: [
-            {
-              title: t("liveWinning"),
-              dataIndex: "liveWinning",
-              align: "center",
-              key: "liveWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "liveBetting",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("liveWinning"),
+          dataIndex: "liveWinning",
+          align: "center",
+          key: "liveWinning",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("slotBetting"),
+          dataIndex: "slotBetting",
           align: "center",
-          children: [
-            {
-              title: t("slotJackpot"),
-              dataIndex: "slotJackpot",
-              align: "center",
-              key: "slotJackpot",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "slotBetting",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("slotJackpot"),
+          dataIndex: "slotJackpot",
+          align: "center",
+          key: "slotJackpot",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("miniDanpolBetting"),
+          dataIndex: "miniDanpolBetting",
           align: "center",
-          children: [
-            {
-              title: t("miniDanpolwinner"),
-              dataIndex: "miniDanpolWinning",
-              align: "center",
-              key: "miniDanpolWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "miniDanpolBetting",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("miniDanpolwinner"),
+          dataIndex: "miniDanpolWinner",
+          align: "center",
+          key: "miniDanpolWinning",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("miniCombinationBetting"),
+          dataIndex: "miniCombinationBetting",
           align: "center",
-          children: [
-            {
-              title: t("miniCombinationWinnings"),
-              dataIndex: "miniCombinationWinning",
-              align: "center",
-              key: "miniCombinationWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "miniCombinationBetting",
+          render: (value) => f.number(value || 0),
         },
         {
-          title: t("sportsDanpolBetting"),
+          title: t("miniCombinationWinnings"),
+          dataIndex: "miniCombinationWinnings",
           align: "center",
-          children: [
-            {
-              title: t("sportsDanpolWinner"),
-              dataIndex: "sportsDanpolWinning",
-              align: "center",
-              key: "sportsDanpolWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sportsDupolBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDupolWinner"),
-              dataIndex: "sportsDupolWinning",
-              align: "center",
-              key: "sportsDupolWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports3poleBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("sports3poleWinner"),
-              dataIndex: "sports3PoleWinning",
-              align: "center",
-              key: "sports3PoleWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports4poleBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("sports4poleWinner"),
-              dataIndex: "sports4PoleWinning",
-              align: "center",
-              key: "sports4PoleWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports5poleBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("sports5poleWinner"),
-              dataIndex: "sports5PoleWinning",
-              align: "center",
-              key: "sports5PoleWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sportsDapolBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDapolWinner"),
-              dataIndex: "sportsDapolWinning",
-              align: "center",
-              key: "sportsDapolWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("virtualGameBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("virtualGameWinnings"),
-              dataIndex: "virtualGameWinning",
-              align: "center",
-              key: "virtualGameWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("lotusBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("lotusLottery"),
-              dataIndex: "lotusWinning",
-              align: "center",
-              key: "lotusWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("mgmBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("mgmWinning"),
-              dataIndex: "mgmWinning",
-              align: "center",
-              key: "mgmWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("touchBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("touchWinning"),
-              dataIndex: "touchWinning",
-              align: "center",
-              key: "touchWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("holdemBetting"),
-          align: "center",
-          children: [
-            {
-              title: t("holdemWinning"),
-              dataIndex: "holdemWinning",
-              align: "center",
-              key: "holdemWinning",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "miniCombinationWinning",
+          render: (value) => f.number(value || 0),
         },
       ],
     },
@@ -571,244 +366,46 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       children: [
         {
           title: t("ratePercentage"),
+          dataIndex: "rollingRate",
           align: "center",
-          children: [
-            {
-              title: t("rollingtransition"),
-              dataIndex: "rollingTransition",
-              align: "center",
-              key: "rollingTransition",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "rollingRate",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("rollingtransition"),
+          dataIndex: "rollingTransition",
+          align: "center",
+          key: "rollingTransition",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("live"),
+          dataIndex: "live",
           align: "center",
-          children: [
-            {
-              title: t("slot"),
-              dataIndex: "liveRolling",
-              align: "center",
-              key: "liveRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "liveRolling",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("slot"),
+          dataIndex: "slot",
+          align: "center",
+          key: "slotRolling",
+          render: (value) => f.number(value || 0),
         },
         {
           title: t("miniDanpol"),
+          dataIndex: "miniDanpolRolling",
           align: "center",
-          children: [
-            {
-              title: t("minicombination"),
-              dataIndex: "miniDanpolRolling",
-              align: "center",
-              key: "miniDanpolRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sportsDanpol"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDupol"),
-              dataIndex: "sportsDanpolRolling",
-              align: "center",
-              key: "sportsDanpolRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports3Pole"),
-          align: "center",
-          children: [
-            {
-              title: t("sports4Pole"),
-              dataIndex: "sports3PoleRolling",
-              align: "center",
-              key: "sports3PoleRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports5Pole"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDapol"),
-              dataIndex: "sports5PoleRolling",
-              align: "center",
-              key: "sports5PoleRolling",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("virtualGame"),
-          dataIndex: "virtualGameRolling",
-          align: "center",
-          key: "virtualGameRolling",
+          key: "miniDanpolRolling",
           render: (value) => f.number(value || 0),
         },
         {
-          title: t("lotus"),
-          dataIndex: "lotusRolling",
+          title: t("minicombination"),
+          dataIndex: "miniCombinationRolling",
           align: "center",
-          key: "lotusRolling",
+          key: "miniCombinationRolling",
           render: (value) => f.number(value || 0),
         },
-        {
-          title: t("mgm"),
-          dataIndex: "mgmRolling",
-          align: "center",
-          key: "mgmRolling",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("touch"),
-          dataIndex: "touchRolling",
-          align: "center",
-          key: "touchRolling",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("holdem"),
-          dataIndex: "holdemRolling",
-          align: "center",
-          key: "holdemRolling",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("cutReduce"),
-          align: "center",
-          dataIndex: "cutReduce",
-          key: "cutReduce",
-          render: (value) => f.number(value || 0),
-        },
-       
-      ],
-    },
-    {
-      title: t("losing"),
-      children: [
-        {
-          title: t("ratePercentage"),
-          align: "center",
-          children: [
-            {
-              title: t("loadingSettlement"),
-              dataIndex: "losingSettlement",
-              align: "center",
-              key: "losingSettlement",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("live"),
-          align: "center",
-          children: [
-            {
-              title: t("slot"),
-              dataIndex: "liveLosing",
-              align: "center",
-              key: "liveLosing",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("miniDanpol"),
-          align: "center",
-          children: [
-            {
-              title: t("minicombination"),
-              dataIndex: "miniDanpolLosing",
-              align: "center",
-              key: "miniDanpolLosing",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sportsDanpol"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDupol"),
-              dataIndex: "sportsDanpolLosing",
-              align: "center",
-              key: "sportsDanpolLosing",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports3Pole"),
-          align: "center",
-          children: [
-            {
-              title: t("sports4Pole"),
-              dataIndex: "sports3PoleLosing",
-              align: "center",
-              key: "sports3PoleLosing",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("sports5Pole"),
-          align: "center",
-          children: [
-            {
-              title: t("sportsDapol"),
-              dataIndex: "sports5PoleLosing",
-              align: "center",
-              key: "sports5PoleLosing",
-              render: (value) => f.number(value || 0),
-            },
-          ],
-        },
-        {
-          title: t("virtualGame"),
-          dataIndex: "virtualGameLosing",
-          align: "center",
-          key: "virtualGameLosing",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("lotus"),
-          dataIndex: "lotusLosing",
-          align: "center",
-          key: "lotusLosing",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("mgm"),
-          dataIndex: "mgmLosing",
-          align: "center",
-          key: "mgmLosing",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("touch"),
-          dataIndex: "touchLosing",
-          align: "center",
-          key: "touchLosing",
-          render: (value) => f.number(value || 0),
-        },
-        {
-          title: t("holdem"),
-          dataIndex: "holdemLosing",
-          align: "center",
-          key: "holdemLosing",
-          render: (value) => f.number(value || 0),
-        },
-        
       ],
     },
     {
@@ -816,20 +413,20 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       children: [
         {
           title: t("rolling"),
+          dataIndex: "partnershipRolling",
           align: "center",
-          children: [
-            {
-              title: t("moneyInHand"),
-              dataIndex: "partnershipMoneyInHand",
-              align: "center",
-              key: "partnershipMoneyInHand",
-              render: (value) => f.number(value || 0),
-            },
-          ],
+          key: "partnershipRolling",
+          render: (value) => f.number(value || 0),
+        },
+        {
+          title: t("moneyInHand"),
+          dataIndex: "partnershipMoneyInHand",
+          align: "center",
+          key: "partnershipMoneyInHand",
+          render: (value) => f.number(value || 0),
         }
       ],
     },
-   
   ];
 
   const onChange: TableProps<any>["onChange"] = (
@@ -992,175 +589,114 @@ const DistributorStatisticsDetailPage: React.FC = () => {
       expandable={{
         onExpand,
       }}
-      summary={() => (
-        <Table.Summary>
-          <Table.Summary.Row style={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}>
-            <Table.Summary.Cell index={0} className="font-bold bg-gray-100 text-center">
-              {t("total")}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={1} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.membershipWithdrawal || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={2} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.totalWithdrawal || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={3} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.numberOfMembers || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={4} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.moneyInHand || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={5} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.slotRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={6} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.miniCombinationRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={7} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.sportsDupolRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={8} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.sports4PoleRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={9} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.sportsDapolRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={10} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.virtualGameRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={11} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.lotusRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={12} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.mgmRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={13} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.touchRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              {f.number(totals.holdemRolling || 0)}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-            <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
-              0
-            </Table.Summary.Cell>
-          </Table.Summary.Row>
-        </Table.Summary>
-      )}
+      // summary={() => (
+      //   <Table.Summary>
+      //     <Table.Summary.Row style={{ backgroundColor: '#f5f5f5', fontWeight: 'bold' }}>
+      //       <Table.Summary.Cell index={0} className="font-bold bg-gray-100 text-center">
+      //         {t("total")}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={1} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.membershipWithdrawal || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={2} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.totalWithdrawal || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={3} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.numberOfMembers || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={4} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.moneyInHand || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={5} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.slotRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={6} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.miniCombinationRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={7} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.sportsDupolRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={8} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.sports4PoleRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={9} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.sportsDapolRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={10} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.virtualGameRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={11} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.lotusRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={12} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.mgmRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={13} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.touchRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         {f.number(totals.holdemRolling || 0)}
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //       <Table.Summary.Cell index={14} className="font-bold bg-gray-100 text-center">
+      //         0
+      //       </Table.Summary.Cell>
+      //     </Table.Summary.Row>
+      //   </Table.Summary>
+      // )}
       pagination={{
         showTotal(total, range) {
           return t("paginationLabel", {

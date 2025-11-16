@@ -268,27 +268,20 @@ const MiniGame: React.FC = () => {
       key: "transactionAt",
       render: (v) =>
         isValidDate(v)
-          ? f.dateTime(new Date(v), {
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit"
-            })
+          ? dayjs(v).format("M/D/YYYY HH:mm:ss")
           : "",
     },
     {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("updatedAt"),
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),
@@ -463,9 +456,9 @@ const MiniGame: React.FC = () => {
           [t("amount")]: Math.abs(transaction.amount),
           "Before Amount": transaction.balanceBefore,
           "After Amount": transaction.balanceAfter,
-          [t("transactionAt")]: transaction.transactionAt ? f.dateTime(new Date(transaction.transactionAt)) : "",
-          [t("createdAt")]: transaction.createdAt ? f.dateTime(new Date(transaction.createdAt)) : "",
-          [t("updatedAt")]: transaction.updatedAt ? f.dateTime(new Date(transaction.updatedAt)) : "",
+          [t("transactionAt")]: transaction.transactionAt ? dayjs(transaction.transactionAt).format("M/D/YYYY HH:mm:ss") : "",
+          [t("createdAt")]: transaction.createdAt ? dayjs(transaction.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+          [t("updatedAt")]: transaction.updatedAt ? dayjs(transaction.updatedAt).format("M/D/YYYY HH:mm:ss") : "",
           [t("status")]: transaction.status,
         }))
       );

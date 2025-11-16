@@ -27,6 +27,7 @@ import {
   FILTER_BANK,
   UPDATE_BANK,
 } from "@/actions/bank";
+import dayjs from "dayjs";
 import { ColumnType } from "antd/es/table";
 
 type EditableColumnType<T> = ColumnType<T> & {
@@ -178,7 +179,7 @@ const BankPage: React.FC = () => {
       key: "createdAt",
       width: 100,
       render: (text: string) =>
-        text ? f.dateTime(new Date(text) ?? null) : "",
+        text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : "",
     },
     {
       title: t("action"),

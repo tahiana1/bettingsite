@@ -27,7 +27,7 @@ import { BiEdit, BiTrash } from "react-icons/bi";
 import { PiPlus } from "react-icons/pi";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import {
   CREATE_INBOX,
@@ -222,7 +222,7 @@ const InboxPage: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),

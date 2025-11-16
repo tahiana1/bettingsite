@@ -32,6 +32,7 @@ import {
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
 const SportsBettingStatus: React.FC = () => {
@@ -259,19 +260,19 @@ const SportsBettingStatus: React.FC = () => {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("approvedAt"),
       dataIndex: "profile.approvedAt",
       key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),

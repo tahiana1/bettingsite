@@ -28,6 +28,7 @@ import {
   FILTER_SMS_API,
   UPDATE_SMS_API,
 } from "@/actions/sms_api";
+import dayjs from "dayjs";
 
 type EditableColumnType<T> = ColumnType<T> & {
   editable?: boolean;
@@ -194,7 +195,7 @@ const SMSSettingPage: React.FC = () => {
       key: "createdAt",
       width: 100,
       render: (text: string) =>
-        text ? f.dateTime(new Date(text) ?? null) : "",
+        text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : "",
     },
     {
       title: t("action"),

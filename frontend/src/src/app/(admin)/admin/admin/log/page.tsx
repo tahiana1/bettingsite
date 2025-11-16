@@ -22,6 +22,7 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { GET_LOGS } from "@/actions/log";
 import { FaApple, FaLinux, FaWindows } from "react-icons/fa6";
@@ -210,13 +211,7 @@ const AdminLogPage: React.FC = () => {
       key: "createdAt",
       render: (text) =>
         text
-          ? f.dateTime(new Date(text) ?? null, {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "numeric",
-              minute: "numeric",
-            })
+          ? dayjs(text).format("M/D/YYYY HH:mm:ss")
           : "",
     },
   ];

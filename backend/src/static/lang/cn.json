@@ -2327,5 +2327,13 @@
   "subtract" : "减去",
   "pleaseSelectRole" : "请选择角色",
   "lossingRate" : "亏损率",
-  "processStatus" : "处理状态"
+  "processStatus" : "处理状态",
+  "partner" : "合作伙伴",
+  "selectRole" : "选择角色",
+  "userType" : "用户类型",
+  "pleaseEnterName" : "请输入姓名",
+  "pleaseEnterUserid" : "请输入用户ID",
+  "pleaseEnterPassword" : "请输入密码",
+  "pleaseEnterNickname" : "请输入昵称",
+  "dormancyMessage" : "休眠消息"
 }

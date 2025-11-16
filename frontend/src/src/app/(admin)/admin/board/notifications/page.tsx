@@ -465,7 +465,7 @@ const NotiPage: React.FC = () => {
       title: t("register-date"),
       dataIndex: "registerDate",
       key: "registerDate",
-      render: (text) => (text ? f.dateTime(new Date(text) ?? null) : ""),
+      render: (text) => (text ? dayjs(text).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("notice-type"),

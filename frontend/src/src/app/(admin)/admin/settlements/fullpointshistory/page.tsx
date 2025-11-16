@@ -21,6 +21,7 @@ import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 
 const FullPointsHistoryPage: React.FC = () => {
@@ -92,24 +93,9 @@ const FullPointsHistoryPage: React.FC = () => {
       render: (_, record) => record.user?.profile?.holderName,
     },
     {
-      title: t("rolling"),
-      children: [
-        {
-          title: t("amount"),
-          dataIndex: "amount",
-          key: "amount",
-        },
-        {
-          title: t("balanceBefore"),
-          dataIndex: "balanceBefore",
-          key: "balanceBefore",
-        },
-        {
-          title: t("balanceAfter"),
-          dataIndex: "balanceAfter",
-          key: "balanceAfter",
-        },
-      ],
+      title: t("amount"),
+      dataIndex: "amount",
+      key: "amount",
     },
     {
       title: t("balance"),
@@ -130,20 +116,36 @@ const FullPointsHistoryPage: React.FC = () => {
       title: t("transactionAt"),
       dataIndex: "transactionAt",
       key: "transactionAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("approvedAt"),
       dataIndex: "approvedAt",
       key: "approvedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("status"),
       dataIndex: "status",
       key: "status",
       render: (value) => {
-        return value == "A" ? t("Approved")  : t("pending");
+        return value == "A" ? (
+          <Button
+            size="small"
+            type="primary"
+            style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
+          >
+            {t("Approved")}
+          </Button>
+        ) : (
+          <Button
+            size="small"
+            danger
+            type="primary"
+          >
+            {t("pending")}
+          </Button>
+        );
       },
     },
   ];

@@ -26,6 +26,7 @@ import { FILTER_QNAS, REPLY_QNA, COMPLETE_QNA } from "@/actions/qna";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { isValidDate, parseTableOptions } from "@/lib";
 import { BsCardChecklist } from "react-icons/bs";
 import Quill from "quill";
@@ -228,13 +229,13 @@ const SupportCenterPage: React.FC = () => {
       title: t("createdAt"),
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("updatedAt"),
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+      render: (v) => (isValidDate(v) ? dayjs(v).format("M/D/YYYY HH:mm:ss") : ""),
     },
     {
       title: t("action"),
