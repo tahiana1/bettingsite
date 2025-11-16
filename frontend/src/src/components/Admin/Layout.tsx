@@ -168,78 +168,78 @@ export default function AdminRootLayout({
   const data = [
     {
       label: t("honorLink"),
-      value: info.honorLinkBalance + t("egg") || 0 + t("egg"),
+      value: (Number(info.honorLinkBalance) || 0).toFixed(2) + t("egg"),
       color: "cyan",
     },
     {
       label: t("depositToday"),
-      value: info.depositToday,
+      value: (Number(info.depositToday) || 0).toFixed(2),
       color: "lightgreen",
     },
     {
       label: t("withdrawlToday"),
-      value: info.withdrawToday,
+      value: (Number(info.withdrawToday) || 0).toFixed(2),
       color: "tomato",
     },
     {
       label: t("bettingToday"),
-      value: info.bettingToday,
+      value: (Number(info.bettingToday) || 0).toFixed(2),
       color: "lightgreen",
     },
     {
       label: t("todaysWinner"),
-      value: info.todayWinners,
+      value: (Number(info.todayWinners) || 0).toFixed(2),
       color: "yellow",
     },
     {
       label: t("userAmount"),
-      value: info.totalBalance,
+      value: (Number(info.totalBalance) || 0).toFixed(2),
       color: "tomato",
     },
     {
       label: t("userPoints"),
-      value: info.totalPoints,
+      value: (Number(info.totalPoints) || 0).toFixed(2),
       color: "lightgreen",
     },
     {
       label: t("totalAmountOfDistributionReserves"),
-      value: 0,
+      value: (0).toFixed(2),
       color: "yellow",
     },
     {
       label: t("totalPoints"),
-      value: info.totalPoints,
+      value: (Number(info.totalPoints) || 0).toFixed(2),
       color: "yellow",
     },
     {
       label: t("totalLoss"),
-      value: info.totalLoss,
+      value: (Number(info.totalLoss) || 0).toFixed(2),
       color: "yellow",
     },
     {
       label: t("rollingTheTotal"),
-      value: info.rollingTotal || 0,
+      value: (Number(info.rollingTotal) || 0).toFixed(2),
       color: "yellow",
     },
     {
       label: t("totalSalesLossToday"),
-      value: info.totalSalesLossToday,
+      value: (Number(info.totalSalesLossToday) || 0).toFixed(2),
       color: "tomato",
     },
     {
       label: t("todaysDistributionRolling"),
-      value: 0,
+      value: (0).toFixed(2),
       color: "tomato",
     },
     {
       label: t("sportsPendingBetting"),
-      value: info.sportsPendingBetting,
+      value: (Number(info.sportsPendingBetting) || 0).toFixed(2),
       color: "lightgreen",
     },
 
     {
       label: t("sportsRebateBetting"),
-      value: info.sportsRebateBetting,
+      value: (Number(info.sportsRebateBetting) || 0).toFixed(2),
       color: "lightgreen",
     },
 
