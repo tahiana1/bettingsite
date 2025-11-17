@@ -27,6 +27,7 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		userRouter.DELETE("/:id/delete", controllers.DeleteUser)
 		userRouter.GET("/all-trash", controllers.GetTrashedUsers)
 		userRouter.DELETE("/delete-permanent/:id", controllers.PermanentlyDeleteUser)
+		userRouter.POST("/reset-coupons", controllers.ResetAllCoupons)
 	}
 
 	// Category routes

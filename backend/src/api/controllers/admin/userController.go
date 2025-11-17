@@ -192,3 +192,21 @@ func PermanentlyDeleteUser(c *gin.Context) {
 		"message": "The user has been deleted permanently",
 	})
 }
+
+// ResetAllCoupons function is used to reset all user coupons to 0
+func ResetAllCoupons(c *gin.Context) {
+	// Update all profiles to set coupon to 0
+	result := initializers.DB.Model(&models.Profile{}).Update("coupon", 0)
+
+	if err := result.Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Return success response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "All user coupons have been reset to 0",
+		"count":   result.RowsAffected,
+	})
+}

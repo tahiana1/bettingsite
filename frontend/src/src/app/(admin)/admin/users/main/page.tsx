@@ -15,6 +15,7 @@ import {
   Select,
   Modal,
   Form,
+  message,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -34,6 +35,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { USER_STATUS, USER_TYPE } from "@/constants";
 import { UPDATE_PROFILE } from "@/actions/profile";
+import api from "@/api";
 
 const UserPage: React.FC = () => {
   const t = useTranslations();
@@ -524,10 +526,27 @@ const UserPage: React.FC = () => {
   };
 
   const onResetCoupon = async () => {
-    const confirmed = await modal.confirm({
+    modal.confirm({
       title: "Do you want to reset the number of coupons for all members to 0?",
+      onOk: async () => {
+        try {
+          const response = await api("admin/users/reset-coupons", {
+            method: "POST",
+          });
+          
+          if (response.success) {
+            message.success(response.message || "All coupons have been reset to 0");
+            // Refresh the user list
+            refetch(tableOptions);
+          } else {
+            message.error("Failed to reset coupons");
+          }
+        } catch (error: any) {
+          console.error("Error resetting coupons:", error);
+          message.error(error?.response?.data?.message || "Failed to reset coupons");
+        }
+      },
     });
-    console.log("Confirmed: ", confirmed);
   };
   const [colorOption, setColorOptoin] = useState<any>("new");
   const onChangeColors = async () => {
