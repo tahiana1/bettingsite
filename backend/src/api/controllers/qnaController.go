@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,7 @@ func CreateQna(c *gin.Context) {
 	var input struct {
 		QuestionTitle string `json:"questionTitle" binding:"required"`
 		Question      string `json:"question" binding:"required"`
+		DomainID      *uint  `json:"domainId"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -35,7 +37,7 @@ func CreateQna(c *gin.Context) {
 	}
 
 	// Get user from context
-	user, err := helpers.GetAuthUser(c)
+	user, err := helpers.GetGinAuthUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status": false,
@@ -44,11 +46,37 @@ func CreateQna(c *gin.Context) {
 		return
 	}
 
+	// Get domain - prefer domainId from request, otherwise get from context
+	var domainID uint
+	if input.DomainID != nil {
+		// Validate that the provided domain exists
+		var domain models.Domain
+		if err := initializers.DB.Where("id = ?", *input.DomainID).First(&domain).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status": false,
+				"error":  fmt.Sprintf("Domain with ID %d not found", *input.DomainID),
+			})
+			return
+		}
+		domainID = *input.DomainID
+	} else {
+		// Get domain from context
+		domain, err := helpers.GetGinAccessDomain(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status": false,
+				"error":  "Domain not found in context. Please provide domainId in request.",
+			})
+			return
+		}
+		domainID = domain.ID
+	}
+
 	qna := models.Qna{
 		QuestionTitle: input.QuestionTitle,
 		Question:      input.Question,
 		UserID:        user.ID,
-		DomainID:      2,
+		DomainID:      domainID,
 		Status:        "P",
 		Type:          "contact",
 	}
@@ -68,7 +96,7 @@ func CreateQna(c *gin.Context) {
 
 func GetQnaByUserId(c *gin.Context) {
 	// Get user from context
-	user, err := helpers.GetAuthUser(c)
+	user, err := helpers.GetGinAuthUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status": false,
@@ -113,7 +141,7 @@ func DeleteQna(c *gin.Context) {
 	}
 
 	// Get user from context
-	user, err := helpers.GetAuthUser(c)
+	user, err := helpers.GetGinAuthUser(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"status": false,

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import dayjs from "dayjs";
 import html2canvas from 'html2canvas-pro';
 import { useRouter } from 'next/navigation';
@@ -34,6 +34,7 @@ import api from "@/api";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
+import { fetchUserBettingHistoryV2 } from "@/actions/betLog";
 
 const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
   const t = useTranslations();
@@ -50,53 +51,102 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
   const [colorModal, setColorModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [selectedTab, setSelectedTab] = useState<"casino" | "slot" | "miniGame">("casino");
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   useEffect(() => {
     api("user/me").then((res) => {
-      fetchBets(res.data.profile);
       setProfile(res.data.profile);
     }).catch((err) => {
       console.log(err);
     });
   }, []);
 
-  const fetchBets = async (profile: any) => {
-    const userid = Number(profile.userId);
-    const response = await api("bets/get-casinoBet", {
-      method: "POST",
-      data: {
+  const fetchBets = useCallback(async (profile: any) => {
+    if (!profile) return;
+    
+    setLoading(true);
+    try {
+      const userid = Number(profile.userId);
+      const result = await fetchUserBettingHistoryV2({
         user_id: userid,
+        limit: pageSize,
+        offset: (currentPage - 1) * pageSize,
+      });
+
+      let dataToShow: any[] = [];
+      let totalCount = 0;
+
+      switch (selectedTab) {
+        case "casino":
+          dataToShow = result.casinoBets || [];
+          totalCount = result.casinoTotal || 0;
+          break;
+        case "slot":
+          dataToShow = result.slotBets || [];
+          totalCount = result.slotTotal || 0;
+          break;
+        case "miniGame":
+          dataToShow = result.miniGameBets || [];
+          totalCount = result.miniGameTotal || 0;
+          break;
       }
-    });
-    if (response.status) {
-      setBets(response.data); 
-      console.log(response.data, "response.data")
-    } else {
+
+      // Map data to common format
+      const mappedData = dataToShow.map((item: any) => {
+        if (selectedTab === "miniGame") {
+          // MiniGame data structure
+          return {
+            id: item.id,
+            gameName: item.gameName || "-",
+            type: item.type || "-",
+            amount: item.amount || 0,
+            beforeAmount: item.beforeAmount || item.balanceBefore || 0, 
+            afterAmount: item.afterAmount || item.balanceAfter || 0,
+            createdAt: item.createdAt || item.transactionAt || "",
+            status: item.status || "-",
+            transId: item.transId || item.id?.toString() || "-",
+            bettingTime: item.bettingTime || (item.createdAt ? new Date(item.createdAt).getTime() / 1000 : 0),
+          };
+        } else {
+          // Casino/Slot data structure
+          return {
+            id: item.id,
+            gameName: item.gameName || "-",
+            type: item.type || "-",
+            amount: item.amount || 0,
+            beforeAmount: item.beforeAmount || 0,
+            afterAmount: item.afterAmount || 0,
+            createdAt: item.createdAt || "",
+            status: item.status || "-",
+            transId: item.transId || item.id?.toString() || "-",
+            bettingTime: item.bettingTime || (item.createdAt ? new Date(item.createdAt).getTime() / 1000 : 0),
+          };
+        }
+      });
+
+      setBets(mappedData);
+      setTotal(totalCount);
+    } catch (error) {
+      console.error("Error fetching bets:", error);
       setBets([]);
+      setTotal(0);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [selectedTab, currentPage, pageSize]);
+
+  useEffect(() => {
+    if (profile) {
+      fetchBets(profile);
+    }
+  }, [profile, fetchBets]);
   
   const onTransactionTypeChange = (v: string = "") => {
     updateFilter("transactions.type", v, "eq");
   };
 
-  const columns: TableProps<Transaction>["columns"] = [
-    {
-      title: "",
-      dataIndex: "id",
-      key: "id",
-      render: (value) => <Checkbox 
-        className="flex justify-center items-center mx-auto custom-checkbox" 
-        checked={selectedBetGroups.includes(value)}
-          onChange={(e) => {
-            if (e.target.checked) {
-              setSelectedBetGroups([...selectedBetGroups, value]);
-            } else {
-              setSelectedBetGroups(selectedBetGroups.filter(id => id !== value));
-            }
-          }}
-        />,
-    },
+  const getColumns = (): TableProps<any>["columns"] => [
     {
       title: t("id"),
       dataIndex: "id",
@@ -111,43 +161,84 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
     },
     {
       title: t("type"),
-      dataIndex: "gameName",
-      key: "game_name",
-      render: (value) => value ? value.split("|")[1] : "-",
+      dataIndex: "type",
+      key: "type",
+      render: (value) => {
+        if (selectedTab === "miniGame") {
+          return value ? value.replace("minigame_", "") : "-";
+        }
+        return value ? (value === "bet" ? t("bet") : t("win")) : "-";
+      },
     },
     {
       title: t("gameName"),
       dataIndex: "gameName",
       key: "game_name",
-      render: (value) => value ? value.split("|")[0] : "-",
+      render: (value) => {
+        if (!value) return "-";
+        // For casino/slot, split by "|" if it exists
+        if (selectedTab !== "miniGame" && value.includes("|")) {
+          return value.split("|")[0];
+        }
+        return value;
+      },
     },
     {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (value) => value,
+      render: (value) => {
+        if (value === null || value === undefined) return "-";
+        const numValue = Number(value);
+        return f.number(Math.abs(numValue));
+      },
     },
     {
       title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
-      render: (value) => value ? value : "-",
+      render: (value) => {
+        if (value === null || value === undefined) return "-";
+        return f.number(Number(value));
+      },
     },
     {
       title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
-      render: (value) => value ? value : "-",
+      render: (value) => {
+        if (value === null || value === undefined) return "-";
+        return f.number(Number(value));
+      },
     },
     {
       title: t("status"),
-      dataIndex: "type",
-      key: "type",
-      render: (value) => value == "bet" ? <span className="text-[#FF0000]">{t("bet")}</span> : <span className="text-[#00FF00]">{t("win")}</span>,
+      dataIndex: "status",
+      key: "status",
+      render: (value, record) => {
+        if (selectedTab === "miniGame") {
+          // For miniGame, check if afterAmount > beforeAmount (win) or < (loss)
+          const before = Number(record.beforeAmount || 0);
+          const after = Number(record.afterAmount || 0);
+          if (after > before) {
+            return <span className="text-[#00FF00]">{t("win")}</span>;
+          } else if (after < before) {
+            return <span className="text-[#FF0000]">{t("bet")}</span>;
+          }
+          return <span className="text-white">{value || "-"}</span>;
+        } else {
+          // For casino/slot, use the type field
+          return record.type === "bet" 
+            ? <span className="text-[#FF0000]">{t("bet")}</span> 
+            : <span className="text-[#00FF00]">{t("win")}</span>;
+        }
+      },
     },
   ];
 
-  const onChange: TableProps<Transaction>["onChange"] = (
+  const columns = getColumns();
+
+  const onChange: TableProps<any>["onChange"] = (
     pagination,
     filters,
     sorter,
@@ -159,7 +250,11 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
   const onPaginationChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
-    console.log('Page changed:', page, 'PageSize:', size);
+  };
+
+  const handleTabChange = (tab: "casino" | "slot" | "miniGame") => {
+    setSelectedTab(tab);
+    setCurrentPage(1); // Reset to first page when changing tabs
   };
 
   const updateFilter = (field: string, v: string, op: string = "eq") => {
@@ -414,11 +509,44 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
               </button>
               
             </div>
-            <div className="flex justify-end gap-2 mb-4">
+            <div className="flex justify-between gap-2 mb-4">
+              
+              <div className="flex bg-gradient-to-r from-[#2a1810] to-[#3e2a1f] rounded-lg overflow-hidden border border-[#5d4a3a]">
+                <button 
+                  onClick={() => handleTabChange("casino")}
+                  className={`flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-1 transition-colors border-r border-[#5d4a3a] ${
+                    selectedTab === "casino" 
+                      ? "text-white bg-[#2a1810]" 
+                      : "text-white hover:bg-[#2a1810]"
+                  }`}
+                >
+                  {t("casino")}
+                </button>
+                <button 
+                  onClick={() => handleTabChange("slot")}
+                  className={`flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-1 transition-colors border-r border-[#5d4a3a] ${
+                    selectedTab === "slot" 
+                      ? "text-white bg-[#2a1810]" 
+                      : "text-white hover:bg-[#2a1810]"
+                  }`}
+                >
+                  {t("slot")}
+                </button>
+                <button 
+                  onClick={() => handleTabChange("miniGame")}
+                  className={`flex items-center justify-center gap-2 cursor-pointer text-[15px] px-4 py-1 transition-colors ${
+                    selectedTab === "miniGame" 
+                      ? "text-white bg-[#2a1810]" 
+                      : "text-white hover:bg-[#2a1810]"
+                  }`}
+                >
+                  {t("miniGame")}
+                </button>
+              </div>
               {/* <button className="btn-modal-auth px-4 py-2 text-sm cursor-pointer">
                 {t("deleteAllHistory")}
               </button> */}
-              <button onClick={() => handleCaptureAllImage()} className="btn-modal-auth px-4 py-2 text-sm cursor-pointer">
+              <button onClick={() => handleCaptureAllImage()} className="btn-modal-auth px-4 py-1 text-sm cursor-pointer">
                 {t("contactInquiry")}
               </button>
               {/* <button 
@@ -428,9 +556,10 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
                 {t("writingInquiry")}
               </button> */}
             </div>
-            <Table<Transaction>
+            <Table<any>
               columns={columns}
               dataSource={bets}
+              loading={loading}
               className="w-full text-center custom-dark-table text-center mb-4 custom-table"
               style={{
                 borderTop: "1px solid #5d4a3a", 
@@ -445,8 +574,10 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
                 {
                   pageSize: pageSize,
                   current: currentPage,
-                  total: bets.length,
-                  onChange: onPaginationChange
+                  total: total,
+                  onChange: onPaginationChange,
+                  showSizeChanger: true,
+                  pageSizeOptions: ['10', '25', '50', '100'],
                 }
               }
             />

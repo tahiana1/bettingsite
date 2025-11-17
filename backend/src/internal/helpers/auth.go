@@ -44,6 +44,26 @@ func GetGinAuthUser(c *gin.Context) (*models.User, error) {
 	return user.(*models.User), nil
 }
 
+// GetGinAccessDomain returns the domain from the Gin context
+func GetGinAccessDomain(c *gin.Context) (*models.Domain, error) {
+	domainName, exists := c.Get("accessDomain")
+	if !exists {
+		return nil, fmt.Errorf("domain not found in context")
+	}
+
+	domainNameStr, ok := domainName.(string)
+	if !ok {
+		return nil, fmt.Errorf("invalid domain type in context")
+	}
+
+	var domain models.Domain
+	if err := initializers.DB.Where("name = ?", domainNameStr).First(&domain).Error; err != nil {
+		return nil, fmt.Errorf("domain not found: %v", err)
+	}
+
+	return &domain, nil
+}
+
 // UpdateUserOnlineStatus updates the online status of a user
 func UpdateUserOnlineStatus(userID uint, onlineStatus bool) error {
 	return initializers.DB.Model(&models.User{}).Where("id = ?", userID).Update("online_status", onlineStatus).Error
@@ -63,28 +83,28 @@ func SetUserOffline(userID uint) error {
 // This allows the frontend to detect when an admin has forced the user to logout
 func NotifyUserLogout(userID uint) error {
 	ctx := context.Background()
-	
+
 	// Create logout message
 	logoutMessage := map[string]interface{}{
 		"type":    "logout",
 		"message": "You have been logged out by administrator",
 		"userId":  userID,
 	}
-	
+
 	// Marshal to JSON
 	messageBytes, err := json.Marshal(logoutMessage)
 	if err != nil {
 		return fmt.Errorf("failed to marshal logout message: %v", err)
 	}
-	
+
 	// Publish to user's private channel
 	userIDStr := fmt.Sprintf("%d", userID)
 	channel := "private:" + userIDStr
-	
+
 	if err := redis.Client.Publish(ctx, channel, messageBytes).Err(); err != nil {
 		return fmt.Errorf("failed to publish logout message: %v", err)
 	}
-	
+
 	return nil
 }
 

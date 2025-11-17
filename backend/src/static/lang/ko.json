@@ -2271,5 +2271,13 @@
   "pointsManagement": "포인트 관리",
   "processStatus": "처리 상태",
   "selectDomains": "도메인 선택",
-  "subtract": "차감"
+  "selectRole": "역할 선택",
+  "subtract": "차감",
+  "dormancyMessage": "휴면 메시지",
+  "partner": "파트너",
+  "pleaseEnterName": "이름을 입력해주세요",
+  "pleaseEnterNickname": "닉네임을 입력해주세요",
+  "pleaseEnterPassword": "비밀번호를 입력해주세요",
+  "pleaseEnterUserid": "사용자 ID를 입력해주세요",
+  "userType": "사용자 유형"
 }

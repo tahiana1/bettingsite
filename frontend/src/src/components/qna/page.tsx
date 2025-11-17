@@ -1,9 +1,10 @@
 "use client"
 
 import { Button, Card, Form, Input, Layout, message, Space, Switch, Table, Tag } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuill } from "react-quilljs";
+import 'quill/dist/quill.snow.css';
 import type { TableProps } from "antd";
 import { BiTrash } from "react-icons/bi";
 import { FILTER_QNAS } from "@/actions/qna";
@@ -52,7 +53,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
         });
     }, []);
  
-    const modules = {
+    const modules = useMemo(() => ({
         toolbar: [
           ["bold", "italic", "underline", "strike", "blockquote"],
           [
@@ -64,9 +65,30 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
           ["link", "image"],
           ["clean"],
         ],
-      };
+    }), []);
 
-      const columns: TableProps<QnaItem>["columns"] = [
+    const formats = useMemo(() => [
+        "bold",
+        "italic",
+        "underline",
+        "strike",
+        "blockquote",
+        "list",
+        "indent",
+        "link",
+        "image",
+    ], []);
+
+    const { quill, quillRef } = useQuill({ modules, formats });
+
+    const handleQuillChange = React.useCallback((editor: any, fieldName: string) => {
+        if (editor) {
+            const content = editor.root.innerHTML;
+            form.setFieldValue(fieldName, content);
+        }
+    }, [form]);
+
+    const columns: TableProps<QnaItem>["columns"] = [
         {
           title: t("number"),
           dataIndex: "id",
@@ -98,18 +120,6 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
           ),
         },
       ];
-    const formats = [
-        "bold",
-        "italic",
-        "underline",
-        "strike",
-        "blockquote",
-        "list",
-        "indent",
-        "link",
-        "image",
-    ];
-    const { quill, quillRef } = useQuill({ modules, formats });
 
     useEffect(() => {
         if (quill) {
@@ -146,7 +156,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                 quill.off('text-change', handleTextChange);
             };
         }
-    }, [quill, hasCheckedForImage]);
+    }, [quill, hasCheckedForImage, handleQuillChange]);
 
     useEffect(() => {
         // Only fetch QnAs if we don't already have profile data
@@ -199,13 +209,6 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
         });
     }
 
-    const handleQuillChange = (editor: any, fieldName: string) => {
-        if (editor) {
-            const content = editor.root.innerHTML;
-            form.setFieldValue(fieldName, content);
-        }
-    };    
-
     const handleDelete = async (id: string) => {
         try {
             const response = await api("qna/delete", {
@@ -229,7 +232,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                 data: {
                     questionTitle: values.title,
                     question: values.description,
-                    domainId: 2
+                    domainId: 1
                 }
             });
 
@@ -243,18 +246,18 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                     status: response.data.status
                 }, ...prevQnas]);
                 
-                // Reset form and editor content
-                form.resetFields();
+                // Clear editor content and form fields
                 if (quill) {
+                    // Clear the editor content
                     quill.setText('');
-                    // Manually clear the form field to ensure consistency
+                    // Update form field to match
                     form.setFieldValue('description', '');
                 }
+                // Reset other form fields (title)
+                form.setFieldsValue({ title: '' });
                 
-                // Reload page to ensure fresh state
-                setTimeout(() => {
-                    window.location.reload();
-                }, 100);
+                // Show success message
+                message.success(t("qnaCreated") || "QnA created successfully");
             } else {
                 throw new Error(response.message || 'Failed to create QnA');
             }
@@ -321,7 +324,6 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                             name="newForm"
                             layout="vertical"
                             form={form}
-                            clearOnDestroy
                             onFinish={onCreate}
                         >
                             <Form.Item 
@@ -336,7 +338,7 @@ const Qna: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
                                 label={<span className="text-white font-medium">{t("desc")}</span>}
                                 rules={[{ required: true, message: t("required") }]}
                             >
-                                <div ref={quillRef} className="quill-editor-dark" key="qna-editor"></div>
+                                <div ref={quillRef} className="quill-editor-dark" style={{ minHeight: '200px' }}></div>
                             </Form.Item>
                             <div className="flex gap-2 pt-3 w-[80%] mx-auto">
                                 <Form.Item label={null} className="w-full">
