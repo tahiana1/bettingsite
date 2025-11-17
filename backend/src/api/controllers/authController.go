@@ -13,15 +13,13 @@ import (
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
+	"github.com/hotbrainy/go-betting/backend/internal/honorlinkapi"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	responses "github.com/hotbrainy/go-betting/backend/internal/response"
 	"github.com/hotbrainy/go-betting/backend/internal/validations"
-	"github.com/hotbrainy/go-betting/backend/internal/honorlinkapi"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
-
-
 
 // Signup function is used to create a user or signup a user
 func SignUp(c *gin.Context) {
@@ -38,9 +36,9 @@ func SignUp(c *gin.Context) {
 		Birthday      time.Time `json:"birthday"`
 		Phone         string    `json:"phone"`
 		Referral      string    `json:"referral"`
-		OS            string    `json:"os"`          // Optional: OS from frontend
-		Device        string    `json:"device"`      // Optional: Device from frontend
-		FingerPrint   string    `json:"fingerPrint"` // Optional: FingerPrint from frontend
+		OS            string    `json:"os"`                        // Optional: OS from frontend
+		Device        string    `json:"device"`                    // Optional: Device from frontend
+		FingerPrint   string    `json:"fingerPrint"`               // Optional: FingerPrint from frontend
 		Domain        string    `json:"domain" binding:"required"` // Domain from frontend
 	}
 
@@ -172,6 +170,12 @@ func SignUp(c *gin.Context) {
 
 	pr := initializers.DB.Create(&profile)
 
+	// Check profile creation error first before proceeding with Honorlink integration
+	if err := pr.Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
 	// checking the user status on the honorlink api, then if it is not exist, creating the honorlink user account.
 	// if the user is exist, skip the creating the honorlink user account.
 	userExists, err := honorlinkapi.CheckUserExists(userInput.Userid)
@@ -186,11 +190,6 @@ func SignUp(c *gin.Context) {
 		}
 	}
 
-	if err := pr.Error; err != nil {
-		format_errors.InternalServerError(c, err)
-		return
-	}
-
 	c.JSON(http.StatusOK, responses.Status{
 		Data: user,
 	})
@@ -202,9 +201,9 @@ func Login(c *gin.Context) {
 	var userInput struct {
 		Userid      string `json:"userid" binding:"required"`
 		Password    string `json:"password" binding:"required"`
-		OS          string `json:"os"`          // Optional: OS from frontend
-		Device      string `json:"device"`      // Optional: Device from frontend
-		FingerPrint string `json:"fingerPrint"` // Optional: FingerPrint from frontend
+		OS          string `json:"os"`                        // Optional: OS from frontend
+		Device      string `json:"device"`                    // Optional: Device from frontend
+		FingerPrint string `json:"fingerPrint"`               // Optional: FingerPrint from frontend
 		Domain      string `json:"domain" binding:"required"` // Domain from frontend
 	}
 

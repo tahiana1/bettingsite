@@ -15,6 +15,7 @@ import { useTranslations, useFormatter } from "next-intl";
 import { useAtom } from "jotai";
 import { expectedWinningAmount, betAmount, rateState, userState } from "@/state/state";
 import api from "@/api";
+import { formatNumber } from "@/lib";
 
 const BettingCart: React.FC = () => {
   const t = useTranslations();
@@ -23,22 +24,22 @@ const BettingCart: React.FC = () => {
     {
       key: "1",
       label: t("betting/singleMaxBettingAmount"),
-      value: f.number(5000000),
+      value: formatNumber(5000000),
     },
     {
       key: "2",
       label: t("betting/singleMaxWinningAmount"),
-      value: f.number(10000000),
+      value: formatNumber(10000000),
     },
     {
       key: "3",
       label: t("betting/multiMaxBettingAmount"),
-      value: f.number(3000000),
+      value: formatNumber(3000000),
     },
     {
       key: "4",
       label: t("betting/multiMaxWinningAmount"),
-      value: f.number(10000000),
+      value: formatNumber(10000000),
     },
   ];
   const [amount, setAmount] = useAtom<number>(betAmount);
@@ -186,11 +187,7 @@ const BettingCart: React.FC = () => {
               {t("betting/expectedWinningAmount")}{" "}
             </div>
             <div className="w-full text-red-500 flex-1 text-end">
-              {f.number(expectedAmount, {
-                currencyDisplay: "narrowSymbol",
-                style: "currency",
-                currency: "USD",
-              })}
+              {formatNumber(expectedAmount)}
             </div>
           </List.Item>
         }
@@ -214,25 +211,25 @@ const BettingCart: React.FC = () => {
             <Space direction="vertical" className="w-full">
               <Space.Compact className="w-full flex gap-2">
                 <Radio.Button className="w-full" value={5000}>
-                  {f.number(5000)}
+                  {formatNumber(5000)}
                 </Radio.Button>
                 <Radio.Button className="w-full" value={10000}>
-                  {f.number(10000)}
+                  {formatNumber(10000)}
                 </Radio.Button>
               </Space.Compact>
 
               <Space.Compact className="w-full flex gap-2">
                 <Radio.Button className="w-full" value={50000}>
-                  {f.number(50000)}
+                  {formatNumber(50000)}
                 </Radio.Button>
                 <Radio.Button className="w-full" value={100000}>
-                  {f.number(100000)}
+                  {formatNumber(100000)}
                 </Radio.Button>
               </Space.Compact>
 
               <Space.Compact className="w-full flex gap-2">
                 <Radio.Button className="w-full" value={500000}>
-                  {f.number(500000)}
+                  {formatNumber(500000)}
                 </Radio.Button>
                 <Radio.Button className="w-full" value={"max"}>
                   MAX

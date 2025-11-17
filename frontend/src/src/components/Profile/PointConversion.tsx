@@ -15,6 +15,7 @@ import { useTranslations, useFormatter } from "next-intl";
 import { useAtom } from "jotai";
 import { betAmount, userState } from "@/state/state";
 import { SiDepositphotos } from "react-icons/si";
+import { formatNumber } from "@/lib";
 
 const PointConversion: React.FC = () => {
   const t = useTranslations();
@@ -110,22 +111,22 @@ const PointConversion: React.FC = () => {
               <Space direction="vertical" className="w-full">
                 <Space.Compact className="w-full flex flex-wrap gap-2">
                   <Radio.Button value={1000}>
-                    {f.number(1000)}
+                    {formatNumber(1000)}
                   </Radio.Button>
                   <Radio.Button value={5000}>
-                    {f.number(5000)}
+                    {formatNumber(5000)}
                   </Radio.Button>
                   <Radio.Button value={10000}>
-                    {f.number(10000)}
+                    {formatNumber(10000)}
                   </Radio.Button>
                   <Radio.Button value={50000}>
-                    {f.number(50000)}
+                    {formatNumber(50000)}
                   </Radio.Button>
                   <Radio.Button value={100000}>
-                    {f.number(100000)}
+                    {formatNumber(100000)}
                   </Radio.Button>
                   <Radio.Button value={500000}>
-                    {f.number(500000)}
+                    {formatNumber(500000)}
                   </Radio.Button>
                   <Radio.Button value={"max"}>MAX</Radio.Button>
                 </Space.Compact>

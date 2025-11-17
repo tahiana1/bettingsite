@@ -22,7 +22,7 @@ import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const FullPointsHistoryPage: React.FC = () => {
   const t = useTranslations();
@@ -96,6 +96,7 @@ const FullPointsHistoryPage: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("balance"),
@@ -104,11 +105,44 @@ const FullPointsHistoryPage: React.FC = () => {
           title: t("balanceBefore"),
           dataIndex: "balanceBefore",
           key: "balanceBefore",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("balanceAfter"),
           dataIndex: "balanceAfter",
           key: "balanceAfter",
+          render: (value) => formatNumber(value || 0),
+        },
+      ],
+    },
+    {
+      title: t("point"),
+      children: [
+        {
+          title: t("pointBefore"),
+          dataIndex: "pointBefore",
+          key: "pointBefore",
+          render: (_, record) => formatNumber(record.user?.profile?.point || 0),
+        },
+        {
+          title: t("point"),
+          dataIndex: "point",
+          key: "point",
+          render: (_, record) => formatNumber(record.amount || 0),
+        },
+        {
+          title: t("pointAfter"),
+          dataIndex: "pointAfter",
+          key: "pointAfter",
+          render: (_, record) => {
+            let point = record.user?.profile?.point || 0;
+            if (record.type == "point") {
+              point = point - (record.amount || 0);
+            } else if (record.type == "pointDeposit") {
+              point = point + (record.amount || 0);
+            }
+            return formatNumber(point);
+          },
         },
       ],
     },

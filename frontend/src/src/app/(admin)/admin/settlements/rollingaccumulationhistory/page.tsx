@@ -21,7 +21,7 @@ import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const RollingAccumulationPage: React.FC = () => {
   const t = useTranslations();
@@ -108,7 +108,7 @@ const RollingAccumulationPage: React.FC = () => {
           dataIndex: "amount",
           key: "amount",
           render: (text, record) => {
-            return Math.abs(record.amount);
+            return formatNumber(Math.abs(record.amount || 0));
           },
         },
         {
@@ -116,7 +116,7 @@ const RollingAccumulationPage: React.FC = () => {
           dataIndex: "prizeMoney",
           key: "prizeMoney",
           render: (text, record) => {
-            return 0;
+            return formatNumber(0);
           },
         },
                   {
@@ -134,7 +134,7 @@ const RollingAccumulationPage: React.FC = () => {
       dataIndex: ["balanceBefore", "balanceAfter"],
       key: "amount",
       render: (text, record) => {
-        return record.balanceAfter - record.balanceBefore;
+        return formatNumber((record.balanceAfter || 0) - (record.balanceBefore || 0));
       },
     },
     {
@@ -142,7 +142,7 @@ const RollingAccumulationPage: React.FC = () => {
       dataIndex: "balanceBefore",
       key: "balanceBefore",
       render: (text) => {
-        return text ? text : "-";
+        return text ? formatNumber(text) : "-";
       },
     },
     {
@@ -150,7 +150,7 @@ const RollingAccumulationPage: React.FC = () => {
       dataIndex: "balanceAfter",
       key: "balanceAfter",
       render: (text) => {
-        return text ? text : "-";
+        return text ? formatNumber(text) : "-";
       },
     },
     {

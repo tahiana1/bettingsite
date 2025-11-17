@@ -22,7 +22,7 @@ import { GET_DISTRIBUTORSDETAILS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions, buildTree } from "@/lib";
+import { isValidDate, parseTableOptions, buildTree, formatNumber } from "@/lib";
 
 const DistributorStatisticsPage: React.FC = () => {
   const t = useTranslations();
@@ -130,28 +130,28 @@ const DistributorStatisticsPage: React.FC = () => {
       dataIndex: "profile.balance",
       key: "profile.balance",
       width: 120,
-      render: (_, { profile }) => f.number(profile?.balance || 0),
+      render: (_, { profile }) => formatNumber(profile?.balance || 0),
     },
     {
       title: t("point"),
       dataIndex: "profile.point",
       key: "profile.point",
       width: 80,
-      render: (_, { profile }) => profile?.point || 0,
+      render: (_, { profile }) => formatNumber(profile?.point || 0),
     },
     {
       title: t("deposit"),
       dataIndex: "membershipDeposit",
       key: "membershipDeposit",
       width: 80,
-      render: (value) => f.number(value || 0),
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("withdraw"),
       dataIndex: "membershipWithdrawal",
       key: "membershipWithdrawal",
       width: 80,
-      render: (value) => f.number(value || 0),
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("entry/exit"),
@@ -160,7 +160,7 @@ const DistributorStatisticsPage: React.FC = () => {
       render: (_, record) => {
         const deposit = record.membershipDeposit || 0;
         const withdrawal = record.membershipWithdrawal || 0;
-        return f.number(deposit - withdrawal);
+        return formatNumber(deposit - withdrawal);
       },
     },
     {
@@ -184,7 +184,7 @@ const DistributorStatisticsPage: React.FC = () => {
                         (record.mgmBetting || 0) +
                         (record.touchBetting || 0) +
                         (record.holdemBetting || 0);
-        return f.number(totalBet);
+        return formatNumber(totalBet);
       },
     },
     {
@@ -208,7 +208,7 @@ const DistributorStatisticsPage: React.FC = () => {
                            (record.mgmWinning || 0) +
                            (record.touchWinning || 0) +
                            (record.holdemWinning || 0);
-        return f.number(totalWinner);
+        return formatNumber(totalWinner);
       },
     },
     {
@@ -216,7 +216,7 @@ const DistributorStatisticsPage: React.FC = () => {
       dataIndex: "losingSettlement",
       key: "bedang",
       width: 80,
-      render: (value) => f.number(value || 0),
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("settlementType"),

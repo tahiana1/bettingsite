@@ -33,7 +33,7 @@ import {
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const SportsBettingStatus: React.FC = () => {
   const t = useTranslations();
@@ -211,33 +211,38 @@ const SportsBettingStatus: React.FC = () => {
       title: t("balanceBefore"),
       dataIndex: "balanceBefore",
       key: "balanceBefore",
+      render: (_, record) => formatNumber(record.balanceBefore || 0),
     },
     {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
+      render: (_, record) => formatNumber(record.amount || 0),
     },
     {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
+      render: (_, record) => formatNumber(record.balanceAfter || 0),
     },
    
     {
       title: t("pointBefore"),
       dataIndex: "pointBefore",
       key: "pointBefore",
+      render: (_, record) => formatNumber(record.pointBefore || 0),
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: () => 0,
+      render: () => formatNumber(0),
     },
     {
       title: t("pointAfter"),
       dataIndex: "pointAfter",
       key: "pointAfter",
+      render: (_, record) => formatNumber(record.pointAfter || 0),
     },
     {
       title: t("usdtDesc"),

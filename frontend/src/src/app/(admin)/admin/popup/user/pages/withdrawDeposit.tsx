@@ -27,7 +27,7 @@ import {
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const UserWithdrawDeposit: React.FC = () => {
   const t = useTranslations();
@@ -158,16 +158,19 @@ const UserWithdrawDeposit: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("balanceBefore"),
       dataIndex: "balanceBefore",
       key: "balanceBefore",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("balanceAfter"),
       dataIndex: "balanceAfter",
       key: "balanceAfter",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("explation"),

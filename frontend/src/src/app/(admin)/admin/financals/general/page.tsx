@@ -34,7 +34,7 @@ import {
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import api from "@/api";
 
 const GeneralDWPage: React.FC = () => {
@@ -408,7 +408,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("balanceBefore"),
       dataIndex: "balanceBefore",
       key: "balanceBefore",
-      render: (_, record) => record.user?.profile?.balance,
+      render: (_, record) => formatNumber(record.user?.profile?.balance || 0),
     },
     {
       title: t("amount"),
@@ -417,9 +417,9 @@ const GeneralDWPage: React.FC = () => {
       render: (_, record) => {
         
         if (record.type == "pointDeposit") {
-          return record.amount;
+          return formatNumber(record.amount || 0);
         }
-        return record.type == "point" && 0
+        return formatNumber(record.type == "point" ? 0 : 0)
       },
     },
     {
@@ -427,16 +427,17 @@ const GeneralDWPage: React.FC = () => {
       dataIndex: "balanceAfter",
       key: "balanceAfter",
       render: (_, record) => {
+        let balance = record.user?.profile?.balance || 0;
         if (record.type == "deposit" && record.status == "pending") {
-          return record.user?.profile?.balance + record.amount;
+          balance = balance + (record.amount || 0);
         } else if (record.type == "withdrawal" && record.status == "pending") {
-          return record.user?.profile?.balance - record.amount;
+          balance = balance - (record.amount || 0);
         } else if (record.type == "point" && record.status == "pending") {
-          return record.user?.profile?.balance;
+          balance = balance;
         } else if (record.type == "rollingExchange" && record.status == "pending") {
-          return record.user?.profile?.balance + record.amount;
+          balance = balance + (record.amount || 0);
         }
-        return record.user?.profile?.balance;
+        return formatNumber(balance);
       },
     },
    
@@ -444,7 +445,7 @@ const GeneralDWPage: React.FC = () => {
       title: t("pointBefore"),
       dataIndex: "pointBefore",
       key: "pointBefore",
-      render: (_, record) => record.type == "point" ? record.user?.profile?.point : record.user?.profile?.point,
+      render: (_, record) => formatNumber(record.user?.profile?.point || 0),
     },
     {
       title: t("point"),
@@ -452,9 +453,9 @@ const GeneralDWPage: React.FC = () => {
       key: "point",
       render: (_, record) => {
         if (record.type == "pointDeposit") {
-          return record.amount;
+          return formatNumber(record.amount || 0);
         }
-        return record.type == "point" ? record.amount : 0
+        return formatNumber(record.type == "point" ? (record.amount || 0) : 0)
       },
     },
     {
@@ -462,12 +463,13 @@ const GeneralDWPage: React.FC = () => {
       dataIndex: "pointAfter",
       key: "pointAfter",
       render: (_, record) => {
+        let point = record.user?.profile?.point || 0;
         if (record.type == "point") {
-          return record.user?.profile?.point - record.amount;
+          point = point - (record.amount || 0);
         } else if (record.type == "pointDeposit") {
-          return record.user?.profile?.point + record.amount;
+          point = point + (record.amount || 0);
         }
-        return record.user?.profile?.point;
+        return formatNumber(point);
       },
     },
     // {

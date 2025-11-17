@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
+import { formatNumber } from '@/lib';
 
 export default function BepickPage() {
   // State management for component functionality
@@ -140,14 +141,6 @@ loadBettingOptions();
     }
   };
 
-  /**
-   * Formats numbers with comma separators for better readability
-   * @param num - The number to format
-   * @returns Formatted number string with commas (e.g., "1,000,000")
-   */
-  const formatNumber = (num: number) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  };
 
   /**
    * Maps tab names to their display names

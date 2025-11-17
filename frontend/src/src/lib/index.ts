@@ -86,3 +86,20 @@ export const buildTree = (data: any[]) => {
 export const isValidDate = (d: any): boolean => {
   return new Date(d).toString() !== "Invalid Date";
 };
+
+/**
+ * Formats numbers with thousand separators and no decimal places
+ * @param num - The number to format (can be number, string, or null/undefined)
+ * @returns Formatted number string with commas (e.g., "1,000,000")
+ */
+export const formatNumber = (num: number | string | null | undefined): string => {
+  if (num === null || num === undefined || num === '') {
+    return '0';
+  }
+  const numValue = typeof num === 'string' ? parseFloat(num) : num;
+  if (isNaN(numValue)) {
+    return '0';
+  }
+  // Round to remove decimals and format with thousand separators
+  return Math.round(numValue).toLocaleString('en-US');
+};

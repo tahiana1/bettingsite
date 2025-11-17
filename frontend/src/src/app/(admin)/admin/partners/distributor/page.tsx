@@ -34,7 +34,7 @@ import {
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
-import { buildTree, parseTableOptions } from "@/lib";
+import { buildTree, parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
 import { GiNightSleep } from "react-icons/gi";
 import { GET_DOMAINS } from "@/actions/domain";
@@ -700,13 +700,13 @@ const PartnerPage: React.FC = () => {
       title: t("balance"),
       dataIndex: "balance",
       key: "balance",
-      render: (_, { profile }) => profile.balance,
+      render: (_, { profile }) => formatNumber(profile?.balance || 0),
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, { profile }) => profile.point,
+      render: (_, { profile }) => formatNumber(profile?.point || 0),
     },
     {
       title: t("rollingRate"),
@@ -726,7 +726,7 @@ const PartnerPage: React.FC = () => {
       title: t("rolling"),
       dataIndex: "profile",
       key: "profile",
-      render: (_, { profile }) => (profile && typeof profile.roll !== 'undefined' ? profile.roll : '-'),
+      render: (_, { profile }) => (profile && typeof profile.roll !== 'undefined' ? formatNumber(profile.roll) : '-'),
     },
     {
       title: t("losingRate"),
@@ -1781,22 +1781,22 @@ const PartnerPage: React.FC = () => {
                   >
                     <Space.Compact className="w-full mt-4 flex flex-wrap gap-2">
                       <Radio.Button value={1000} onClick={() => setAmount(1000)}>
-                        {f.number(1000)}
+                        {formatNumber(1000)}
                       </Radio.Button>
                       <Radio.Button value={5000} onClick={() => setAmount(5000)}>
-                        {f.number(5000)}
+                        {formatNumber(5000)}
                       </Radio.Button>
                       <Radio.Button value={10000} onClick={() => setAmount(10000)}>
-                        {f.number(10000)}
+                        {formatNumber(10000)}
                       </Radio.Button>
                       <Radio.Button value={50000} onClick={() => setAmount(50000)}>
-                        {f.number(50000)}
+                        {formatNumber(50000)}
                       </Radio.Button>
                       <Radio.Button value={100000} onClick={() => setAmount(100000)}>
-                        {f.number(100000)}
+                        {formatNumber(100000)}
                       </Radio.Button>
                       <Radio.Button value={500000} onClick={() => setAmount(500000)}>
-                        {f.number(500000)}
+                        {formatNumber(500000)}
                       </Radio.Button>
                       <Radio.Button value={"max"} onClick={() => setAmount(10000000)}>MAX</Radio.Button>
                     </Space.Compact>
@@ -1855,22 +1855,22 @@ const PartnerPage: React.FC = () => {
                   >
                     <Space.Compact className="w-full mt-4 flex flex-wrap gap-2">
                       <Radio.Button value={100} onClick={() => setPointAmount(100)}>
-                        {f.number(100)}
+                        {formatNumber(100)}
                       </Radio.Button>
                       <Radio.Button value={500} onClick={() => setPointAmount(500)}>
-                        {f.number(500)}
+                        {formatNumber(500)}
                       </Radio.Button>
                       <Radio.Button value={1000} onClick={() => setPointAmount(1000)}>
-                        {f.number(1000)}
+                        {formatNumber(1000)}
                       </Radio.Button>
                       <Radio.Button value={5000} onClick={() => setPointAmount(5000)}>
-                        {f.number(5000)}
+                        {formatNumber(5000)}
                       </Radio.Button>
                       <Radio.Button value={10000} onClick={() => setPointAmount(10000)}>
-                        {f.number(10000)}
+                        {formatNumber(10000)}
                       </Radio.Button>
                       <Radio.Button value={50000} onClick={() => setPointAmount(50000)}>
-                        {f.number(50000)}
+                        {formatNumber(50000)}
                       </Radio.Button>
                       <Radio.Button value={"max"} onClick={() => setPointAmount(10000000)}>MAX</Radio.Button>
                     </Space.Compact>

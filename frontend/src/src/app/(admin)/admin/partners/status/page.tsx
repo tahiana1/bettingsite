@@ -28,7 +28,7 @@ import api from "@/api";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
-import { parseTableOptions } from "@/lib";
+import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
@@ -297,13 +297,13 @@ const DistStatusPage: React.FC = () => {
       title: t("balance"),
       dataIndex: "balance",
       key: "balance",
-      render: (_, { profile }) => profile.balance,
+      render: (_, { profile }) => formatNumber(profile?.balance || 0),
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, { profile }) => profile.point,
+      render: (_, { profile }) => formatNumber(profile?.point || 0),
     },
     {
       title: t("comp"),

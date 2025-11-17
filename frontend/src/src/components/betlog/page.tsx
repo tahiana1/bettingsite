@@ -29,7 +29,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import {
   FILTER_TRANSACTIONS,
 } from "@/actions/transaction";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import api from "@/api";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
@@ -190,7 +190,7 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
       render: (value) => {
         if (value === null || value === undefined) return "-";
         const numValue = Number(value);
-        return f.number(Math.abs(numValue));
+        return formatNumber(Math.abs(numValue));
       },
     },
     {
@@ -199,7 +199,7 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
       key: "beforeAmount",
       render: (value) => {
         if (value === null || value === undefined) return "-";
-        return f.number(Number(value));
+        return formatNumber(Number(value));
       },
     },
     {
@@ -208,7 +208,7 @@ const BettingLog: React.FC<{checkoutModal: (modal: string) => void}> = (props) =
       key: "afterAmount",
       render: (value) => {
         if (value === null || value === undefined) return "-";
-        return f.number(Number(value));
+        return formatNumber(Number(value));
       },
     },
     {

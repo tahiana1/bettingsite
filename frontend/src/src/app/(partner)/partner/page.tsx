@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 
 import { Column } from "@ant-design/charts";
 import api from "@/api";
+import { formatNumber } from "@/lib";
 
 interface DataType {
   division: string,
@@ -97,7 +98,7 @@ const columns: TableProps<DataType>["columns"] = [
     dataIndex: "depositWithdraw",
     key: "depositWithdraw",
     render: (text: number) => {
-      return Number(text).toFixed(2)
+      return formatNumber(text)
     }
   },
   {

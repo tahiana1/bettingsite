@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import api from '@/api';
 import { message, Spin } from 'antd';
 import dayjs from 'dayjs';
+import { formatNumber } from '@/lib';
 
 export default function EOS5Page() {
     const t = useTranslations();
@@ -188,14 +189,6 @@ export default function EOS5Page() {
         }
     };
 
-    /**
-     * Formats numbers with comma separators for better readability
-     * @param num - The number to format
-     * @returns Formatted number string with commas (e.g., "1,000,000")
-     */
-    const formatNumber = (num: number) => {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    };
 
     /**
      * Maps tab names to their display names
@@ -611,12 +604,12 @@ export default function EOS5Page() {
                         {/* Display user's current balance */}
                         <div className="stat-item">
                         <span className="label">{t('balance')}</span>
-                        <span className="value myCash">{userBalance}</span>
+                        <span className="value myCash">{formatNumber(userBalance)}</span>
                         </div>
                         {/* Display potential win amount */}
                         <div className="stat-item">
                         <span className="label">{t('winAmount')}</span>
-                        <span className="value win-amount">{formatNumber(Number(winAmount.toFixed(2)))}</span>
+                        <span className="value win-amount">{formatNumber(winAmount)}</span>
                         </div>
 
                         {/* Bet amount input field */}

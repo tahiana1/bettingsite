@@ -21,7 +21,7 @@ import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const FullPointsHistoryPage: React.FC = () => {
   const t = useTranslations();
@@ -87,46 +87,55 @@ const FullPointsHistoryPage: React.FC = () => {
           title: t("bettingAmount"),
           dataIndex: "bettingAmount",
           key: "bettingAmount",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("prizeMoney"),
           dataIndex: "prizeMoney",
           key: "prizeMoney",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("deposit"),
           dataIndex: "deposit",
           key: "deposit",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("withdrawal"),
           dataIndex: "withdrawal",
           key: "withdrawal",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("currentHoldings"),
           dataIndex: "currentHoldings",
           key: "currentHoldings",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("previouslyOwned"),
           dataIndex: "previouslyOwned",
           key: "previouslyOwned",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("point"),
           dataIndex: "point",
           key: "point",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("rollingGold"),
           dataIndex: "rollingGold",
           key: "rollingGold",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("rollingCoversationFund"),
           dataIndex: "rollingCoversationFund",
           key: "rollingCoversationFund",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("losing(%)"),

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import api from "@/api";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
+import { formatNumber } from "@/lib";
 
 interface BettingOption {
   id: string;
@@ -385,7 +386,7 @@ const EOS1Component: React.FC = () => {
                   }`}
                   onClick={() => setBettingAmount(amount)}
                 >
-                  {(amount / 10000).toFixed(0)}만
+                  {formatNumber(amount / 10000)}만
                 </button>
               ))}
             </div>

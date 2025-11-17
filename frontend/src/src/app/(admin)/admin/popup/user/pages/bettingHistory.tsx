@@ -22,7 +22,7 @@ import { fetchUserBettingHistoryV2 } from "@/actions/betLog";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate } from "@/lib";
+import { isValidDate, formatNumber } from "@/lib";
 
 interface CasinoBet {
   id: string;
@@ -170,19 +170,19 @@ const UserBettingHistory: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (v) => f.number(Math.abs(v)),
+      render: (v) => formatNumber(Math.abs(v)),
     },
     {
       title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("createdAt"),
@@ -241,19 +241,19 @@ const UserBettingHistory: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (v) => f.number(Math.abs(v)),
+      render: (v) => formatNumber(Math.abs(v)),
     },
     {
       title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("createdAt"),
@@ -297,19 +297,19 @@ const UserBettingHistory: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (v) => f.number(Math.abs(v)),
+      render: (v) => formatNumber(Math.abs(v)),
     },
     {
       title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
-      render: (v) => f.number(v),
+      render: (v) => formatNumber(v),
     },
     {
       title: t("bettingTime"),

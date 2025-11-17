@@ -9,6 +9,7 @@ import { useFormatter } from "next-intl";
 import Link from "next/link";
 import { ROUTES } from "@/routes";
 import api from "@/api";
+import { formatNumber } from "@/lib";
 
 const ProfileCard: React.FC = () => {
   const [modal, contextHolder] = Modal.useModal();
@@ -66,10 +67,7 @@ const ProfileCard: React.FC = () => {
     {
       key: "1",
       label: "profile/balance",
-      value: f.number(profile?.balance ?? 0, {
-        style: "currency",
-        currency: "USD",
-      }),
+      value: formatNumber(profile?.balance ?? 0),
       action: (
         <Link href={ROUTES.deposit}>
           <Button type="link">{t("depositWithdraw")}</Button>

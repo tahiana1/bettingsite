@@ -27,7 +27,7 @@ import { APPROVE_USER, BLOCK_USER, FILTER_USERS } from "@/actions/user";
 import { BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import dayjs, { Dayjs } from "dayjs";
-import { parseTableOptions } from "@/lib";
+import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
@@ -189,13 +189,13 @@ const PendingUserPage: React.FC = () => {
       title: t("balance"),
       dataIndex: "balance",
       key: "balance",
-      render: (_, { profile }) => profile.balance,
+      render: (_, { profile }) => formatNumber(profile?.balance || 0),
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, { profile }) => profile.point,
+      render: (_, { profile }) => formatNumber(profile?.point || 0),
     },
     {
       title: t("comp"),

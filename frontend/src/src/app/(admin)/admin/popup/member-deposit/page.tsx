@@ -29,7 +29,7 @@ import {
 } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import api from "@/api";
 
 const MemberDeposit = () => {
@@ -235,6 +235,7 @@ const MemberDeposit = () => {
             dataIndex: "balanceBefore",
             width: 130,
             key: "balanceBefore",
+            render: (value) => formatNumber(value || 0),
         },
         {
             title: t("depositAmount"),
@@ -243,10 +244,10 @@ const MemberDeposit = () => {
             key: "amount",
             render: (_, record) => {
                 if (record.type === "deposit") {
-                    return <p className="text-[red]">{record.amount}</p>;
+                    return <p className="text-[red]">{formatNumber(record.amount || 0)}</p>;
                 }
                 if (record.type === "point") {
-                    return <p className="text-[black]">0</p>;
+                    return <p className="text-[black]">{formatNumber(0)}</p>;
                 }
                 return null;
             }
@@ -256,12 +257,14 @@ const MemberDeposit = () => {
             dataIndex: "balanceAfter",
             width: 130,
             key: "balanceAfter",
+            render: (value) => formatNumber(value || 0),
         },
         {
             title: t("pointBefore"),
             dataIndex: "pointBefore",
             width: 130,
             key: "pointBefore",
+            render: (value) => formatNumber(value || 0),
         },
         {
             title: t("pointAmount"),
@@ -270,10 +273,10 @@ const MemberDeposit = () => {
             key: "pointAmount",
             render: (_, record) => {
                 if (record.type === "deposit") {
-                    return <p className="text-[black]">0</p>;
+                    return <p className="text-[black]">{formatNumber(0)}</p>;
                 }
                 if (record.type === "point") {
-                    return <p className="text-[red]">{record.amount}</p>;
+                    return <p className="text-[red]">{formatNumber(record.amount || 0)}</p>;
                 }
                 return null;
             }
@@ -283,6 +286,7 @@ const MemberDeposit = () => {
             dataIndex: "pointAfter",
             width: 130,
             key: "pointAfter",
+            render: (value) => formatNumber(value || 0),
         },
         {
             title: t("explation"),

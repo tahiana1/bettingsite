@@ -23,7 +23,7 @@ import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 interface Transaction {
   id: string;
@@ -248,19 +248,19 @@ const MiniGame: React.FC = () => {
       title: t("amount"),
       dataIndex: "amount",
       key: "amount",
-      render: (_, record) => f.number(Math.abs(record.amount)),
+      render: (_, record) => formatNumber(Math.abs(record.amount)),
     },
     {
       title: "Before Amount",
       dataIndex: "balanceBefore",
       key: "balanceBefore",
-      render: (_, record) => f.number(record.balanceBefore),
+      render: (_, record) => formatNumber(record.balanceBefore),
     },
     {
       title: "After Amount",
       dataIndex: "balanceAfter",
       key: "balanceAfter",
-      render: (_, record) => f.number(record.balanceAfter),
+      render: (_, record) => formatNumber(record.balanceAfter),
     },
     {
       title: t("transactionAt"),

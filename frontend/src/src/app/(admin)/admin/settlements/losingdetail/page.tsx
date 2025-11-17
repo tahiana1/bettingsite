@@ -21,7 +21,7 @@ import { useQuery } from "@apollo/client";
 import { FILTER_TRANSACTIONS, GET_WEEK_LOSING_DATA } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const LosingDeailsPage: React.FC = () => {
   const t = useTranslations();
@@ -123,25 +123,25 @@ const LosingDeailsPage: React.FC = () => {
       title: t("bet"),
       dataIndex: "totalBet",
       key: "totalBet",
-      render: (text) => f.number(text || 0),
+      render: (text) => formatNumber(text || 0),
     },
     {
       title: t("winner"),
       dataIndex: "totalWinner",
       key: "totalWinner",
-      render: (text) => f.number(text || 0),
+      render: (text) => formatNumber(text || 0),
     },
     {
       title: t("losingMoney"),
       dataIndex: "totalLosingMoney",
       key: "totalLosingMoney",
-      render: (text) => f.number(text || 0),
+      render: (text) => formatNumber(text || 0),
     },
     {
       title: t("settlementAmount"),
       dataIndex: "settlementAmount",
       key: "settlementAmount",
-      render: (text) => f.number(text || 0),
+      render: (text) => formatNumber(text || 0),
     },
     {
       title: t("applicationDate"),

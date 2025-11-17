@@ -23,6 +23,7 @@ import { betAmount, userState } from "@/state/state";
 import { SiDepositphotos } from "react-icons/si";
 import modalImage from '@/assets/img/main/modal-head.png';
 import api from "@/api";
+import { formatNumber } from "@/lib";
 import dayjs from "dayjs";
 
 const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => {
@@ -118,6 +119,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
       title: t("profile/rollingAmount"),
       dataIndex: "amount",
       key: "amount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("applicationDate"),
@@ -260,7 +262,7 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
           <List.Item className="flex gap-2 bg-[#160d0c]" style={{border: 'none'}}>
             <div className="w-full flex-3">{t("profile/balance")}</div>
             <div className="w-full text-red-500 flex-1 text-end">
-              {profile.roll}
+              {formatNumber(profile.roll || 0)}
             </div>
           </List.Item>
 
@@ -298,22 +300,22 @@ const RollingPage: React.FC<{checkoutModal: (modal: string) => void}> = (props) 
                 <Space direction="vertical" className="w-full">
                   <Space.Compact className="w-full flex flex-wrap gap-2">
                     <Radio.Button value={1000} className="btn-modal-effect">
-                      {f.number(1000)}
+                      {formatNumber(1000)}
                     </Radio.Button>
                     <Radio.Button value={5000} className="btn-modal-effect">
-                      {f.number(5000)}
+                      {formatNumber(5000)}
                     </Radio.Button>
                     <Radio.Button value={10000} className="btn-modal-effect">
-                      {f.number(10000)}
+                      {formatNumber(10000)}
                     </Radio.Button>
                     <Radio.Button value={50000} className="btn-modal-effect">
-                      {f.number(50000)}
+                      {formatNumber(50000)}
                     </Radio.Button>
                     <Radio.Button value={100000} className="btn-modal-effect">
-                      {f.number(100000)}
+                      {formatNumber(100000)}
                     </Radio.Button>
                     <Radio.Button value={500000} className="btn-modal-effect">
-                      {f.number(500000)}
+                      {formatNumber(500000)}
                     </Radio.Button>
                     <Radio.Button value={"max"} className="btn-modal-effect">MAX</Radio.Button>
                   </Space.Compact>

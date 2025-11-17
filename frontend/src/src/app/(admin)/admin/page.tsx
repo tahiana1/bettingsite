@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 
 import { Column } from "@ant-design/charts";
 import api from "@/api";
+import { formatNumber } from "@/lib";
 
 interface DataType {
   division: string,
@@ -186,16 +187,19 @@ const Dashboard: React.FC = () => {
       title: t("admin/beforeAmount"),
       key: "beforeAmount",
       dataIndex: "beforeAmount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("admin/processingAmount"),
       key: "processingAmount",
       dataIndex: "processingAmount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("admin/afterAmount"),
       key: "afterAmount",
       dataIndex: "afterAmount",
+      render: (value) => formatNumber(value || 0),
     },
     {
       title: t("admin/applicationDate"),

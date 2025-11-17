@@ -32,7 +32,7 @@ import { BiBlock, BiTrash } from "react-icons/bi";
 import { PiUserCircleCheckLight } from "react-icons/pi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
-import { parseTableOptions } from "@/lib";
+import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS, USER_TYPE } from "@/constants";
 import { UPDATE_PROFILE } from "@/actions/profile";
 import api from "@/api";
@@ -322,13 +322,13 @@ const UserPage: React.FC = () => {
       title: t("balance"),
       dataIndex: "balance",
       key: "balance",
-      render: (_, { profile }) => profile.balance,
+      render: (_, { profile }) => formatNumber(profile?.balance || 0),
     },
     {
       title: t("point"),
       dataIndex: "point",
       key: "point",
-      render: (_, { profile }) => profile.point,
+      render: (_, { profile }) => formatNumber(profile?.point || 0),
     },
     {
       title: t("comp"),

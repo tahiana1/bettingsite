@@ -22,7 +22,7 @@ import { fetchCasinoBets, CasinoBetFilters } from "@/actions/betLog";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 interface CasinoBet {
   id: string;
@@ -242,7 +242,7 @@ const CasinoSlot: React.FC = () => {
       dataIndex: "betAmount",
       key: "betAmount",
       render: (_, record) => (
-        <span className="text-red-500">{f.number(Math.abs(record.betAmount))}</span>
+        <span className="text-red-500">{formatNumber(Math.abs(record.betAmount))}</span>
       ),
     },
     {
@@ -251,7 +251,7 @@ const CasinoSlot: React.FC = () => {
       key: "winAmount",
       render: (_, record) => (
         <span className={record.winAmount > 0 ? "text-green-500" : "text-gray-500"}>
-          {f.number(record.winAmount)}
+          {formatNumber(record.winAmount)}
         </span>
       ),
     },
@@ -261,7 +261,7 @@ const CasinoSlot: React.FC = () => {
       key: "netAmount",
       render: (_, record) => (
         <span className={record.netAmount > 0 ? "text-green-500" : record.netAmount < 0 ? "text-red-500" : "text-gray-500"}>
-          {f.number(record.netAmount)}
+          {formatNumber(record.netAmount)}
         </span>
       ),
     },
@@ -269,13 +269,13 @@ const CasinoSlot: React.FC = () => {
       title: t("beforeAmount"),
       dataIndex: "beforeAmount",
       key: "beforeAmount",
-      render: (_, record) => f.number(record.beforeAmount),
+      render: (_, record) => formatNumber(record.beforeAmount),
     },
     {
       title: t("afterAmount"),
       dataIndex: "afterAmount",
       key: "afterAmount",
-      render: (_, record) => f.number(record.afterAmount),
+      render: (_, record) => formatNumber(record.afterAmount),
     },
     {
       title: t("bettingTime"),

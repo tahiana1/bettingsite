@@ -46,6 +46,7 @@ import { breadcrumbState, currentAdminTheme, userState } from "@/state/state";
 import { useAtom } from "jotai";
 import api from "@/api";
 import { ROUTES } from "@/routes";
+import { formatNumber } from "@/lib";
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
 import { FaFootball, FaUsersGear } from "react-icons/fa6";
@@ -168,78 +169,78 @@ export default function AdminRootLayout({
   const data = [
     {
       label: t("honorLink"),
-      value: (Number(info.honorLinkBalance) || 0).toFixed(2) + t("egg"),
+      value: formatNumber(Number(info.honorLinkBalance) || 0) + t("egg"),
       color: "cyan",
     },
     {
       label: t("depositToday"),
-      value: (Number(info.depositToday) || 0).toFixed(2),
+      value: formatNumber(Number(info.depositToday) || 0),
       color: "lightgreen",
     },
     {
       label: t("withdrawlToday"),
-      value: (Number(info.withdrawToday) || 0).toFixed(2),
+      value: formatNumber(Number(info.withdrawToday) || 0),
       color: "tomato",
     },
     {
       label: t("bettingToday"),
-      value: (Number(info.bettingToday) || 0).toFixed(2),
+      value: formatNumber(Number(info.bettingToday) || 0),
       color: "lightgreen",
     },
     {
       label: t("todaysWinner"),
-      value: (Number(info.todayWinners) || 0).toFixed(2),
+      value: formatNumber(Number(info.todayWinners) || 0),
       color: "yellow",
     },
     {
       label: t("userAmount"),
-      value: (Number(info.totalBalance) || 0).toFixed(2),
+      value: formatNumber(Number(info.totalBalance) || 0),
       color: "tomato",
     },
     {
       label: t("userPoints"),
-      value: (Number(info.totalPoints) || 0).toFixed(2),
+      value: formatNumber(Number(info.totalPoints) || 0),
       color: "lightgreen",
     },
     {
       label: t("totalAmountOfDistributionReserves"),
-      value: (0).toFixed(2),
+      value: formatNumber(0),
       color: "yellow",
     },
     {
       label: t("totalPoints"),
-      value: (Number(info.totalPoints) || 0).toFixed(2),
+      value: formatNumber(Number(info.totalPoints) || 0),
       color: "yellow",
     },
     {
       label: t("totalLoss"),
-      value: (Number(info.totalLoss) || 0).toFixed(2),
+      value: formatNumber(Number(info.totalLoss) || 0),
       color: "yellow",
     },
     {
       label: t("rollingTheTotal"),
-      value: (Number(info.rollingTotal) || 0).toFixed(2),
+      value: formatNumber(Number(info.rollingTotal) || 0),
       color: "yellow",
     },
     {
       label: t("totalSalesLossToday"),
-      value: (Number(info.totalSalesLossToday) || 0).toFixed(2),
+      value: formatNumber(Number(info.totalSalesLossToday) || 0),
       color: "tomato",
     },
     {
       label: t("todaysDistributionRolling"),
-      value: (0).toFixed(2),
+      value: formatNumber(0),
       color: "tomato",
     },
     {
       label: t("sportsPendingBetting"),
-      value: (Number(info.sportsPendingBetting) || 0).toFixed(2),
+      value: formatNumber(Number(info.sportsPendingBetting) || 0),
       color: "lightgreen",
     },
 
     {
       label: t("sportsRebateBetting"),
-      value: (Number(info.sportsRebateBetting) || 0).toFixed(2),
+      value: formatNumber(Number(info.sportsRebateBetting) || 0),
       color: "lightgreen",
     },
 

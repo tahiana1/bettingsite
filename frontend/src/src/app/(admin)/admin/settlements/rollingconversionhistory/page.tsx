@@ -23,7 +23,7 @@ import { FILTER_TRANSACTIONS } from "@/actions/transaction";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { isValidDate, parseTableOptions } from "@/lib";
+import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 
 const RollingConversionPage: React.FC = () => {
   const t = useTranslations();
@@ -101,16 +101,19 @@ const RollingConversionPage: React.FC = () => {
           title: t("amount"),
           dataIndex: "amount",
           key: "amount",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("balanceBefore"),
           dataIndex: "balanceBefore",
           key: "balanceBefore",
+          render: (value) => formatNumber(value || 0),
         },
         {
           title: t("balanceAfter"),
           dataIndex: "balanceAfter",
           key: "balanceAfter",
+          render: (value) => formatNumber(value || 0),
         },
       ],
     },
