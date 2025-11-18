@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	adminControllers "github.com/hotbrainy/go-betting/backend/api/controllers/admin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
@@ -86,6 +87,11 @@ func CreateQna(c *gin.Context) {
 		format_errors.InternalServerError(c, err)
 		return
 	}
+
+	// Create alert for admin
+	title := "New QNA Request"
+	message := fmt.Sprintf("User %s (ID: %d) submitted a new QNA: %s", user.Userid, user.ID, input.QuestionTitle)
+	adminControllers.CreateAlert("qna", title, message, qna.ID)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Qna created successfully",

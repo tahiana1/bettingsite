@@ -56,6 +56,7 @@ import { BiDiamond, BiSupport } from "react-icons/bi";
 
 import Image from "next/image";
 import AdminLogo from "@/assets/img/Adminlogo.png"
+import NotificationButton from "./NotificationButton";
 
 const { Header, Sider } = Layout;
 
@@ -1131,6 +1132,8 @@ export default function AdminRootLayout({
                       onClick={onThemeChange}
                       className="!w-10 !h-10 !hidden"
                     />
+
+                    <NotificationButton />
                     <Dropdown
                       className="flex gap-2 items-center"
                       menu={{ items: profileItems }}

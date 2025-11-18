@@ -172,4 +172,15 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		miniRouter.GET("/configs", controllers.AdminGetMiniGameConfigs)
 		miniRouter.PUT("/configs", controllers.AdminUpdateMiniGameConfig)
 	}
+
+	// Alert routes
+	alertRouter := r.Group("/alerts")
+	{
+		alertRouter.GET("", controllers.GetAlerts)
+		alertRouter.GET("/", controllers.GetAlerts)
+		alertRouter.GET("/unread-count", controllers.GetUnreadAlertsCount)
+		alertRouter.POST("/mark-read", controllers.MarkAlertAsRead)
+		alertRouter.POST("/mark-all-read", controllers.MarkAllAlertsAsRead)
+		alertRouter.DELETE("/delete", controllers.DeleteAlert)
+	}
 }

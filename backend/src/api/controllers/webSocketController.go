@@ -102,8 +102,15 @@ func Info(c *gin.Context) {
 	}()
 
 	rdb := redis.Client
-	// Subscribe to Redis channel for this user
-	pubsub := rdb.Subscribe(c, "private:"+userID)
+	// Subscribe to Redis channels
+	channels := []string{"private:" + userID}
+	
+	// If userID is "admin", also subscribe to admin alerts channel
+	if userID == "admin" {
+		channels = append(channels, "alerts:admin")
+	}
+	
+	pubsub := rdb.Subscribe(c, channels...)
 	defer pubsub.Close()
 
 	// Redis to WebSocket

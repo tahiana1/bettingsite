@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
+	adminControllers "github.com/hotbrainy/go-betting/backend/api/controllers/admin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/helpers"
@@ -189,6 +190,11 @@ func SignUp(c *gin.Context) {
 			fmt.Printf("Error creating Honorlink user: %v\n", err)
 		}
 	}
+
+	// Create alert for admin
+	title := "New User Registration"
+	message := fmt.Sprintf("New user registered: %s (ID: %d, Name: %s)", userInput.Userid, user.ID, userInput.Name)
+	adminControllers.CreateAlert("signup", title, message, user.ID)
 
 	c.JSON(http.StatusOK, responses.Status{
 		Data: user,

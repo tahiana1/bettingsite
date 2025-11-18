@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	adminControllers "github.com/hotbrainy/go-betting/backend/api/controllers/admin"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
@@ -112,6 +114,33 @@ func CreateTransaction(c *gin.Context) {
 	}
 
 	initializers.DB.Create(&transaction)
+
+	// Create alert for admin
+	var user models.User
+	if err := initializers.DB.First(&user, transactionInput.UserId).Error; err == nil {
+		var alertType, title, message string
+		switch transactionInput.Type {
+		case "deposit":
+			alertType = "deposit"
+			title = "New Deposit Request"
+			message = fmt.Sprintf("User %s (ID: %d) requested a deposit of %.2f", user.Userid, user.ID, transactionInput.Amount)
+		case "withdrawal":
+			alertType = "withdrawal"
+			title = "New Withdrawal Request"
+			message = fmt.Sprintf("User %s (ID: %d) requested a withdrawal of %.2f", user.Userid, user.ID, transactionInput.Amount)
+		case "point":
+			alertType = "point"
+			title = "New Point Conversion Request"
+			message = fmt.Sprintf("User %s (ID: %d) requested to convert %.2f points to balance", user.Userid, user.ID, transactionInput.Amount)
+		case "rollingExchange":
+			alertType = "rollingExchange"
+			title = "New Rolling Conversion Request"
+			message = fmt.Sprintf("User %s (ID: %d) requested to convert %.2f rolling to balance", user.Userid, user.ID, transactionInput.Amount)
+		}
+		if alertType != "" {
+			adminControllers.CreateAlert(alertType, title, message, transaction.ID)
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Transaction created successfully",

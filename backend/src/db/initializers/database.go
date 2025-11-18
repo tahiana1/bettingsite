@@ -122,6 +122,7 @@ func ConnectDB() {
 		models.Attendance{},
 		models.Inbox{},
 		models.Notification{},
+		models.Alert{},
 		models.Menu{},
 		models.Log{},
 		models.AdminPermission{},
