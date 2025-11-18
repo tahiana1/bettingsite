@@ -194,7 +194,8 @@ func SignUp(c *gin.Context) {
 	// Create alert for admin
 	title := "New User Registration"
 	message := fmt.Sprintf("New user registered: %s (ID: %d, Name: %s)", userInput.Userid, user.ID, userInput.Name)
-	adminControllers.CreateAlert("signup", title, message, user.ID)
+	redirectURL := "/admin/popup/member-join"
+	adminControllers.CreateAlert("signup", title, message, user.ID, redirectURL)
 
 	c.JSON(http.StatusOK, responses.Status{
 		Data: user,

@@ -2333,5 +2333,13 @@
   "pleaseEnterUserid" : "Please Enter User ID",
   "pleaseEnterPassword" : "Please Enter Password",
   "pleaseEnterNickname" : "Please Enter Nickname",
-  "dormancyMessage" : "Dormancy Message"
+  "dormancyMessage" : "Dormancy Message",
+  "alerts" : "Alerts",
+  "filterByType" : "Filter by Type",
+  "filterByStatus" : "Filter by Status",
+  "markAllAsRead" : "Mark All as Read",
+  "of" : "of",
+  "viewAll" : "View All",
+  "loadingNotifications" : "Loading notifications...",
+  "noNewNotifications" : "No new notifications"
 } 

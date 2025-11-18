@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Badge, Button, Dropdown, List, Modal, Space, Tag, Typography, notification } from "antd";
+import { Badge, Button, Dropdown, Space, Tag, Typography, notification } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import apiCall, { wsURL } from "@/api";
 import dayjs from "dayjs";
 
@@ -18,27 +19,25 @@ interface Alert {
   isRead: boolean;
   readAt: string | null;
   createdAt: string;
+  redirectUrl?: string;
 }
 
 const NotificationButton: React.FC = () => {
   const t = useTranslations();
+  const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [allAlerts, setAllAlerts] = useState<Alert[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const ws = useRef<WebSocket | null>(null);
   const retryTimeout = useRef<NodeJS.Timeout | null>(null);
   const previousUnreadCount = useRef<number>(0);
 
-  const fetchAlerts = async (showAll: boolean = false) => {
+  const fetchAlerts = async () => {
     try {
       setLoading(true);
-      const params: any = { limit: "50" };
-      if (!showAll) {
-        params.isRead = "false";
-      }
+      const params: any = { limit: "10", pageSize: "10", page: "1", isRead: "false" };
       console.log("Fetching alerts from: admin/alerts with params:", params);
       const response = await apiCall("admin/alerts", {
         method: "GET",
@@ -57,20 +56,9 @@ const NotificationButton: React.FC = () => {
       }
       
       console.log("Parsed alerts data:", alertsData, "Length:", alertsData.length);
-      
-      if (showAll) {
-        setAllAlerts(alertsData);
-        console.log("Set allAlerts to:", alertsData.length, "items");
-      } else {
-        setAlerts(alertsData);
-        console.log("Set alerts to:", alertsData.length, "items");
-      }
+      setAlerts(alertsData);
     } catch (error: any) {
       console.error("Error fetching alerts - full error:", error);
-      console.error("Error response:", error?.response);
-      console.error("Error status:", error?.response?.status);
-      console.error("Error data:", error?.response?.data);
-      console.error("Request URL:", error?.config?.url);
       // Don't throw - just log and continue with empty array
       setAlerts([]);
     } finally {
@@ -105,30 +93,22 @@ const NotificationButton: React.FC = () => {
           alert.id === alertId ? { ...alert, isRead: true } : alert
         )
       );
-      setAllAlerts((prev) =>
-        prev.map((alert) =>
-          alert.id === alertId ? { ...alert, isRead: true } : alert
-        )
-      );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error("Error marking alert as read:", error);
     }
   };
 
-  const markAllAsRead = async () => {
-    try {
-      await apiCall("admin/alerts/mark-all-read", {
-        method: "POST",
-      });
-      setAlerts((prev) => prev.map((alert) => ({ ...alert, isRead: true })));
-      setAllAlerts((prev) => prev.map((alert) => ({ ...alert, isRead: true })));
-      setUnreadCount(0);
-      // Refresh alerts after marking all as read
-      fetchAlerts(false);
-      fetchAlerts(true);
-    } catch (error) {
-      console.error("Error marking all alerts as read:", error);
+  const handleAlertClick = async (alert: Alert) => {
+    // Close dropdown first
+    setDropdownOpen(false);
+    // Mark as read first if unread
+    if (!alert.isRead) {
+      await markAsRead(alert.id);
+    }
+    // Navigate to redirect URL if available
+    if (alert.redirectUrl) {
+      router.push(alert.redirectUrl);
     }
   };
 
@@ -172,10 +152,10 @@ const NotificationButton: React.FC = () => {
               isRead: false,
               readAt: null,
               createdAt: data.createdAt || new Date().toISOString(),
+              redirectUrl: data.redirectUrl || data.redirect_url,
             };
             
             setAlerts((prev) => [newAlert, ...prev]);
-            setAllAlerts((prev) => [newAlert, ...prev]);
             setUnreadCount((prev) => prev + 1);
             
             // Show notification popup
@@ -233,6 +213,7 @@ const NotificationButton: React.FC = () => {
           });
         }
       }
+      previousUnreadCount.current = unreadCount;
     }, 5000);
 
     return () => {
@@ -288,51 +269,79 @@ const NotificationButton: React.FC = () => {
   
   // Use alerts if available, otherwise show message
   const dropdownItems = alerts.length > 0
-    ? alerts.slice(0, 10).map((alert) => ({
-        key: alert.id.toString(),
-        label: (
-          <div
-            onClick={() => {
-              if (!alert.isRead) {
-                markAsRead(alert.id);
-              }
-              setIsModalOpen(true);
-            }}
-            style={{
-              padding: "8px",
-              cursor: "pointer",
-              backgroundColor: alert.isRead ? "transparent" : "#f0f0f0",
-            }}
-          >
-            <Space direction="vertical" size="small" style={{ width: "100%" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <Tag color={getAlertTypeColor(alert.type)}>
-                  {getAlertTypeLabel(alert.type)}
-                </Tag>
-                {!alert.isRead && <Badge status="processing" />}
-              </div>
-              <Text strong style={{ fontSize: "12px" }}>
-                {alert.title}
-              </Text>
-              <Text type="secondary" style={{ fontSize: "11px" }}>
-                {alert.message.length > 50
-                  ? `${alert.message.substring(0, 50)}...`
-                  : alert.message}
-              </Text>
-              <Text type="secondary" style={{ fontSize: "10px" }}>
-                {dayjs(alert.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-              </Text>
-            </Space>
-          </div>
-        ),
-      }))
+    ? [
+        ...alerts.slice(0, 10).map((alert) => ({
+          key: alert.id.toString(),
+          label: (
+            <div
+              onClick={async (e) => {
+                e.stopPropagation();
+                await handleAlertClick(alert);
+              }}
+              style={{
+                padding: "8px",
+                cursor: "pointer",
+                backgroundColor: alert.isRead ? "transparent" : "#f0f0f0",
+              }}
+            >
+              <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <Tag color={getAlertTypeColor(alert.type)}>
+                    {getAlertTypeLabel(alert.type)}
+                  </Tag>
+                  {!alert.isRead && <Badge status="processing" />}
+                </div>
+                <Text strong style={{ fontSize: "12px" }}>
+                  {alert.title}
+                </Text>
+                <Text type="secondary" style={{ fontSize: "11px" }}>
+                  {alert.message.length > 50
+                    ? `${alert.message.substring(0, 50)}...`
+                    : alert.message}
+                </Text>
+                <Text type="secondary" style={{ fontSize: "10px" }}>
+                  {dayjs(alert.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+                </Text>
+              </Space>
+            </div>
+          ),
+        })),
+        {
+          key: "view-all",
+          label: (
+            <div style={{ padding: "8px", borderTop: "1px solid #f0f0f0", textAlign: "center" }}>
+              <Button
+                type="link"
+                onClick={() => router.push("/admin/alert")}
+                style={{ width: "100%" }}
+              >
+                {t("viewAll") || "View All"}
+              </Button>
+            </div>
+          ),
+        },
+      ]
     : unreadCount > 0
     ? [
         {
           key: "loading",
           label: (
             <div style={{ padding: "16px", textAlign: "center" }}>
-              <Text type="secondary">Loading notifications...</Text>
+              <Text type="secondary">{t("loadingNotifications") || "Loading notifications..."}</Text>
+            </div>
+          ),
+        },
+        {
+          key: "view-all",
+          label: (
+            <div style={{ padding: "8px", borderTop: "1px solid #f0f0f0", textAlign: "center" }}>
+              <Button
+                type="link"
+                onClick={() => router.push("/admin/alert")}
+                style={{ width: "100%" }}
+              >
+                {t("viewAll") || "View All"}
+              </Button>
             </div>
           ),
         },
@@ -342,27 +351,25 @@ const NotificationButton: React.FC = () => {
           key: "no-alerts",
           label: (
             <div style={{ padding: "16px", textAlign: "center" }}>
-              <Text type="secondary">No new notifications</Text>
+              <Text type="secondary">{t("noNewNotifications") || "No new notifications"}</Text>
+            </div>
+          ),
+        },
+        {
+          key: "view-all",
+          label: (
+            <div style={{ padding: "8px", borderTop: "1px solid #f0f0f0", textAlign: "center" }}>
+              <Button
+                type="link"
+                onClick={() => router.push("/admin/alert")}
+                style={{ width: "100%" }}
+              >
+                {t("viewAll") || "View All"}
+              </Button>
             </div>
           ),
         },
       ];
-
-  // Show notification when new alerts arrive via polling
-  useEffect(() => {
-    if (alerts.length > 0) {
-      const unreadAlerts = alerts.filter(a => !a.isRead);
-      if (unreadAlerts.length > 0 && previousUnreadCount.current < unreadAlerts.length) {
-        const latestAlert = unreadAlerts[0];
-        api.info({
-          message: latestAlert.title,
-          description: latestAlert.message,
-          placement: "topRight",
-          duration: 5,
-        });
-      }
-    }
-  }, [alerts.length]);
 
   return (
     <>
@@ -370,15 +377,10 @@ const NotificationButton: React.FC = () => {
       <Dropdown
         menu={{
           items: dropdownItems,
-          onClick: ({ key }) => {
-            if (key !== "no-alerts") {
-              const alert = alerts.find((a) => a.id.toString() === key);
-              if (alert && !alert.isRead) {
-                markAsRead(alert.id);
-              }
-            }
-          },
         }}
+        open={dropdownOpen}
+        onOpenChange={setDropdownOpen}
+        className="!mb-[8px]"
         trigger={["click"]}
         placement="bottomRight"
         dropdownRender={(menu) => (
@@ -395,70 +397,6 @@ const NotificationButton: React.FC = () => {
           />
         </Badge>
       </Dropdown>
-
-      <Modal
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span>Notifications</span>
-            {unreadCount > 0 && (
-              <Button size="small" onClick={markAllAsRead}>
-                Mark all as read
-              </Button>
-            )}
-          </div>
-        }
-        open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        afterOpenChange={(open) => {
-          if (open) {
-            fetchAlerts(true); // Fetch all alerts when modal opens
-          }
-        }}
-        footer={null}
-        width={600}
-      >
-        <List
-          dataSource={allAlerts.length > 0 ? allAlerts : alerts}
-          loading={loading}
-          renderItem={(alert) => (
-            <List.Item
-              style={{
-                backgroundColor: alert.isRead ? "transparent" : "#f0f7ff",
-                padding: "12px",
-                marginBottom: "8px",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                if (!alert.isRead) {
-                  markAsRead(alert.id);
-                }
-              }}
-            >
-              <List.Item.Meta
-                title={
-                  <Space>
-                    <Tag color={getAlertTypeColor(alert.type)}>
-                      {getAlertTypeLabel(alert.type)}
-                    </Tag>
-                    <Text strong>{alert.title}</Text>
-                    {!alert.isRead && <Badge status="processing" />}
-                  </Space>
-                }
-                description={
-                  <div>
-                    <Text>{alert.message}</Text>
-                    <br />
-                    <Text type="secondary" style={{ fontSize: "11px" }}>
-                      {dayjs(alert.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-                    </Text>
-                  </div>
-                }
-              />
-            </List.Item>
-          )}
-        />
-      </Modal>
     </>
   );
 };

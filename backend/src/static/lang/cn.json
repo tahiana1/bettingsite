@@ -2339,5 +2339,13 @@
   "pleaseEnterUserid" : "请输入用户ID",
   "pleaseEnterPassword" : "请输入密码",
   "pleaseEnterNickname" : "请输入昵称",
-  "dormancyMessage" : "休眠消息"
+  "dormancyMessage" : "休眠消息",
+  "alerts" : "通知",
+  "filterByType" : "按类型过滤",
+  "filterByStatus" : "按状态过滤",
+  "markAllAsRead" : "全部已读",
+  "of" : "共",
+  "viewAll" : "查看全部",
+  "loadingNotifications" : "加载通知...",
+  "noNewNotifications" : "没有新的通知"
 }

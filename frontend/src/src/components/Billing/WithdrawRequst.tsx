@@ -296,12 +296,12 @@ const WithdrawRequest: React.FC<{checkoutModal: (modal: string) => void}> = (pro
               >
                 <Space direction="vertical" className="w-full">
                   <Space.Compact className="w-full flex flex-wrap gap-2">
-                    <Radio.Button value={1000} className="btn-modal-effect">
+                    {/* <Radio.Button value={1000} className="btn-modal-effect">
                       {formatNumber(1000)}
                     </Radio.Button>
                     <Radio.Button value={5000} className="btn-modal-effect">
                       {formatNumber(5000)}
-                    </Radio.Button>
+                    </Radio.Button> */}
                     <Radio.Button value={10000} className="btn-modal-effect">
                       {formatNumber(10000)}
                     </Radio.Button>

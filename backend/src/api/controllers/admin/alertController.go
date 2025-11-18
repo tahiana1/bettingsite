@@ -14,10 +14,11 @@ import (
 	"github.com/hotbrainy/go-betting/backend/internal/redis"
 )
 
-// GetAlerts returns all alerts, optionally filtered by read status
+// GetAlerts returns all alerts, optionally filtered by read status with pagination
 func GetAlerts(c *gin.Context) {
 	var alerts []models.Alert
-	query := initializers.DB.Order("created_at DESC")
+	var total int64
+	query := initializers.DB.Model(&models.Alert{})
 
 	// Filter by read status if provided
 	isRead := c.Query("isRead")
@@ -33,15 +34,30 @@ func GetAlerts(c *gin.Context) {
 		query = query.Where("type = ?", alertType)
 	}
 
-	// Limit to 100 most recent if not specified
-	limit := c.DefaultQuery("limit", "100")
-	query = query.Limit(100)
-	if limit != "" {
-		var limitInt int
-		if _, err := fmt.Sscanf(limit, "%d", &limitInt); err == nil && limitInt > 0 && limitInt <= 500 {
-			query = query.Limit(limitInt)
-		}
+	// Get total count before pagination (clone the query for counting)
+	countQuery := query
+	if err := countQuery.Count(&total).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
 	}
+
+	// Pagination
+	page := c.DefaultQuery("page", "1")
+	pageSize := c.DefaultQuery("pageSize", "20")
+
+	var pageInt, pageSizeInt int
+	if _, err := fmt.Sscanf(page, "%d", &pageInt); err != nil || pageInt < 1 {
+		pageInt = 1
+	}
+	if _, err := fmt.Sscanf(pageSize, "%d", &pageSizeInt); err != nil || pageSizeInt < 1 {
+		pageSizeInt = 20
+	}
+	if pageSizeInt > 100 {
+		pageSizeInt = 100
+	}
+
+	offset := (pageInt - 1) * pageSizeInt
+	query = query.Order("created_at DESC").Offset(offset).Limit(pageSizeInt)
 
 	if err := query.Find(&alerts).Error; err != nil {
 		format_errors.InternalServerError(c, err)
@@ -49,9 +65,12 @@ func GetAlerts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": true,
-		"data":   alerts,
-		"total":  len(alerts),
+		"status":   true,
+		"data":     alerts,
+		"total":    total,
+		"page":     pageInt,
+		"pageSize": pageSizeInt,
+		"pages":    (int(total) + pageSizeInt - 1) / pageSizeInt,
 	})
 }
 
@@ -150,13 +169,14 @@ func DeleteAlert(c *gin.Context) {
 }
 
 // CreateAlert is a helper function to create alerts (used internally)
-func CreateAlert(alertType, title, message string, entityID uint) (*models.Alert, error) {
+func CreateAlert(alertType, title, message string, entityID uint, redirectURL string) (*models.Alert, error) {
 	alert := models.Alert{
-		Type:     alertType,
-		Title:    title,
-		Message:  message,
-		EntityID: entityID,
-		IsRead:   false,
+		Type:        alertType,
+		Title:       title,
+		Message:     message,
+		EntityID:    entityID,
+		IsRead:      false,
+		RedirectURL: redirectURL,
 	}
 
 	if err := initializers.DB.Create(&alert).Error; err != nil {

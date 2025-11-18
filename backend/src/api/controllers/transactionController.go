@@ -118,7 +118,7 @@ func CreateTransaction(c *gin.Context) {
 	// Create alert for admin
 	var user models.User
 	if err := initializers.DB.First(&user, transactionInput.UserId).Error; err == nil {
-		var alertType, title, message string
+		var alertType, title, message, redirectURL string
 		switch transactionInput.Type {
 		case "deposit":
 			alertType = "deposit"
@@ -137,8 +137,15 @@ func CreateTransaction(c *gin.Context) {
 			title = "New Rolling Conversion Request"
 			message = fmt.Sprintf("User %s (ID: %d) requested to convert %.2f rolling to balance", user.Userid, user.ID, transactionInput.Amount)
 		}
+		
+		// Set redirect URL based on user role
 		if alertType != "" {
-			adminControllers.CreateAlert(alertType, title, message, transaction.ID)
+			if user.Role == "A" || user.Role == "P" {
+				redirectURL = "/admin/financals/general"
+			} else {
+				redirectURL = "/admin/financals/memberdwhistory"
+			}
+			adminControllers.CreateAlert(alertType, title, message, transaction.ID, redirectURL)
 		}
 	}
 

@@ -91,7 +91,8 @@ func CreateQna(c *gin.Context) {
 	// Create alert for admin
 	title := "New QNA Request"
 	message := fmt.Sprintf("User %s (ID: %d) submitted a new QNA: %s", user.Userid, user.ID, input.QuestionTitle)
-	adminControllers.CreateAlert("qna", title, message, qna.ID)
+	redirectURL := "/admin/support/center"
+	adminControllers.CreateAlert("qna", title, message, qna.ID, redirectURL)
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Qna created successfully",
