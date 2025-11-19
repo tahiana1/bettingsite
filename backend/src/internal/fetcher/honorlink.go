@@ -177,7 +177,7 @@ func (h *HonorLinkFetcher) fetchAndLogTransactions() {
 	// Set time range to last 3 minutes in UTC timezone
 	now := time.Now().In(loc)
 	end := now                         // Current time UTC
-	start := end.Add(-3 * time.Minute) // 3 minutes ago in UTC
+	start := end.Add(-2 * time.Minute) // 3 minutes ago in UTC
 	fmt.Println(start, end, "date------------- (UTC Time)")
 
 	// Retry logic for API calls with fallback time ranges
@@ -340,6 +340,8 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 		gameType = "win"
 	}
 
+	fmt.Println(hlTransaction.CreatedAt, "hlTransaction.CreatedAt")
+
 	if hlTransaction.Type == "bet" || hlTransaction.Type == "win" {
 		//Create transaction record
 		transactionIDStr := hlTransaction.GetIDString()
@@ -352,6 +354,7 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 			BalanceBefore: balanceBefore,
 			BalanceAfter:  balanceBefore + hlTransaction.Amount,
 			Status:        "success",
+			TransactionAt:     hlTransaction.CreatedAt,
 		}
 
 		// Save transaction to database
@@ -375,6 +378,7 @@ func (h *HonorLinkFetcher) processTransaction(hlTransaction HonorLinkTransaction
 			BalanceBefore: float64(profile.Roll),
 			BalanceAfter:  float64(profile.Roll) + rollingGoldAmount,
 			Status:        "success",
+			TransactionAt:     hlTransaction.CreatedAt,
 		}
 		if err := initializers.DB.Create(&transactionRolling).Error; err != nil {
 			fmt.Printf("❌ Error creating transaction record: %v\n", err)

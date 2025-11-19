@@ -279,7 +279,7 @@ const CasinoLive: React.FC = () => {
         if (!record.bettingTime) return "-";
         // Convert Unix timestamp (seconds) to milliseconds and format
         const date = dayjs(record.bettingTime * 1000);
-        return date.format("M/D/YYYY HH:mm:ss");
+        return date.format("M/D/YYYY HH:mm");
       },
     },
     {
@@ -420,10 +420,10 @@ const CasinoLive: React.FC = () => {
           "Result Status": bet.resultStatus,
           [t("beforeAmount")]: bet.beforeAmount,
           [t("afterAmount")]: bet.afterAmount,
-          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm:ss") : "",
+          [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm") : "",
           Status: bet.status,
-          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
-          [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm:ss") : "",
+          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm") : "",
+          [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm") : "",
           Details: bet.details ? JSON.stringify(bet.details) : "",
         }))
       );
