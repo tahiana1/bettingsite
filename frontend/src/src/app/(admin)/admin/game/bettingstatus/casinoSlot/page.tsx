@@ -419,8 +419,8 @@ const CasinoSlot: React.FC = () => {
           [t("afterAmount")]: bet.afterAmount,
           [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm:ss") : "",
           Status: bet.status,
-          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
-          [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm:ss") : "",
+          // [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm:ss") : "",
+          // [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm:ss") : "",
           Details: bet.details ? JSON.stringify(bet.details) : "",
         }))
       );

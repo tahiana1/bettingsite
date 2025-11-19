@@ -55,13 +55,8 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	// Hash the password
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), 10)
-
-	if err != nil {
-		format_errors.BadRequestError(c, fmt.Errorf("The userid is already existed!"))
-		return
-	}
+	// Encode the password using Base64
+	encodedPassword := helpers.EncodePasswordBase64(userInput.Password)
 
 	// Get client IP
 	clientIP := c.ClientIP()
@@ -92,7 +87,7 @@ func SignUp(c *gin.Context) {
 	user := models.User{
 		Name:        userInput.Name,
 		Userid:      userInput.Userid,
-		Password:    string(hashPassword),
+		Password:    encodedPassword,
 		SecPassword: userInput.SecPassword,
 		USDTAddress: userInput.USDTAddress,
 		IP:          clientIP,
@@ -198,10 +193,36 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Compare the password with user hashed password
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
-	if err != nil {
-		format_errors.BadRequestError(c, err)
+	// Compare the password with user password
+	// Support Base64 encoded, encrypted (AES), MD5 hash, and bcrypt for backward compatibility
+	var passwordValid bool
+	
+	// First try to decode Base64 (new method)
+	decoded, err := helpers.DecodePasswordBase64(user.Password)
+	if err == nil {
+		// Successfully decoded - compare plain text
+		passwordValid = (decoded == userInput.Password)
+	} else {
+		// Try to decrypt (assuming it's encrypted with AES)
+		decrypted, err := helpers.DecryptPassword(user.Password)
+		if err == nil {
+			// Successfully decrypted - compare plain text
+			passwordValid = (decrypted == userInput.Password)
+		} else if helpers.IsBcryptHash(user.Password) {
+			// Old bcrypt hash
+			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
+			passwordValid = (err == nil)
+		} else if helpers.IsMD5Hash(user.Password) {
+			// MD5 hash
+			passwordValid = helpers.VerifyPasswordMD5(userInput.Password, user.Password)
+		} else {
+			// Plain text (not recommended)
+			passwordValid = (user.Password == userInput.Password)
+		}
+	}
+	
+	if !passwordValid {
+		format_errors.BadRequestError(c, fmt.Errorf("Invalid password"))
 		return
 	}
 

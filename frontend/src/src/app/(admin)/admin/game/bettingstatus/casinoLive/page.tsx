@@ -282,28 +282,28 @@ const CasinoLive: React.FC = () => {
         return date.format("M/D/YYYY HH:mm");
       },
     },
-    {
-      title: "Details",
-      dataIndex: "details",
-      key: "details",
-      render: (_, record) => (
-        <div className="max-w-xs overflow-hidden text-ellipsis">
-          {record.details ? JSON.stringify(record.details) : '-'}
-        </div>
-      ),
-    },
-    {
-      title: t("createdAt"),
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
-    {
-      title: t("updatedAt"),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
-    },
+    // {
+    //   title: "Details",
+    //   dataIndex: "details",
+    //   key: "details",
+    //   render: (_, record) => (
+    //     <div className="max-w-xs overflow-hidden text-ellipsis">
+    //       {record.details ? JSON.stringify(record.details) : '-'}
+    //     </div>
+    //   ),
+    // },
+    // {
+    //   title: t("createdAt"),
+    //   dataIndex: "createdAt",
+    //   key: "createdAt",
+    //   render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+    // },
+    // {
+    //   title: t("updatedAt"),
+    //   dataIndex: "updatedAt",
+    //   key: "updatedAt",
+    //   render: (v) => (isValidDate(v) ? f.dateTime(new Date(v)) : ""),
+    // },
     {
       title: t("status"),
       dataIndex: "resultStatus",
@@ -422,8 +422,8 @@ const CasinoLive: React.FC = () => {
           [t("afterAmount")]: bet.afterAmount,
           [t("bettingTime")]: bet.bettingTime ? dayjs(bet.bettingTime * 1000).format("M/D/YYYY HH:mm") : "",
           Status: bet.status,
-          [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm") : "",
-          [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm") : "",
+          // [t("createdAt")]: bet.createdAt ? dayjs(bet.createdAt).format("M/D/YYYY HH:mm") : "",
+          // [t("updatedAt")]: bet.updatedAt ? dayjs(bet.updatedAt).format("M/D/YYYY HH:mm") : "",
           Details: bet.details ? JSON.stringify(bet.details) : "",
         }))
       );

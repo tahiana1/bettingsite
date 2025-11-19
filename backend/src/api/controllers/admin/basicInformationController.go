@@ -17,6 +17,7 @@ import (
 type BasicInformationResponse struct {
 	ID                                                            string `json:"id"`
 	Nickname                                                      string `json:"nickname"`
+	Password                                                      string `json:"password"`
 	ExchangePassword                                              string `json:"exchangePassword"`
 	Allas                                                         string `json:"allas"`
 	Depositor                                                     string `json:"depositor"`
@@ -169,9 +170,40 @@ func GetBasicInformation(c *gin.Context) {
 	}
 
 	// Map user data to response
+	// For password: Try to decode Base64 first, then decrypt, otherwise check for MD5/bcrypt
+	passwordDisplay := ""
+	if user.Password != "" {
+		// First try to decode Base64 (new method)
+		decoded, err := helpers.DecodePasswordBase64(user.Password)
+		if err == nil {
+			// Successfully decoded - it's a Base64 encoded password
+			passwordDisplay = decoded
+		} else {
+			// Try to decrypt (assuming it's encrypted with AES)
+			decrypted, err := helpers.DecryptPassword(user.Password)
+			if err == nil {
+				// Successfully decrypted - it's an encrypted password
+				passwordDisplay = decrypted
+			} else {
+				// Decryption failed - might be MD5 hash, bcrypt hash, or plain text
+				if helpers.IsBcryptHash(user.Password) {
+					// Old bcrypt hash - cannot decode, show empty
+					passwordDisplay = ""
+				} else if helpers.IsMD5Hash(user.Password) {
+					// MD5 hash - cannot decode (one-way), show empty
+					passwordDisplay = ""
+				} else {
+					// Might be plain text (not recommended but handle it)
+					passwordDisplay = user.Password
+				}
+			}
+		}
+	}
+	
 	response := BasicInformationResponse{
 		ID:               user.Userid,
 		Nickname:         user.Profile.Nickname,
+		Password:         passwordDisplay, // Decrypted password or empty
 		ExchangePassword: user.SecPassword,
 		Allas:            user.Name,
 		Depositor:        user.Profile.HolderName,
@@ -360,6 +392,9 @@ func UpdateBasicInformation(c *gin.Context) {
 	case "nickname":
 		updateProfileField(c, userid, field, value, []string{"Profile.Nickname"})
 		return
+	case "password":
+		// Encode the password using Base64 before saving (so it can be decoded and displayed)
+		user.Password = helpers.EncodePasswordBase64(value)
 	case "exchangePassword":
 		user.SecPassword = value
 	case "allas":
