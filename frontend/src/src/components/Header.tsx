@@ -26,7 +26,7 @@ import DepositRequest from "./Billing/DepositRequst";
 import WithdrawRequest from "./Billing/WithdrawRequst";
 import Notice from '@/components/notice/page';
 import Event from '@/components/event/page';
-import ProfilePage from '@/components/profile/page';
+import ProfilePage from '@/components/Profile/page';
 import QnaPage from "@/components/qna/page";
 import NotePage from "@/components/note/page";
 import BettingHistoryPage from "@/components/betlog/page";
@@ -54,8 +54,8 @@ import Level10 from "@/assets/img/level/lv10.png"
 import LevelVIP1 from "@/assets/img/level/Vip1.png"
 import LevelVIP2 from "@/assets/img/level/Vip2.png"
 import Prumium from "@/assets/img/level/premium.png"
-import PointPage from "./profile/point/page";
-import RollingPage from "./profile/rolling/page";
+import PointPage from "./Profile/point/page";
+import RollingPage from "./Profile/rolling/page";
 
 const { Header } = Layout;
 
