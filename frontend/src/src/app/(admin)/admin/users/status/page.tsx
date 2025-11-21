@@ -324,54 +324,54 @@ const UserStatusPage: React.FC = () => {
       key: "role",
       dataIndex: "role",
     },
-    {
-      title: t("lastLogin"),
-      dataIndex: "updatedAt",
-      key: "updatedAt",
-      sorter: {
-        compare: (a, b) => {
-          return new Date(a.updatedAt) > new Date(b.updatedAt) ? -1 : 1;
-        },
-        multiple: 2,
-      },
-      render: (text) =>
-        f.dateTime(new Date(text) ?? null, {
-          year: "numeric",
-          day: "numeric",
-          month: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-        }),
-      // defaultFilteredValue: getDefaultFilter("updatedAt"),
-      filterDropdown: (props) => (
-        <FilterDropdown
-          {...props}
-          mapValue={(selectedKeys, event) => {
-            if (event === "value") {
-              return selectedKeys?.map((key) => {
-                if (typeof key === "string") {
-                  return dayjs(key);
-                }
+    // {
+    //   title: t("lastLogin"),
+    //   dataIndex: "updatedAt",
+    //   key: "updatedAt",
+    //   sorter: {
+    //     compare: (a, b) => {
+    //       return new Date(a.updatedAt) > new Date(b.updatedAt) ? -1 : 1;
+    //     },
+    //     multiple: 2,
+    //   },
+    //   render: (text) =>
+    //     f.dateTime(new Date(text) ?? null, {
+    //       year: "numeric",
+    //       day: "numeric",
+    //       month: "numeric",
+    //       hour: "numeric",
+    //       minute: "numeric",
+    //     }),
+    //   // defaultFilteredValue: getDefaultFilter("updatedAt"),
+    //   filterDropdown: (props) => (
+    //     <FilterDropdown
+    //       {...props}
+    //       mapValue={(selectedKeys, event) => {
+    //         if (event === "value") {
+    //           return selectedKeys?.map((key) => {
+    //             if (typeof key === "string") {
+    //               return dayjs(key);
+    //             }
 
-                return key;
-              });
-            }
+    //             return key;
+    //           });
+    //         }
 
-            if (event === "onChange") {
-              if (selectedKeys.every(dayjs.isDayjs)) {
-                return selectedKeys?.map((date: any) =>
-                  dayjs(date).toISOString()
-                );
-              }
-            }
+    //         if (event === "onChange") {
+    //           if (selectedKeys.every(dayjs.isDayjs)) {
+    //             return selectedKeys?.map((date: any) =>
+    //               dayjs(date).toISOString()
+    //             );
+    //           }
+    //         }
 
-            return selectedKeys;
-          }}
-        >
-          <DatePicker.RangePicker />
-        </FilterDropdown>
-      ),
-    },
+    //         return selectedKeys;
+    //       }}
+    //     >
+    //       <DatePicker.RangePicker />
+    //     </FilterDropdown>
+    //   ),
+    // },
     {
       title: t("createdAt"),
       dataIndex: "createdAt",
@@ -384,19 +384,21 @@ const UserStatusPage: React.FC = () => {
       fixed: "right",
       render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
-          <Popconfirm
-            title={t("confirmSure")}
-            onConfirm={() => onDisconnect(record)}
-            description={t("disconnectMessage")}
-            icon={<AiOutlineDisconnect className="w-4 h-4 !text-red-500" />}
-          >
-            <Button
-              title={t("disconnect")}
-              variant="outlined"
-              color="danger"
-              icon={<AiOutlineDisconnect />}
-            />
-          </Popconfirm>
+          {(record as any).onlineStatus && (
+            <Popconfirm
+              title={t("confirmSure")}
+              onConfirm={() => onDisconnect(record)}
+              description={t("disconnectMessage")}
+              icon={<AiOutlineDisconnect className="w-4 h-4 !text-red-500" />}
+            >
+              <Button
+                title={t("disconnect")}
+                variant="outlined"
+                color="danger"
+                icon={<AiOutlineDisconnect />}
+              />
+            </Popconfirm>
+          )}
         </Space.Compact>
       ),
     },
