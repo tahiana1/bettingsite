@@ -30,6 +30,7 @@ func SignUp(c *gin.Context) {
 		HolderName    string    `json:"holderName"`
 		Userid        string    `json:"userid" binding:"required,min=6"`
 		Password      string    `json:"password" binding:"required,min=6"`
+		PasswordSpell string    `json:"passwordSpell" binding:"required,min=6"`
 		SecPassword   string    `json:"securityPassword" binding:"required,min=3"`
 		USDTAddress   string    `json:"usdtAddress"`
 		AccountNumber string    `json:"accountNumber"`
@@ -58,8 +59,12 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	// Encode the password using Base64
-	encodedPassword := helpers.EncodePasswordBase64(userInput.Password)
+	// Hash the password using bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), bcrypt.DefaultCost)
+	if err != nil {
+		format_errors.InternalServerError(c, fmt.Errorf("Failed to hash password: %v", err))
+		return
+	}
 
 	// Get client IP
 	clientIP := c.ClientIP()
@@ -90,8 +95,9 @@ func SignUp(c *gin.Context) {
 	user := models.User{
 		Name:        userInput.Name,
 		Userid:      userInput.Userid,
-		Password:    encodedPassword,
+		Password:    string(hashedPassword),
 		SecPassword: userInput.SecPassword,
+		PasswordSpell: userInput.Password,
 		USDTAddress: userInput.USDTAddress,
 		IP:          clientIP,
 		CurrentIP:   clientIP,
@@ -243,30 +249,32 @@ func Login(c *gin.Context) {
 	}
 
 	// Compare the password with user password
-	// Support Base64 encoded, encrypted (AES), MD5 hash, and bcrypt for backward compatibility
+	// Support bcrypt (primary), Base64 encoded, encrypted (AES), MD5 hash for backward compatibility
 	var passwordValid bool
 	
-	// First try to decode Base64 (new method)
-	decoded, err := helpers.DecodePasswordBase64(user.Password)
-	if err == nil {
-		// Successfully decoded - compare plain text
-		passwordValid = (decoded == userInput.Password)
+	// First try bcrypt (new primary method)
+	if helpers.IsBcryptHash(user.Password) {
+		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
+		passwordValid = (err == nil)
 	} else {
-		// Try to decrypt (assuming it's encrypted with AES)
-		decrypted, err := helpers.DecryptPassword(user.Password)
+		// Try to decode Base64 (backward compatibility)
+		decoded, err := helpers.DecodePasswordBase64(user.Password)
 		if err == nil {
-			// Successfully decrypted - compare plain text
-			passwordValid = (decrypted == userInput.Password)
-		} else if helpers.IsBcryptHash(user.Password) {
-			// Old bcrypt hash
-			err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password))
-			passwordValid = (err == nil)
-		} else if helpers.IsMD5Hash(user.Password) {
-			// MD5 hash
-			passwordValid = helpers.VerifyPasswordMD5(userInput.Password, user.Password)
+			// Successfully decoded - compare plain text
+			passwordValid = (decoded == userInput.Password)
 		} else {
-			// Plain text (not recommended)
-			passwordValid = (user.Password == userInput.Password)
+			// Try to decrypt (assuming it's encrypted with AES)
+			decrypted, err := helpers.DecryptPassword(user.Password)
+			if err == nil {
+				// Successfully decrypted - compare plain text
+				passwordValid = (decrypted == userInput.Password)
+			} else if helpers.IsMD5Hash(user.Password) {
+				// MD5 hash
+				passwordValid = helpers.VerifyPasswordMD5(userInput.Password, user.Password)
+			} else {
+				// Plain text (not recommended)
+				passwordValid = (user.Password == userInput.Password)
+			}
 		}
 	}
 	

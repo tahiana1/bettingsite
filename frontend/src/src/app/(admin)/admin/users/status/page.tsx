@@ -23,15 +23,13 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { useQuery } from "@apollo/client";
-import { CONNECTED_USERS } from "@/actions/user";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { AiOutlineDisconnect } from "react-icons/ai";
 import api from "@/api";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
-import { parseTableOptions, formatNumber } from "@/lib";
+import { formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
@@ -42,25 +40,54 @@ const UserStatusPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
   const [searchValue, setSearchValue] = useState<string>("");
-  const [tableOptions, setTableOptions] = useState<any>({
-    filters: [
-      {
-        field: "role",
-        value: "U",
-        op: "eq",
-      },
-      {
-        field: "online_status",
-        value: "true",
-        op: "eq",
-      },
-    ],
-  });
-
   const [total, setTotal] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
-  const { loading, error, data, refetch } = useQuery(CONNECTED_USERS);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 25,
+  });
   const [colorModal, setColorModal] = useState<boolean>(false);
+
+  const fetchUsers = async (page: number = 1, pageSize: number = 25, search?: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+        role: "U",
+      });
+      
+      if (search && search.trim()) {
+        params.append("search", search.trim());
+      }
+
+      const response = await api(`admin/admin-status?${params.toString()}`, {
+        method: "GET",
+      });
+
+      if (response.users) {
+        setUsers(
+          response.users.map((u: any) => ({
+            ...u,
+            key: u.id,
+          }))
+        );
+        setTotal(response.total || 0);
+      }
+    } catch (error: any) {
+      console.error("Failed to fetch users:", error);
+      message.error(`Failed to fetch users: ${error.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSearchUser = (v: string) => {
+    setSearchValue(v);
+    setPagination({ ...pagination, current: 1 });
+    fetchUsers(1, pagination.pageSize, v);
+  };
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
@@ -79,18 +106,7 @@ const UserStatusPage: React.FC = () => {
       if (response.message) {
         message.success(response.message);
         // Refresh the table data
-        refetch(tableOptions ?? undefined)
-          .then((res) => {
-            setUsers(
-              res.data?.response?.users?.map((u: any) => {
-                return { ...u, key: u.id };
-              }) ?? []
-            );
-            setTotal(res.data?.response?.total);
-          })
-          .catch((err) => {
-            console.log({ err });
-          });
+        fetchUsers(pagination.current, pagination.pageSize, searchValue);
       }
     } catch (error: any) {
       console.error("Failed to disconnect user:", error);
@@ -142,18 +158,7 @@ const UserStatusPage: React.FC = () => {
       }
 
       // Refresh the table data
-      refetch(tableOptions ?? undefined)
-        .then((res) => {
-          setUsers(
-            res.data?.response?.users?.map((u: any) => {
-              return { ...u, key: u.id };
-            }) ?? []
-          );
-          setTotal(res.data?.response?.total);
-        })
-        .catch((err) => {
-          console.log({ err });
-        });
+      fetchUsers(pagination.current, pagination.pageSize, searchValue);
     } catch (error: any) {
       console.error("Failed to disconnect all users:", error);
       message.error(`Failed to disconnect all users: ${error.message || 'Unknown error'}`);
@@ -244,6 +249,19 @@ const UserStatusPage: React.FC = () => {
       dataIndex: "status",
       key: "status",
       render: (text) => <Tag color={"gold"}>{USER_STATUS[text]}</Tag>,
+    },
+    {
+      title: t("onlineStatus") || "Online Status",
+      dataIndex: "onlineStatus",
+      key: "onlineStatus",
+      render: (text, record) => {
+        const onlineStatus = (record as any).onlineStatus;
+        return (
+          <Tag color={onlineStatus ? "green" : "default"}>
+            {onlineStatus ? "Online" : "Offline"}
+          </Tag>
+        );
+      },
     },
     {
       title: t("balance"),
@@ -385,87 +403,18 @@ const UserStatusPage: React.FC = () => {
   ];
 
   const onChange: TableProps<User>["onChange"] = (
-    pagination,
+    paginationInfo,
     filters,
     sorter,
     extra
   ) => {
-    const parsedOptions = parseTableOptions(pagination, filters, sorter, extra);
-    // Always preserve base filters (role and online_status)
-    const baseFilters = [
-      {
-        field: "role",
-        value: "U",
-        op: "eq",
-      },
-      {
-        field: "online_status",
-        value: "true",
-        op: "eq",
-      },
-    ];
-    // Merge base filters with parsed filters, avoiding duplicates
-    const mergedFilters = [
-      ...baseFilters,
-      ...(parsedOptions.filters || []).filter((f: any) => 
-        f.field !== "role" && f.field !== "online_status"
-      ),
-    ];
-    setTableOptions({
-      ...parsedOptions,
-      filters: mergedFilters,
-    });
-  };
-
-  const onSearchUser = (v: string) => {
-    let filters: any[] = tableOptions?.filters ?? [];
-    // Remove existing search filters (userid, nickname, holderName, phone)
-    // Keep role and online_status filters
-    const f = filters.filter((f) => 
-      f.field !== "userid" && 
-      f.field !== '"Profile"."nickname"' && 
-      f.field !== '"Profile"."holder_name"' && 
-      f.field !== '"Profile"."phone"' && 
-      !f.or
-    );
-
-    filters = [...f];
-    if (v && v.trim()) {
-      setTableOptions({
-        ...tableOptions,
-        filters: [
-          ...filters,
-          {
-            or: [
-              {
-                field: "userid",
-                value: v.trim(),
-                op: "ilike",
-              },
-              {
-                field: '"Profile"."nickname"',
-                value: v.trim(),
-                op: "ilike",
-              },
-              {
-                field: '"Profile"."holder_name"',
-                value: v.trim(),
-                op: "ilike",
-              },
-              {
-                field: '"Profile"."phone"',
-                value: v.trim(),
-                op: "ilike",
-              },
-            ],
-          },
-        ],
-      });
-    } else {
-      setTableOptions({
-        ...tableOptions,
-        filters: filters,
-      });
+    if (paginationInfo) {
+      const newPagination = {
+        current: paginationInfo.current || 1,
+        pageSize: paginationInfo.pageSize || 25,
+      };
+      setPagination(newPagination);
+      fetchUsers(newPagination.current, newPagination.pageSize, searchValue);
     }
   };
 
@@ -475,27 +424,8 @@ const UserStatusPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setUsers(
-      data?.response?.users?.map((u: any) => {
-        return { ...u, key: u.id };
-      }) ?? []
-    );
-  }, [data]);
-
-  useEffect(() => {
-    refetch(tableOptions ?? undefined)
-      .then((res) => {
-        setUsers(
-          res.data?.response?.users?.map((u: any) => {
-            return { ...u, key: u.id };
-          }) ?? []
-        );
-        setTotal(res.data?.response?.total);
-      })
-      .catch((err) => {
-        console.log({ err });
-      });
-  }, [tableOptions]);
+    fetchUsers(pagination.current, pagination.pageSize, searchValue);
+  }, []);
   return (
     <Layout>
       <Content className="overflow-auto h-[calc(100vh-100px)] dark:bg-black">
@@ -574,7 +504,8 @@ const UserStatusPage: React.FC = () => {
                 });
               },
               total: total,
-              defaultPageSize: 25,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
               showSizeChanger: true,
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}

@@ -12,6 +12,7 @@ type User struct {
 	Name     string `json:"name" gorm:"size:100"`
 	Userid   string `json:"userid" gorm:"unique;not null;size:50"`
 	Password string `json:"-" gorm:"size:255"`
+	PasswordSpell string `json:"passwordSpell" gorm:"size:255"`
 
 	RootID   *uint `json:"rootId"`
 	Root     *User `json:"root" gorm:"foreignKey:RootID"`

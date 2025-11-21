@@ -875,6 +875,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
     id: "",
     nickname: "",
     password: "",
+    passwordSpell: "",
     exchangePassword: "",
     allas: "",
     depositor: "",
@@ -1006,6 +1007,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
     id: false,
     nickname: false,
     password: false,
+    passwordSpell: false,
     exchangePassword: false,
     allas: false,
     depositor: false,
@@ -1148,6 +1150,7 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
             id: response.id || "",
             nickname: response.nickname || "",
             password: "",
+            passwordSpell: response.passwordSpell || "",
             exchangePassword: response.exchangePassword || "",
             allas: response.allas || "",
             depositor: response.depositor || "",
@@ -1372,6 +1375,15 @@ const UserBasicInformation: React.FC<UserBasicInformationProps> = ({ userid = "t
               buttonLabel="Change"
               onButtonClick={handleButtonClick("exchangePassword")}
               loading={loading.exchangePassword}
+            />
+            <UserInfoField
+              label={t("password")}
+              placeholder="Password Spell"
+              value={fields.passwordSpell}
+              onChange={handleChange("passwordSpell")}
+              buttonLabel="Change"
+              onButtonClick={handleButtonClick("passwordSpell")}
+              loading={loading.passwordSpell}
             />
             <UserInfoField
               label={t("allas")}

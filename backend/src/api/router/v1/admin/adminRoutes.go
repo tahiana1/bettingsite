@@ -113,6 +113,9 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		basicInfoRouter.PUT("/:userid/update", controllers.UpdateBasicInformation)
 	}
 
+	// Admin status routes
+	r.GET("/admin-status", controllers.GetAdminStatus)
+
 	contactInfoRouter := r.Group("/contact-info")
 	{
 		contactInfoRouter.GET("/get", controllers.GetContactInfo)
