@@ -56,7 +56,7 @@ extend type Query {
 
 extend type Mutation {
   createQna(input: NewQnaInput!): Qna! @auth
-  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @auth
+  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
   replyQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
   deleteQna(id: ID!): Boolean! @hasRole(role: A)
   completeQna(id: ID!): Boolean! @hasRole(role: A)

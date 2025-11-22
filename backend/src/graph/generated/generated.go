@@ -5667,7 +5667,7 @@ extend type Query {
 
 extend type Mutation {
   createQna(input: NewQnaInput!): Qna! @auth
-  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @auth
+  updateQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
   replyQna(id: ID!, input: UpdateQnaInput!): Qna! @hasRole(role: A)
   deleteQna(id: ID!): Boolean! @hasRole(role: A)
   completeQna(id: ID!): Boolean! @hasRole(role: A)
@@ -20846,11 +20846,16 @@ func (ec *executionContext) _Mutation_updateQna(ctx context.Context, field graph
 		}
 
 		directive1 := func(ctx context.Context) (any, error) {
-			if ec.directives.Auth == nil {
+			role, err := ec.unmarshalNRole2githubᚗcomᚋhotbrainyᚋgoᚑbettingᚋbackendᚋgraphᚋmodelᚐRole(ctx, "A")
+			if err != nil {
 				var zeroVal *models.Qna
-				return zeroVal, errors.New("directive auth is not implemented")
+				return zeroVal, err
 			}
-			return ec.directives.Auth(ctx, nil, directive0)
+			if ec.directives.HasRole == nil {
+				var zeroVal *models.Qna
+				return zeroVal, errors.New("directive hasRole is not implemented")
+			}
+			return ec.directives.HasRole(ctx, nil, directive0, role)
 		}
 
 		tmp, err := directive1(rctx)

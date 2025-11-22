@@ -165,6 +165,10 @@ func (qr *qnaReader) UpdateQna(ctx context.Context, nID uint, updates model.Upda
 		return nil, err
 	}
 
+	if updates.Type != nil {
+		qna.Type = *updates.Type
+	}
+
 	if updates.Question != nil {
 		qna.Question = *updates.Question
 	}
@@ -179,6 +183,10 @@ func (qr *qnaReader) UpdateQna(ctx context.Context, nID uint, updates model.Upda
 
 	if updates.AnswerTitle != nil {
 		qna.AnswerTitle = *updates.AnswerTitle
+	}
+
+	if updates.Status != nil {
+		qna.Status = *updates.Status
 	}
 
 	qr.db.Save(qna)

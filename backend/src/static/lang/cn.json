@@ -2348,5 +2348,8 @@
   "viewAll" : "查看全部",
   "loadingNotifications" : "加载通知...",
   "noNewNotifications" : "没有新的通知",
-  "onlineStatus" : "在线状态"
+  "onlineStatus" : "在线状态",
+  "wait" : "等待",
+  "yes" : "是",
+  "no" : "否"
 }

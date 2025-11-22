@@ -383,7 +383,7 @@ const NotificationButton: React.FC = () => {
         className="!mb-[8px]"
         trigger={["click"]}
         placement="bottomRight"
-        dropdownRender={(menu) => (
+        popupRender={(menu) => (
           <div style={{ minWidth: 350, maxWidth: 400 }}>
             {menu}
           </div>

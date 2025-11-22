@@ -22,7 +22,7 @@ import type { TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { useFormatter, useTranslations } from "next-intl";
 import { useQuery, useMutation } from "@apollo/client";
-import { FILTER_QNAS, REPLY_QNA, COMPLETE_QNA } from "@/actions/qna";
+import { FILTER_QNAS, REPLY_QNA, COMPLETE_QNA, DELETE_QNA, UPDATE_QNA } from "@/actions/qna";
 import { BiBlock, BiTrash } from "react-icons/bi";
 import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
@@ -58,6 +58,8 @@ const SupportCenterPage: React.FC = () => {
 
   const [replyQna] = useMutation(REPLY_QNA);
   const [completeQna] = useMutation(COMPLETE_QNA);
+  const [deleteQna] = useMutation(DELETE_QNA);
+  const [updateQna] = useMutation(UPDATE_QNA);
 
   const handleQuillChange = useCallback((editor: any, fieldName: string) => {
     if (editor) {
@@ -212,7 +214,10 @@ const SupportCenterPage: React.FC = () => {
       dataIndex: "questionTitle",                                                                                                                                                                   
       key: "questionTitle",
       render: (text, record) => {                                                                             
-        return <div className="line-clamp-2 cursor-pointer">
+        return <div 
+          className="line-clamp-2 cursor-pointer hover:text-blue-600"
+          onClick={() => handleReplyQuestion(record)}
+        >
           {text}
         </div>
       }
@@ -245,9 +250,9 @@ const SupportCenterPage: React.FC = () => {
         <Space.Compact size="small" className="gap-1">
           <button 
             className="bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50"
-            onClick={() => handleViewQuestion(record)}
+            onClick={() => handleWaitQuestion(record)}
           >
-            {t("view")}
+            {t("wait")}
           </button>
           <button 
             className="bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50"
@@ -255,21 +260,19 @@ const SupportCenterPage: React.FC = () => {
           >
             {t("reply")}
           </button>
-          {
-            record.status !== 'F' && record.status !== 'A' && (<button 
-              className={`bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50 ${
-                record.status === 'C' ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
-              onClick={() => {
-                if (record.status !== 'C') {
-                  handleCompleteQuestion(record);
-                }
-              }}
+          <Popconfirm
+            title={t("deleteConfirm")}
+            description={t("deleteConfirmDescription")}
+            onConfirm={() => handleDeleteQuestion(record)}
+            okText={t("yes")}
+            cancelText={t("no")}
+          >
+            <button 
+              className="bg-[white] border-1 rounded-[3px] cursor-pointer px-3 py-1 hover:bg-gray-50 text-red-600 hover:text-red-700"
             >
-              {record.status === 'F' ? t("completed") : t("complete")}
-            </button>)
-          }
-          
+              {t("delete")}
+            </button>
+          </Popconfirm>
         </Space.Compact>
       ),
     },
@@ -372,6 +375,37 @@ const SupportCenterPage: React.FC = () => {
       refetch();
     } catch (error) {
       console.error('Error completing question:', error);
+    }
+  };
+
+  const handleWaitQuestion = async (record: any) => {
+    try {
+      await updateQna({
+        variables: {
+          id: record.id.toString(),
+          input: {
+            status: "P"
+          }
+        }
+      });
+      // Refetch data to update the table
+      refetch();
+    } catch (error) {
+      console.error('Error setting question to wait:', error);
+    }
+  };
+
+  const handleDeleteQuestion = async (record: any) => {
+    try {
+      await deleteQna({
+        variables: {
+          id: record.id.toString()
+        }
+      });
+      // Refetch data to update the table
+      refetch();
+    } catch (error) {
+      console.error('Error deleting question:', error);
     }
   };
 
