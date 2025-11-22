@@ -2341,5 +2341,6 @@
   "of" : "of",
   "viewAll" : "View All",
   "loadingNotifications" : "Loading notifications...",
-  "noNewNotifications" : "No new notifications"
+  "noNewNotifications" : "No new notifications",
+  "onlineStatus" : "Online Status"
 } 
