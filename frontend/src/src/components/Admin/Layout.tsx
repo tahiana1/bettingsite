@@ -776,10 +776,10 @@ export default function AdminRootLayout({
           key: "admin/support/center",
           label: t("admin/menu/customServiceCenter"),
         },
-        // {
-        //   key: "admin/support/sample",
-        //   label: t("admin/menu/serviceCenterSample"),
-        // },
+        {
+          key: "admin/support/sample",
+          label: t("admin/menu/serviceCenterSample"),
+        },
       ],
     },
     {

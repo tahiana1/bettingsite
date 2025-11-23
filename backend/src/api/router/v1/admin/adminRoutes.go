@@ -186,4 +186,14 @@ func GetAdminRoute(r *gin.RouterGroup) {
 		alertRouter.POST("/mark-all-read", controllers.MarkAllAlertsAsRead)
 		alertRouter.DELETE("/delete", controllers.DeleteAlert)
 	}
+
+	// Sample QNA routes
+	sampleQnaRouter := r.Group("/sample-qnas")
+	{
+		sampleQnaRouter.GET("/", controllers.GetSampleQnas)
+		sampleQnaRouter.POST("/create", controllers.CreateSampleQna)
+		sampleQnaRouter.PUT("/:id/update", controllers.UpdateSampleQna)
+		sampleQnaRouter.DELETE("/:id/delete", controllers.DeleteSampleQna)
+		sampleQnaRouter.PATCH("/:id/use", controllers.UpdateSampleQnaUse)
+	}
 }

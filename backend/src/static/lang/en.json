@@ -2345,5 +2345,10 @@
   "onlineStatus" : "Online Status",
   "wait" : "Wait",
   "yes" : "Yes",
-  "no" : "No"
+  "no" : "No",
+  "deleteConfirmDescription" : "Are you sure you want to delete this question?",
+  "deleteConfirm" : "Delete Confirm",
+  "sampleAnswerList" : "Sample Answer List",
+  "updateTime" : "Update Time",
+  "createTime" : "Create Time"
 } 

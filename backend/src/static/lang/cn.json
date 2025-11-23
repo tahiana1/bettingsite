@@ -2351,5 +2351,10 @@
   "onlineStatus" : "在线状态",
   "wait" : "等待",
   "yes" : "是",
-  "no" : "否"
+  "no" : "否",
+  "deleteConfirmDescription" : "您确定要删除此问题吗？",
+  "deleteConfirm" : "确定删除",
+  "sampleAnswerList" : "样例答案列表",
+  "updateTime" : "更新时间",
+  "createTime" : "创建时间"
 }

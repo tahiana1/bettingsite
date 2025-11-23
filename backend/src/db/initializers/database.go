@@ -140,6 +140,7 @@ func ConnectDB() {
 		models.MiniBetOption{},
 		models.MiniGameConfig{},
 		models.PowerballHistory{},
+		models.SampleQna{},
 	)
 
 	if err != nil {
