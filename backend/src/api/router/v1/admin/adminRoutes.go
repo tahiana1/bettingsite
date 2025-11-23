@@ -190,6 +190,7 @@ func GetAdminRoute(r *gin.RouterGroup) {
 	// Sample QNA routes
 	sampleQnaRouter := r.Group("/sample-qnas")
 	{
+		sampleQnaRouter.GET("", controllers.GetSampleQnas)
 		sampleQnaRouter.GET("/", controllers.GetSampleQnas)
 		sampleQnaRouter.POST("/create", controllers.CreateSampleQna)
 		sampleQnaRouter.PUT("/:id/update", controllers.UpdateSampleQna)
