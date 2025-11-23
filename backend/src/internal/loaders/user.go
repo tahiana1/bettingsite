@@ -122,6 +122,18 @@ func (pr *userReader) DeleteUser(ctx context.Context, userID uint) error {
 		return fmt.Errorf("user not found: %w", err)
 	}
 
+	// Delete AdminPermission if it exists
+	var adminPermission models.AdminPermission
+	err := initializers.DB.Where("user_id = ?", userID).First(&adminPermission).Error
+	if err == nil {
+		// AdminPermission exists, delete it
+		if err := initializers.DB.Unscoped().Delete(&adminPermission).Error; err != nil {
+			fmt.Printf("Error deleting admin permission for user %d: %v\n", userID, err)
+			return fmt.Errorf("failed to delete admin permission: %w", err)
+		}
+		fmt.Printf("Deleted admin permission for user %d\n", userID)
+	}
+
 	// Permanently delete the user and related profile (cascade delete should handle profile)
 	if err := initializers.DB.Unscoped().Delete(&user).Error; err != nil {
 		return fmt.Errorf("failed to delete user: %w", err)
@@ -288,6 +300,11 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 		return err
 	}
 
+	// Store old role before updating
+	oldRole := me.Role
+	roleChanged := false
+	newRole := ""
+
 	if updates.Name != nil {
 		me.Name = *updates.Name
 	}
@@ -295,7 +312,11 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 		me.OrderNum = *updates.OrderNum
 	}
 	if updates.Role != nil {
-		me.Role = *updates.Role
+		newRole = *updates.Role
+		if oldRole != newRole {
+			roleChanged = true
+		}
+		me.Role = newRole
 	}
 	if updates.Type != nil {
 		me.Type = string(*updates.Type)
@@ -352,6 +373,48 @@ func (pr *userReader) UpdateUser(ctx context.Context, userID uint, updates model
 
 	if updates.DomainIds != nil {
 		fmt.Printf("Successfully updated user %d with domain IDs: %v\n", userID, me.DomainIDs)
+	}
+
+	// Handle admin_permission based on role change
+	if roleChanged {
+		if newRole == "A" {
+			// Role changed to Admin - create AdminPermission if it doesn't exist
+			var existingPermission models.AdminPermission
+			err := initializers.DB.Where("user_id = ?", userID).First(&existingPermission).Error
+			if err != nil {
+				// AdminPermission doesn't exist, create it with default values
+				adminPermission := models.AdminPermission{
+					UserID:      userID,
+					Membership:  false,
+					Financials:  false,
+					Qna:         false,
+					Game:        false,
+					Settlement:  false,
+					Sale:        false,
+					Statistical: false,
+					IP:          false,
+					Dwdelete:    false,
+					Status:      false,
+				}
+				if err := initializers.DB.Create(&adminPermission).Error; err != nil {
+					fmt.Printf("Error creating admin permission for user %d: %v\n", userID, err)
+					return err
+				}
+				fmt.Printf("Created admin permission for user %d (role changed to Admin)\n", userID)
+			}
+		} else if newRole == "P" || newRole == "U" {
+			// Role changed to Partner or User - delete AdminPermission if it exists
+			var existingPermission models.AdminPermission
+			err := initializers.DB.Where("user_id = ?", userID).First(&existingPermission).Error
+			if err == nil {
+				// AdminPermission exists, delete it
+				if err := initializers.DB.Delete(&existingPermission).Error; err != nil {
+					fmt.Printf("Error deleting admin permission for user %d: %v\n", userID, err)
+					return err
+				}
+				fmt.Printf("Deleted admin permission for user %d (role changed to %s)\n", userID, newRole)
+			}
+		}
 	}
 
 	return nil

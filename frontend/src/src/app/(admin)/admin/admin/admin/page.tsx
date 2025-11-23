@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import {
   Layout,
@@ -9,11 +9,9 @@ import {
   Button,
   Popconfirm,
   Input,
-  Radio,
-  Select,
   Modal,
-  Form,
   Switch,
+  message,
 } from "antd";
 import { FilterDropdown } from "@refinedev/antd";
 import type { TableProps } from "antd";
@@ -30,10 +28,10 @@ import {
 } from "@/actions/admin_permission";
 import dayjs from "dayjs";
 
-const PartnerPage: React.FC = () => {
+const AdminPermissionPage: React.FC = () => {
   const t = useTranslations();
   const f = useFormatter();
-  const [tableOptions, setTableOptions] = useState<any>({});
+  const [tableOptions, setTableOptions] = useState<any>(null);
 
   const [, contextHolder] = Modal.useModal();
   const [total, setTotal] = useState<number>(0);
@@ -41,9 +39,8 @@ const PartnerPage: React.FC = () => {
     []
   );
 
-  const { loading, data, refetch } = useQuery(GET_ADMIN_PERMISSIONS);
+  const { loading, data, refetch, error } = useQuery(GET_ADMIN_PERMISSIONS);
   const [updatePermission] = useMutation(UPDATE_ADMIN_PERMISSION);
-  const [colorModal, setColorModal] = useState<boolean>(false);
 
   const onChange: TableProps<AdminPermission>["onChange"] = (
     pagination,
@@ -54,20 +51,37 @@ const PartnerPage: React.FC = () => {
     setTableOptions(parseTableOptions(pagination, filters, sorter, extra));
   };
 
-  const onChangeSetting = (record: AdminPermission, f: string, v: boolean) => {
-    updatePermission({
-      variables: {
-        id: record.id,
-        input: {
-          [f]: v,
-        },
-      },
-    });
-  };
-  const [colorOption, setColorOptoin] = useState<any>("new");
-  const onChangeColors = async () => {
-    setColorModal(false);
-  };
+  const onChangeSetting = useCallback(
+    async (record: AdminPermission, field: string, value: boolean) => {
+      try {
+        await updatePermission({
+          variables: {
+            id: record.id,
+            input: {
+              [field]: value,
+            },
+          },
+        });
+        message.success(t("updateSuccess") || "Permission updated successfully");
+        refetch({
+          filters: tableOptions?.filters,
+          orders: tableOptions?.orders,
+          p: tableOptions?.pagination,
+        });
+      } catch (err: any) {
+        message.error(
+          err?.message || t("updateFailed") || "Failed to update permission"
+        );
+        // Revert the change by refetching
+        refetch({
+          filters: tableOptions?.filters,
+          orders: tableOptions?.orders,
+          p: tableOptions?.pagination,
+        });
+      }
+    },
+    [updatePermission, refetch, tableOptions, t]
+  );
 
   const columns: TableProps<AdminPermission>["columns"] = [
     {
@@ -94,7 +108,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "membership", e)}
           />
         );
@@ -108,7 +122,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "settlement", e)}
           />
         );
@@ -122,7 +136,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "qna", e)}
           />
         );
@@ -136,7 +150,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "game", e)}
           />
         );
@@ -150,7 +164,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "sale", e)}
           />
         );
@@ -164,7 +178,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "ip", e)}
           />
         );
@@ -178,7 +192,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "dwdelete", e)}
           />
         );
@@ -192,7 +206,7 @@ const PartnerPage: React.FC = () => {
         return (
           <Switch
             size="small"
-            defaultChecked={value}
+            checked={value}
             onChange={(e) => onChangeSetting(record, "status", e)}
           />
         );
@@ -208,36 +222,78 @@ const PartnerPage: React.FC = () => {
       title: t("action"),
       key: "action",
       fixed: "right",
-      render: () => (
+      render: (_, record) => (
         <Space.Compact size="small" className="gap-2">
           <Popconfirm
             title={t("confirmSure")}
-            // onConfirm={}
+            onConfirm={async () => {
+              try {
+                await updatePermission({
+                  variables: {
+                    id: record.id,
+                    input: {
+                      status: !(record as any).status,
+                    },
+                  },
+                });
+                message.success(
+                  t("updateSuccess") || "Permission updated successfully"
+                );
+                refetch({
+                  filters: tableOptions?.filters,
+                  orders: tableOptions?.orders,
+                  p: tableOptions?.pagination,
+                });
+              } catch (err: any) {
+                message.error(
+                  err?.message ||
+                    t("updateFailed") ||
+                    "Failed to update permission"
+                );
+              }
+            }}
             description={t("approveMessage")}
           >
             <Button
-              title={t("approve")}
-              variant="outlined"
-              color="blue"
+              type="primary"
               icon={<BiUser />}
-            />
+              title={t("approve")}
+            >
+              {t("approve")}
+            </Button>
           </Popconfirm>
         </Space.Compact>
       ),
     },
   ];
   useEffect(() => {
-    setAdminPermissions(
-      data?.response?.adminPermissions?.map((u: any) => {
-        return { ...u, key: u.id };
-      }) ?? []
-    );
-    setTotal(data?.response?.total);
+    if (data?.response) {
+      setAdminPermissions(
+        data.response.adminPermissions?.map((u: any) => {
+          return { ...u, key: u.id };
+        }) ?? []
+      );
+      setTotal(data.response.total ?? 0);
+    }
   }, [data]);
 
   useEffect(() => {
-    refetch(tableOptions ?? undefined);
-  }, [tableOptions]);
+    if (error) {
+      message.error(
+        error.message || t("fetchFailed") || "Failed to fetch admin permissions"
+      );
+    }
+  }, [error, t]);
+
+  useEffect(() => {
+    if (tableOptions !== null) {
+      refetch({
+        filters: tableOptions.filters,
+        orders: tableOptions.orders,
+        p: tableOptions.pagination,
+      });
+    }
+  }, [tableOptions, refetch]);
   return (
     <Layout>
       {contextHolder}
@@ -270,41 +326,10 @@ const PartnerPage: React.FC = () => {
               pageSizeOptions: [25, 50, 100, 250, 500, 1000],
             }}
           />
-          <Modal
-            open={colorModal}
-            onCancel={() => setColorModal(false)}
-            onOk={onChangeColors}
-          >
-            <Space direction="vertical" className="gap-2">
-              <Radio.Group
-                onChange={(e) => setColorOptoin(e.target.value)}
-                className="!flex !flex-col gap-2"
-                defaultValue={"new"}
-              >
-                <Radio value={"new"}>New Search Criteria</Radio>
-                {colorOption == "new" ? (
-                  <Form.Item>
-                    <Input />
-                  </Form.Item>
-                ) : null}
-                <Radio value={"list"}>
-                  Apply the member list search conditions as is:
-                </Radio>
-                {colorOption == "list" ? (
-                  <Form.Item>
-                    <Select />
-                  </Form.Item>
-                ) : null}
-              </Radio.Group>
-              <Form.Item label="Change Color">
-                <Select />
-              </Form.Item>
-            </Space>
-          </Modal>
         </Card>
       </Content>
     </Layout>
   );
 };
 
-export default PartnerPage;
+export default AdminPermissionPage;
