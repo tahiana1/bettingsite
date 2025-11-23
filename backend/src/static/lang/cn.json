@@ -2356,5 +2356,7 @@
   "deleteConfirm" : "确定删除",
   "sampleAnswerList" : "样例答案列表",
   "updateTime" : "更新时间",
-  "createTime" : "创建时间"
+  "createTime" : "创建时间",
+  "sampleAnswer" : "样例答案",
+  "selectSampleAnswer" : "选择样例答案"
 }

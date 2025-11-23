@@ -2350,5 +2350,7 @@
   "deleteConfirm" : "Delete Confirm",
   "sampleAnswerList" : "Sample Answer List",
   "updateTime" : "Update Time",
-  "createTime" : "Create Time"
+  "createTime" : "Create Time",
+  "sampleAnswer" : "Sample Answer",
+  "selectSampleAnswer" : "Select Sample Answer"
 } 

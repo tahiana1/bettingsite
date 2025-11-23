@@ -32,6 +32,7 @@ import { BsCardChecklist } from "react-icons/bs";
 import Quill from "quill";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
+import api from "@/api";
 
 const SupportCenterPage: React.FC = () => {
   const [form] = Form.useForm();
@@ -43,6 +44,8 @@ const SupportCenterPage: React.FC = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
   const [total, setTotal] = useState<number>(0);
   const [qnas, setQnas] = useState<any[]>([]);
+  const [sampleQnas, setSampleQnas] = useState<any[]>([]);
+  const [loadingSampleQnas, setLoadingSampleQnas] = useState(false);
   const quillRef = useRef<HTMLDivElement>(null);
   const quillInstanceRef = useRef<Quill | null>(null);
   const { loading, data, refetch } = useQuery(FILTER_QNAS, {
@@ -144,6 +147,37 @@ const SupportCenterPage: React.FC = () => {
       }
     };
   }, []);
+
+  // Fetch sample QNAs when modal opens
+  useEffect(() => {
+    const fetchSampleQnas = async () => {
+      if (modalOpen) {
+        setLoadingSampleQnas(true);
+        try {
+          const response = await api(`admin/sample-qnas?page=1&perPage=1000`);
+          if (response?.response?.data) {
+            // Filter only active (use: true) sample QNAs
+            const activeSamples = response.response.data.filter((item: any) => item.use === true);
+            setSampleQnas(activeSamples);
+          }
+        } catch (error) {
+          console.error('Error fetching sample QNAs:', error);
+        } finally {
+          setLoadingSampleQnas(false);
+        }
+      }
+    };
+    fetchSampleQnas();
+  }, [modalOpen]);
+
+  // Handle sample QNA selection
+  const handleSampleQnaChange = (value: string) => {
+    const selectedSample = sampleQnas.find((item: any) => item.id.toString() === value);
+    if (selectedSample && quillInstanceRef.current) {
+      quillInstanceRef.current.root.innerHTML = selectedSample.answerContent || '';
+      form.setFieldValue('answer', selectedSample.answerContent || '');
+    }
+  };
 
   const popupWindow = (id: number) => {
     window.open(`/admin/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
@@ -346,6 +380,9 @@ const SupportCenterPage: React.FC = () => {
       // Don't destroy the instance, just clear it - let the next modal opening recreate it fresh
       quillInstanceRef.current = null;
     }
+    
+    // Reset sample QNA select
+    form.setFieldValue('sampleQna', undefined);
   };
 
   const handleViewModalClose = () => {
@@ -646,6 +683,26 @@ const SupportCenterPage: React.FC = () => {
               layout="vertical"
               onFinish={handleReplySubmit}
             >
+              <Form.Item
+                name="sampleQna"
+                label={t("sampleAnswer")}
+              >
+                <Select
+                  placeholder={t("selectSampleAnswer")}
+                  allowClear
+                  loading={loadingSampleQnas}
+                  onChange={handleSampleQnaChange}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  }
+                  options={sampleQnas.map((item: any) => ({
+                    value: item.id.toString(),
+                    label: item.answerTitle || `Sample ${item.id}`,
+                  }))}
+                />
+              </Form.Item>
               <Form.Item
                 name="answer"
                 label={t("answerContent")}
