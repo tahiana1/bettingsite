@@ -316,12 +316,17 @@ const PartnerPage: React.FC = () => {
           op: "eq",
         },
       ],
-    }).then(() => {
+    }).then((result) => {
+      // Use the result directly instead of childrenData
+      const fetchedChildren = result.data?.response?.users || [];
       setCurrentUserChildren(
-        childrenData?.response?.users?.map((u: any) => {
+        fetchedChildren.map((u: any) => {
           return { ...u, key: u.id };
-        }) ?? []
+        })
       );
+    }).catch((error) => {
+      console.error("Error fetching children for losing/rolling setting:", error);
+      message.error(t("failedToLoadChildren") || "Failed to load children");
     });
   };
 
@@ -597,14 +602,32 @@ const PartnerPage: React.FC = () => {
             op: "eq",
           },
         ],
-      }).then(() => {
-        setUsers([
-          ...(users ?? []),
-          ...(childrenData?.response?.users?.map((u: any) => {
-            return { ...u, key: u.id };
-          }) ?? []),
-        ]);
+      }).then((result) => {
+        // Get children from the refetch result
+        const fetchedChildren = result.data?.response?.users || [];
+        
+        // Get existing user IDs to avoid duplicates
+        const existingUserIds = new Set(users.map((u: any) => u.id));
+        
+        // Map children and ensure they have parentId set and key property
+        const newChildren = fetchedChildren
+          .filter((u: any) => !existingUserIds.has(u.id)) // Filter out duplicates
+          .map((u: any) => ({
+            ...u,
+            key: u.id,
+            parentId: record.id, // Ensure parentId is set correctly
+          }));
+        
+        if (newChildren.length > 0) {
+          setUsers([...(users ?? []), ...newChildren]);
+        }
+      }).catch((error) => {
+        console.error("Error fetching children:", error);
+        message.error(t("failedToLoadChildren") || "Failed to load children");
       });
+    } else {
+      // When collapsing, we can optionally remove children to keep the list clean
+      // For now, we'll keep them in the list but they won't be displayed if parentId doesn't match
     }
   };
 
