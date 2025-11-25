@@ -57,7 +57,13 @@ const Login: React.FC = () => {
           onClose() {
             setUser(result.data);
             localStorage.setItem("token", result.token);
-            router.push(ROUTES.admin.home);
+            if(result.data.role == "A"){
+              router.push(ROUTES.admin.home);
+              console.log("admin");
+            } else if(result.data.role == "P"){
+              router.push(ROUTES.partner.home);
+              console.log("partner");
+            }
           },
         });
       })
@@ -86,7 +92,7 @@ const Login: React.FC = () => {
     >
       {contextHolder}
 
-      <Card title={"Admin Login"} className="w-full">
+      <Card title={"Partner Login"} className="w-full">
         <Form.Item<User>
           label="UserID"
           {...register("userid")}

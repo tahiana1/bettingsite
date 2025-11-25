@@ -1,0 +1,12 @@
+.ant-modal-content  {
+    border-radius: 0px !important;
+    border : none !important;
+}   
+
+.ant-modal-close-icon {
+    color: #fff !important;
+}
+
+.losingRollingModal .ant-modal-content {
+    padding: 0px!important;
+}

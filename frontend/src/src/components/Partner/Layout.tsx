@@ -183,7 +183,7 @@ export default function PartnerRootLayout({
     api("auth/logout", { method: "POST" }).then(() => {
       setUser({});
       localStorage.removeItem("token");
-      router.push(ROUTES.admin.login);
+      router.push(ROUTES.partner.login);
     });
   };
 
@@ -421,16 +421,16 @@ export default function PartnerRootLayout({
         } else {
           setAdmin(false);
           setPartner(false);
-          router.push(ROUTES.admin.login);
+          router.push(ROUTES.partner.login);
           notiApi.error({
             message: "Error",
-            description: "You are not able to access to Admin page!",
+            description: "You are not able to access to Partner page!",
           });
         }
         localStorage.setItem("token", result.token);
       })
       .catch(() => {
-        router.push(ROUTES.admin.login);
+        router.push(ROUTES.partner.login);
       });
     return () => {};
   }, []);
@@ -482,7 +482,7 @@ export default function PartnerRootLayout({
         {contextHolder}
 
         {
-          pathname.includes('/partner/popup') ? (
+          pathname.includes('/partner/popup') || pathname.includes('/partner/auth/login') ? (
             <>{children}</>
           ) : (
             <LayoutContext.Provider
@@ -510,8 +510,8 @@ export default function PartnerRootLayout({
                   <div
                     className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
                     onClick={() => {
-                      setSelectedkeys(["admin"]);
-                      router.push("/admin");
+                      setSelectedkeys(["partner"]);
+                      router.push("/partner");
                     }}
                   >
                     <Image src={Logo} height={40} alt="Toto Admin" />
@@ -520,7 +520,7 @@ export default function PartnerRootLayout({
                   <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={["admin"]}
+                    defaultSelectedKeys={["home"]}
                     selectedKeys={selectedkeys}
                     items={sideBarItems}
                     onClick={onMenuClick}
@@ -550,28 +550,28 @@ export default function PartnerRootLayout({
                       className="gap-0.5 text-center"
                     >
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-join', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-join', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membershipDeposit")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membershipWithdraw")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("membershipInquiry")}:0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/rolling-conversation', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/rolling-conversation', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("rollingTransition")}:0
                         </Tag>
                         {/* <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag> */}
                       </Space.Compact>
                       <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/partner-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/distributor-inquiry', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/partner-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/distributor-inquiry', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("distributorInquiry")} :0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/total-settlement', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/total-settlement', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
                       </Space.Compact>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
@@ -588,7 +588,7 @@ export default function PartnerRootLayout({
                         <Tag className="!me-0.5">
                           {t("notificationMGM")}:0/0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("notificationSportsLive")}:0
                         </Tag>
                         <Tag className="!me-0.5">{t("sportRebateList")}:0</Tag>
@@ -597,7 +597,7 @@ export default function PartnerRootLayout({
                         <Tag className="!me-0.5">
                           {t("notificationSlot")}:0/0
                         </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/admin/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
+                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
                           {t("notificationSport")}:0/0
                         </Tag>
                         <Tag className="!me-0.5">
@@ -647,7 +647,7 @@ export default function PartnerRootLayout({
                     {
                       title: (
                         <Link
-                          href="/admin"
+                          href="/partner"
                           className="flex justify-center items-center gap-2"
                         >
                           <HomeOutlined /> {t("home")}
