@@ -2374,5 +2374,7 @@
   "partner/menu/mySettlementManagement/rollingHistory" : "滚动历史",
   "partner/menu/casinoStatus" : "赌场状态",
   "partner/menu/slotStatus" : "老虎机状态",
-  "partner/menu/miniGameStatus" : "小游戏状态"
+  "partner/menu/miniGameStatus" : "小游戏状态",
+  "partner/menu/noteManagement" : "笔记管理",
+  "partner/menu/noteManagement/myNotes" : "我的笔记"
 }

@@ -2368,5 +2368,7 @@
   "partner/menu/mySettlementManagement/rollingHistory" : "Rolling History",
   "partner/menu/casinoStatus" : "Casino Status",
   "partner/menu/slotStatus" : "Slot Status",
-  "partner/menu/miniGameStatus" : "Mini Game Status"
+  "partner/menu/miniGameStatus" : "Mini Game Status",
+  "partner/menu/noteManagement" : "Note Management",
+  "partner/menu/noteManagement/myNotes" : "My Notes"
 } 

@@ -43,6 +43,7 @@ import { breadcrumbState, currentAdminTheme, userState } from "@/state/state";
 import { useAtom } from "jotai";
 import api from "@/api";
 import { ROUTES } from "@/routes";
+import { formatNumber } from "@/lib";
 import { Content } from "antd/es/layout/layout";
 import Link from "next/link";
 import { FaFootball, FaUsersGear } from "react-icons/fa6";
@@ -81,21 +82,81 @@ export default function PartnerRootLayout({
   const [currentUser, setUser] = useAtom<any>(userState);
   const [pathname, setPathname] = useState<string>('');
   const [info, setInfo] = useState<any>({});
+  const [previousInfo, setPreviousInfo] = useState<any>({});
+  const [newNotifications, setNewNotifications] = useState<any>({});
 
   useEffect(() => {
     setPathname(window.location.pathname);
     fetchInfo();
+    // fetchHonorLinkBalance();
   }, []);
+
+  const playAlarmSound = () => {
+    const audio = document.querySelector('audio[src="/wav/alarm.wav"]') as HTMLAudioElement;
+    if (audio) {
+      audio.play().catch((error) => {
+        console.log('Audio play failed:', error);
+      });
+    }
+  };
+
+  const checkForNewNotifications = (currentStats: any, previousStats: any) => {
+    const notificationFields = [
+      'registeredUsers',
+      'numberOfDepositorsToday', 
+      'numberOfWithdrawalToday',
+      'membershipInquiry',
+      'rollingTransition',
+      'depositToday',
+      'withdrawToday',
+      'numberOfBettingMembersToday',
+      'numberOfBetsToday'
+    ];
+
+    const newNotificationsDetected: any = {};
+    let hasNewNotifications = false;
+
+    notificationFields.forEach(field => {
+      const currentValue = currentStats[field] || 0;
+      const previousValue = previousStats[field] || 0;
+      
+      if (currentValue > previousValue) {
+        newNotificationsDetected[field] = currentValue - previousValue;
+        hasNewNotifications = true;
+      }
+    });
+
+    if (hasNewNotifications) {
+      setNewNotifications(newNotificationsDetected);
+      playAlarmSound();
+      
+      // Clear new notifications after 5 seconds
+      setTimeout(() => {
+        setNewNotifications({});
+      }, 5000);
+    }
+
+    return newNotificationsDetected;
+  };
 
   const fetchInfo = () => {
     api("admin/dashboard/get-data", {
       method: "GET",
     }).then((res) => {
       if (res) {
-        setInfo(res.stats);
+        const currentStats = res.stats;
+        
+        // Check for new notifications if we have previous data
+        if (Object.keys(previousInfo).length > 0) {
+          checkForNewNotifications(currentStats, previousInfo);
+        }
+        
+        setPreviousInfo(info);
+        setInfo(currentStats);
+        console.log(res.stats, "res.data");
         setTimeout(() => {
           fetchInfo();
-        }, 15000);
+        }, 3000);
       }
     });
   };
@@ -103,48 +164,48 @@ export default function PartnerRootLayout({
   const data = [
     {
       label: t("depositToday"),
-      value: info.depositToday,
-      color: "steelblue",
+      value: info.depositToday || 0,
+      color: "dodgerblue",
     },
     {
       label: t("withdrawlToday"),
-      value: info.withdrawToday,
-      color: "crimson",
+      value: info.withdrawToday || 0,
+      color: "hotpink",
     },
     {
       label: t("bettingToday"),
-      value: info.bettingToday,
-      color: "mediumseagreen",
+      value: info.bettingToday || 0,
+      color: "lime",
     },
     {
       label: t("todaysWinner"),
-      value: info.todayWinners,
-      color: "gold",
+      value: info.todayWinners || 0,
+      color: "yellow",
     },
     {
       label: t("lowerHoldingAmount"),
       value : 0,
-      color: "slateblue",
+      color: "mediumorchid",
     },
     {
       label : t("myBalance"),
       value : 0,
-      color: "teal",
+      color: "cyan",
     },
     {
       label: t("point"),
       value : 0,
-      color: "orchid",
+      color: "magenta",
     },
     {
       label: t("today'sLossingMoney"),
       value : 0,
-      color: "salmon",
+      color: "orangered",
     },
     {
       label: t("today'sRollingFee"),
       value : 0,
-      color: "cornflowerblue",
+      color: "deepskyblue",
     }
   ];
 
@@ -347,24 +408,13 @@ export default function PartnerRootLayout({
       ],
     },
     {
-      key: "partner/inbox",
-      label: t("partner/menu/inbox"),
+      key: "partner/noteManagement",
+      label: t("partner/menu/noteManagement"),
       icon: <InboxOutlined />,
       children: [
         {
-          key: "partner/inbox/custom",
-          label: t("partner/menu/inbox"),
-        },
-      ],
-    },
-    {
-      key: "partner/statistical",
-      label: t("partner/menu/statistical"),
-      icon: <InboxOutlined />,
-      children: [
-        {
-          key: "partner/statistical/custom",
-          label: t("partner/menu/statistical"),
+          key: "partner/noteManagement/myNotes",
+          label: t("partner/menu/noteManagement/myNotes"),
         },
       ],
     },
@@ -503,6 +553,7 @@ export default function PartnerRootLayout({
         >
           <Layout>
             <RouteTracker />
+            <audio src="/wav/alarm.wav" controls className="hidden"></audio>
             {isPartner ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
@@ -543,7 +594,7 @@ export default function PartnerRootLayout({
                       {t("onlinePartner")}
                     </p>
                     <p className="text-sm text-white font-medium">
-                      {currentUser.name} <span className="text-white/60">({currentUser.name})</span>
+                      {currentUser.userid} <span className="text-white/60">({currentUser.name})</span>
                     </p>
                   </div>
                   <p className="text-white px-6 mt-3">{t("home")}</p>
@@ -578,71 +629,90 @@ export default function PartnerRootLayout({
                     className="!w-10 !h-10 !hidden lg:!block"
                   />
                   <Flex className="px-2 overflow-x-auto w-full">
-                    <Space.Compact
+                    <Space.Compact  
                       direction="vertical"
                       className="gap-0.5 text-center"
                     >
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-join', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("membership")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipDeposit")}:0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipWithdraw")}:0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("membershipInquiry")}:0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/rolling-conversation', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("rollingTransition")}:0
-                        </Tag>
-                        {/* <Tag className="!me-0.5 cursor-pointer">{t("nonMember")}:0</Tag> */}
-                      </Space.Compact>
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalDeposit")}:0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/partner-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalWithdraw")}: 0</Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/distributor-inquiry', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("distributorInquiry")} :0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/total-settlement', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{t("totalSettlement")} :0</Tag>
-                      </Space.Compact>
+                      <table style={{ 
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        backgroundColor: '#ffffff',
+                        minWidth: '400px',
+                        borderCollapse: 'separate',
+                        borderSpacing: '0',
+                        marginRight: '10px',
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membership")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipDeposit")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipWithdraw")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("rollingConversion")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalDeposit")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalWithdraw")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("distributorInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalSettlement")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ height: '18px' }}>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.registeredUsers ? '#ff0000' : 'inherit', fontWeight: newNotifications.registeredUsers ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-join', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsers || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfDepositorsToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfDepositorsToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfWithdrawalToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfWithdrawalToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.rollingTransition ? '#ff0000' : 'inherit', fontWeight: newNotifications.rollingTransition ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/rolling-conversion', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTransition || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.depositToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.depositToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.withdrawToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.withdrawToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/partner-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.withdrawToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/distributor-inquiry', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.totalSettlement ? '#ff0000' : 'inherit', fontWeight: newNotifications.totalSettlement ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/total-settlement', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.totalSettlement || 0}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </Space.Compact>
                     <Space.Compact direction="vertical" className="gap-0.5">
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">
-                          {t("notificationLive")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationMini")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationVirtual")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationMGM")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("notificationSportsLive")}:0
-                        </Tag>
-                        <Tag className="!me-0.5">{t("sportRebateList")}:0</Tag>
-                      </Space.Compact>
-                      <Space.Compact className="justify-center">
-                        <Tag className="!me-0.5">
-                          {t("notificationSlot")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5 cursor-pointer" onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>
-                          {t("notificationSport")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationLotus")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("notificationTouch")}:0/0
-                        </Tag>
-                        <Tag className="!me-0.5">
-                          {t("interestedMemberBetting")}:0/0
-                        </Tag>
-                      </Space.Compact>
+                    <table style={{ 
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        backgroundColor: '#ffffff',
+                        minWidth: '400px',
+                        borderCollapse: 'separate',
+                        borderSpacing: '0',
+                        marginRight: '10px',
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLive")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMini")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationVirtual")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMGM")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSportsLive")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("sportRebateList")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSlot")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSport")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLotus")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationTouch")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("interestedMemberBetting")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr style={{ height: '18px' }}>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{ 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', color: '#000000', fontWeight: 'normal' }}>0</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: (newNotifications.numberOfBettingMembersToday || newNotifications.numberOfBetsToday) ? '#ff0000' : '#000000', fontWeight: (newNotifications.numberOfBettingMembersToday || newNotifications.numberOfBetsToday) ? 'bold' : 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfBettingMembersToday || 0}/{info.numberOfBetsToday || 0}</td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </Space.Compact>
                   </Flex>
                   <Flex
