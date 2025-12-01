@@ -13,6 +13,7 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	// Member management routes
 	memberRouter := r.Group("/member-management")
 	{
+		memberRouter.POST("/direct-members/register", controllers.RegisterDirectMember)
 		memberRouter.GET("/direct-members", controllers.GetDirectMembers)
 	}
 	

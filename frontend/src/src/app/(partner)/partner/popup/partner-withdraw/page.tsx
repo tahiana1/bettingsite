@@ -1,4 +1,4 @@
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 import WithdrawRequest from "@/app/(admin)/partner/financals/general/page";
 
 const PartnerWithdraw = () => {

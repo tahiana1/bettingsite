@@ -1,5 +1,5 @@
 "use client";
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 import SettlementRequest from "@/app/(admin)/partner/settlements/losingdetail/page";
 import { DatePicker, Input, Layout, Radio, Space, Table, TableProps } from "antd";
 import { useTranslations } from "next-intl";

@@ -3,14 +3,22 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/hotbrainy/go-betting/backend/db/initializers"
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
+	"github.com/hotbrainy/go-betting/backend/internal/helpers"
+	"github.com/hotbrainy/go-betting/backend/internal/honorlinkapi"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
+	responses "github.com/hotbrainy/go-betting/backend/internal/response"
+	"github.com/hotbrainy/go-betting/backend/internal/validations"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type DirectMemberResponse struct {
@@ -280,6 +288,197 @@ func GetDirectMembers(c *gin.Context) {
 			"per_page":     perPage,
 			"total":        total,
 		},
+	})
+}
+
+// RegisterDirectMember function is used to register a direct member by a partner
+func RegisterDirectMember(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get the registration data from request
+	var userInput struct {
+		Name          string    `json:"name" binding:"required,min=2,max=50"`
+		HolderName    string    `json:"holderName"`
+		Userid        string    `json:"userId" binding:"required,min=6"`
+		Password      string    `json:"password" binding:"required,min=6"`
+		PasswordSpell string    `json:"passwordSpell" binding:"required,min=6"`
+		SecPassword   string    `json:"securityPassword" binding:"required,min=3"`
+		USDTAddress   string    `json:"usdtAddress"`
+		AccountNumber string    `json:"account_number"`
+		Bank          string    `json:"bank"`
+		Birthday      time.Time `json:"birthday"`
+		Phone         string    `json:"phone"`
+		Referral      string    `json:"referral"`
+		OS            string    `json:"os"`
+		Device        string    `json:"device"`
+		FingerPrint   string    `json:"fingerPrint"`
+		Domain        string    `json:"domain" binding:"required"`
+	}
+
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		if errs, ok := err.(validator.ValidationErrors); ok {
+			format_errors.BadRequestError(c, errs)
+			return
+		}
+		format_errors.BadRequestError(c, err)
+		return
+	}
+
+	// Userid unique validation
+	if validations.IsUniqueValue("users", "userid", userInput.Userid) {
+		format_errors.ConflictError(c, fmt.Errorf("The userid is already exist!"))
+		return
+	}
+
+	// Hash the password using bcrypt
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), bcrypt.DefaultCost)
+	if err != nil {
+		format_errors.InternalServerError(c, fmt.Errorf("Failed to hash password: %v", err))
+		return
+	}
+
+	// Get client IP
+	clientIP := c.ClientIP()
+
+	// Parse OS and Device from User-Agent if not provided in request
+	var osValue, deviceValue string
+	if userInput.OS != "" {
+		osValue = userInput.OS
+	} else {
+		// Parse from User-Agent
+		uaString := c.GetHeader("User-Agent")
+		if uaString != "" {
+			ua := helpers.ParseClient(uaString)
+			osValue = ua.OS
+			if userInput.Device == "" {
+				deviceValue = ua.BrowserName + " " + ua.BrowserVersion
+				if ua.Platform != "" {
+					deviceValue = ua.Platform + " - " + deviceValue
+				}
+			}
+		}
+	}
+
+	if userInput.Device != "" {
+		deviceValue = userInput.Device
+	}
+
+	// Create the user with parent_id set to partner's ID
+	user := models.User{
+		Name:        userInput.Name,
+		Userid:      userInput.Userid,
+		Password:    string(hashedPassword),
+		SecPassword: userInput.SecPassword,
+		PasswordSpell: userInput.Password,
+		USDTAddress: userInput.USDTAddress,
+		IP:          clientIP,
+		CurrentIP:   clientIP,
+		Domain:      userInput.Domain,
+		ParentID:    &partner.ID, // Set the partner as parent
+	}
+
+	// Set OS if we have a value
+	if osValue != "" {
+		user.OS = osValue
+	}
+
+	// Set Device if we have a value
+	if deviceValue != "" {
+		user.Device = deviceValue
+	}
+
+	// Set FingerPrint if provided
+	if userInput.FingerPrint != "" {
+		user.FingerPrint = userInput.FingerPrint
+	}
+
+	// Create the user
+	result := initializers.DB.Create(&user)
+
+	if err := result.Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Find the bank by name if provided
+	var bankID uint
+	if userInput.Bank != "" {
+		// Normalize the bank name: trim and lowercase
+		normalizedBankName := strings.TrimSpace(strings.ToLower(userInput.Bank))
+		var bank models.Bank
+		err := initializers.DB.Where("LOWER(name) = ?", normalizedBankName).First(&bank).Error
+		if err != nil {
+			// If not found, create a new bank with status=false
+			if err.Error() == "record not found" || err == gorm.ErrRecordNotFound {
+				bank = models.Bank{
+					Name:     normalizedBankName,
+					Status:   false,
+					OrderNum: 1,
+				}
+				if err := initializers.DB.Create(&bank).Error; err != nil {
+					format_errors.BadRequestError(c, fmt.Errorf("Failed to create new bank: %v", err))
+					return
+				}
+				bankID = bank.ID
+			} else {
+				format_errors.BadRequestError(c, fmt.Errorf("Invalid bank name provided"))
+				return
+			}
+		} else {
+			bankID = bank.ID
+		}
+	}
+
+	// Create the profile
+	profile := &models.Profile{
+		UserID:        user.ID,
+		Name:          userInput.Name,
+		Nickname:      userInput.Name,
+		BankName:      userInput.Bank,
+		BankID:        bankID,
+		HolderName:    userInput.HolderName,
+		AccountNumber: userInput.AccountNumber,
+		Birthday:      userInput.Birthday,
+		Phone:         userInput.Phone,
+		Referral:      userInput.Referral,
+	}
+
+	pr := initializers.DB.Create(&profile)
+
+	// Check profile creation error first before proceeding with Honorlink integration
+	if err := pr.Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// checking the user status on the honorlink api, then if it is not exist, creating the honorlink user account.
+	// if the user is exist, skip the creating the honorlink user account.
+	userExists, err := honorlinkapi.CheckUserExists(userInput.Userid)
+	if err != nil {
+		// Log error but don't fail the signup process
+		fmt.Printf("Error checking Honorlink user: %v\n", err)
+	} else if !userExists {
+		// User doesn't exist, create it
+		if err := honorlinkapi.CreateUser(userInput.Userid); err != nil {
+			// Log error but don't fail the signup process
+			fmt.Printf("Error creating Honorlink user: %v\n", err)
+		}
+	}
+
+	c.JSON(http.StatusOK, responses.Status{
+		Data:    user,
+		Message: "Direct member registered successfully!",
 	})
 }
 

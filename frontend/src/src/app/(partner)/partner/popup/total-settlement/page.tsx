@@ -22,7 +22,7 @@ import { FILTER_TRANSACTIONS, GET_WEEK_LOSING_DATA } from "@/actions/transaction
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 import SettlementRequest from "@/app/(admin)/partner/settlements/losingdetail/page";
 
 const TotalSettlement = () => {

@@ -1,4 +1,4 @@
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 import InquiryPage from "@/app/(admin)/partner/support/center/page";
 
 const DistributorInquiry = () => {

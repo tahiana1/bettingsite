@@ -1,5 +1,5 @@
 import PendingUserPage from "../../users/pending/page";
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 
 const MemberJoin = () => {
 //   return <PendingUserPage />;

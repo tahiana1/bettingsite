@@ -1,6 +1,6 @@
 "use client";
 
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 import React, { useEffect, useState } from "react";
 import {
     Layout,

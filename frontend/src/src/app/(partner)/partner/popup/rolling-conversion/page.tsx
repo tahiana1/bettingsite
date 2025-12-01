@@ -24,7 +24,7 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
-import PopupHeader from "@/components/partner/popupHeader";
+import PopupHeader from "@/components/Partner/PopupHeader";
 
 const RollingConversion = () => {
     const t = useTranslations();

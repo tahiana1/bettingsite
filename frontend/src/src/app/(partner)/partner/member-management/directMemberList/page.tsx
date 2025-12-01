@@ -21,6 +21,7 @@ import { formatNumber } from "@/lib";
 import { USER_STATUS, USER_TYPE } from "@/constants";
 import api from "@/api";
 import { ReloadOutlined, UserAddOutlined } from "@ant-design/icons";
+import DirectMemberRegistrationModal from "@/components/Partner/DirectMemberRegistrationModal";
 
 const { RangePicker } = DatePicker;
 
@@ -69,6 +70,7 @@ export default function DirectMemberListPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null] | null>(null);
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState<boolean>(false);
 
   // Update current time
   useEffect(() => {
@@ -166,8 +168,12 @@ export default function DirectMemberListPage() {
   };
 
   const handleDirectMemberRegistration = () => {
-    // TODO: Implement direct member registration
-    message.info("Direct Member Registration feature coming soon");
+    setIsRegistrationModalOpen(true);
+  };
+
+  const handleRegistrationSuccess = () => {
+    // Refresh the member list after successful registration
+    fetchMembers();
   };
 
   // Prepare table data with total row
@@ -453,6 +459,11 @@ export default function DirectMemberListPage() {
             }}
           />
         </Card>
+        <DirectMemberRegistrationModal
+          open={isRegistrationModalOpen}
+          onClose={() => setIsRegistrationModalOpen(false)}
+          onSuccess={handleRegistrationSuccess}
+        />
       </Content>
     </Layout>
   );
