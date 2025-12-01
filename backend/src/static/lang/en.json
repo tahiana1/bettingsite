@@ -2370,5 +2370,17 @@
   "partner/menu/slotStatus" : "Slot Status",
   "partner/menu/miniGameStatus" : "Mini Game Status",
   "partner/menu/noteManagement" : "Note Management",
-  "partner/menu/noteManagement/myNotes" : "My Notes"
+  "partner/menu/noteManagement/myNotes" : "My Notes",
+  "note" : "Note",
+  "to" : "To",
+  "pageSize" : "Page Size",
+  "pageSizeOptions" : "Page Size Options",
+  "pageSizeOptions25" : "25",
+  "pageSizeOptions50" : "50",
+  "pageSizeOptions100" : "100",
+  "pageSizeOptions250" : "250",
+  "pageSizeOptions500" : "500",
+  "accessDate" : "Access Date",
+  "dateOfRegistration" : "Date of Registration",
+  "directMemberRegistration" : "Direct Member Registration"
 } 

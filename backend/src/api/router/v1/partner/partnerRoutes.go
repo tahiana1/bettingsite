@@ -9,6 +9,13 @@ import (
 func GetPartnerRoute(r *gin.RouterGroup) {
 
 	r.Use(middleware.RequirePartnerAuth)
+	
+	// Member management routes
+	memberRouter := r.Group("/member-management")
+	{
+		memberRouter.GET("/direct-members", controllers.GetDirectMembers)
+	}
+	
 	userRouter := r.Group("/users")
 	{
 		userRouter.GET("/", controllers.GetUsers)

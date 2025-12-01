@@ -2376,5 +2376,17 @@
   "partner/menu/slotStatus" : "老虎机状态",
   "partner/menu/miniGameStatus" : "小游戏状态",
   "partner/menu/noteManagement" : "笔记管理",
-  "partner/menu/noteManagement/myNotes" : "我的笔记"
+  "partner/menu/noteManagement/myNotes" : "我的笔记",
+  "note" : "笔记",
+  "to" : "到",
+  "pageSize" : "每页显示",
+  "pageSizeOptions" : "每页显示选项",
+  "pageSizeOptions25" : "25",
+  "pageSizeOptions50" : "50",
+  "pageSizeOptions100" : "100",
+  "pageSizeOptions250" : "250",
+  "pageSizeOptions500" : "500",
+  "accessDate" : "访问日期",
+  "dateOfRegistration" : "注册日期",
+  "directMemberRegistration" : "直接会员注册"
 }

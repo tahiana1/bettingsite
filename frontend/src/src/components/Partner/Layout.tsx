@@ -401,10 +401,6 @@ export default function PartnerRootLayout({
           key: "partner/support/center",
           label: t("partner/menu/customServiceCenter"),
         },
-        {
-          key: "partner/support/sample",
-          label: t("partner/menu/serviceCenterSample"),
-        },
       ],
     },
     {
@@ -645,15 +641,12 @@ export default function PartnerRootLayout({
                       }}>
                         <thead>
                           <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membership")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipDeposit")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipWithdraw")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("depositRequest")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("withdrawRequest")}</th>
                             <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("rollingConversion")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalDeposit")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalWithdraw")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("distributorInquiry")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("totalSettlement")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("membershipInquiry")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("note")}</th>
+                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("inquiry")}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -664,9 +657,6 @@ export default function PartnerRootLayout({
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.rollingTransition ? '#ff0000' : 'inherit', fontWeight: newNotifications.rollingTransition ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/rolling-conversion', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTransition || 0}</td>
                             <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.depositToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.depositToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.withdrawToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.withdrawToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/partner-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.withdrawToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/distributor-inquiry', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.totalSettlement ? '#ff0000' : 'inherit', fontWeight: newNotifications.totalSettlement ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/total-settlement', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.totalSettlement || 0}</td>
                           </tr>
                         </tbody>
                       </table>
