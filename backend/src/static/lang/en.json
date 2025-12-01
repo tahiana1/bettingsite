@@ -2352,5 +2352,21 @@
   "updateTime" : "Update Time",
   "createTime" : "Create Time",
   "sampleAnswer" : "Sample Answer",
-  "selectSampleAnswer" : "Select Sample Answer"
+  "selectSampleAnswer" : "Select Sample Answer",
+  "lowerHoldingAmount" : "Lower Holding Amount",
+  "myBalance" : "My Balance",
+  "today'sLossingMoney" : "Today's Lossing Money",
+  "today'sRollingFee" : "Today's Rolling Fee",
+  "onlinePartner" : "Online Partner",
+  "partner/menu/mySettlementManagement" : "My Settlement Management",
+  "partner/menu/mySettlementManagement/myDepositWidthdrawal" : "My Deposit/Withdrawal",
+  "partner/menu/mySettlementManagement/rollingTransaction" : "Rolling Transaction",
+  "partner/menu/mySettlementManagement/pointConversion" : "Point Conversion",
+  "partner/menu/mySettlementManagement/settlementDetails" : "Settlement Details",
+  "partner/menu/mySettlementManagement/moneyHistory" : "Money History",
+  "partner/menu/mySettlementManagement/pointDetails" : "Point Details",
+  "partner/menu/mySettlementManagement/rollingHistory" : "Rolling History",
+  "partner/menu/casinoStatus" : "Casino Status",
+  "partner/menu/slotStatus" : "Slot Status",
+  "partner/menu/miniGameStatus" : "Mini Game Status"
 } 

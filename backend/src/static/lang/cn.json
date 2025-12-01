@@ -2358,5 +2358,21 @@
   "updateTime" : "更新时间",
   "createTime" : "创建时间",
   "sampleAnswer" : "样例答案",
-  "selectSampleAnswer" : "选择样例答案"
+  "selectSampleAnswer" : "选择样例答案",
+  "lowerHoldingAmount" : "最低持有金额",
+  "myBalance" : "我的余额",
+  "today'sLossingMoney" : "今日亏损金额",
+  "today'sRollingFee" : "今日滚动费用",
+  "onlinePartner" : "在线合作伙伴",
+  "partner/menu/mySettlementManagement" : "我的结算管理",
+  "partner/menu/mySettlementManagement/myDepositWidthdrawal" : "我的存款/提款",
+  "partner/menu/mySettlementManagement/rollingTransaction" : "滚动交易",
+  "partner/menu/mySettlementManagement/pointConversion" : "点数转换",
+  "partner/menu/mySettlementManagement/settlementDetails" : "结算详情",
+  "partner/menu/mySettlementManagement/moneyHistory" : "资金历史",
+  "partner/menu/mySettlementManagement/pointDetails" : "点数详情",
+  "partner/menu/mySettlementManagement/rollingHistory" : "滚动历史",
+  "partner/menu/casinoStatus" : "赌场状态",
+  "partner/menu/slotStatus" : "老虎机状态",
+  "partner/menu/miniGameStatus" : "小游戏状态"
 }

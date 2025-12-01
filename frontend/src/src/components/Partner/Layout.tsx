@@ -51,7 +51,7 @@ import { SiDistrokid } from "react-icons/si";
 import { BiDiamond, BiSupport } from "react-icons/bi";
 
 import Image from "next/image";
-import Loading from "@/assets/img/loading.gif";
+import Loading from "@/assets/img/main/loader.png";
 import Logo from "@/assets/img/logo.png";
 
 const { Header, Sider } = Layout;
@@ -102,81 +102,50 @@ export default function PartnerRootLayout({
 
   const data = [
     {
-      label: t("honorLink"),
-      value: 0,
-      color: "cyan",
-    },
-    {
       label: t("depositToday"),
       value: info.depositToday,
-      color: "lightgreen",
+      color: "steelblue",
     },
     {
       label: t("withdrawlToday"),
       value: info.withdrawToday,
-      color: "tomato",
+      color: "crimson",
     },
     {
       label: t("bettingToday"),
       value: info.bettingToday,
-      color: "lightgreen",
+      color: "mediumseagreen",
     },
     {
       label: t("todaysWinner"),
       value: info.todayWinners,
-      color: "yellow",
+      color: "gold",
     },
     {
-      label: t("userAmount"),
-      value: info.totalBalance,
-      color: "tomato",
+      label: t("lowerHoldingAmount"),
+      value : 0,
+      color: "slateblue",
     },
     {
-      label: t("userPoints"),
-      value: info.totalPoints,
-      color: "lightgreen",
+      label : t("myBalance"),
+      value : 0,
+      color: "teal",
     },
     {
-      label: t("totalAmountOfDistributionReserves"),
-      value: 0,
-      color: "yellow",
+      label: t("point"),
+      value : 0,
+      color: "orchid",
     },
     {
-      label: t("totalPoints"),
-      value: info.totalPoints,
-      color: "yellow",
+      label: t("today'sLossingMoney"),
+      value : 0,
+      color: "salmon",
     },
     {
-      label: t("totalLoss"),
-      value: info.totalLoss,
-      color: "yellow",
-    },
-    {
-      label: t("rollingTheTotal"),
-      value: 0,
-      color: "yellow",
-    },
-    {
-      label: t("totalSalesLossToday"),
-      value: info.totalSalesLossToday,
-      color: "tomato",
-    },
-    {
-      label: t("todaysDistributionRolling"),
-      value: 0,
-      color: "tomato",
-    },
-    {
-      label: t("sportsPendingBetting"),
-      value: info.sportsPendingBetting,
-      color: "lightgreen",
-    },
-
-    {
-      label: t("sportsRebateBetting"),
-      value: info.sportsRebateBetting,
-      color: "lightgreen",
-    },
+      label: t("today'sRollingFee"),
+      value : 0,
+      color: "cornflowerblue",
+    }
   ];
 
   const onLogout = () => {
@@ -193,7 +162,13 @@ export default function PartnerRootLayout({
       label: (
         <List
           className="!text-white"
-          header={t("home")}
+          style={{
+            borderRadius: '10px',
+            border: '1px solid #09188962',
+            padding: '10px',
+            backgroundColor:'#002140'
+          }}
+          header={""}
           dataSource={data}
           renderItem={(item: any) => {
             return (
@@ -210,40 +185,50 @@ export default function PartnerRootLayout({
     {
       key: "manage",
       label: t("partner/menu/manage"),
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
       type: "group",
     },
     {
-      key: "partner/accountManagement",
-      label: t("partner/menu/myAccountManagement"),
+      key: "partner/mySettlementManagement",
+      label: t("partner/menu/mySettlementManagement"),
       icon: <CalculatorOutlined />,
       children: [
         {
-          key: "partner/accountManagement/myDepositWidthdrawal",
-          label: t(`partner/menu/myDepositWidthdrawal`),
+          key: "partner/mySettlementManagement/myDepositWidthdrawal",
+          label: t(`partner/menu/mySettlementManagement/myDepositWidthdrawal`),
         },
         {
-          key: "partner/accountManagement/rollingTransaction",
-          label: t(`partner/menu/rollingTransaction`),
+          key: "partner/mySettlementManagement/rollingTransaction",
+          label: t(`partner/menu/mySettlementManagement/rollingTransaction`),
         },
         {
-          key: "partner/accountManagement/pointConversion",
-          label: t(`partner/menu/pointConversion`),
+          key: "partner/mySettlementManagement/pointConversion",
+          label: t(`partner/menu/mySettlementManagement/pointConversion`),
         },
         {
-          key: "partner/accountManagement/settlementDetails",
-          label: t(`partner/menu/settlementDetails`),
+          key: "partner/mySettlementManagement/settlementDetails",
+          label: t(`partner/menu/mySettlementManagement/settlementDetails`),
         },
         {
-          key: "partner/accountManagement/moneyHistory",
-          label: t(`partner/menu/moneyHistory`),
+          key: "partner/mySettlementManagement/moneyHistory",
+          label: t(`partner/menu/mySettlementManagement/moneyHistory`),
         },
         {
-          key: "partner/accountManagement/pointDetails",
-          label: t(`partner/menu/pointDetails`),
+          key: "partner/mySettlementManagement/pointDetails",
+          label: t(`partner/menu/mySettlementManagement/pointDetails`),
         },
         {
-          key: "partner/accountManagement/rollingHistory",
-          label: t(`partner/menu/rollingHistory`),
+          key: "partner/mySettlementManagement/rollingHistory",
+          label: t(`partner/menu/mySettlementManagement/rollingHistory`),
         }
       ],
     },
@@ -301,6 +286,16 @@ export default function PartnerRootLayout({
       key: "game",
       label: t("partner/menu/game"),
       type: "group",
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
     },
     {
       key: "partner/game/bettingstatus",
@@ -308,8 +303,16 @@ export default function PartnerRootLayout({
       icon: <FaFootball />,
       children: [
         {
-          key: "partner/game/bettingstatus/sports",
-          label: t("partner/menu/bettingStatus"),
+          key: "partner/game/bettingstatus/casino",
+          label: t("partner/menu/casinoStatus"),
+        },
+        {
+          key: "partner/game/bettingstatus/slot",
+          label: t("partner/menu/slotStatus"),
+        },
+        {
+          key: "partner/game/bettingstatus/miniGame",
+          label: t("partner/menu/miniGameStatus"),
         },
       ],
     },
@@ -317,6 +320,16 @@ export default function PartnerRootLayout({
       key: "board",
       label: t("partner/menu/board"),
       type: "group",
+      style: {
+        borderRadius: '10px',
+        border: '1px solid #09188962',
+        paddingLeft: '0px',
+        paddingRight: '10px',
+        marginLeft: '16px',
+        marginRight: "16px",
+        marginTop: '10px',
+        backgroundColor:'#002140'
+      },
     },
     {
       key: "partner/support",
@@ -493,6 +506,9 @@ export default function PartnerRootLayout({
             {isPartner ? (
               <Sider
                 className="h-screen !absolute md:!relative z-50 top-0"
+                style={{
+                  borderTopRightRadius: '25px',
+                }}
                 breakpoint="md"
                 collapsedWidth="0"
                 collapsed={collapsed}
@@ -505,7 +521,12 @@ export default function PartnerRootLayout({
               >
                 <Space
                   direction="vertical"
-                  className="w-full h-screen overflow-y-auto"
+                  className="w-full h-screen overflow-y-auto hide-scrollbar"
+                  style={{
+                    borderTopRightRadius: '25px',
+                    scrollbarWidth: 'none', /* Firefox */
+                    msOverflowStyle: 'none', /* IE and Edge */
+                  }}
                 >
                   <div
                     className="h-10 justify-center items-center text-center p-6 cursor-pointer flex"
@@ -514,9 +535,18 @@ export default function PartnerRootLayout({
                       router.push("/partner");
                     }}
                   >
-                    <Image src={Logo} height={40} alt="Toto Admin" />
+                    <Image src={Logo} height={50} className="mt-3" alt="Toto Admin" />
                   </div>
 
+                  <div className="px-4 py-3 text-center border-b border-white/10">
+                    <p className="text-xs text-white/70 uppercase tracking-wider mb-1.5">
+                      {t("onlinePartner")}
+                    </p>
+                    <p className="text-sm text-white font-medium">
+                      {currentUser.name} <span className="text-white/60">({currentUser.name})</span>
+                    </p>
+                  </div>
+                  <p className="text-white px-6 mt-3">{t("home")}</p>
                   <Menu
                     theme="dark"
                     mode="inline"
@@ -526,6 +556,9 @@ export default function PartnerRootLayout({
                     onClick={onMenuClick}
                     defaultOpenKeys={selectedkeys}
                     className="!text-white"
+                    style={{
+                      marginTop: '-10px'
+                    }}
                   />
                 </Space>
               </Sider>
@@ -533,7 +566,7 @@ export default function PartnerRootLayout({
             <Layout className="min-h-screen">
               {isPartner ? (
                 <Header
-                  className="w-full !px-2 flex !h-10 items-center !leading-10"
+                  className="w-full !px-2 flex !h-12 items-center !leading-10"
                   style={{ background: isDarkTheme ? "" : colorBgContainer }}
                 >
                   <Button
@@ -641,24 +674,26 @@ export default function PartnerRootLayout({
                 </Header>
               ) : null}
               {isPartner ? (
-                <Breadcrumb
-                  className="!p-2 shadow"
-                  items={[
-                    {
-                      title: (
-                        <Link
-                          href="/partner"
-                          className="flex justify-center items-center gap-2"
-                        >
-                          <HomeOutlined /> {t("home")}
-                        </Link>
-                      ),
-                    },
-                    ...(currentMenuItems?.map((c: any) => ({
-                      title: c.label,
-                    })) ?? []),
-                  ]}
-                />
+                <>
+                  <Breadcrumb
+                    className="!p-2 shadow flex w-full items-center breadcrumb-home"
+                    items={[
+                      {
+                        title: (
+                          <Link
+                            href="/partner"
+                            className="flex justify-center items-center gap-2"
+                          >
+                            <HomeOutlined /> {t("home")}
+                          </Link>
+                        ),
+                      },
+                      ...(currentMenuItems?.map((c: any) => ({
+                        title: c.label,
+                      })) ?? []),
+                    ]}
+                  />
+                </>
               ) : null}
               <Content className="p-2">{children}</Content>
             </Layout>
@@ -670,8 +705,8 @@ export default function PartnerRootLayout({
       </ConfigProvider>
     </ApolloProvider>
   ) : (
-    <div className="flex justify-center items-center h-screen">
-      <Image src={Loading} alt="Toto Admin" width={100} height={100} />
+    <div className="flex justify-center bg-[#0b0600] items-center h-screen">
+      <Image src={Loading} alt="Toto Admin" width={70} height={70} className="animate-spin" />
     </div>
   );
 }
