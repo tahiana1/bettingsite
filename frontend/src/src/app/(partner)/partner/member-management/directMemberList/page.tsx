@@ -128,6 +128,15 @@ export default function DirectMemberListPage() {
     fetchMembers();
   }, [currentPage, pageSize, statusFilter, typeFilter, dateRange]);
 
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchMembers();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [currentPage, pageSize, statusFilter, typeFilter, dateRange, searchQuery]);
+
   const onSearch = () => {
     setCurrentPage(1);
     fetchMembers();
