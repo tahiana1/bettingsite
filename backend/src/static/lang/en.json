@@ -2384,5 +2384,7 @@
   "dateOfRegistration" : "Date of Registration",
   "directMemberRegistration" : "Direct Member Registration",
   "admin/login" : "Admin Login",
-  "admin/login/description" : "Enter your credentials to access the admin panel"
+  "admin/login/description" : "Enter your credentials to access the admin panel",
+  "partner/login" : "Partner Login",
+  "partner/login/description" : "Enter your credentials to access the partner portal"
 } 
