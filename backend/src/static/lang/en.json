@@ -2382,5 +2382,7 @@
   "pageSizeOptions500" : "500",
   "accessDate" : "Access Date",
   "dateOfRegistration" : "Date of Registration",
-  "directMemberRegistration" : "Direct Member Registration"
+  "directMemberRegistration" : "Direct Member Registration",
+  "admin/login" : "Admin Login",
+  "admin/login/description" : "Enter your credentials to access the admin panel"
 } 

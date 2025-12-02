@@ -310,6 +310,59 @@ body {
   background-color: #f5b774!important;
 }
 
+/* Login button custom styling */
+.login-button-custom.ant-btn {
+  background: linear-gradient(135deg, #edd497 0%, #e3b27f 50%, #c9a972 100%) !important;
+  border: none !important;
+  color: #1a120f !important;
+  font-weight: 600 !important;
+}
+
+.login-button-custom.ant-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f0d9a8 0%, #e8ba8a 50%, #d4b583 100%) !important;
+  color: #1a120f !important;
+}
+
+.login-button-custom.ant-btn:active:not(:disabled) {
+  background: linear-gradient(135deg, #d4b583 0%, #d19f6f 50%, #b8965f 100%) !important;
+  color: #1a120f !important;
+}
+
+.login-button-custom.ant-btn:disabled {
+  background: rgba(237, 212, 151, 0.3) !important;
+  color: rgba(26, 18, 15, 0.5) !important;
+  cursor: not-allowed !important;
+}
+
+/* Login input field styling */
+.login-card-modern .ant-input-affix-wrapper {
+  background-color: #ffffff !important;
+  border-color: rgba(201, 169, 114, 0.3) !important;
+}
+
+.login-card-modern .ant-input-affix-wrapper:hover {
+  border-color: rgba(201, 169, 114, 0.5) !important;
+}
+
+.login-card-modern .ant-input-affix-wrapper-focused {
+  border-color: #edd497 !important;
+  box-shadow: 0 0 0 2px rgba(237, 212, 151, 0.1) !important;
+}
+
+.login-card-modern .ant-input-affix-wrapper .anticon {
+  color: #c9a972 !important;
+}
+
+.login-card-modern .ant-input-password-icon {
+  color: #c9a972 !important;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.login-card-modern .ant-input-password-icon:hover {
+  color: #edd497 !important;
+}
+
 /* Custom dark table styling */
 .custom-dark-table .ant-table-thead > tr > th {
   background-color: #3e2a1f !important;

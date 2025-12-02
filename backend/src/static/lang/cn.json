@@ -2388,5 +2388,7 @@
   "pageSizeOptions500" : "500",
   "accessDate" : "访问日期",
   "dateOfRegistration" : "注册日期",
-  "directMemberRegistration" : "直接会员注册"
+  "directMemberRegistration" : "直接会员注册",
+  "admin/login" : "管理员登录",
+  "admin/login/description" : "输入您的凭据以访问管理面板"
 }
