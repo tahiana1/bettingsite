@@ -2404,5 +2404,7 @@
   "partner/inbox/action" : "操作",
   "description" : "描述",
   "pleaseSelectRecipient" : "请选择收件人",
-  "searchUser" : "搜索用户"
+  "searchUser" : "搜索用户",
+  "qnaCreated" : "问答已创建",
+  "qnaUpdated" : "问答已更新"
 }

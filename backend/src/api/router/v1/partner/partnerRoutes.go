@@ -21,6 +21,17 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	r.PUT("/inboxes/:id/update", controllers.UpdatePartnerInbox)
 	r.DELETE("/inboxes/:id/delete", controllers.DeletePartnerInbox)
 
+	// QNA/Support Center routes
+	r.GET("/qnas", controllers.GetPartnerQnas)
+	r.POST("/qnas/:id/reply", controllers.ReplyPartnerQna)
+	r.PUT("/qnas/:id/status", controllers.UpdatePartnerQnaStatus)
+	r.POST("/qnas/:id/complete", controllers.CompletePartnerQna)
+	r.DELETE("/qnas/:id/delete", controllers.DeletePartnerQna)
+
+	// Betting Status routes
+	r.POST("/betting/casino", controllers.GetPartnerCasinoBetting)
+	r.POST("/betting/minigame", controllers.GetPartnerMiniGameBetting)
+
 	// Member management routes
 	memberRouter := r.Group("/member-management")
 	{
