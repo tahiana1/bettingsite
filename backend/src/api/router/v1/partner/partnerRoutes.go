@@ -1,22 +1,34 @@
 package router
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	controllers "github.com/hotbrainy/go-betting/backend/api/controllers/partner"
 	"github.com/hotbrainy/go-betting/backend/api/middleware"
 )
 
 func GetPartnerRoute(r *gin.RouterGroup) {
+	fmt.Println("✅ Partner routes being registered...")
 
+	// Apply middleware to ALL partner routes
 	r.Use(middleware.RequirePartnerAuth)
-	
+
+	// Inbox/Notes routes
+	r.GET("/inboxes", controllers.GetPartnerInboxes)
+	r.GET("/inboxes/users", controllers.GetPartnerUsers)
+	r.POST("/inboxes/create", controllers.CreatePartnerInbox)
+	r.PUT("/inboxes/:id/update", controllers.UpdatePartnerInbox)
+	r.DELETE("/inboxes/:id/delete", controllers.DeletePartnerInbox)
+
 	// Member management routes
 	memberRouter := r.Group("/member-management")
 	{
 		memberRouter.POST("/direct-members/register", controllers.RegisterDirectMember)
 		memberRouter.GET("/direct-members", controllers.GetDirectMembers)
 	}
-	
+
+	// User routes
 	userRouter := r.Group("/users")
 	{
 		userRouter.GET("/", controllers.GetUsers)
@@ -30,8 +42,6 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	// Category routes
 	catRouter := r.Group("/categories")
 	{
-		//catRouter.Use(middleware.RequireAuth)
-
 		catRouter.GET("/", controllers.GetCategories)
 		catRouter.POST("/create", controllers.CreateCategory)
 		catRouter.GET("/:id/edit", controllers.EditCategory)
@@ -62,4 +72,6 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 		commentRouter.PUT("/:comment_id/update", controllers.UpdateComment)
 		commentRouter.DELETE("/:comment_id/delete", controllers.DeleteComment)
 	}
+
+	fmt.Println("✅ Partner routes registration complete!")
 }

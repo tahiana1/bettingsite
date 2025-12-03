@@ -2392,5 +2392,15 @@
   "admin/login" : "管理员登录",
   "admin/login/description" : "输入您的凭据以访问管理面板",
   "partner/login" : "合作伙伴登录",
-  "partner/login/description" : "输入您的凭据以访问合作伙伴门户"
+  "partner/login/description" : "输入您的凭据以访问合作伙伴门户",
+  "partner/inbox/title" : "标题",
+  "partner/inbox/description" : "描述",
+  "partner/inbox/status" : "状态",
+  "partner/inbox/orderNum" : "排序号",
+  "partner/inbox/openedAt" : "打开时间",
+  "partner/inbox/createdAt" : "创建时间",
+  "partner/inbox/updatedAt" : "更新时间",
+  "partner/inbox/deletedAt" : "删除时间",
+  "partner/inbox/action" : "操作",
+  "description" : "描述"
 }

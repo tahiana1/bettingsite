@@ -2386,5 +2386,15 @@
   "admin/login" : "Admin Login",
   "admin/login/description" : "Enter your credentials to access the admin panel",
   "partner/login" : "Partner Login",
-  "partner/login/description" : "Enter your credentials to access the partner portal"
+  "partner/login/description" : "Enter your credentials to access the partner portal",
+  "partner/inbox/title" : "Title",
+  "partner/inbox/description" : "Description",
+  "partner/inbox/status" : "Status",
+  "partner/inbox/orderNum" : "Order Number",
+  "partner/inbox/openedAt" : "Opened At",
+  "partner/inbox/createdAt" : "Created At",
+  "partner/inbox/updatedAt" : "Updated At",
+  "partner/inbox/deletedAt" : "Deleted At",
+  "partner/inbox/action" : "Action",
+  "description" : "Description"
 } 
