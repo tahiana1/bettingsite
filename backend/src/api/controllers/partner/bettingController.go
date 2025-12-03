@@ -322,7 +322,7 @@ func GetPartnerMiniGameBetting(c *gin.Context) {
 
 	// Build query with partner filter - only users under this partner
 	query := initializers.DB.Model(&models.Transaction{}).
-		Where("type = ?", "minigame_place").
+		Where("transactions.type = ?", "minigame_place").
 		Joins("JOIN users ON users.id = transactions.user_id").
 		Where("users.parent_id = ?", partner.ID).
 		Preload("User", func(db *gorm.DB) *gorm.DB {
