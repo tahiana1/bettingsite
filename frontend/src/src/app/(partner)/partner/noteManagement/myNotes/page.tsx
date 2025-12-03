@@ -115,6 +115,18 @@ const PartnerNotesPage: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
+  // Auto-refresh data every 10 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchInboxes();
+    }, 10000); // 10 seconds
+
+    // Cleanup interval on unmount
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fetchInboxes]);
+
   const showModal = () => {
     newForm.resetFields();
     setOpen(true);
@@ -275,6 +287,10 @@ const PartnerNotesPage: React.FC = () => {
     }
   };
 
+  const popupWindow = (id: number) => {
+    window.open(`/partner/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
+  }
+
   const columns: TableProps<PartnerInbox>["columns"] = [
     {
       title: t("number"),
@@ -285,10 +301,22 @@ const PartnerNotesPage: React.FC = () => {
     },
     {
       title: t("userId"),
-      dataIndex: "user",
+      dataIndex: "User",
       key: "user",
       width: 150,
-      render: (user) => user?.userid || "-",
+      render: (User) => {
+        if (!User) return null;
+        return (
+          <div className="flex items-center cursor-pointer" onClick={() => popupWindow(User?.id || 0)}>
+            <p className="w-[15px] h-[15px] flex items-center justify-center rounded-full bg-[#1677ff] text-white text-xs">
+              {User?.profile?.level ?? 0}
+            </p>
+            <p className="text-xs text-[white] bg-[#000] px-1 py-0.5 rounded">
+              {User?.userid || ""}
+            </p>
+          </div>
+        );
+      },
     },
     {
       title: t("title"),
@@ -499,11 +527,11 @@ const PartnerNotesPage: React.FC = () => {
               <Form.Item
                 name="userId"
                 label={t("recipient")}
-                rules={[{ required: true, message: t("Please select a recipient") }]}
+                rules={[{ required: true, message: t("pleaseSelectRecipient") }]}
               >
                 <Select
                   showSearch
-                  placeholder={t("Search Member")}
+                  placeholder={t("searchUser")}
                   optionFilterProp="label"
                   onSearch={onSearchUser}
                   loading={loadingUser}
@@ -549,7 +577,7 @@ const PartnerNotesPage: React.FC = () => {
             open={editOpen}
             footer={false}
             onCancel={onCancelEdit}
-            destroyOnClose
+            destroyOnHidden
           >
             <Form
               form={editForm}

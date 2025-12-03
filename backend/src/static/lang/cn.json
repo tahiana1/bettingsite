@@ -2402,5 +2402,7 @@
   "partner/inbox/updatedAt" : "更新时间",
   "partner/inbox/deletedAt" : "删除时间",
   "partner/inbox/action" : "操作",
-  "description" : "描述"
+  "description" : "描述",
+  "pleaseSelectRecipient" : "请选择收件人",
+  "searchUser" : "搜索用户"
 }

@@ -86,7 +86,9 @@ export const partnerInboxAPI = {
       params.append("status", status);
     }
 
-    return api(`partner/inboxes/?${params.toString()}`, {
+    // NOTE: Do not include a trailing slash after "inboxes" so it matches
+    // the backend route definition r.GET("/inboxes", ...) exactly.
+    return api(`partner/inboxes?${params.toString()}`, {
       method: "GET",
     });
   },

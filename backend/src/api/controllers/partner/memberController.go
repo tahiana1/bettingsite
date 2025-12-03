@@ -3,7 +3,6 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -22,21 +21,21 @@ import (
 )
 
 type DirectMemberResponse struct {
-	ID              uint    `json:"id"`
-	Userid          string  `json:"userid"`
-	Nickname        string  `json:"nickname"`
-	Depositor       string  `json:"depositor"`
-	AmountHeld      float64 `json:"amountHeld"`      // balance from profile
-	Point           int32   `json:"point"`           // point from profile
-	RollingGold     float64 `json:"rollingGold"`     // roll from profile
-	Deposit         float64 `json:"deposit"`         // Total approved deposits
-	Withdrawal      float64 `json:"withdrawal"`      // Total approved withdrawals
-	Bet             float64 `json:"bet"`            // Total bet amount
-	Winner          float64 `json:"winner"`          // Total winner amount
-	AccessDate      *time.Time `json:"accessDate"`   // updatedAt from user
+	ID                 uint       `json:"id"`
+	Userid             string     `json:"userid"`
+	Nickname           string     `json:"nickname"`
+	Depositor          string     `json:"depositor"`
+	AmountHeld         float64    `json:"amountHeld"`         // balance from profile
+	Point              int32      `json:"point"`              // point from profile
+	RollingGold        float64    `json:"rollingGold"`        // roll from profile
+	Deposit            float64    `json:"deposit"`            // Total approved deposits
+	Withdrawal         float64    `json:"withdrawal"`         // Total approved withdrawals
+	Bet                float64    `json:"bet"`                // Total bet amount
+	Winner             float64    `json:"winner"`             // Total winner amount
+	AccessDate         *time.Time `json:"accessDate"`         // updatedAt from user
 	DateOfRegistration *time.Time `json:"dateOfRegistration"` // createdAt from user
-	Status          string  `json:"status"`
-	Type            string  `json:"type"`
+	Status             string     `json:"status"`
+	Type               string     `json:"type"`
 }
 
 // GetDirectMembers function is used to get direct members list for partner
@@ -137,16 +136,16 @@ func GetDirectMembers(c *gin.Context) {
 	members := make([]DirectMemberResponse, 0, len(users))
 	for _, user := range users {
 		member := DirectMemberResponse{
-			ID:                user.ID,
-			Userid:            user.Userid,
-			Nickname:          user.Profile.Nickname,
-			Depositor:         user.Profile.HolderName,
+			ID:                 user.ID,
+			Userid:             user.Userid,
+			Nickname:           user.Profile.Nickname,
+			Depositor:          user.Profile.HolderName,
 			AmountHeld:         user.Profile.Balance,
-			Point:             user.Profile.Point,
-			RollingGold:       user.Profile.Roll,
-			Status:            user.Status,
-			Type:              user.Type,
-			AccessDate:        &user.UpdatedAt,
+			Point:              user.Profile.Point,
+			RollingGold:        user.Profile.Roll,
+			Status:             user.Status,
+			Type:               user.Type,
+			AccessDate:         &user.UpdatedAt,
 			DateOfRegistration: &user.CreatedAt,
 		}
 
@@ -263,16 +262,16 @@ func GetDirectMembers(c *gin.Context) {
 
 	// Create total row
 	totalRow := DirectMemberResponse{
-		Userid:          "-",
-		Nickname:        "-",
-		Depositor:       "-",
-		AmountHeld:      totalAmountHeld,
-		Point:           int32(totalPoint),
-		RollingGold:     totalRollingGold,
-		Deposit:         totalDeposit,
-		Withdrawal:      totalWithdrawal,
-		Bet:             totalBet,
-		Winner:          totalWinner,
+		Userid:      "-",
+		Nickname:    "-",
+		Depositor:   "-",
+		AmountHeld:  totalAmountHeld,
+		Point:       int32(totalPoint),
+		RollingGold: totalRollingGold,
+		Deposit:     totalDeposit,
+		Withdrawal:  totalWithdrawal,
+		Bet:         totalBet,
+		Winner:      totalWinner,
 	}
 
 	// Return response
@@ -376,16 +375,16 @@ func RegisterDirectMember(c *gin.Context) {
 
 	// Create the user with parent_id set to partner's ID
 	user := models.User{
-		Name:        userInput.Name,
-		Userid:      userInput.Userid,
-		Password:    string(hashedPassword),
-		SecPassword: userInput.SecPassword,
+		Name:          userInput.Name,
+		Userid:        userInput.Userid,
+		Password:      string(hashedPassword),
+		SecPassword:   userInput.SecPassword,
 		PasswordSpell: userInput.Password,
-		USDTAddress: userInput.USDTAddress,
-		IP:          clientIP,
-		CurrentIP:   clientIP,
-		Domain:      userInput.Domain,
-		ParentID:    &partner.ID, // Set the partner as parent
+		USDTAddress:   userInput.USDTAddress,
+		IP:            clientIP,
+		CurrentIP:     clientIP,
+		Domain:        userInput.Domain,
+		ParentID:      &partner.ID, // Set the partner as parent
 	}
 
 	// Set OS if we have a value
@@ -481,4 +480,3 @@ func RegisterDirectMember(c *gin.Context) {
 		Message: "Direct member registered successfully!",
 	})
 }
-

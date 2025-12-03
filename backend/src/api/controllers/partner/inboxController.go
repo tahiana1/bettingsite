@@ -12,6 +12,7 @@ import (
 	format_errors "github.com/hotbrainy/go-betting/backend/internal/format-errors"
 	"github.com/hotbrainy/go-betting/backend/internal/models"
 	responses "github.com/hotbrainy/go-betting/backend/internal/response"
+	"gorm.io/gorm"
 )
 
 // GetPartnerInboxes returns inbox messages for users under the partner's management
@@ -50,7 +51,11 @@ func GetPartnerInboxes(c *gin.Context) {
 	query := initializers.DB.Model(&models.Inbox{}).
 		Joins("JOIN users ON users.id = inboxes.user_id").
 		Where("users.parent_id = ?", partner.ID).
-		Preload("User")
+		// Preload basic user information (including userid and name) so the frontend
+		// can display both the userid and the user's name in the table.
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, userid, name")
+		})
 
 	// Apply search filter (title, description, user userid)
 	if searchQuery != "" {
@@ -134,7 +139,7 @@ func CreatePartnerInbox(c *gin.Context) {
 	// Verify that the target user is under this partner
 	var targetUser models.User
 	if err := initializers.DB.First(&targetUser, inboxInput.UserID).Error; err != nil {
-		format_errors.NotFoundError(c, fmt.Errorf("Target user not found"))
+		format_errors.NotFound(c, err, "Target user not found")
 		return
 	}
 
@@ -165,8 +170,10 @@ func CreatePartnerInbox(c *gin.Context) {
 		return
 	}
 
-	// Load the user relation
-	initializers.DB.Preload("User").First(&inbox, inbox.ID)
+	// Load the user relation (basic fields used by frontend)
+	initializers.DB.Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id, userid, name")
+	}).First(&inbox, inbox.ID)
 
 	c.JSON(http.StatusOK, responses.Status{
 		Data:    inbox,
@@ -216,7 +223,7 @@ func UpdatePartnerInbox(c *gin.Context) {
 		Joins("JOIN users ON users.id = inboxes.user_id").
 		Where("inboxes.id = ? AND users.parent_id = ?", id, partner.ID).
 		First(&inbox).Error; err != nil {
-		format_errors.NotFoundError(c, fmt.Errorf("Inbox not found or not authorized"))
+		format_errors.NotFound(c, err, "Inbox not found or not authorized")
 		return
 	}
 
@@ -242,8 +249,10 @@ func UpdatePartnerInbox(c *gin.Context) {
 		return
 	}
 
-	// Load the user relation
-	initializers.DB.Preload("User").First(&inbox, inbox.ID)
+	// Load the user relation (basic fields used by frontend)
+	initializers.DB.Preload("User", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id, userid, name")
+	}).First(&inbox, inbox.ID)
 
 	c.JSON(http.StatusOK, responses.Status{
 		Data:    inbox,
@@ -280,7 +289,7 @@ func DeletePartnerInbox(c *gin.Context) {
 		Joins("JOIN users ON users.id = inboxes.user_id").
 		Where("inboxes.id = ? AND users.parent_id = ?", id, partner.ID).
 		First(&inbox).Error; err != nil {
-		format_errors.NotFoundError(c, fmt.Errorf("Inbox not found or not authorized"))
+		format_errors.NotFound(c, err, "Inbox not found or not authorized")
 		return
 	}
 
@@ -337,4 +346,3 @@ func GetPartnerUsers(c *gin.Context) {
 		"data":    users,
 	})
 }
-

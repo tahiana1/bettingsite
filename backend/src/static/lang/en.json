@@ -2396,5 +2396,7 @@
   "partner/inbox/updatedAt" : "Updated At",
   "partner/inbox/deletedAt" : "Deleted At",
   "partner/inbox/action" : "Action",
-  "description" : "Description"
+  "description" : "Description",
+  "pleaseSelectRecipient" : "Please select a recipient",
+  "searchUser" : "Search User"
 } 

@@ -2,7 +2,7 @@
 
 import { Button, Card, Form, Input, Layout, Select, Table, TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { ColumnsType } from "antd/es/table";
 import api from "@/api";
@@ -13,6 +13,7 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
     const t = useTranslations();
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [profile, setProfile] = useState<any>(null);
     const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
     const [pagination, setPagination] = useState({
         pageSize: 10,
@@ -27,9 +28,9 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
         },
         {
             title: t("title"),
-            dataIndex: "name",
-            key: "name",
-            render: (_, record: any) => record.name,
+            dataIndex: "title",
+            key: "title",
+            render: (_, record: any) => record.title,
         },
         {
             title: t("dateOfWriting"),   
@@ -129,15 +130,8 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
         });
     }
 
-    useEffect(() => {
-        api("user/me").then((res) => {
-          fetchBets(res.data.profile);
-        }).catch((err) => {
-          console.log(err);
-        });
-      }, []);
-    
-    const fetchBets = async (profile: any) => {
+    const fetchBets = useCallback(async (profile: any) => {
+        if (!profile) return;
         const userid = Number(profile.userId);
         const response = await api("notes/get-notes", {
             method: "POST",
@@ -148,7 +142,30 @@ const NotePage: React.FC<{checkoutModal: (modal: string) => void}> = (props) => 
         console.log(response, "response");
         console.log(response.data, "response.data");
         setData(response.data);
-    };
+    }, []);
+
+    useEffect(() => {
+        api("user/me").then((res) => {
+          setProfile(res.data.profile);
+          fetchBets(res.data.profile);
+        }).catch((err) => {
+          console.log(err);
+        });
+      }, [fetchBets]);
+
+    // Auto-refresh data every 10 seconds
+    useEffect(() => {
+        if (!profile) return;
+        
+        const intervalId = setInterval(() => {
+            fetchBets(profile);
+        }, 10000); // 10 seconds
+
+        // Cleanup interval on unmount
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [profile, fetchBets]);
 
    
                 
