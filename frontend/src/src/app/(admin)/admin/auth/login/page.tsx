@@ -4,8 +4,10 @@ import { Content } from "antd/es/layout/layout";
 import React from "react";
 
 import Login from "@/components/Admin/Login";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const LoginPage: React.FC = () => {
+  usePageTitle("Admin - Login Page");
   return (
     <Content className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a0504] via-[#160d0c] to-[#1a120f] p-4">
       {/* Animated background elements */}

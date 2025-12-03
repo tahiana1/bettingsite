@@ -31,9 +31,11 @@ import {
   DELETE_ANNOUNCEMENT,
   GET_ANNOUNCEMENTS,
   UPDATE_ANNOUNCEMENT,
-} from "@/actions/announcement"; 
+} from "@/actions/announcement";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AnnouncementPage: React.FC = () => {
+  usePageTitle("Admin - Comments Page");
   const t = useTranslations();
   const [tableOptions, setTableOptions] = useState<any>(null);
 

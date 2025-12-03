@@ -35,6 +35,7 @@ import { message } from 'antd';
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import dayjs from "dayjs";
 import { parseTableOptions } from "@/lib";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import {
   CREATE_NOTI,
   FILTER_NOTI,
@@ -47,6 +48,7 @@ import {
 // type UserIndex = keyof User;
 
 const NotiPage: React.FC = () => {
+  usePageTitle("Admin - Notifications Page");
   const [form] = Form.useForm();
   const t = useTranslations();
   const f = useFormatter();

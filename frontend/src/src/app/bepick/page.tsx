@@ -4,8 +4,10 @@ import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 import { MiniBetOptionsAPI, MiniBetOption } from '../../services/miniBetOptionsAPI';
 import { formatNumber } from '@/lib';
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function BepickPage() {
+  usePageTitle("TOTOCLUB - Bepick Page");
   // State management for component functionality
   const [activeTab, setActiveTab] = useState('Bepick'); // Currently selected game tab
   const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display

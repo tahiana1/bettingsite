@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import apiCall from "@/api";
 import dayjs from "dayjs";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -35,6 +36,7 @@ interface Alert {
 }
 
 const AlertsPageContent: React.FC = () => {
+  usePageTitle("Admin - Alerts Page");
   const t = useTranslations();
   const router = useRouter();
   const { message } = App.useApp();

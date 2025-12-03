@@ -29,8 +29,10 @@ import {
 import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const MemberTransferPage: React.FC = () => {
+  usePageTitle("Admin - Member Transfer History Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({

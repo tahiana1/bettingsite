@@ -27,8 +27,10 @@ import {
   UPDATE_ADMIN_PERMISSION,
 } from "@/actions/admin_permission";
 import dayjs from "dayjs";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const AdminPermissionPage: React.FC = () => {
+  usePageTitle("Admin - Admin Management Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);

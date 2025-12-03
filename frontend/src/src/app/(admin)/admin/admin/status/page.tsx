@@ -28,12 +28,14 @@ import api from "@/api";
 import dayjs from "dayjs";
 import { formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
 const AdminStatusPage: React.FC = () => {
+  usePageTitle("Admin - Admin Status Page");
   const t = useTranslations();
   const f = useFormatter();
   const [searchValue, setSearchValue] = useState<string>("");

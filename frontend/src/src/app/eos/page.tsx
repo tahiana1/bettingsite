@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import '../minigame.css';
 import { formatNumber } from '@/lib';
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 /**
  * EOSPage Component - Powerball Betting Interface
@@ -20,6 +21,7 @@ import { formatNumber } from '@/lib';
  * - Current round information and statistics
  */
 export default function EOSPage() {
+  usePageTitle("TOTOCLUB - EOS Page");
   // State management for component functionality
   const [activeTab, setActiveTab] = useState('EOS'); // Currently selected game tab
   const [currentTime, setCurrentTime] = useState<string>('00:00:00'); // Real-time clock display

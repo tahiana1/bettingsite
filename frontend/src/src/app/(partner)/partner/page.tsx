@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl";
 import { Column } from "@ant-design/charts";
 import api from "@/api";
 import { formatNumber } from "@/lib";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface DataType {
   division: string,
@@ -75,6 +76,7 @@ interface DashboardResponse {
 
 
 const Dashboard: React.FC = () => {
+  usePageTitle("Partner - Dashboard");
   const t = useTranslations();
   const columns: TableProps<DataType>["columns"] = [
     {

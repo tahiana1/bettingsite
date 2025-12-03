@@ -22,6 +22,7 @@ import { USER_STATUS, USER_TYPE } from "@/constants";
 import api from "@/api";
 import { ReloadOutlined, UserAddOutlined } from "@ant-design/icons";
 import DirectMemberRegistrationModal from "@/components/Partner/DirectMemberRegistrationModal";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const { RangePicker } = DatePicker;
 
@@ -57,6 +58,7 @@ interface TotalRow {
 }
 
 export default function DirectMemberListPage() {
+  usePageTitle("Partner - User Management Page");
   const t = useTranslations();
   const f = useFormatter();
   const [loading, setLoading] = useState<boolean>(false);

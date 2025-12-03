@@ -7,6 +7,7 @@ import { Spin, message, Layout, Modal } from "antd";
 import { useRouter } from "next/navigation";
 import Login from "@/components/Auth/Login";
 import api from "@/api";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // Import all casino game company logos
 import algLogo from "@/assets/img/casinoGame/alg.png";
@@ -30,6 +31,7 @@ import vivoLogo from "@/assets/img/casinoGame/vivo.png";
 import wmLogo from "@/assets/img/casinoGame/wm.png";
 
 const Index: React.FC = () => {
+  usePageTitle("TOTOCLUB - Home Page");
   const t = useTranslations();
   const router = useRouter();
   const [loading, setLoading] = useState(false);

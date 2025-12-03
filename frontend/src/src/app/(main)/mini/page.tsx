@@ -10,6 +10,7 @@ import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
 import EOS1Component from "@/components/mini/eos1";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import eos1pb from '@/assets/img/mini/eos1pb.png';
 import eos2pb from '@/assets/img/mini/eos2pb.png';
 import eos3pb from '@/assets/img/mini/eos3pb.png';
@@ -21,6 +22,7 @@ import poverballgame from '@/assets/img/mini/poverballgame.png';
 import dhpowerball from '@/assets/img/mini/dhpowerball.png';
 
 const MiniPage: React.FC = () => {
+    usePageTitle("TOTOCLUB - Mini Games Page");
     const t = useTranslations();
     const [userId, setUserId] = useState<any>("");
     const [balance, setBalance] = useState<any>(0);

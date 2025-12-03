@@ -36,8 +36,10 @@ import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS, USER_TYPE } from "@/constants";
 import { UPDATE_PROFILE } from "@/actions/profile";
 import api from "@/api";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const UserPage: React.FC = () => {
+  usePageTitle("Admin - User Management Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);

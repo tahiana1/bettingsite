@@ -35,8 +35,10 @@ import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import api from "@/api";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const MemberDWPage: React.FC = () => {
+  usePageTitle("Admin - Member Deposit Withdrawal History Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({

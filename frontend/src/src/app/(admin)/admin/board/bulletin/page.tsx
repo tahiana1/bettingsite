@@ -26,6 +26,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import { BiTrash } from "react-icons/bi";
 import { useQuill } from "react-quilljs";
 import { PiPlus } from "react-icons/pi";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // import HighlighterComp, { HighlighterProps } from "react-highlight-words";
 import { parseTableOptions } from "@/lib";
@@ -41,6 +42,7 @@ import {
 // type UserIndex = keyof User;
 
 const BulletinPage: React.FC = () => {
+  usePageTitle("Admin - Bulletin Page");
   const [form] = Form.useForm();
   const t = useTranslations();
   const [tableOptions, setTableOptions] = useState<any>(null);

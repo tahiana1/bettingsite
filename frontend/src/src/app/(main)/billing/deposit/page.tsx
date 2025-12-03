@@ -10,8 +10,10 @@ import { Layout, message } from "antd";
 import { useTranslations } from "next-intl";
 import api from "@/api";
 import Login from "@/components/Auth/Login";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const Deposit: React.FC = () => {
+  usePageTitle("TOTOCLUB - Deposit Page");
   const t = useTranslations();
   const [profile, setProfile] = useState<any>(null);
   const checkoutModal = (modal: string) => {

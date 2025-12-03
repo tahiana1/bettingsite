@@ -24,12 +24,14 @@ import { FaWindows, FaLinux, FaApple } from "react-icons/fa";
 import { Dayjs } from "dayjs";
 import { parseTableOptions } from "@/lib";
 import { GET_LOGS } from "@/actions/log";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type LogIndex = keyof Log;
 
 const LogStatusPage: React.FC = () => {
+  usePageTitle("Admin - User Activity Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>(null);

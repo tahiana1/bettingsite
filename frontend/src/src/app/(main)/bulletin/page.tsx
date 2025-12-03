@@ -9,6 +9,7 @@ import 'quill/dist/quill.snow.css';
 import { FILTER_QNAS } from "@/actions/qna";
 import { useQuery } from "@apollo/client";
 import "./index.css";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface QnaItem {
     id: string;
@@ -26,6 +27,7 @@ interface QnaItem {
 }
 
 const Notice = () => {
+    usePageTitle("TOTOCLUB - Bulletin Page");
     const [form] = Form.useForm();
     const t = useTranslations();
     const [qnas, setQnas] = useState<QnaItem[]>([]);

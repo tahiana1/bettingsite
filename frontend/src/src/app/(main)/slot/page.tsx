@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useAtom } from "jotai";
 import { userState } from "@/state/state";
 import Login from "@/components/Auth/Login";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // Import slot provider logos using actual images from the directory
 import MancalaLogo from "@/assets/img/slot/mancala.png";
@@ -59,6 +60,7 @@ import PragmaticLogo from "@/assets/img/slot/pragmatic.png";
 import YggdrasilLogo from "@/assets/img/slot/yggdrasil.png";
 
 const SlotPage: React.FC = () => {
+    usePageTitle("TOTOCLUB - Slot Page");
     const t = useTranslations();
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<any>("");

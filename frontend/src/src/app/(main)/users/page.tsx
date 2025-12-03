@@ -5,8 +5,10 @@ import { gql, useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import Image from "next/image";
 import LoadingGIF from '@/assets/img/loading.gif'
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function UsersPage() {
+  usePageTitle("TOTOCLUB - Users Page");
   const { loading, error, data } = useQuery(GET_USERS);
   useEffect(() => {
     client

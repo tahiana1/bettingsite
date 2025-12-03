@@ -4,8 +4,10 @@ import { Button, Card, Checkbox, DatePicker, Form, Input, InputNumber, Select, S
 import { useTranslations } from "next-intl";
 import { levelAPI, Level, SurpriseBonus, ChargeBonusTableLevel } from "@/api/levelAPI";
 import dayjs from "dayjs";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function LevelPage() {
+    usePageTitle("Admin - Level Settings Page");
     const t = useTranslations();
     const [form] = Form.useForm();
     

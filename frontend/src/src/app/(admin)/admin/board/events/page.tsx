@@ -38,6 +38,7 @@ import {
   FILTER_EVENT,
   UPDATE_EVENT,
 } from "@/actions/event";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import { GET_DOMAINS } from "@/actions/domain";
 import type { UploadProps } from 'antd';
 import { message } from 'antd';
@@ -81,6 +82,7 @@ interface Event {
 
 
 const EventPage: React.FC = () => {
+  usePageTitle("Admin - Events Page");
   const [form] = Form.useForm();
   const t = useTranslations();
   const f = useFormatter();

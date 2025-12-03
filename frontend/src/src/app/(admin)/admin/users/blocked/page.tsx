@@ -31,12 +31,14 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
 const PendingUserPage: React.FC = () => {
+  usePageTitle("Admin - Blocked Users Page");
   const t = useTranslations();
   const f = useFormatter();
   const [tableOptions, setTableOptions] = useState<any>({

@@ -36,8 +36,10 @@ import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import api from "@/api";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const GeneralDWPage: React.FC = () => {
+  usePageTitle("Admin - Financial General Page");
   const t = useTranslations();
   const f = useFormatter();
 

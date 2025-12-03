@@ -29,12 +29,14 @@ import { PiUserCircleCheckLight } from "react-icons/pi";
 import dayjs, { Dayjs } from "dayjs";
 import { parseTableOptions, formatNumber } from "@/lib";
 import { USER_STATUS } from "@/constants";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 // const Highlighter = HighlighterComp as unknown as React.FC<HighlighterProps>;
 
 // type UserIndex = keyof User;
 
 const PendingUserPage: React.FC = () => {
+  usePageTitle("Admin - Pending Users Page");
   const [pathname, setPathname] = useState<string>('');
   useEffect(() => {
     setPathname(window.location.pathname);

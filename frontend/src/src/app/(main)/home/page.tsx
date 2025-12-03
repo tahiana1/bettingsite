@@ -10,10 +10,12 @@ import { useAtom } from "jotai";
 import { currentLeagueState } from "@/state/state";
 import HomeHeader from "@/components/Home/Header";
 import BettingSidebar from "@/components/Home/BettingSidebar";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const { Header } = Layout;
 
 const Index: React.FC = () => {
+  usePageTitle("TOTOCLUB - Home Page");
   const { token } = theme.useToken();
 
   const { isDarkTheme } = useContext(LayoutContext);

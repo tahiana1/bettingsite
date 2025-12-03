@@ -28,8 +28,10 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import * as XLSX from 'xlsx';
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const IntegratedTransferPage: React.FC = () => {
+  usePageTitle("Admin - Integrated Transfer History Page");
   const t = useTranslations();
   const f = useFormatter();
   const [caseSensitive, setCaseSensitive] = useState<boolean>(false);
