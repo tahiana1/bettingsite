@@ -47,6 +47,13 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 		memberRouter.GET("/direct-members", controllers.GetDirectMembers)
 	}
 
+	// Sub-member management routes
+	subMemberRouter := r.Group("/sub-management")
+	{
+		subMemberRouter.GET("/sub-members", controllers.GetSubMembers)
+		subMemberRouter.GET("/sub-distributors", controllers.GetSubDistributors)
+	}
+
 	// User routes
 	userRouter := r.Group("/users")
 	{

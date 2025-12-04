@@ -2425,5 +2425,18 @@
   "accumulatedPoints" : "累计点数",
   "lastSettlementDate" : "最后结算日期",
   "rolloverAmount" : "滚存金额",
-  "searchByRegistrationTime" : "按注册时间搜索"
+  "searchByRegistrationTime" : "按注册时间搜索",
+  "membershipType" : "会员类型",
+  "entryAndExit" : "入/出",
+  "numberOfDeposits" : "存款次数",
+  "referralLinkO" : "推荐链接O",
+  "noReferralLinkX" : "无推荐链接X",
+  "allMembers" : "全部会员",
+  "membersWhoRefuseToJoin" : "拒绝加入会员",
+  "dormantMembers" : "休眠会员",
+  "rollingToday" : "今日流水",
+  "losingToday" : "今日亏损",
+  "viewAllLowerPart" : "查看所有下级",
+  "openOnlyToDirectMembers" : "仅显示直属会员",
+  "subDistributorRegistration" : "下级注册"
 }

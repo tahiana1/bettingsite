@@ -38,6 +38,30 @@ type DirectMemberResponse struct {
 	Type               string     `json:"type"`
 }
 
+type SubMemberResponse struct {
+	ID                 uint       `json:"id"`
+	Userid             string     `json:"userid"`
+	Nickname           string     `json:"nickname"`
+	Depositor          string     `json:"depositor"`
+	AmountHeld         float64    `json:"amountHeld"`         // balance from profile
+	Point              int32      `json:"point"`              // point from profile
+	RollingGold        float64    `json:"rollingGold"`        // roll from profile
+	Deposit            float64    `json:"deposit"`            // Total approved deposits
+	Withdrawal         float64    `json:"withdrawal"`         // Total approved withdrawals
+	Bet                float64    `json:"bet"`                // Total bet amount
+	Winner             float64    `json:"winner"`             // Total winner amount
+	LosingMoney        float64    `json:"losingMoney"`        // EntireLosing from user
+	EntryAndExit       float64    `json:"entryAndExit"`       // deposit - withdrawal
+	NumberOfDeposits   int64      `json:"numberOfDeposits"`   // Count of deposit transactions
+	BeDang             float64    `json:"beDang"`             // EntireLosing (same as losing money)
+	AccessDate         *time.Time `json:"accessDate"`         // updatedAt from user
+	DateOfRegistration *time.Time `json:"dateOfRegistration"` // createdAt from user
+	Status             string     `json:"status"`
+	Type               string     `json:"type"`
+	Role               string     `json:"role"`        // User role (U, P, etc.)
+	HasReferral        bool       `json:"hasReferral"` // Whether user has referral link
+}
+
 // GetDirectMembers function is used to get direct members list for partner
 func GetDirectMembers(c *gin.Context) {
 	// Get the authenticated partner user
@@ -478,5 +502,707 @@ func RegisterDirectMember(c *gin.Context) {
 	c.JSON(http.StatusOK, responses.Status{
 		Data:    user,
 		Message: "Direct member registered successfully!",
+	})
+}
+
+// GetSubMembers function is used to get sub members list for partner
+func GetSubMembers(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "25")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 25
+	}
+
+	// Get filter parameters
+	statusFilter := c.Query("status")
+	typeFilter := c.Query("type")
+	memberTypeFilter := c.Query("memberType") // member, distributor, distributor+member
+	referralFilter := c.Query("referral")     // entire, has, none
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+
+	// Build query for sub members (where parent_id = partner.ID)
+	query := initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID)
+
+	// Apply member type filter (role-based)
+	switch memberTypeFilter {
+	case "member":
+		query = query.Where("role = ?", "U")
+	case "distributor":
+		query = query.Where("role = ?", "P")
+	case "distributor+member":
+		query = query.Where("role IN ?", []string{"U", "P"})
+	}
+
+	// Apply referral filter
+	switch referralFilter {
+	case "has":
+		// Users with referral link (profile.referral is not empty)
+		var usersWithReferral []uint
+		initializers.DB.Model(&models.Profile{}).
+			Where("referral IS NOT NULL AND referral != ''").
+			Joins("JOIN users ON users.id = profiles.user_id").
+			Where("users.parent_id = ?", partner.ID).
+			Pluck("users.id", &usersWithReferral)
+		if len(usersWithReferral) > 0 {
+			query = query.Where("id IN ?", usersWithReferral)
+		} else {
+			query = query.Where("1 = 0")
+		}
+	case "none":
+		// Users without referral link
+		var usersWithoutReferral []uint
+		initializers.DB.Model(&models.Profile{}).
+			Where("(referral IS NULL OR referral = '')").
+			Joins("JOIN users ON users.id = profiles.user_id").
+			Where("users.parent_id = ?", partner.ID).
+			Pluck("users.id", &usersWithoutReferral)
+		if len(usersWithoutReferral) > 0 {
+			query = query.Where("id IN ?", usersWithoutReferral)
+		} else {
+			query = query.Where("1 = 0")
+		}
+	}
+
+	// Apply status filter
+	if statusFilter != "" {
+		query = query.Where("status = ?", statusFilter)
+	}
+
+	// Apply type filter
+	if typeFilter != "" {
+		query = query.Where("type = ?", typeFilter)
+	}
+
+	// Apply date range filter (registration date)
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		query = query.Where("created_at <= ?", dateTo)
+	}
+
+	// Apply search filter (ID, nickname, account holder, phone)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		var matchingUserIDs []uint
+		initializers.DB.Model(&models.User{}).
+			Select("users.id").
+			Joins("LEFT JOIN profiles ON profiles.user_id = users.id").
+			Where("parent_id = ?", partner.ID).
+			Where(
+				"LOWER(users.userid) LIKE ? OR LOWER(profiles.nickname) LIKE ? OR LOWER(profiles.holder_name) LIKE ? OR LOWER(profiles.phone) LIKE ?",
+				searchPattern, searchPattern, searchPattern, searchPattern,
+			).
+			Pluck("users.id", &matchingUserIDs)
+		if len(matchingUserIDs) > 0 {
+			query = query.Where("id IN ?", matchingUserIDs)
+		} else {
+			query = query.Where("1 = 0")
+		}
+	}
+
+	// Preload Profile after all filters
+	query = query.Preload("Profile")
+
+	// Get total count
+	var total int64
+	query.Model(&models.User{}).Count(&total)
+
+	// Apply pagination
+	offset := (page - 1) * perPage
+	var users []models.User
+	if err := query.Offset(offset).Limit(perPage).Order("created_at DESC").Find(&users).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build response with calculated fields
+	members := make([]SubMemberResponse, 0, len(users))
+	for _, user := range users {
+		member := SubMemberResponse{
+			ID:                 user.ID,
+			Userid:             user.Userid,
+			Nickname:           user.Profile.Nickname,
+			Depositor:          user.Profile.HolderName,
+			AmountHeld:         user.Profile.Balance,
+			Point:              user.Profile.Point,
+			RollingGold:        user.Profile.Roll,
+			Status:             user.Status,
+			Type:               user.Type,
+			Role:               user.Role,
+			AccessDate:         &user.UpdatedAt,
+			DateOfRegistration: &user.CreatedAt,
+			LosingMoney:        user.EntireLosing,
+			BeDang:             user.EntireLosing,
+			HasReferral:        user.Profile.Referral != "",
+		}
+
+		// Calculate total approved deposits
+		var totalDeposit float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "deposit", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalDeposit)
+		member.Deposit = totalDeposit
+
+		// Get count of deposits
+		var depositCount int64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "deposit", "A").
+			Count(&depositCount)
+		member.NumberOfDeposits = depositCount
+
+		// Calculate total approved withdrawals
+		var totalWithdrawal float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "withdrawal", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalWithdrawal)
+		member.Withdrawal = totalWithdrawal
+
+		// Calculate entry and exit (deposit - withdrawal)
+		member.EntryAndExit = totalDeposit - totalWithdrawal
+
+		// Calculate total bet amount (sum of stake)
+		var totalBet float64
+		initializers.DB.Model(&models.Bet{}).
+			Where("user_id = ?", user.ID).
+			Select("COALESCE(SUM(stake), 0)").
+			Scan(&totalBet)
+		member.Bet = totalBet
+
+		// Calculate total winner amount (bets where result = 'win', sum of potentialPayout)
+		var totalWinner float64
+		initializers.DB.Model(&models.Bet{}).
+			Where("user_id = ? AND result = ?", user.ID, "win").
+			Select("COALESCE(SUM(potential_payout), 0)").
+			Scan(&totalWinner)
+		member.Winner = totalWinner
+
+		members = append(members, member)
+	}
+
+	// Calculate totals for all members (with same filters, without pagination)
+	var totalAmountHeld, totalPoint, totalRollingGold, totalDeposit, totalWithdrawal, totalBet, totalWinner, totalLosingMoney, totalEntryAndExit, totalBeDang float64
+	var totalPointInt int32
+	var totalNumberOfDeposits int64
+
+	// Build query for totals with same filters
+	totalQuery := initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID)
+
+	// Apply same filters
+	switch memberTypeFilter {
+	case "member":
+		totalQuery = totalQuery.Where("role = ?", "U")
+	case "distributor":
+		totalQuery = totalQuery.Where("role = ?", "P")
+	case "distributor+member":
+		totalQuery = totalQuery.Where("role IN ?", []string{"U", "P"})
+	}
+
+	switch referralFilter {
+	case "has":
+		var usersWithReferral []uint
+		initializers.DB.Model(&models.Profile{}).
+			Where("referral IS NOT NULL AND referral != ''").
+			Joins("JOIN users ON users.id = profiles.user_id").
+			Where("users.parent_id = ?", partner.ID).
+			Pluck("users.id", &usersWithReferral)
+		if len(usersWithReferral) > 0 {
+			totalQuery = totalQuery.Where("id IN ?", usersWithReferral)
+		} else {
+			totalQuery = totalQuery.Where("1 = 0")
+		}
+	case "none":
+		var usersWithoutReferral []uint
+		initializers.DB.Model(&models.Profile{}).
+			Where("(referral IS NULL OR referral = '')").
+			Joins("JOIN users ON users.id = profiles.user_id").
+			Where("users.parent_id = ?", partner.ID).
+			Pluck("users.id", &usersWithoutReferral)
+		if len(usersWithoutReferral) > 0 {
+			totalQuery = totalQuery.Where("id IN ?", usersWithoutReferral)
+		} else {
+			totalQuery = totalQuery.Where("1 = 0")
+		}
+	}
+
+	if statusFilter != "" {
+		totalQuery = totalQuery.Where("status = ?", statusFilter)
+	}
+	if typeFilter != "" {
+		totalQuery = totalQuery.Where("type = ?", typeFilter)
+	}
+	if dateFrom != "" {
+		totalQuery = totalQuery.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		totalQuery = totalQuery.Where("created_at <= ?", dateTo)
+	}
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		var matchingUserIDs []uint
+		initializers.DB.Model(&models.User{}).
+			Select("users.id").
+			Joins("LEFT JOIN profiles ON profiles.user_id = users.id").
+			Where("parent_id = ?", partner.ID).
+			Where(
+				"LOWER(users.userid) LIKE ? OR LOWER(profiles.nickname) LIKE ? OR LOWER(profiles.holder_name) LIKE ? OR LOWER(profiles.phone) LIKE ?",
+				searchPattern, searchPattern, searchPattern, searchPattern,
+			).
+			Pluck("users.id", &matchingUserIDs)
+		if len(matchingUserIDs) > 0 {
+			totalQuery = totalQuery.Where("id IN ?", matchingUserIDs)
+		} else {
+			totalQuery = totalQuery.Where("1 = 0")
+		}
+	}
+
+	// Get all sub members for totals (without pagination)
+	var allUsers []models.User
+	totalQuery.Preload("Profile").Find(&allUsers)
+
+	for _, user := range allUsers {
+		totalAmountHeld += user.Profile.Balance
+		totalPointInt += user.Profile.Point
+		totalRollingGold += user.Profile.Roll
+		totalLosingMoney += user.EntireLosing
+		totalBeDang += user.EntireLosing
+
+		var deposit, withdrawal, bet, winner float64
+		var depositCount int64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "deposit", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&deposit)
+		totalDeposit += deposit
+
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "deposit", "A").
+			Count(&depositCount)
+		totalNumberOfDeposits += depositCount
+
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "withdrawal", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&withdrawal)
+		totalWithdrawal += withdrawal
+
+		initializers.DB.Model(&models.Bet{}).
+			Where("user_id = ?", user.ID).
+			Select("COALESCE(SUM(stake), 0)").
+			Scan(&bet)
+		totalBet += bet
+
+		initializers.DB.Model(&models.Bet{}).
+			Where("user_id = ? AND result = ?", user.ID, "win").
+			Select("COALESCE(SUM(potential_payout), 0)").
+			Scan(&winner)
+		totalWinner += winner
+	}
+	totalPoint = float64(totalPointInt)
+	totalEntryAndExit = totalDeposit - totalWithdrawal
+
+	// Create total row
+	totalRow := SubMemberResponse{
+		Userid:           "-",
+		Nickname:         "-",
+		Depositor:        "-",
+		AmountHeld:       totalAmountHeld,
+		Point:            int32(totalPoint),
+		RollingGold:      totalRollingGold,
+		Deposit:          totalDeposit,
+		Withdrawal:       totalWithdrawal,
+		Bet:              totalBet,
+		Winner:           totalWinner,
+		LosingMoney:      totalLosingMoney,
+		EntryAndExit:     totalEntryAndExit,
+		NumberOfDeposits: totalNumberOfDeposits,
+		BeDang:           totalBeDang,
+	}
+
+	// Return response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    members,
+		"total":   totalRow,
+		"pagination": gin.H{
+			"current_page": page,
+			"from":         offset + 1,
+			"to":           offset + len(members),
+			"last_page":    (int(total) + perPage - 1) / perPage,
+			"per_page":     perPage,
+			"total":        total,
+		},
+	})
+}
+
+type SubDistributorResponse struct {
+	ID              uint                     `json:"id"`
+	Userid          string                   `json:"userid"`
+	Nickname        string                   `json:"nickname"`
+	NumberOfMembers int64                    `json:"numberOfMembers"`
+	Status          string                   `json:"status"`
+	AmountHeld      float64                  `json:"amountHeld"`
+	Point           int32                    `json:"point"`
+	SettlementType  string                   `json:"settlementType"`
+	RollingRate     string                   `json:"rollingRate"` // Format: "0/0/0/0/0/0/0/0/0/0"
+	RollingToday    float64                  `json:"rollingToday"`
+	LosingRate      string                   `json:"losingRate"` // Format: "0/0/0/0/0/0/0/0/0/0"
+	LosingToday     float64                  `json:"losingToday"`
+	SubDistributors []SubDistributorResponse `json:"subDistributors,omitempty"`
+}
+
+// GetSubDistributors function is used to get sub-distributors list for partner
+func GetSubDistributors(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get filter parameters
+	statusFilter := c.Query("status")
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+	onlyDirectMembers := c.Query("onlyDirectMembers") == "true"
+
+	// Get pagination parameters (optional, for future use)
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "50")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 50
+	}
+
+	// Build query for sub-distributors (where parent_id = partner.ID)
+	// Show all users with parent_id = partner.ID (they are all sub-users of this partner)
+	query := initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID)
+
+	// Apply status filter
+	if statusFilter != "" {
+		query = query.Where("status = ?", statusFilter)
+	}
+
+	// Apply date range filter (registration date)
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		// Add end of day to dateTo to include the entire day
+		if dateToTime, err := time.Parse("2006-01-02", dateTo); err == nil {
+			dateToTime = dateToTime.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			query = query.Where("created_at <= ?", dateToTime)
+		} else {
+			query = query.Where("created_at <= ?", dateTo)
+		}
+	}
+
+	// Apply search filter (ID, nickname, account holder, phone)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		var matchingUserIDs []uint
+		initializers.DB.Model(&models.User{}).
+			Select("users.id").
+			Joins("LEFT JOIN profiles ON profiles.user_id = users.id").
+			Where("parent_id = ?", partner.ID).
+			Where(
+				"LOWER(users.userid) LIKE ? OR LOWER(profiles.nickname) LIKE ? OR LOWER(profiles.holder_name) LIKE ? OR LOWER(profiles.phone) LIKE ?",
+				searchPattern, searchPattern, searchPattern, searchPattern,
+			).
+			Pluck("users.id", &matchingUserIDs)
+		if len(matchingUserIDs) > 0 {
+			query = query.Where("id IN ?", matchingUserIDs)
+		} else {
+			query = query.Where("1 = 0")
+		}
+	}
+
+	// Preload Profile - ensure it's loaded
+	query = query.Preload("Profile")
+
+	// Get total count before pagination
+	var totalCount int64
+	query.Model(&models.User{}).Count(&totalCount)
+
+	// Get all sub-distributors (no pagination for now, as we need nested structure)
+	// Note: Pagination is handled on frontend after flattening nested structure
+	var distributors []models.User
+	if err := query.Order("created_at DESC").Find(&distributors).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Debug: Log the count of distributors found
+	fmt.Printf("🔍 Found %d sub-distributors for partner ID: %d (total in DB: %d)\n", len(distributors), partner.ID, totalCount)
+
+	// Build response with nested structure
+	distributorsResponse := make([]SubDistributorResponse, 0, len(distributors))
+	today := time.Now().Format("2006-01-02")
+
+	for _, distributor := range distributors {
+		// Check if Profile is loaded
+		if distributor.Profile.ID == 0 {
+			fmt.Printf("⚠️ Warning: Profile not loaded for distributor ID: %d, Userid: %s\n", distributor.ID, distributor.Userid)
+			// Try to load profile if not loaded
+			initializers.DB.Model(&distributor).Preload("Profile").First(&distributor)
+		}
+
+		// Count number of members (direct children)
+		var numberOfMembers int64
+		memberQuery := initializers.DB.Model(&models.User{}).
+			Where("parent_id = ?", distributor.ID)
+
+		if onlyDirectMembers {
+			// Only count direct members, not sub-distributors
+			memberQuery = memberQuery.Where("role = ?", "U")
+		}
+
+		memberQuery.Count(&numberOfMembers)
+
+		// Get settlement type - default value
+		settlementType := "(Be-Dang)*Rate%-Rolling-Rolling Conversion"
+
+		// Calculate rolling rates (10 game types)
+		rollingRates := []float64{
+			distributor.Live,
+			distributor.Slot,
+			distributor.Hold,
+			distributor.MiniDanpolRolling,
+			distributor.MiniCombinationRolling,
+			distributor.SportsDanpolRolling,
+			distributor.SportsDupolRolling,
+			distributor.Sports3PoleRolling,
+			distributor.Sports4PoleRolling,
+		}
+		rollingRateStr := ""
+		for i, rate := range rollingRates {
+			if i > 0 {
+				rollingRateStr += "/"
+			}
+			rollingRateStr += fmt.Sprintf("%.0f", rate)
+		}
+
+		// Calculate losing rates (10 game types)
+		losingRates := []float64{
+			distributor.EntireLosing,
+			distributor.LiveLosingBeDang,
+			distributor.SlotLosingBeDang,
+			distributor.HoldLosingBeDang,
+			0, // Mini danpol losing
+			0, // Mini combination losing
+			0, // Sports danpol losing
+			0, // Sports dupol losing
+			0, // Sports 3pole losing
+			0, // Sports 4pole losing
+		}
+		losingRateStr := ""
+		for i, rate := range losingRates {
+			if i > 0 {
+				losingRateStr += "/"
+			}
+			losingRateStr += fmt.Sprintf("%.0f", rate)
+		}
+
+		// Calculate rolling today (transactions with type "Rolling" for today)
+		var rollingToday float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND DATE(created_at) = ?", distributor.ID, "Rolling", today).
+			Select("COALESCE(ABS(SUM(amount)),0)").
+			Scan(&rollingToday)
+
+		// Calculate losing today (lost bets settled today)
+		var losingToday float64
+		initializers.DB.Model(&models.Bet{}).
+			Where("user_id = ? AND status = ? AND DATE(settled_at) = ?", distributor.ID, "lost", today).
+			Select("COALESCE(SUM(stake),0)").
+			Scan(&losingToday)
+
+		// Ensure Profile is loaded
+		nickname := ""
+		balance := 0.0
+		point := int32(0)
+		if distributor.Profile.ID != 0 {
+			nickname = distributor.Profile.Nickname
+			balance = distributor.Profile.Balance
+			point = distributor.Profile.Point
+		} else {
+			fmt.Printf("⚠️ Profile missing for user ID: %d, attempting to load...\n", distributor.ID)
+			var profile models.Profile
+			if err := initializers.DB.Where("user_id = ?", distributor.ID).First(&profile).Error; err == nil {
+				nickname = profile.Nickname
+				balance = profile.Balance
+				point = profile.Point
+			}
+		}
+
+		distributorResp := SubDistributorResponse{
+			ID:              distributor.ID,
+			Userid:          distributor.Userid,
+			Nickname:        nickname,
+			NumberOfMembers: numberOfMembers,
+			Status:          distributor.Status,
+			AmountHeld:      balance,
+			Point:           point,
+			SettlementType:  settlementType,
+			RollingRate:     rollingRateStr,
+			RollingToday:    rollingToday,
+			LosingRate:      losingRateStr,
+			LosingToday:     losingToday,
+		}
+
+		// Get sub-distributors (nested) - show all users with parent_id = distributor.ID
+		if !onlyDirectMembers {
+			var subDistributors []models.User
+			subQuery := initializers.DB.Model(&models.User{}).
+				Where("parent_id = ?", distributor.ID).
+				Preload("Profile")
+
+			if statusFilter != "" {
+				subQuery = subQuery.Where("status = ?", statusFilter)
+			}
+
+			subQuery.Order("created_at DESC").Find(&subDistributors)
+
+			subDistributorsResp := make([]SubDistributorResponse, 0, len(subDistributors))
+			for _, subDist := range subDistributors {
+				var subNumberOfMembers int64
+				initializers.DB.Model(&models.User{}).
+					Where("parent_id = ?", subDist.ID).
+					Count(&subNumberOfMembers)
+
+				subSettlementType := "(Be-Dang)*Rate%-Rolling-Rolling Conversion"
+
+				subRollingRates := []float64{
+					subDist.Live,
+					subDist.Slot,
+					subDist.Hold,
+					subDist.MiniDanpolRolling,
+					subDist.MiniCombinationRolling,
+					subDist.SportsDanpolRolling,
+					subDist.SportsDupolRolling,
+					subDist.Sports3PoleRolling,
+					subDist.Sports4PoleRolling,
+				}
+				subRollingRateStr := ""
+				for i, rate := range subRollingRates {
+					if i > 0 {
+						subRollingRateStr += "/"
+					}
+					subRollingRateStr += fmt.Sprintf("%.0f", rate)
+				}
+
+				subLosingRates := []float64{
+					subDist.EntireLosing,
+					subDist.LiveLosingBeDang,
+					subDist.SlotLosingBeDang,
+					subDist.HoldLosingBeDang,
+					0, 0, 0, 0, 0, 0,
+				}
+				subLosingRateStr := ""
+				for i, rate := range subLosingRates {
+					if i > 0 {
+						subLosingRateStr += "/"
+					}
+					subLosingRateStr += fmt.Sprintf("%.0f", rate)
+				}
+
+				var subRollingToday float64
+				initializers.DB.Model(&models.Transaction{}).
+					Where("user_id = ? AND type = ? AND DATE(created_at) = ?", subDist.ID, "Rolling", today).
+					Select("COALESCE(ABS(SUM(amount)),0)").
+					Scan(&subRollingToday)
+
+				var subLosingToday float64
+				initializers.DB.Model(&models.Bet{}).
+					Where("user_id = ? AND status = ? AND DATE(settled_at) = ?", subDist.ID, "lost", today).
+					Select("COALESCE(SUM(stake),0)").
+					Scan(&subLosingToday)
+
+				// Ensure Profile is loaded for sub-distributor
+				subNickname := ""
+				subBalance := 0.0
+				subPoint := int32(0)
+				if subDist.Profile.ID != 0 {
+					subNickname = subDist.Profile.Nickname
+					subBalance = subDist.Profile.Balance
+					subPoint = subDist.Profile.Point
+				} else {
+					var subProfile models.Profile
+					if err := initializers.DB.Where("user_id = ?", subDist.ID).First(&subProfile).Error; err == nil {
+						subNickname = subProfile.Nickname
+						subBalance = subProfile.Balance
+						subPoint = subProfile.Point
+					}
+				}
+
+				subDistributorsResp = append(subDistributorsResp, SubDistributorResponse{
+					ID:              subDist.ID,
+					Userid:          subDist.Userid,
+					Nickname:        subNickname,
+					NumberOfMembers: subNumberOfMembers,
+					Status:          subDist.Status,
+					AmountHeld:      subBalance,
+					Point:           subPoint,
+					SettlementType:  subSettlementType,
+					RollingRate:     subRollingRateStr,
+					RollingToday:    subRollingToday,
+					LosingRate:      subLosingRateStr,
+					LosingToday:     subLosingToday,
+				})
+			}
+			distributorResp.SubDistributors = subDistributorsResp
+		}
+
+		distributorsResponse = append(distributorsResponse, distributorResp)
+	}
+
+	// Return response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    distributorsResponse,
+		"pagination": gin.H{
+			"total":        totalCount,
+			"current_page": page,
+			"per_page":     perPage,
+		},
 	})
 }

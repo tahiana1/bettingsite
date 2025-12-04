@@ -61,17 +61,18 @@ func GetPartnerRollingHistory(c *gin.Context) {
 
 	// Apply type filter
 	if typeFilter != "" && typeFilter != "entire" {
-		if typeFilter == "bettingRelatedRolling" {
+		switch typeFilter {
+		case "bettingRelatedRolling":
 			// Betting-related rolling - transactions with shortcut (game info)
 			query = query.Where("shortcut != ? AND shortcut != ?", "", " ")
-		} else if typeFilter == "memberRollingCoversation" {
+		case "memberRollingCoversation":
 			// Member rolling conversion - transactions with type "rollingExchange" but we're already filtering by "Rolling"
 			// This might need adjustment based on actual business logic
 			query = query.Where("explation LIKE ?", "%conversion%")
-		} else if typeFilter == "rollingCoversationOfDistributor" {
+		case "rollingCoversationOfDistributor":
 			// Rolling conversion of distributor
 			query = query.Where("explation LIKE ?", "%distributor%")
-		} else if typeFilter == "adminRollingPayments" {
+		case "adminRollingPayments":
 			// Administrator rolling payment
 			query = query.Where("explation LIKE ?", "%admin%")
 		}
@@ -115,20 +116,21 @@ func GetPartnerRollingHistory(c *gin.Context) {
 	summaryQuery := initializers.DB.Model(&models.Transaction{}).
 		Where("user_id = ?", partner.ID).
 		Where("type = ?", "Rolling")
-	
+
 	// Apply same filters for summary
 	if typeFilter != "" && typeFilter != "entire" {
-		if typeFilter == "bettingRelatedRolling" {
+		switch typeFilter {
+		case "bettingRelatedRolling":
 			summaryQuery = summaryQuery.Where("shortcut != ? AND shortcut != ?", "", " ")
-		} else if typeFilter == "memberRollingCoversation" {
+		case "memberRollingCoversation":
 			summaryQuery = summaryQuery.Where("explation LIKE ?", "%conversion%")
-		} else if typeFilter == "rollingCoversationOfDistributor" {
+		case "rollingCoversationOfDistributor":
 			summaryQuery = summaryQuery.Where("explation LIKE ?", "%distributor%")
-		} else if typeFilter == "adminRollingPayments" {
+		case "adminRollingPayments":
 			summaryQuery = summaryQuery.Where("explation LIKE ?", "%admin%")
 		}
 	}
-	
+
 	if dateFrom != "" {
 		summaryQuery = summaryQuery.Where(dateField+" >= ?", dateFrom)
 	}
@@ -140,7 +142,7 @@ func GetPartnerRollingHistory(c *gin.Context) {
 			summaryQuery = summaryQuery.Where(dateField+" <= ?", dateTo)
 		}
 	}
-	
+
 	if searchQuery != "" {
 		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
 		summaryQuery = summaryQuery.Where(
@@ -148,10 +150,10 @@ func GetPartnerRollingHistory(c *gin.Context) {
 			searchPattern, searchPattern, searchPattern,
 		)
 	}
-	
+
 	// Betting amount is the absolute sum of amounts (this represents the betting amount that generated the rolling)
 	summaryQuery.Select("COALESCE(SUM(ABS(amount)), 0)").Scan(&bettingAmount)
-	
+
 	// Rollover amount is the sum of rolling gold (amount field in Rolling transactions)
 	rolloverAmount = bettingAmount // For now, using same value. Adjust based on business logic if needed
 
@@ -172,18 +174,18 @@ func GetPartnerRollingHistory(c *gin.Context) {
 		ID            uint    `json:"id"`
 		UserID        uint    `json:"userId"`
 		Type          string  `json:"type"`
-		Amount        float64 `json:"amount"` // Rolling gold amount
+		Amount        float64 `json:"amount"`        // Rolling gold amount
 		BalanceBefore float64 `json:"balanceBefore"` // Previous rolling fee
 		BalanceAfter  float64 `json:"balanceAfter"`  // After that rolling money
 		Shortcut      string  `json:"shortcut"`      // Game company|Game name
 		Explation     string  `json:"explation"`
 		Status        string  `json:"status"`
 		TransactionAt string  `json:"transactionAt"` // Betting time
-		CreatedAt     string  `json:"createdAt"`    // Registration time
+		CreatedAt     string  `json:"createdAt"`     // Registration time
 		User          struct {
-			ID      uint   `json:"id"`
-			Userid  string `json:"userid"`
-			Name    string `json:"name"`
+			ID      uint    `json:"id"`
+			Userid  string  `json:"userid"`
+			Name    string  `json:"name"`
 			Live    float64 `json:"live"` // Rolling percentage
 			Profile *struct {
 				Nickname string `json:"nickname"`
@@ -231,7 +233,7 @@ func GetPartnerRollingHistory(c *gin.Context) {
 		"success": true,
 		"data":    responseData,
 		"summary": gin.H{
-			"bettingAmount": bettingAmount,
+			"bettingAmount":  bettingAmount,
 			"rolloverAmount": rolloverAmount,
 		},
 		"pagination": gin.H{
@@ -244,4 +246,3 @@ func GetPartnerRollingHistory(c *gin.Context) {
 		},
 	})
 }
-

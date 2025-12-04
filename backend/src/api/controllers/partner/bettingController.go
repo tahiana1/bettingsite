@@ -58,12 +58,11 @@ func GetPartnerCasinoBetting(c *gin.Context) {
 		})
 
 	// Apply filters
-	if input.GameNameFilter != "" {
-		if input.GameNameFilter == "slot" {
-			query = query.Where("casino_bets.game_name LIKE ?", "%slot%")
-		} else if input.GameNameFilter == "not_slot" {
-			query = query.Where("casino_bets.game_name NOT LIKE ?", "%slot%")
-		}
+	switch input.GameNameFilter {
+	case "slot":
+		query = query.Where("casino_bets.game_name LIKE ?", "%slot%")
+	case "not_slot":
+		query = query.Where("casino_bets.game_name NOT LIKE ?", "%slot%")
 	}
 
 	if input.Status != "" && (input.Status == "bet" || input.Status == "win") {
@@ -141,9 +140,10 @@ func GetPartnerCasinoBetting(c *gin.Context) {
 		var wins []models.CasinoBet
 
 		for _, record := range group {
-			if record.Type == "bet" {
+			switch record.Type {
+			case "bet":
 				bets = append(bets, record)
-			} else if record.Type == "win" {
+			case "win":
 				wins = append(wins, record)
 			}
 		}

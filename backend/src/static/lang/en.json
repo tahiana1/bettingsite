@@ -2419,5 +2419,18 @@
   "accumulatedPoints" : "Accumulated Points",
   "lastSettlementDate" : "Last Settlement Date",
   "rolloverAmount" : "Rollover Amount",
-  "searchByRegistrationTime" : "Search by Registration Time"
+  "searchByRegistrationTime" : "Search by Registration Time",
+  "membershipType" : "Membership Type",
+  "entryAndExit" : "Entry and Exit",
+  "numberOfDeposits" : "Number of Deposits",
+  "referralLinkO" : "Referral Link O",
+  "noReferralLinkX" : "No Referral Link X",
+  "allMembers" : "All Members",
+  "membersWhoRefuseToJoin" : "Members Who Refuse to Join",
+  "dormantMembers" : "Dormant Members",
+  "rollingToday" : "Rolling Today",
+  "losingToday" : "Losing Today",
+  "viewAllLowerPart" : "View All Lower Part",
+  "openOnlyToDirectMembers" : "Open only to direct members",
+  "subDistributorRegistration" : "Sub-distributor Registration"
 } 
