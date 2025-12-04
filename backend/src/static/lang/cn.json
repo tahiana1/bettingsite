@@ -2420,5 +2420,8 @@
   "moneyHoldAfter" : "之后持有金额",
   "pointConversionRequest" : "点数转换请求",
   "pointConversionRequestSuccess" : "点数转换请求成功",
-  "pointConversionRequestFailed" : "点数转换请求失败"
+  "pointConversionRequestFailed" : "点数转换请求失败",
+  "lossAmount" : "亏损金额",
+  "accumulatedPoints" : "累计点数",
+  "lastSettlementDate" : "最后结算日期"
 }

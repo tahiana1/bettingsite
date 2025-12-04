@@ -2414,5 +2414,8 @@
   "moneyHoldAfter" : "Money Hold After",
   "pointConversionRequest" : "Point Conversion Request",
   "pointConversionRequestSuccess" : "Point Conversion Request Success",
-  "pointConversionRequestFailed" : "Point Conversion Request Failed"
+  "pointConversionRequestFailed" : "Point Conversion Request Failed",
+  "lossAmount" : "Loss Amount",
+  "accumulatedPoints" : "Accumulated Points",
+  "lastSettlementDate" : "Last Settlement Date"
 } 
