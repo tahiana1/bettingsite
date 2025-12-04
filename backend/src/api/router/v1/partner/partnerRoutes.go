@@ -32,6 +32,9 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	r.POST("/betting/casino", controllers.GetPartnerCasinoBetting)
 	r.POST("/betting/minigame", controllers.GetPartnerMiniGameBetting)
 
+	// Transaction routes
+	r.GET("/transactions", controllers.GetPartnerTransactions)
+
 	// Member management routes
 	memberRouter := r.Group("/member-management")
 	{

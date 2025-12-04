@@ -2406,5 +2406,6 @@
   "pleaseSelectRecipient" : "请选择收件人",
   "searchUser" : "搜索用户",
   "qnaCreated" : "问答已创建",
-  "qnaUpdated" : "问答已更新"
+  "qnaUpdated" : "问答已更新",
+  "processedDate" : "处理时间"
 }

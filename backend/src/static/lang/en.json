@@ -2400,5 +2400,6 @@
   "pleaseSelectRecipient" : "Please select a recipient",
   "searchUser" : "Search User",
   "qnaCreated" : "Qna Created",
-  "qnaUpdated" : "Qna Updated"
+  "qnaUpdated" : "Qna Updated",
+  "processedDate" : "Processed Date"
 } 
