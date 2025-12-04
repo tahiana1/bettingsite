@@ -2401,5 +2401,18 @@
   "searchUser" : "Search User",
   "qnaCreated" : "Qna Created",
   "qnaUpdated" : "Qna Updated",
-  "processedDate" : "Processed Date"
+  "processedDate" : "Processed Date",
+  "applicationAmount" : "Application Amount",
+  "afterProcessing" : "After Processing",
+  "rollingBalance" : "Rolling Balance",
+  "beforeProcessing" : "Before Processing",
+  "application" : "Application",
+  "pointsHold" : "Points Hold",
+  "previousPoint" : "Previous Point",
+  "afterPoint" : "After Point",
+  "previouslyHoldMoney" : "Previously Held Money",
+  "moneyHoldAfter" : "Money Hold After",
+  "pointConversionRequest" : "Point Conversion Request",
+  "pointConversionRequestSuccess" : "Point Conversion Request Success",
+  "pointConversionRequestFailed" : "Point Conversion Request Failed"
 } 

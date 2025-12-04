@@ -49,8 +49,8 @@ export default function MyDepositWidthdrawalPage() {
     api("user/me").then((res) => {
       setDepositProfile(res.data.profile);
       setWithdrawProfile(res.data.profile);
-      setDepositBalance(res.balance || 0);
-      setWithdrawBalance(res.balance || 0);
+      setDepositBalance(res.data.profile?.balance || 0);
+      setWithdrawBalance(res.data.profile?.balance || 0);
     }).catch((err) => {
       console.log(err);
     });
@@ -129,6 +129,15 @@ export default function MyDepositWidthdrawalPage() {
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, dateRange, searchValue]);
+
+  // Auto-refresh transactions every 10 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      loadTransactions();
+    }, 10000); // 10 seconds
+
+    return () => clearInterval(intervalId);
+  }, [loadTransactions]);
   
   // Deposit functions
   const submitDeposit = (amount: number, rechargeBonus: string) => {
@@ -156,8 +165,8 @@ export default function MyDepositWidthdrawalPage() {
         setRechargeBonus("");
         // Refresh balance
         api("user/me").then((res) => {
-          setDepositBalance(res.balance || 0);
-          setWithdrawBalance(res.balance || 0);
+          setDepositBalance(res.data.profile?.balance || 0);
+          setWithdrawBalance(res.data.profile?.balance || 0);
         });
         // Refresh transactions
         refreshTransactions();
@@ -219,8 +228,8 @@ export default function MyDepositWidthdrawalPage() {
         setWithdrawAmount(0);
         // Refresh balance
         api("user/me").then((res) => {
-          setDepositBalance(res.balance || 0);
-          setWithdrawBalance(res.balance || 0);
+          setDepositBalance(res.data.profile?.balance || 0);
+          setWithdrawBalance(res.data.profile?.balance || 0);
         });
         // Refresh transactions
         refreshTransactions();

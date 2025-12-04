@@ -98,6 +98,19 @@ func CreateTransaction(c *gin.Context) {
 		pointAfter = pointBefore - transactionInput.Amount
 		balanceAfter = balanceBefore + transactionInput.Amount
 		balanceBefore = profile.Balance
+	} else if transactionInput.Type == "rollingExchange" {
+		// Check if user has sufficient rolling
+		if profile.Roll < transactionInput.Amount {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Insufficient rolling for conversion",
+			})
+			return
+		}
+		// For rolling exchange, PointBefore/PointAfter represent rolling before/after
+		pointBefore = profile.Roll
+		pointAfter = profile.Roll - transactionInput.Amount
+		balanceAfter = balanceBefore + transactionInput.Amount
+		balanceBefore = profile.Balance
 	}
 
 	// Create transaction record

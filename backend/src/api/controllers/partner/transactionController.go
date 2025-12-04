@@ -212,3 +212,407 @@ func GetPartnerTransactions(c *gin.Context) {
 		},
 	})
 }
+
+// GetPartnerRollingTransactions returns rolling exchange transactions for the authenticated partner user
+func GetPartnerRollingTransactions(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "10")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 10
+	}
+
+	// Get filter parameters
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+
+	// Build query for rolling exchange transactions where user_id = partner.ID
+	query := initializers.DB.Model(&models.Transaction{}).
+		Where("user_id = ?", partner.ID).
+		Where("type = ?", "rollingExchange").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, userid, name").Preload("Profile", func(db *gorm.DB) *gorm.DB {
+				return db.Select("user_id, balance, roll, nickname, phone, level")
+			})
+		})
+
+	// Apply date range filter
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		// Add end of day to dateTo
+		if dateToTime, err := time.Parse("2006-01-02", dateTo); err == nil {
+			dateToTime = dateToTime.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			query = query.Where("created_at <= ?", dateToTime)
+		} else {
+			query = query.Where("created_at <= ?", dateTo)
+		}
+	}
+
+	// Apply search filter (nickname, phone, transaction ID, userid)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		query = query.Where(
+			"LOWER(CAST(id AS TEXT)) LIKE ? OR EXISTS (SELECT 1 FROM users JOIN profiles ON profiles.user_id = users.id WHERE users.id = transactions.user_id AND (LOWER(users.userid) LIKE ? OR LOWER(users.name) LIKE ? OR LOWER(profiles.phone) LIKE ? OR LOWER(profiles.nickname) LIKE ?))",
+			searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+		)
+	}
+
+	// Get total count before pagination
+	var total int64
+	query.Model(&models.Transaction{}).Count(&total)
+
+	// Apply pagination and ordering
+	offset := (page - 1) * perPage
+	var transactions []models.Transaction
+	if err := query.
+		Offset(offset).
+		Limit(perPage).
+		Order("created_at DESC").
+		Find(&transactions).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build response with rolling transaction fields
+	type RollingTransactionResponse struct {
+		ID            uint    `json:"id"`
+		UserID        uint    `json:"userId"`
+		Type          string  `json:"type"`
+		Amount        float64 `json:"amount"`
+		BalanceBefore float64 `json:"balanceBefore"`
+		BalanceAfter  float64 `json:"balanceAfter"`
+		PointBefore   float64 `json:"pointBefore"` // Used for rolling before
+		PointAfter    float64 `json:"pointAfter"`  // Used for rolling after
+		Explation     string  `json:"explation"`
+		Status        string  `json:"status"`
+		TransactionAt string  `json:"transactionAt"`
+		ApprovedAt    string  `json:"approvedAt,omitempty"`
+		CreatedAt     string  `json:"createdAt"`
+		UpdatedAt     string  `json:"updatedAt"`
+		User          struct {
+			ID      uint   `json:"id"`
+			Userid  string `json:"userid"`
+			Name    string `json:"name"`
+			Phone   string `json:"phone,omitempty"`
+			Profile *struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Roll     float64 `json:"roll"`
+				Level    int32   `json:"level"`
+			} `json:"profile,omitempty"`
+		} `json:"user"`
+	}
+
+	responseData := make([]RollingTransactionResponse, len(transactions))
+	for i, t := range transactions {
+		responseData[i] = RollingTransactionResponse{
+			ID:            t.ID,
+			UserID:        t.UserID,
+			Type:          t.Type,
+			Amount:        t.Amount,
+			BalanceBefore: t.BalanceBefore,
+			BalanceAfter:  t.BalanceAfter,
+			PointBefore:   t.PointBefore,
+			PointAfter:    t.PointAfter,
+			Explation:     t.Explation,
+			Status:        t.Status,
+			TransactionAt: t.TransactionAt.Format(time.RFC3339),
+			CreatedAt:     t.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     t.UpdatedAt.Format(time.RFC3339),
+		}
+
+		// Set ApprovedAt if not zero
+		if !t.ApprovedAt.IsZero() {
+			responseData[i].ApprovedAt = t.ApprovedAt.Format(time.RFC3339)
+		}
+
+		// Set User data
+		responseData[i].User.ID = t.User.ID
+		responseData[i].User.Userid = t.User.Userid
+		responseData[i].User.Name = t.User.Name
+
+		// Set Profile data if exists
+		if t.User.Profile.ID != 0 {
+			responseData[i].User.Profile = &struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Roll     float64 `json:"roll"`
+				Level    int32   `json:"level"`
+			}{
+				Nickname: t.User.Profile.Nickname,
+				Phone:    t.User.Profile.Phone,
+				Balance:  t.User.Profile.Balance,
+				Roll:     t.User.Profile.Roll,
+				Level:    t.User.Profile.Level,
+			}
+			// Also set phone at user level for easier access
+			responseData[i].User.Phone = t.User.Profile.Phone
+		}
+	}
+
+	// Get partner profile for summary
+	var profile models.Profile
+	if err := initializers.DB.Where("user_id = ?", partner.ID).First(&profile).Error; err == nil {
+		// Return response with summary
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    responseData,
+			"summary": gin.H{
+				"amountHeld":     profile.Balance, // Amount held (balance)
+				"rollingBalance": profile.Roll,    // Rolling balance
+			},
+			"pagination": gin.H{
+				"current_page": page,
+				"from":         offset + 1,
+				"to":           offset + len(transactions),
+				"last_page":    (int(total) + perPage - 1) / perPage,
+				"per_page":     perPage,
+				"total":        total,
+			},
+		})
+	} else {
+		// Return response without summary if profile not found
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    responseData,
+			"summary": gin.H{
+				"amountHeld":     0.0,
+				"rollingBalance": 0.0,
+			},
+			"pagination": gin.H{
+				"current_page": page,
+				"from":         offset + 1,
+				"to":           offset + len(transactions),
+				"last_page":    (int(total) + perPage - 1) / perPage,
+				"per_page":     perPage,
+				"total":        total,
+			},
+		})
+	}
+}
+
+// GetPartnerPointTransactions returns point conversion transactions for the authenticated partner user
+func GetPartnerPointTransactions(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "10")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 10
+	}
+
+	// Get filter parameters
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+
+	// Build query for point conversion transactions where user_id = partner.ID
+	query := initializers.DB.Model(&models.Transaction{}).
+		Where("user_id = ?", partner.ID).
+		Where("type = ?", "point").
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, userid, name").Preload("Profile", func(db *gorm.DB) *gorm.DB {
+				return db.Select("user_id, balance, point, nickname, phone, level")
+			})
+		})
+
+	// Apply date range filter
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		// Add end of day to dateTo
+		if dateToTime, err := time.Parse("2006-01-02", dateTo); err == nil {
+			dateToTime = dateToTime.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			query = query.Where("created_at <= ?", dateToTime)
+		} else {
+			query = query.Where("created_at <= ?", dateTo)
+		}
+	}
+
+	// Apply search filter (nickname, phone, transaction ID, userid)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		query = query.Where(
+			"LOWER(CAST(id AS TEXT)) LIKE ? OR EXISTS (SELECT 1 FROM users JOIN profiles ON profiles.user_id = users.id WHERE users.id = transactions.user_id AND (LOWER(users.userid) LIKE ? OR LOWER(users.name) LIKE ? OR LOWER(profiles.phone) LIKE ? OR LOWER(profiles.nickname) LIKE ?))",
+			searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+		)
+	}
+
+	// Get total count before pagination
+	var total int64
+	query.Model(&models.Transaction{}).Count(&total)
+
+	// Apply pagination and ordering
+	offset := (page - 1) * perPage
+	var transactions []models.Transaction
+	if err := query.
+		Offset(offset).
+		Limit(perPage).
+		Order("created_at DESC").
+		Find(&transactions).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build response with point transaction fields
+	type PointTransactionResponse struct {
+		ID            uint    `json:"id"`
+		UserID        uint    `json:"userId"`
+		Type          string  `json:"type"`
+		Amount        float64 `json:"amount"`
+		BalanceBefore float64 `json:"balanceBefore"`
+		BalanceAfter  float64 `json:"balanceAfter"`
+		PointBefore   float64 `json:"pointBefore"` // Point before conversion
+		PointAfter    float64 `json:"pointAfter"`  // Point after conversion
+		Explation     string  `json:"explation"`
+		Status        string  `json:"status"`
+		TransactionAt string  `json:"transactionAt"`
+		ApprovedAt    string  `json:"approvedAt,omitempty"`
+		CreatedAt     string  `json:"createdAt"`
+		UpdatedAt     string  `json:"updatedAt"`
+		User          struct {
+			ID      uint   `json:"id"`
+			Userid  string `json:"userid"`
+			Name    string `json:"name"`
+			Phone   string `json:"phone,omitempty"`
+			Profile *struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Point    int32   `json:"point"`
+				Level    int32   `json:"level"`
+			} `json:"profile,omitempty"`
+		} `json:"user"`
+	}
+
+	responseData := make([]PointTransactionResponse, len(transactions))
+	for i, t := range transactions {
+		responseData[i] = PointTransactionResponse{
+			ID:            t.ID,
+			UserID:        t.UserID,
+			Type:          t.Type,
+			Amount:        t.Amount,
+			BalanceBefore: t.BalanceBefore,
+			BalanceAfter:  t.BalanceAfter,
+			PointBefore:   t.PointBefore,
+			PointAfter:    t.PointAfter,
+			Explation:     t.Explation,
+			Status:        t.Status,
+			TransactionAt: t.TransactionAt.Format(time.RFC3339),
+			CreatedAt:     t.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     t.UpdatedAt.Format(time.RFC3339),
+		}
+
+		// Set ApprovedAt if not zero
+		if !t.ApprovedAt.IsZero() {
+			responseData[i].ApprovedAt = t.ApprovedAt.Format(time.RFC3339)
+		}
+
+		// Set User data
+		responseData[i].User.ID = t.User.ID
+		responseData[i].User.Userid = t.User.Userid
+		responseData[i].User.Name = t.User.Name
+
+		// Set Profile data if exists
+		if t.User.Profile.ID != 0 {
+			responseData[i].User.Profile = &struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Point    int32   `json:"point"`
+				Level    int32   `json:"level"`
+			}{
+				Nickname: t.User.Profile.Nickname,
+				Phone:    t.User.Profile.Phone,
+				Balance:  t.User.Profile.Balance,
+				Point:    t.User.Profile.Point,
+				Level:    t.User.Profile.Level,
+			}
+			// Also set phone at user level for easier access
+			responseData[i].User.Phone = t.User.Profile.Phone
+		}
+	}
+
+	// Get partner profile for summary
+	var profile models.Profile
+	if err := initializers.DB.Where("user_id = ?", partner.ID).First(&profile).Error; err == nil {
+		// Return response with summary
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    responseData,
+			"summary": gin.H{
+				"amountHeld": profile.Balance,        // Amount held (balance)
+				"pointsHeld": float64(profile.Point), // Points held
+			},
+			"pagination": gin.H{
+				"current_page": page,
+				"from":         offset + 1,
+				"to":           offset + len(transactions),
+				"last_page":    (int(total) + perPage - 1) / perPage,
+				"per_page":     perPage,
+				"total":        total,
+			},
+		})
+	} else {
+		// Return response without summary if profile not found
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"data":    responseData,
+			"summary": gin.H{
+				"amountHeld": 0.0,
+				"pointsHeld": 0.0,
+			},
+			"pagination": gin.H{
+				"current_page": page,
+				"from":         offset + 1,
+				"to":           offset + len(transactions),
+				"last_page":    (int(total) + perPage - 1) / perPage,
+				"per_page":     perPage,
+				"total":        total,
+			},
+		})
+	}
+}
