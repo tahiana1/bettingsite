@@ -49,6 +49,9 @@ export interface GetPartnerTransactionsParams {
   dateTo?: string;
 }
 
+// Optional params for money history (same as generic transactions but conceptually separated)
+export interface GetPartnerMoneyHistoryParams extends GetPartnerTransactionsParams {}
+
 export interface PartnerRollingTransaction {
   id: number;
   userId: number;
@@ -188,6 +191,41 @@ export const partnerTransactionAPI = {
     const url = queryString
       ? `partner/transactions?${queryString}`
       : "partner/transactions";
+
+    return api(url, {
+      method: "GET",
+    });
+  },
+
+  // Get partner money history transactions (limited to money-related types)
+  getMoneyHistory: async (
+    params: GetPartnerMoneyHistoryParams = {}
+  ): Promise<PartnerTransactionsResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params.perPage) {
+      queryParams.append("perPage", params.perPage.toString());
+    }
+    if (params.type && params.type !== "entire") {
+      queryParams.append("type", params.type);
+    }
+    if (params.search) {
+      queryParams.append("search", params.search);
+    }
+    if (params.dateFrom) {
+      queryParams.append("dateFrom", params.dateFrom);
+    }
+    if (params.dateTo) {
+      queryParams.append("dateTo", params.dateTo);
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `partner/transactions/money-history?${queryString}`
+      : "partner/transactions/money-history";
 
     return api(url, {
       method: "GET",

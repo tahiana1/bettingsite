@@ -36,6 +36,7 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	r.GET("/transactions", controllers.GetPartnerTransactions)
 	r.GET("/transactions/rolling", controllers.GetPartnerRollingTransactions)
 	r.GET("/transactions/point", controllers.GetPartnerPointTransactions)
+	r.GET("/transactions/money-history", controllers.GetPartnerMoneyHistory)
 
 	// Member management routes
 	memberRouter := r.Group("/member-management")

@@ -213,6 +213,201 @@ func GetPartnerTransactions(c *gin.Context) {
 	})
 }
 
+// GetPartnerMoneyHistory returns money-related transactions for the authenticated partner user.
+// It is similar to GetPartnerTransactions but restricted to specific transaction types that
+// affect the partner's money/points history.
+func GetPartnerMoneyHistory(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "10")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 10
+	}
+
+	// Get filter parameters
+	typeFilter := c.Query("type") // "entire" or a specific transaction type
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+
+	// Allowed money history transaction types
+	allowedTypes := []string{
+		"deposit",
+		"minigame_place",
+		"rollingExchange",
+		"point",
+		"pointDeposit",
+		"directDeposit",
+		"directWithdraw",
+	}
+
+	// Base query: partner's transactions limited to allowed types
+	query := initializers.DB.Model(&models.Transaction{}).
+		Where("user_id = ?", partner.ID).
+		Where("type IN ?", allowedTypes).
+		Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id, userid, name").Preload("Profile", func(db *gorm.DB) *gorm.DB {
+				return db.Select("user_id, balance, nickname, phone, level")
+			})
+		})
+
+	// Apply type filter if provided (and not "entire")
+	if typeFilter != "" && typeFilter != "entire" {
+		query = query.Where("type = ?", typeFilter)
+	}
+
+	// Apply date range filter
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		// Add end of day to dateTo
+		if dateToTime, err := time.Parse("2006-01-02", dateTo); err == nil {
+			dateToTime = dateToTime.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			query = query.Where("created_at <= ?", dateToTime)
+		} else {
+			query = query.Where("created_at <= ?", dateTo)
+		}
+	}
+
+	// Apply search filter (nickname, phone, transaction ID)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		query = query.Where(
+			"LOWER(CAST(id AS TEXT)) LIKE ? OR EXISTS (SELECT 1 FROM users JOIN profiles ON profiles.user_id = users.id WHERE users.id = transactions.user_id AND (LOWER(users.userid) LIKE ? OR LOWER(users.name) LIKE ? OR LOWER(profiles.phone) LIKE ? OR LOWER(profiles.nickname) LIKE ?))",
+			searchPattern, searchPattern, searchPattern, searchPattern, searchPattern,
+		)
+	}
+
+	// Get total count before pagination
+	var total int64
+	query.Model(&models.Transaction{}).Count(&total)
+
+	// Apply pagination and ordering
+	offset := (page - 1) * perPage
+	var transactions []models.Transaction
+	if err := query.
+		Offset(offset).
+		Limit(perPage).
+		Order("created_at DESC").
+		Find(&transactions).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Reuse the same response structure as GetPartnerTransactions
+	type TransactionResponse struct {
+		ID            uint    `json:"id"`
+		UserID        uint    `json:"userId"`
+		Type          string  `json:"type"`
+		Amount        float64 `json:"amount"`
+		BalanceBefore float64 `json:"balanceBefore"`
+		BalanceAfter  float64 `json:"balanceAfter"`
+		Explation     string  `json:"explation"`
+		Status        string  `json:"status"`
+		TransactionAt string  `json:"transactionAt"`
+		ApprovedAt    string  `json:"approvedAt,omitempty"`
+		CreatedAt     string  `json:"createdAt"`
+		UpdatedAt     string  `json:"updatedAt"`
+		DeletedAt     *string `json:"deletedAt,omitempty"`
+		User          struct {
+			ID      uint   `json:"id"`
+			Userid  string `json:"userid"`
+			Name    string `json:"name"`
+			Phone   string `json:"phone,omitempty"`
+			Profile *struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Level    int32   `json:"level"`
+			} `json:"profile,omitempty"`
+		} `json:"user"`
+	}
+
+	responseData := make([]TransactionResponse, len(transactions))
+	for i, t := range transactions {
+		responseData[i] = TransactionResponse{
+			ID:            t.ID,
+			UserID:        t.UserID,
+			Type:          t.Type,
+			Amount:        t.Amount,
+			BalanceBefore: t.BalanceBefore,
+			BalanceAfter:  t.BalanceAfter,
+			Explation:     t.Explation,
+			Status:        t.Status,
+			TransactionAt: t.TransactionAt.Format(time.RFC3339),
+			CreatedAt:     t.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     t.UpdatedAt.Format(time.RFC3339),
+		}
+
+		// Set ApprovedAt if not zero
+		if !t.ApprovedAt.IsZero() {
+			responseData[i].ApprovedAt = t.ApprovedAt.Format(time.RFC3339)
+		}
+
+		// Set DeletedAt if exists
+		if t.DeletedAt != nil {
+			deletedAtStr := t.DeletedAt.Time.Format(time.RFC3339)
+			responseData[i].DeletedAt = &deletedAtStr
+		}
+
+		// Set User data
+		responseData[i].User.ID = t.User.ID
+		responseData[i].User.Userid = t.User.Userid
+		responseData[i].User.Name = t.User.Name
+
+		// Set Profile data if exists
+		if t.User.Profile.ID != 0 {
+			responseData[i].User.Profile = &struct {
+				Nickname string  `json:"nickname"`
+				Phone    string  `json:"phone"`
+				Balance  float64 `json:"balance"`
+				Level    int32   `json:"level"`
+			}{
+				Nickname: t.User.Profile.Nickname,
+				Phone:    t.User.Profile.Phone,
+				Balance:  t.User.Profile.Balance,
+				Level:    t.User.Profile.Level,
+			}
+			// Also set phone at user level for easier access
+			responseData[i].User.Phone = t.User.Profile.Phone
+		}
+	}
+
+	// Return response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    responseData,
+		"pagination": gin.H{
+			"current_page": page,
+			"from":         offset + 1,
+			"to":           offset + len(transactions),
+			"last_page":    (int(total) + perPage - 1) / perPage,
+			"per_page":     perPage,
+			"total":        total,
+		},
+	})
+}
+
 // GetPartnerRollingTransactions returns rolling exchange transactions for the authenticated partner user
 func GetPartnerRollingTransactions(c *gin.Context) {
 	// Get the authenticated partner user
