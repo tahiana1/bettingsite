@@ -211,6 +211,57 @@ export interface GetPartnerPointDetailsParams {
   dateTo?: string;
 }
 
+export interface PartnerRollingHistoryTransaction {
+  id: number;
+  userId: number;
+  type: string;
+  amount: number; // Rolling gold amount
+  balanceBefore: number; // Previous rolling fee
+  balanceAfter: number; // After that rolling money
+  shortcut: string; // Game company|Game name
+  explation?: string;
+  status: string;
+  transactionAt: string; // Betting time
+  createdAt: string; // Registration time
+  user?: {
+    id: number;
+    userid: string;
+    name?: string;
+    live: number; // Rolling percentage
+    profile?: {
+      nickname?: string;
+      level?: number;
+    };
+  };
+}
+
+export interface PartnerRollingHistoryResponse {
+  success: boolean;
+  data: PartnerRollingHistoryTransaction[];
+  summary: {
+    bettingAmount: number;
+    rolloverAmount: number;
+  };
+  pagination: {
+    current_page: number;
+    from: number;
+    to: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+export interface GetPartnerRollingHistoryParams {
+  page?: number;
+  perPage?: number;
+  type?: string; // "entire", "bettingRelatedRolling", "memberRollingCoversation", "rollingCoversationOfDistributor", "adminRollingPayments"
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  searchByRegistrationTime?: boolean;
+}
+
 // Partner Transaction API functions
 export const partnerTransactionAPI = {
   // Get all partner transactions with pagination and filters
@@ -376,6 +427,44 @@ export const partnerTransactionAPI = {
     const url = queryString
       ? `partner/transactions/point-details?${queryString}`
       : "partner/transactions/point-details";
+
+    return api(url, {
+      method: "GET",
+    });
+  },
+
+  // Get rolling history transactions for partner
+  getRollingHistory: async (
+    params: GetPartnerRollingHistoryParams = {}
+  ): Promise<PartnerRollingHistoryResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params.perPage) {
+      queryParams.append("perPage", params.perPage.toString());
+    }
+    if (params.type && params.type !== "entire") {
+      queryParams.append("type", params.type);
+    }
+    if (params.search) {
+      queryParams.append("search", params.search);
+    }
+    if (params.dateFrom) {
+      queryParams.append("dateFrom", params.dateFrom);
+    }
+    if (params.dateTo) {
+      queryParams.append("dateTo", params.dateTo);
+    }
+    if (params.searchByRegistrationTime) {
+      queryParams.append("searchByRegistrationTime", "true");
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `partner/transactions/rolling-history?${queryString}`
+      : "partner/transactions/rolling-history";
 
     return api(url, {
       method: "GET",

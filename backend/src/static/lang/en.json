@@ -2417,5 +2417,7 @@
   "pointConversionRequestFailed" : "Point Conversion Request Failed",
   "lossAmount" : "Loss Amount",
   "accumulatedPoints" : "Accumulated Points",
-  "lastSettlementDate" : "Last Settlement Date"
+  "lastSettlementDate" : "Last Settlement Date",
+  "rolloverAmount" : "Rollover Amount",
+  "searchByRegistrationTime" : "Search by Registration Time"
 } 

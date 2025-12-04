@@ -35,6 +35,7 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	// Transaction routes
 	r.GET("/transactions", controllers.GetPartnerTransactions)
 	r.GET("/transactions/rolling", controllers.GetPartnerRollingTransactions)
+	r.GET("/transactions/rolling-history", controllers.GetPartnerRollingHistory)
 	r.GET("/transactions/point", controllers.GetPartnerPointTransactions)
 	r.GET("/transactions/money-history", controllers.GetPartnerMoneyHistory)
 	r.GET("/transactions/point-details", controllers.GetPartnerPointDetails)

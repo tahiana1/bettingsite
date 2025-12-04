@@ -2423,5 +2423,7 @@
   "pointConversionRequestFailed" : "点数转换请求失败",
   "lossAmount" : "亏损金额",
   "accumulatedPoints" : "累计点数",
-  "lastSettlementDate" : "最后结算日期"
+  "lastSettlementDate" : "最后结算日期",
+  "rolloverAmount" : "滚存金额",
+  "searchByRegistrationTime" : "按注册时间搜索"
 }
