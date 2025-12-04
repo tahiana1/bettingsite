@@ -160,6 +160,57 @@ export interface GetPartnerPointTransactionsParams {
   dateTo?: string;
 }
 
+export interface PartnerPointDetailTransaction {
+  id: number;
+  userId: number;
+  user?: {
+    id: number;
+    userid: string;
+    name?: string;
+    phone?: string;
+    profile?: {
+      balance: number;
+      point: number;
+      nickname?: string;
+      level?: number;
+    };
+  };
+  type: string; // "point" or "pointDeposit"
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  pointBefore: number; // Point before transaction
+  pointAfter: number; // Point after transaction
+  explation?: string;
+  status: string;
+  transactionAt: string;
+  approvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PartnerPointDetailsResponse {
+  success: boolean;
+  data: PartnerPointDetailTransaction[];
+  pagination: {
+    current_page: number;
+    from: number;
+    to: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+export interface GetPartnerPointDetailsParams {
+  page?: number;
+  perPage?: number;
+  type?: string; // "entire", "point", "pointDeposit", or explanation filter
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
 // Partner Transaction API functions
 export const partnerTransactionAPI = {
   // Get all partner transactions with pagination and filters
@@ -290,6 +341,41 @@ export const partnerTransactionAPI = {
     const url = queryString
       ? `partner/transactions/point?${queryString}`
       : "partner/transactions/point";
+
+    return api(url, {
+      method: "GET",
+    });
+  },
+
+  // Get point details transactions for partner (point and pointDeposit types)
+  getPointDetails: async (
+    params: GetPartnerPointDetailsParams = {}
+  ): Promise<PartnerPointDetailsResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params.perPage) {
+      queryParams.append("perPage", params.perPage.toString());
+    }
+    if (params.type && params.type !== "entire") {
+      queryParams.append("type", params.type);
+    }
+    if (params.search) {
+      queryParams.append("search", params.search);
+    }
+    if (params.dateFrom) {
+      queryParams.append("dateFrom", params.dateFrom);
+    }
+    if (params.dateTo) {
+      queryParams.append("dateTo", params.dateTo);
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `partner/transactions/point-details?${queryString}`
+      : "partner/transactions/point-details";
 
     return api(url, {
       method: "GET",
