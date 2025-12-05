@@ -88,10 +88,16 @@ export default function PartnerRootLayout({
 
   useEffect(() => {
     setPathname(window.location.pathname);
-    fetchInfo();
     fetchDashboardStats();
     // fetchHonorLinkBalance();
   }, []);
+
+  useEffect(() => {
+    // Only fetch info after currentUser is set
+    if (currentUser?.role) {
+      fetchInfo();
+    }
+  }, [currentUser]);
 
   const playAlarmSound = () => {
     const audio = document.querySelector('audio[src="/wav/alarm.wav"]') as HTMLAudioElement;
@@ -142,7 +148,12 @@ export default function PartnerRootLayout({
   };
 
   const fetchInfo = () => {
-    api("admin/dashboard/get-data", {
+    // Use partner endpoint for partner users (this is PartnerRootLayout, so default to partner)
+    const endpoint = currentUser?.role === "A" 
+      ? "admin/dashboard/get-data" 
+      : "partner/dashboard/get-header-data";
+    
+    api(endpoint, {
       method: "GET",
     }).then((res) => {
       if (res) {
@@ -158,7 +169,7 @@ export default function PartnerRootLayout({
         console.log(res.stats, "res.data");
         setTimeout(() => {
           fetchInfo();
-        }, 3000);
+        }, 10000);
       }
     });
   };
@@ -681,12 +692,12 @@ export default function PartnerRootLayout({
                         </thead>
                         <tbody>
                           <tr style={{ height: '18px' }}>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.registeredUsers ? '#ff0000' : 'inherit', fontWeight: newNotifications.registeredUsers ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-join', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsers || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfDepositorsToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfDepositorsToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfWithdrawalToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfWithdrawalToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-withdraw', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/member-support', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.rollingTransition ? '#ff0000' : 'inherit', fontWeight: newNotifications.rollingTransition ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/rolling-conversion', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTransition || 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.depositToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.depositToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/popup/partner-deposit', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.registeredUsers ? '#ff0000' : 'inherit', fontWeight: newNotifications.registeredUsers ? 'bold' : 'normal' }} onClick={() => window.open('/partner/member-management/directMemberDepositWithdrawal', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.registeredUsers || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfDepositorsToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfDepositorsToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/member-management/directMemberDepositWithdrawal', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfDepositorsToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.numberOfWithdrawalToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.numberOfWithdrawalToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/member-management/integratedMoneyTransferHistory', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfWithdrawalToday || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.membershipInquiry ? '#ff0000' : 'inherit', fontWeight: newNotifications.membershipInquiry ? 'bold' : 'normal' }} onClick={() => window.open('/partner/support/center', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.membershipInquiry || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.rollingTransition ? '#ff0000' : 'inherit', fontWeight: newNotifications.rollingTransition ? 'bold' : 'normal' }} onClick={() => window.open('/partner/noteManagement/myNotes', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.rollingTransition || 0}</td>
+                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: newNotifications.depositToday ? '#ff0000' : 'inherit', fontWeight: newNotifications.depositToday ? 'bold' : 'normal' }} onClick={() => window.open('/partner/support/center', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.depositToday || 0}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -725,12 +736,12 @@ export default function PartnerRootLayout({
                     className="gap-2 items-center"
                   >
                     <LangSwitcher locale={locale} />
-                    <Button
+                    {/* <Button
                       type="text"
                       icon={isDarkTheme ? <SunOutlined /> : <MoonOutlined />}
                       onClick={onThemeChange}
                       className="!w-10 !h-10"
-                    />
+                    /> */}
                     <Dropdown
                       className="flex gap-2 items-center"
                       menu={{ items: profileItems }}

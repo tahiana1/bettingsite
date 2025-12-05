@@ -518,3 +518,90 @@ func GetPartnerDashboardData(c *gin.Context) {
 		"contactAdmin": contactAdmins,
 	})
 }
+
+// GetPartnerHeaderData returns header table data for partner layout (filtered by sub users)
+func GetPartnerHeaderData(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get today's date for filtering
+	today := time.Now().Format("2006-01-02")
+
+	// Get all sub users (where parent_id = partner.ID) - ONLY sub users, not including partner
+	var subUserIDs []uint
+	initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID).
+		Pluck("id", &subUserIDs)
+
+	// 1. registeredUsers: Count of sub users registered today
+	var registeredUsers int64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.User{}).
+			Where("parent_id = ? AND DATE(created_at) = ?", partner.ID, today).
+			Count(&registeredUsers)
+	}
+
+	// 2. numberOfDepositorsToday: Count of pending deposit transactions for sub users ONLY
+	var numberOfDepositorsToday int64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id IN ? AND type = ? AND status = ?", subUserIDs, "deposit", "pending").
+			Count(&numberOfDepositorsToday)
+	}
+
+	// 3. numberOfWithdrawalToday: Count of pending withdrawal transactions for sub users ONLY
+	var numberOfWithdrawalToday int64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id IN ? AND type = ? AND status = ?", subUserIDs, "withdrawal", "pending").
+			Count(&numberOfWithdrawalToday)
+	}
+
+	// 4. membershipInquiry: Count of QNAs with type = 'contact' and status = 'P' for sub users ONLY
+	var membershipInquiry int64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.Qna{}).
+			Joins("JOIN users ON qnas.user_id = users.id").
+			Where("users.parent_id = ? AND qnas.type = ? AND qnas.status = ?", partner.ID, "contact", "P").
+			Count(&membershipInquiry)
+	}
+
+	// 5. rollingTransition: Count of transactions with type = 'rollingExchange' and status = 'pending' for sub users ONLY
+	var rollingTransition int64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id IN ? AND type = ? AND status = ?", subUserIDs, "rollingExchange", "pending").
+			Count(&rollingTransition)
+	}
+
+	// 6. depositToday: Today's deposit amount (approved) for sub users ONLY - used for "inquiry" column
+	var depositToday float64
+	if len(subUserIDs) > 0 {
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id IN ? AND type = ? AND status = ? AND DATE(transaction_at) = ?", subUserIDs, "deposit", "A", today).
+			Select("COALESCE(SUM(amount),0)").
+			Scan(&depositToday)
+	}
+
+	// Return the response in the same format as admin dashboard
+	c.JSON(http.StatusOK, gin.H{
+		"stats": gin.H{
+			"registeredUsers":         int(registeredUsers),
+			"numberOfDepositorsToday": int(numberOfDepositorsToday),
+			"numberOfWithdrawalToday": int(numberOfWithdrawalToday),
+			"membershipInquiry":       int(membershipInquiry),
+			"rollingTransition":       int(rollingTransition),
+			"depositToday":            depositToday,
+		},
+	})
+}

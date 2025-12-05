@@ -43,6 +43,11 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	// Dashboard routes
 	r.GET("/dashboard/stats", controllers.GetPartnerDashboardStats)
 	r.GET("/dashboard/get-data", controllers.GetPartnerDashboardData)
+	r.GET("/dashboard/get-header-data", controllers.GetPartnerHeaderData)
+
+	// Partner User Basic Information routes (new)
+	r.GET("/user-basic-information/:userid", controllers.GetPartnerUserBasicInformation)
+	r.PUT("/user-basic-information/:userid/update", controllers.UpdatePartnerUserBasicInformation)
 
 	// Member management routes
 	memberRouter := r.Group("/member-management")

@@ -5,10 +5,12 @@ import { Layout, Card, Table, Button, Space } from "antd";
 import type { TableProps } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import { useTranslations } from "next-intl";
+import { useAtom } from "jotai";
 
 import api from "@/api";
 import { formatNumber } from "@/lib";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { userState } from "@/state/state";
 
 interface DataType {
   division: string;
@@ -64,6 +66,7 @@ const Dashboard: React.FC = () => {
   const [mount, setMount] = useState<boolean>(false);
   const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
   const [currentDateTime, setCurrentDateTime] = useState<string>("");
+  const [currentUser] = useAtom<any>(userState);
 
   useEffect(() => {
     setMount(true);
@@ -94,6 +97,10 @@ const Dashboard: React.FC = () => {
     }).catch((err) => {
       console.error("Error fetching dashboard data:", err);
     });
+  };
+
+  const popupWindow = (id: number) => {
+    window.open(`/partner/popup/user?id=${id}`, '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
   };
 
   const summaryColumns: TableProps<DataType>["columns"] = [
@@ -241,10 +248,14 @@ const Dashboard: React.FC = () => {
         <Table
           columns={[
             {
-              title: t("partner/testDistributor") || "Test distributor",
+              title: `${currentUser?.userid ? ` ${currentUser.userid}` : ""}`,
               key: "distributor",
               render: () => (
-                <Button type="link" size="small">
+                <Button 
+                  type="link" 
+                  size="small"
+                  onClick={() => currentUser?.id && popupWindow(currentUser.id)}
+                >
                   {t("partner/viewMyInformation") || "View my information"}
                 </Button>
               ),
