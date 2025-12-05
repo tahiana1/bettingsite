@@ -2455,5 +2455,14 @@
   "partner/menu/memberManagement/integratedMoneyTransferHistory" : "Integrated Money Transfer History",
   "recalculationAndRecovery" : "Recalculation and Recovery",
   "ID/Nickname/Account" : "ID/Nickname/Account",
-  "today'sRollingGold" : "Today's Rolling Gold"
+  "today'sRollingGold" : "Today's Rolling Gold",
+  "admin/menu/dashboard" : "Dashboard",
+  "admin/title" : "Admin",
+  "partner/adminNote" : "Admin Note",
+  "admin/timeOfWriting" : "Time of Writing",
+  "admin/situation" : "Situation",
+  "partner/amountHeld" : "Amount Held",
+  "partner/rollingGold" : "Rolling Gold",
+  "partner/losingMoney" : "Losing Money",
+  "admin/noData" : "Admin No Data"
 } 

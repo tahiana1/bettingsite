@@ -271,6 +271,7 @@ const Dashboard: React.FC = () => {
             },
           ]}
           dataSource={[{ key: "1" }]}
+          rowKey="key"
           pagination={false}
           className="w-full"
         />
@@ -315,6 +316,7 @@ const Dashboard: React.FC = () => {
             },
           ]}
           dataSource={[{ key: "1" }]}
+          rowKey="key"
           pagination={false}
           className="w-full"
         />
@@ -328,6 +330,7 @@ const Dashboard: React.FC = () => {
         <Table<DataType>
           columns={summaryColumns}
           dataSource={dashboardData?.summary || []}
+          rowKey={(record) => record.division}
           className="w-full"
           pagination={false}
         />
@@ -342,6 +345,7 @@ const Dashboard: React.FC = () => {
           <Table<AdminNoteType>
             columns={adminNoteColumns}
             dataSource={dashboardData?.adminNotes || []}
+            rowKey={(record) => `admin-note-${record.number}-${record.timeOfWriting}`}
             className="w-full"
             pagination={false}
             locale={{
@@ -356,6 +360,7 @@ const Dashboard: React.FC = () => {
           <Table<ContactAdminType>
             columns={contactAdminColumns}
             dataSource={dashboardData?.contactAdmin || []}
+            rowKey={(record) => `contact-admin-${record.number}-${record.timeOfWriting}`}
             className="w-full"
             pagination={false}
             locale={{

@@ -2410,5 +2410,14 @@
   "partner/menu/memberManagement/integratedMoneyTransferHistory": "集成资金转账历史",
   "ID/Nickname/Account": "ID/昵称/账号",
   "recalculationAndRecovery": "重新计算和恢复",
-  "today'sRollingGold": "今日滚动黄金"
-}
+  "today'sRollingGold": "今日滚动黄金",
+  "admin/menu/dashboard": "仪表盘",
+  "admin/title": "管理员",
+  "partner/adminNote": "管理员备注",
+  "admin/timeOfWriting": "写作时间",
+  "admin/situation": "情况",
+  "parter/amountHeld": "持有金额",
+  "partner/rollingGold": "滚动黄金",
+  "partner/losingMoney": "亏损金额",
+  "admin/noData": "暂无数据"
+} 
