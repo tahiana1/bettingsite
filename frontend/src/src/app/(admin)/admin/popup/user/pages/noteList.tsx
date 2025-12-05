@@ -60,9 +60,9 @@ const UserNoteList: React.FC = () => {
     },
     {
       title: t("title"),
-      dataIndex: "name",
-      key: "name",
-      render: (_, record: any) => record.name,
+      dataIndex: "title",
+      key: "title",
+      render: (_, record: any) => record.title,
     },
     {
       title: t("dateOfWriting"),   

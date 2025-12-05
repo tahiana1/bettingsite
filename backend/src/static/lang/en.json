@@ -2465,5 +2465,6 @@
   "partner/rollingGold" : "Rolling Gold",
   "partner/losingMoney" : "Losing Money",
   "admin/noData" : "Admin No Data",
-  "depoistRequest" : "Deposit Request"
+  "depoistRequest" : "Deposit Request",
+  "blocklist" : "Blocklist"
 } 

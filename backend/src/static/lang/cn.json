@@ -2420,5 +2420,6 @@
   "partner/rollingGold": "滚动黄金",
   "partner/losingMoney": "亏损金额",
   "admin/noData": "暂无数据",
-  "depoistRequest" : "存款请求"
+  "depoistRequest" : "存款请求",
+  "blocklist" : "黑名单"
 } 
