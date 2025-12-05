@@ -2445,5 +2445,10 @@
   "offline" : "Offline",
   "noData" : "No Data",
   "directMemberDepositWithdrawal" : "Direct Member Deposit Withdrawal",
-  "entireMemberDepositWithdrawal" : "Entire Member Deposit Withdrawal"
+  "entireMemberDepositWithdrawal" : "Entire Member Deposit Withdrawal",
+  "beforeMoney" : "Before Money",
+  "afterMoney" : "After Money",
+  "partner/menu/memberManagement/integratedMoneyTransferHistory" : "Integrated Money Transfer History",
+  "recalculationAndRecovery" : "Recalculation and Recovery",
+  "ID/Nickname/Account" : "ID/Nickname/Account"
 } 

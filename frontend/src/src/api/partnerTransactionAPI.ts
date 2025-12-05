@@ -262,6 +262,54 @@ export interface GetPartnerRollingHistoryParams {
   searchByRegistrationTime?: boolean;
 }
 
+export interface PartnerIntegratedMoneyTransferHistoryTransaction {
+  id: number;
+  userId: number;
+  user?: {
+    id: number;
+    userid: string;
+    name?: string;
+    phone?: string;
+    profile?: {
+      balance: number;
+      nickname?: string;
+      level?: number;
+    };
+  };
+  type: string; // deposit, withdrawal, win, Rolling, bet, WithdrawalCasino, DepositCasino, minigame_place, minigame_Win, rollingExchange, point, pointDeposit, directWithdraw, directDeposit
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  explation?: string;
+  status: string;
+  transactionAt: string;
+  approvedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PartnerIntegratedMoneyTransferHistoryResponse {
+  success: boolean;
+  data: PartnerIntegratedMoneyTransferHistoryTransaction[];
+  pagination: {
+    current_page: number;
+    from: number;
+    to: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}
+
+export interface GetPartnerIntegratedMoneyTransferHistoryParams {
+  page?: number;
+  perPage?: number;
+  type?: string; // "entire" or specific transaction type
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
 // Partner Transaction API functions
 export const partnerTransactionAPI = {
   // Get all partner transactions with pagination and filters
@@ -500,6 +548,41 @@ export const partnerTransactionAPI = {
     const url = queryString
       ? `partner/transactions/rolling-history?${queryString}`
       : "partner/transactions/rolling-history";
+
+    return api(url, {
+      method: "GET",
+    });
+  },
+
+  // Get integrated money transfer history for sub users
+  getIntegratedMoneyTransferHistory: async (
+    params: GetPartnerIntegratedMoneyTransferHistoryParams = {}
+  ): Promise<PartnerIntegratedMoneyTransferHistoryResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params.perPage) {
+      queryParams.append("perPage", params.perPage.toString());
+    }
+    if (params.type && params.type !== "entire") {
+      queryParams.append("type", params.type);
+    }
+    if (params.search) {
+      queryParams.append("search", params.search);
+    }
+    if (params.dateFrom) {
+      queryParams.append("dateFrom", params.dateFrom);
+    }
+    if (params.dateTo) {
+      queryParams.append("dateTo", params.dateTo);
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `partner/member-management/integrated-money-transfer-history?${queryString}`
+      : "partner/member-management/integrated-money-transfer-history";
 
     return api(url, {
       method: "GET",

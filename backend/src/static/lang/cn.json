@@ -2451,5 +2451,9 @@
   "offline" : "离线",
   "noData" : "暂无数据",
   "directMemberDepositWithdrawal" : "直接会员存款/提款",
-  "entireMemberDepositWithdrawal" : "全部会员存款/提款"
+  "entireMemberDepositWithdrawal" : "全部会员存款/提款",
+  "beforeMoney" : "之前金额",
+  "afterMoney" : "之后金额",
+  "partner/menu/memberManagement/integratedMoneyTransferHistory" : "集成资金转账历史",
+  "ID/Nickname/Account" : "ID/昵称/账号"
 }

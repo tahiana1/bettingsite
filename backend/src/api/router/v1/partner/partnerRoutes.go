@@ -49,6 +49,7 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 		memberRouter.GET("/waiting-for-member-approval", controllers.GetWaitingForMemberApproval)
 		memberRouter.GET("/direct-member-deposit-withdrawal", controllers.GetDirectMemberDepositWithdrawal)
 		memberRouter.GET("/direct-member-points-details", controllers.GetDirectMemberPointsDetails)
+		memberRouter.GET("/integrated-money-transfer-history", controllers.GetPartnerIntegratedMoneyTransferHistory)
 	}
 
 	// Sub-member management routes
