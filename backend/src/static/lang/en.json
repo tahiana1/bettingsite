@@ -1826,6 +1826,10 @@
   "minimumFolderForSportsBetting" : "Minimum Folder For Sports Betting",
   "accountMemo" : "Account Memo",
   "adminNote" : "Admin Note",
+  "partner/myWallet" : "My Wallet",
+  "partner/testDistributor" : "Test distributor",
+  "partner/viewMyInformation" : "View my information",
+  "partner/contactAdministrator" : "Contact the administrator",
   "adminMemo2" : "Admin Memo2",
   "allowedIPAddress" : "Allowed Ip Address",
   "pointAmount" : "Point Amount",
@@ -2450,5 +2454,6 @@
   "afterMoney" : "After Money",
   "partner/menu/memberManagement/integratedMoneyTransferHistory" : "Integrated Money Transfer History",
   "recalculationAndRecovery" : "Recalculation and Recovery",
-  "ID/Nickname/Account" : "ID/Nickname/Account"
+  "ID/Nickname/Account" : "ID/Nickname/Account",
+  "today'sRollingGold" : "Today's Rolling Gold"
 } 

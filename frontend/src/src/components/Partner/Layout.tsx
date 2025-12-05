@@ -84,10 +84,12 @@ export default function PartnerRootLayout({
   const [info, setInfo] = useState<any>({});
   const [previousInfo, setPreviousInfo] = useState<any>({});
   const [newNotifications, setNewNotifications] = useState<any>({});
+  const [dashboardStats, setDashboardStats] = useState<any>({});
 
   useEffect(() => {
     setPathname(window.location.pathname);
     fetchInfo();
+    fetchDashboardStats();
     // fetchHonorLinkBalance();
   }, []);
 
@@ -161,50 +163,78 @@ export default function PartnerRootLayout({
     });
   };
 
+  const fetchDashboardStats = () => {
+    api("partner/dashboard/stats", {
+      method: "GET",
+    }).then((res) => {
+      if (res && res.stats) {
+        setDashboardStats(res.stats);
+        console.log(res.stats, "dashboard stats");
+        setTimeout(() => {
+          fetchDashboardStats();
+        }, 10000); // Refetch every 10 seconds
+      }
+    }).catch((err) => {
+      console.error("Error fetching dashboard stats:", err);
+      setTimeout(() => {
+        fetchDashboardStats();
+      }, 10000); // Retry after 10 seconds even on error
+    });
+  };
+
   const data = [
     {
       label: t("depositToday"),
-      value: info.depositToday || 0,
+      // depositToday sum on transaction table for this user and sub users
+      value: dashboardStats.depositToday || 0,
       color: "dodgerblue",
     },
     {
       label: t("withdrawlToday"),
-      value: info.withdrawToday || 0,
+      // withdrawlToday sum on transaction table for this user and sub users
+      value: dashboardStats.withdrawToday || 0,
       color: "hotpink",
     },
     {
       label: t("bettingToday"),
-      value: info.bettingToday || 0,
+      // bettingToday sum on transaction table for this user and sub users
+      value: dashboardStats.bettingToday || 0,
       color: "lime",
     },
     {
       label: t("todaysWinner"),
-      value: info.todayWinners || 0,
+      // today's win sum on transaction table for this user
+      value: dashboardStats.todayWinners || 0,
       color: "yellow",
     },
     {
       label: t("lowerHoldingAmount"),
-      value : 0,
+      // sub users balance sum
+      value: dashboardStats.lowerHoldingAmount || 0,
       color: "mediumorchid",
     },
     {
       label : t("myBalance"),
-      value : 0,
+      // current user balance
+      value: dashboardStats.myBalance || 0,
       color: "cyan",
     },
     {
       label: t("point"),
-      value : 0,
+      // current user point
+      value: dashboardStats.point || 0,
       color: "magenta",
     },
     {
       label: t("today'sLossingMoney"),
-      value : 0,
+      // today's losing money sum on bet table for this user and sub users
+      value: dashboardStats.todaysLossingMoney || 0,
       color: "orangered",
     },
     {
-      label: t("today'sRollingFee"),
-      value : 0,
+      label: t("today'sRollingGold"),
+      // today's rolling gold sum on profile table for this user and sub users
+      value: dashboardStats.todaysRollingGold || 0,
       color: "deepskyblue",
     }
   ];

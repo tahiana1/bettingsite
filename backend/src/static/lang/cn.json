@@ -1778,6 +1778,10 @@
   "minimumFolderForSportsBetting": "体育投注最小文件夹",
   "accountMemo": "账户备注",
   "adminNote": "管理员备注",
+  "partner/myWallet": "我的钱包",
+  "partner/testDistributor": "测试分销商",
+  "partner/viewMyInformation": "查看我的信息",
+  "partner/contactAdministrator": "联系管理员",
   "adminMemo2": "管理员备注2",
   "allowedIPAddress": "允许的IP地址",
   "pointAmount": "点数金额",
@@ -2405,5 +2409,6 @@
   "afterMoney": "之后金额",
   "partner/menu/memberManagement/integratedMoneyTransferHistory": "集成资金转账历史",
   "ID/Nickname/Account": "ID/昵称/账号",
-  "recalculationAndRecovery": "重新计算和恢复"
+  "recalculationAndRecovery": "重新计算和恢复",
+  "today'sRollingGold": "今日滚动黄金"
 }

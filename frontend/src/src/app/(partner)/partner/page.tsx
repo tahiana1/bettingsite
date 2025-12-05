@@ -1,84 +1,102 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { Layout, Statistic, Space, Card, Divider, Table, Tag, Button } from "antd";
-import type { TableProps } from "antd"; 
-
-import {
-  DollarCircleOutlined,
-  UserAddOutlined,
-  UserOutlined,
-  UserSwitchOutlined,
-} from "@ant-design/icons";
+import { Layout, Card, Table, Button, Space } from "antd";
+import type { TableProps } from "antd";
+import { ReloadOutlined } from "@ant-design/icons";
 import { useTranslations } from "next-intl";
 
-import { Column } from "@ant-design/charts";
 import api from "@/api";
 import { formatNumber } from "@/lib";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 interface DataType {
-  division: string,
-  numberOfDeposit: number,
-  numberOfWithdraw: number,
-  numberOfSettlement: number,
-  depositWithdraw : number,
-  numberOfBets: number,
-  numberOfWin: number,
-  bettingWinning: number,
-  numberOfMembers: number,
-  numberOfBettingUsers: number,
-  numberOfVisiters: number,
+  division: string;
+  numberOfDeposit: number;
+  numberOfWithdraw: number;
+  numberOfSettlement: number;
+  depositWithdraw: number;
+  numberOfBets: number;
+  numberOfWin: number;
+  bettingWinning: number;
+  numberOfMembers: number;
+  numberOfBettingUsers: number;
+  numberOfVisiters: number;
 }
 
-interface PaymentDataType {
-  number : number,
-  type : string,
-  name : string,
-  allas : string,
-  depositor: string,
-  beforeAmount : number,
-  processingAmount : number,
-  afterAmount : number,
-  applicationDate : Date,
-  processDate : Date,
+interface AdminNoteType {
+  number: number;
+  title: string;
+  timeOfWriting: string;
+  situation: string;
+}
+
+interface ContactAdminType {
+  number: number;
+  title: string;
+  timeOfWriting: string;
+  situation: string;
 }
 
 interface DashboardResponse {
-  stats: {
-    depositAmount: number;
-    withdrawAmount: number;
-    memberDepositAmount: number;
-    memberWithdrawAmount: number;
-    totalDepositAmount: number;
-    totalWithdrawAmount: number;
-    totalSettlement: number;
-    bettingAmount: number;
-    prizeAmount: number;
-    bettingUsers: number;
-    registeredUsers: number;
-    numberOfVisiters: number;
+  wallet: {
+    amountHeld: number;
+    point: number;
+    rollingGold: number;
+    losingMoney: number;
   };
-  divisionSummary: DataType[];
-  recentPayments: PaymentDataType[];
-  depositChart: {
-    name: string;
-    action: string;
-    pv: number;
-  }[];
-  bettingChart: {
-    name: string;
-    action: string;
-    pv: number;
-  }[];
+  todayStats: {
+    depositAmount: number;
+    withdrawalAmount: number;
+    depositWithdrawal: number;
+    bettingAmount: number;
+    winningAmount: number;
+    betWin: number;
+  };
+  summary: DataType[];
+  adminNotes: AdminNoteType[];
+  contactAdmin: ContactAdminType[];
 }
-
-
 
 const Dashboard: React.FC = () => {
   usePageTitle("Partner - Dashboard");
   const t = useTranslations();
-  const columns: TableProps<DataType>["columns"] = [
+  const [mount, setMount] = useState<boolean>(false);
+  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
+  const [currentDateTime, setCurrentDateTime] = useState<string>("");
+
+  useEffect(() => {
+    setMount(true);
+    fetchInfo();
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const updateDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    setCurrentDateTime(`${year}-${month}-${day} ${hours}:${minutes}:${seconds}`);
+  };
+
+  const fetchInfo = () => {
+    api("partner/dashboard/get-data", {
+      method: "GET",
+    }).then((res) => {
+      if (res && res.success) {
+        setDashboardData(res);
+      }
+    }).catch((err) => {
+      console.error("Error fetching dashboard data:", err);
+    });
+  };
+
+  const summaryColumns: TableProps<DataType>["columns"] = [
     {
       title: t("admin/division"),
       dataIndex: "division",
@@ -93,334 +111,259 @@ const Dashboard: React.FC = () => {
       title: t("admin/numberOfDeposit"),
       dataIndex: "numberOfDeposit",
       key: "numberOfDeposit",
-      render: (value: number, record: DataType) => `${value} items - ${record.depositWithdraw > 0 ? record.depositWithdraw.toLocaleString() : 0} won`,
+      render: (value: number, record: DataType) => {
+        const amount = record.depositWithdraw > 0 ? record.depositWithdraw : 0;
+        return `${value} items - ${formatNumber(amount)} won`;
+      },
     },
     {
       title: t("admin/numberOfWithdraw"),
       dataIndex: "numberOfWithdraw",
       key: "numberOfWithdraw",
-      render: (value: number, record: DataType) => `${value} items - ${record.depositWithdraw < 0 ? Math.abs(record.depositWithdraw).toLocaleString() : 0} won`,
-    },
-    {
-      title: t("admin/numberOfSettlement"),
-      dataIndex: "numberOfSettlement",
-      key: "numberOfSettlement",
-      render: (value: number) => `${value} items - 0 won`, // Adjust if you have settlement amount
+      render: (value: number, record: DataType) => {
+        const amount = record.depositWithdraw < 0 ? Math.abs(record.depositWithdraw) : 0;
+        return `${value} items - ${formatNumber(amount)} won`;
+      },
     },
     {
       title: t("admin/depositWithdraw"),
       dataIndex: "depositWithdraw",
       key: "depositWithdraw",
-      render: (text: number) => `${Number(text).toLocaleString()} won`,
+      render: (text: number) => `${formatNumber(text)} won`,
+    },
+    {
+      title: t("admin/numberOfSettlement"),
+      dataIndex: "numberOfSettlement",
+      key: "numberOfSettlement",
+      render: (value: number) => `${value} items - 0 won`,
+    },
+    {
+      title: t("admin/depositWithdraw") + "-" + t("admin/numberOfSettlement"),
+      key: "depositWithdrawSettlement",
+      render: (_: any, record: DataType) => {
+        const settlementAmount = record.depositWithdraw; // Adjust if you have separate settlement amount
+        return `${formatNumber(settlementAmount)} won`;
+      },
     },
     {
       title: t("admin/numberOfBets"),
       dataIndex: "numberOfBets",
       key: "numberOfBets",
-      render: (value: number, record: DataType) => `${value} items - ${record.bettingWinning > 0 ? record.bettingWinning.toLocaleString() : 0} won`,
+      render: (value: number, record: DataType) => {
+        const amount = record.bettingWinning > 0 ? record.bettingWinning : 0;
+        return `${value} items - ${formatNumber(amount)} won`;
+      },
     },
     {
       title: t("admin/numberOfWin"),
       dataIndex: "numberOfWin",
       key: "numberOfWin",
-      render: (value: number, record: DataType) => `${value} pieces - ${record.bettingWinning > 0 ? record.bettingWinning.toLocaleString() : 0} won`,
+      render: (value: number, record: DataType) => {
+        const amount = record.bettingWinning > 0 ? record.bettingWinning : 0;
+        return `${value} pieces - ${formatNumber(amount)} won`;
+      },
     },
     {
       title: t("admin/bettingWinning"),
       dataIndex: "bettingWinning",
       key: "bettingWinning",
-      render: (text: number) => `${Number(text).toLocaleString()} won`,
-    },
-    {
-      title: t("admin/numberOfMembers"),
-      dataIndex: "numberOfMembers",
-      key: "numberOfMembers",
-    },
-    {
-      title: t("admin/numberOfBettingUsers"),
-      dataIndex: "numberOfBettingUsers",
-      key: "numberOfBettingUsers",
-    },
-    {
-      title: t("admin/numberOfVisiters"),
-      dataIndex: "numberOfVisiters",
-      key: "numberOfVisiters",
+      render: (text: number) => `${formatNumber(text)} won`,
     },
   ];
-  const paymentColumns: TableProps<PaymentDataType>["columns"] = [
+
+  const adminNoteColumns: TableProps<AdminNoteType>["columns"] = [
     {
       title: t("admin/number"),
       dataIndex: "number",
-      key: "number"
+      key: "number",
     },
     {
-      title: t("admin/type"),
-      dataIndex: "type",
-      key: "type",
-      render: (text: string) => {
-        if (text === "withdrawal") {
-          return <Button danger>{text}</Button>;
-        }
-        if (text === "deposit") {
-          return <Button type="primary" style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}>{text}</Button>;
-        }
-        return text;
-      }
+      title: t("admin/title"),
+      dataIndex: "title",
+      key: "title",
     },
     {
-      title: t("userid"),
-      dataIndex: "name",
-      key: "name",
+      title: t("admin/timeOfWriting"),
+      dataIndex: "timeOfWriting",
+      key: "timeOfWriting",
     },
     {
-      title: t("admin/allas"),
-      key: "allas",
-      dataIndex: "allas",
-      render: (text: string) => {
-        return "-"
-      }
+      title: t("admin/situation"),
+      dataIndex: "situation",
+      key: "situation",
     },
-    {
-      title: t("admin/depositor"),
-      key: "allas",
-      dataIndex: "allas",
-    },
-    {
-      title: t("admin/beforeAmount"),
-      key: "beforeAmount",
-      dataIndex: "beforeAmount",
-      render: (value) => formatNumber(value || 0),
-    },
-    {
-      title: t("admin/processingAmount"),
-      key: "processingAmount",
-      dataIndex: "processingAmount",
-      render: (value) => formatNumber(value || 0),
-    },
-    {
-      title: t("admin/afterAmount"),
-      key: "afterAmount",
-      dataIndex: "afterAmount",
-      render: (value) => formatNumber(value || 0),
-    },
-    {
-      title: t("admin/applicationDate"),
-      key: "applicationDate",
-      dataIndex: "applicationDate",
-    },
-    // {
-    //   title: t("admin/processDate"),
-    //   key: "applicationDate",
-    //   dataIndex: "applicationDate",
-    // }
   ];
-  const [mount, setMount] = useState<boolean>(false);
-  const [dashboardData, setDashboardData] = useState<DashboardResponse | null>(null);
 
-  useEffect(() => {
-    setMount(true);
-    fetchInfo();
-  }, []);
-
-  const fetchInfo = () => {
-    api("admin/dashboard/get-data", {
-      method: "GET",
-    }).then((res) => {
-      if (res) {
-        setDashboardData(res);
-        // Uncomment if you want to refresh data every 15 seconds
-        // setTimeout(() => {
-        //   fetchInfo();
-        // }, 15000);
-      }
-    });
-  };
-
-  const config1 = {
-    data: dashboardData?.depositChart || [],
-    group: true,
-    xField: "name",
-    yField: "pv",
-    colorField: "action",
-    label: {
-      text: (d: any) => d.pv,
-      textBaseline: "bottom",
+  const contactAdminColumns: TableProps<ContactAdminType>["columns"] = [
+    {
+      title: t("admin/number"),
+      dataIndex: "number",
+      key: "number",
     },
-    height: 200,
-    style: {
-      inset: 5,
-      maxWidth: 30,
+    {
+      title: t("admin/title"),
+      dataIndex: "title",
+      key: "title",
     },
-  };
-
-  const config2 = {
-    data: dashboardData?.bettingChart || [],
-    group: true,
-    xField: "name",
-    yField: "pv",
-    colorField: "action",
-    label: {
-      text: (d: any) => d.pv,
-      textBaseline: "bottom",
+    {
+      title: t("admin/timeOfWriting"),
+      dataIndex: "timeOfWriting",
+      key: "timeOfWriting",
     },
-    height: 200,
-    style: {
-      inset: 5,
-      maxWidth: 30,
+    {
+      title: t("admin/situation"),
+      dataIndex: "situation",
+      key: "situation",
     },
-  };
+  ];
 
   return mount ? (
     <Layout className="">
-      <Card title={t("admin/todayStatistics")} className="!mb-2 home-admin-layout">
-        <Space wrap className="w-full justify-between today-home-statistics">
-          <Statistic
-            title={t("depositAmount")}
-            value={dashboardData?.stats.depositAmount || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="text-lg font-semibold">{t("home")}</div>
+        <div className="flex items-center gap-2">
+          <span>{currentDateTime}</span>
+          <Button
+            icon={<ReloadOutlined />}
+            onClick={fetchInfo}
+            type="text"
+            size="small"
           />
-          <Statistic
-            title={t("withdrawAmount")}
-            value={dashboardData?.stats.withdrawAmount || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("memberDepositAmount")}
-            value={dashboardData?.stats.memberDepositAmount || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("memberWithdrawAmount")}
-            value={dashboardData?.stats.memberWithdrawAmount || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            prefix={<DollarCircleOutlined />}
-            title={t("totalDepositAmount")}
-            value={dashboardData?.stats.totalDepositAmount || 0}
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("totalWithdrawAmount")}
-            value={dashboardData?.stats.totalWithdrawAmount || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
-          />
-        </Space>
-        <Divider />
-        <Space wrap className="w-full justify-between today-home-statistics">
-          <Statistic
-            title={t("totalSettlement")}
-            value={dashboardData?.stats.totalSettlement || 0}
-            prefix={<DollarCircleOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            prefix={<DollarCircleOutlined />}
-            title={t("bettingAmount")}
-            value={dashboardData?.stats.bettingAmount || 0}
-            className="w-[200px]"
-          />
-          <Statistic
-            prefix={<UserOutlined />}
-            title={t("prizeAmount")}
-            value={dashboardData?.stats.prizeAmount || 0}
-            suffix="/ 100"
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("bettingUsers")}
-            value={dashboardData?.stats.bettingUsers || 0}
-            prefix={<UserAddOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("registeredUsers")}
-            value={dashboardData?.stats.registeredUsers || 0}
-            prefix={<UserSwitchOutlined />}
-            className="w-[200px]"
-          />
-          <Statistic
-            title={t("numberOfVisiters")}
-            value={dashboardData?.stats.numberOfVisiters || 0}
-            prefix={<UserSwitchOutlined />}
-            className="w-[200px]"
-          />
-        </Space>
+        </div>
+      </div>
+
+      {/* My Wallet Section */}
+      <Card
+        title={t("partner/myWallet") || "My Wallet"}
+        className="!mb-4 home-admin-layout"
+      >
+        <Table
+          columns={[
+            {
+              title: t("partner/testDistributor") || "Test distributor",
+              key: "distributor",
+              render: () => (
+                <Button type="link" size="small">
+                  {t("partner/viewMyInformation") || "View my information"}
+                </Button>
+              ),
+            },
+            {
+              title: t("partner/amountHeld") || "Amount held",
+              key: "amountHeld",
+              render: () => formatNumber(dashboardData?.wallet?.amountHeld || 0) + " won",
+            },
+            {
+              title: t("point") || "point",
+              key: "point",
+              render: () => formatNumber(dashboardData?.wallet?.point || 0) + " P",
+            },
+            {
+              title: t("partner/rollingGold") || "Rolling gold",
+              key: "rollingGold",
+              render: () => formatNumber(dashboardData?.wallet?.rollingGold || 0) + " won",
+            },
+            {
+              title: t("partner/losingMoney") || "Losing money",
+              key: "losingMoney",
+              render: () => formatNumber(dashboardData?.wallet?.losingMoney || 0) + " won",
+            },
+          ]}
+          dataSource={[{ key: "1" }]}
+          pagination={false}
+          className="w-full"
+        />
       </Card>
-      <Space.Compact className="w-full gap-2 flex justify-between">
-        <Space direction="vertical" className="w-full flex-1">
-          <Card title={t("admin/todayDepositWithdraw")} className="home-admin-layout">
-            <Column {...config1} />
-          </Card>
-          <Card title={t("admin/betWinning")} className="home-admin-layout">
-            <Column {...config2} />
-          </Card>
-        </Space>
-        <Space.Compact direction="vertical" className="w-full flex-2 p-0 gap-2">
-          <Space wrap align="start" id="admin-dashboard-card" className="w-full flex flex-row justify-between" style={{flexWrap: "nowrap"}}>
-            <Card title={t("admin/membershipBalance")} className="!bg-[#00c689] !rounded-[10px] !text-white mini-card-admin">
-              <div className="flex justify-between flex-row gap-4">
-                <div>
-                  <p>{t("admin/membershipBalance")}</p>
-                  <p>{dashboardData?.stats.totalDepositAmount || 0}</p>
-                </div>
-                <div>
-                  <p>{t("admin/totalPoints")}</p>
-                  <p>{dashboardData?.stats.totalSettlement || 0}</p>
-                </div>
-              </div>
-            </Card>
-            <Card title={t("admin/totalAmountOfDistribution")} className=" !bg-[#3da5f4] !rounded-[10px] !text-white mini-card-admin">
-              <p>{t("admin/totalPoints")}</p>
-              <p>{dashboardData?.stats.totalSettlement || 0}</p>
-            </Card>
-            <Card title={t("admin/totalLose")}  className=" !bg-[#f1536e] !rounded-[10px] !text-white mini-card-admin">
-              <p>{t("admin/rollingTheTotal")}</p>
-              <p>{((dashboardData?.stats.bettingAmount || 0) - (dashboardData?.stats.prizeAmount || 0))}</p>
-            </Card>
-            <Card title={t("admin/bettingAmount")}  className=" !bg-[#fda006] !rounded-[10px] !text-white mini-card-admin">
-              <p>{t("admin/prizeAmount")}</p>
-              <p>{dashboardData?.stats.prizeAmount || 0}</p>
-            </Card>
-            <Card title={t("admin/sportsGameCompany")}  className=" !bg-[#00c689] !rounded-[10px] !text-white mini-card-admin">
-              <p>{t("admin/thisMonthIncoming")} : {dashboardData?.stats.totalDepositAmount || 0}</p>
-              <p>{t("admin/thisMonthDeduction")} : {dashboardData?.stats.totalWithdrawAmount || 0}</p>
-            </Card>
-          </Space>
-          <Space.Compact className="w-full flex">
-            <Card
-              title={t("admin/recentUserDepositsAndWithdrawals")}
-              className="home-admin-layout"
-              style={{width: "100%"}}
-            >
-              <Table<PaymentDataType>
-                key="recentPayments"
-                columns={paymentColumns}
-                dataSource={dashboardData?.recentPayments || []}
-                className="w-full"
-              />
-            </Card>
-          </Space.Compact>
-        </Space.Compact>
-      </Space.Compact>
-      <Space.Compact className="w-full flex mt-3">
+
+      {/* Today's Statistics Section */}
+      <Card
+        title={t("admin/todayStatistics") || "Today's Statistics"}
+        className="!mb-4 home-admin-layout"
+      >
+        <Table
+          columns={[
+            {
+              title: t("depositAmount") || "Deposit amount",
+              key: "depositAmount",
+              render: () => formatNumber(dashboardData?.todayStats?.depositAmount || 0) + " won",
+            },
+            {
+              title: t("withdrawAmount") || "Withdrawal amount",
+              key: "withdrawalAmount",
+              render: () => formatNumber(dashboardData?.todayStats?.withdrawalAmount || 0) + " won",
+            },
+            {
+              title: t("admin/depositWithdraw") || "Deposit-Withdrawal",
+              key: "depositWithdrawal",
+              render: () => formatNumber(dashboardData?.todayStats?.depositWithdrawal || 0) + " won",
+            },
+            {
+              title: t("bettingAmount") || "Betting amount",
+              key: "bettingAmount",
+              render: () => formatNumber(dashboardData?.todayStats?.bettingAmount || 0) + " won",
+            },
+            {
+              title: t("prizeAmount") || "Winning amount",
+              key: "winningAmount",
+              render: () => formatNumber(dashboardData?.todayStats?.winningAmount || 0) + " won",
+            },
+            {
+              title: t("admin/bettingWinning") || "Bet-Win",
+              key: "betWin",
+              render: () => formatNumber(dashboardData?.todayStats?.betWin || 0) + " won",
+            },
+          ]}
+          dataSource={[{ key: "1" }]}
+          pagination={false}
+          className="w-full"
+        />
+      </Card>
+
+      {/* Summary Section */}
+      <Card
+        title={t("admin/summary") || "Summary"}
+        className="!mb-4 home-admin-layout"
+      >
+        <Table<DataType>
+          columns={summaryColumns}
+          dataSource={dashboardData?.summary || []}
+          className="w-full"
+          pagination={false}
+        />
+      </Card>
+
+      {/* Admin Note and Contact the administrator Sections */}
+      <div className="flex gap-4">
         <Card
-          title={t("admin/summary")}
-          className="home-admin-layout"
-          style={{width: "100%"}}
+          title={t("partner/adminNote") || "Admin Note"}
+          className="flex-1 home-admin-layout"
         >
-          <Table<DataType>
-            columns={columns}
-            dataSource={dashboardData?.divisionSummary || []}
+          <Table<AdminNoteType>
+            columns={adminNoteColumns}
+            dataSource={dashboardData?.adminNotes || []}
             className="w-full"
+            pagination={false}
+            locale={{
+              emptyText: t("admin/noData") || "There is no data.",
+            }}
           />
         </Card>
-      </Space.Compact>
+        <Card
+          title={t("partner/contactAdministrator") || "Contact the administrator"}
+          className="flex-1 home-admin-layout"
+        >
+          <Table<ContactAdminType>
+            columns={contactAdminColumns}
+            dataSource={dashboardData?.contactAdmin || []}
+            className="w-full"
+            pagination={false}
+            locale={{
+              emptyText: t("admin/noData") || "There is no data.",
+            }}
+          />
+        </Card>
+      </div>
     </Layout>
   ) : null;
 };

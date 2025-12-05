@@ -40,6 +40,10 @@ func GetPartnerRoute(r *gin.RouterGroup) {
 	r.GET("/transactions/money-history", controllers.GetPartnerMoneyHistory)
 	r.GET("/transactions/point-details", controllers.GetPartnerPointDetails)
 
+	// Dashboard routes
+	r.GET("/dashboard/stats", controllers.GetPartnerDashboardStats)
+	r.GET("/dashboard/get-data", controllers.GetPartnerDashboardData)
+
 	// Member management routes
 	memberRouter := r.Group("/member-management")
 	{
