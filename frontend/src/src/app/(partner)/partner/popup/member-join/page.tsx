@@ -1,4 +1,4 @@
-import PendingUserPage from "../../users/pending/page";
+import PendingUserPage from "@/app/(admin)/admin/users/pending/page";
 import PopupHeader from "@/components/Partner/PopupHeader";
 
 const MemberJoin = () => {

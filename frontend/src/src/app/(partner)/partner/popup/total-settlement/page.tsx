@@ -23,7 +23,7 @@ import { RxLetterCaseToggle } from "react-icons/rx";
 import dayjs, { Dayjs } from "dayjs";
 import { isValidDate, parseTableOptions, formatNumber } from "@/lib";
 import PopupHeader from "@/components/Partner/PopupHeader";
-import SettlementRequest from "@/app/(admin)/partner/settlements/losingdetail/page";
+import SettlementRequest from "@/app/(admin)/admin/settlements/losingdetail/page";
 
 const TotalSettlement = () => {
     const t = useTranslations();
