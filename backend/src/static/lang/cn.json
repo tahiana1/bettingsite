@@ -2438,5 +2438,13 @@
   "losingToday" : "今日亏损",
   "viewAllLowerPart" : "查看所有下级",
   "openOnlyToDirectMembers" : "仅显示直属会员",
-  "subDistributorRegistration" : "下级注册"
+  "subDistributorRegistration" : "下级注册",
+  "connectedMember" : "连接会员",
+  "connectedMembers" : "连接会员",
+  "connectionGame" : "连接游戏",
+  "accessDomain" : "访问域名",
+  "connectionIP" : "连接IP",
+  "online" : "在线",
+  "offline" : "离线",
+  "noData" : "暂无数据"
 }

@@ -1206,3 +1206,184 @@ func GetSubDistributors(c *gin.Context) {
 		},
 	})
 }
+
+type ConnectedMemberResponse struct {
+	ID                 uint       `json:"id"`
+	Userid             string     `json:"userid"`
+	Nickname           string     `json:"nickname"`
+	Depositor          string     `json:"depositor"`
+	AmountHeld         float64    `json:"amountHeld"`         // balance from profile
+	Point              int32      `json:"point"`              // point from profile
+	RollingGold        float64    `json:"rollingGold"`        // roll from profile
+	Deposit            float64    `json:"deposit"`            // Total approved deposits
+	Withdrawal         float64    `json:"withdrawal"`         // Total approved withdrawals
+	EntryAndExit       float64    `json:"entryAndExit"`       // deposit - withdrawal
+	Bet                float64    `json:"bet"`                // Total bet amount
+	Winner             float64    `json:"winner"`             // Total winner amount
+	BeDang             float64    `json:"beDang"`             // EntireLosing
+	ConnectionGame     string     `json:"connectionGame"`     // Placeholder for game info
+	AccessDomain       string     `json:"accessDomain"`       // Domain from user
+	ConnectionIP       string     `json:"connectionIP"`       // CurrentIP from user
+	AccessDate         *time.Time `json:"accessDate"`         // updatedAt from user
+	DateOfRegistration *time.Time `json:"dateOfRegistration"` // createdAt from user
+	OnlineStatus       bool       `json:"onlineStatus"`       // Online status of the member
+}
+
+// GetConnectedMembers function is used to get all members list for partner (where parent_id = partner.ID)
+func GetConnectedMembers(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "25")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 25
+	}
+
+	// Get search query
+	searchQuery := c.Query("search")
+	// Get online status filter (optional: "true", "false", or empty for all)
+	onlineStatusFilter := c.Query("onlineStatus")
+
+	// Build query for all members (where parent_id = partner.ID)
+	query := initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID)
+
+	// Apply online status filter if provided
+	if onlineStatusFilter != "" {
+		onlineStatusBool := onlineStatusFilter == "true" || onlineStatusFilter == "1"
+		query = query.Where("online_status = ?", onlineStatusBool)
+	}
+
+	// Apply search filter (ID, nickname, account holder, phone)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		var matchingUserIDs []uint
+		searchQueryBuilder := initializers.DB.Model(&models.User{}).
+			Select("users.id").
+			Joins("LEFT JOIN profiles ON profiles.user_id = users.id").
+			Where("parent_id = ?", partner.ID)
+
+		// Apply online status filter to search query if provided
+		if onlineStatusFilter != "" {
+			onlineStatusBool := onlineStatusFilter == "true" || onlineStatusFilter == "1"
+			searchQueryBuilder = searchQueryBuilder.Where("users.online_status = ?", onlineStatusBool)
+		}
+
+		searchQueryBuilder.Where(
+			"LOWER(users.userid) LIKE ? OR LOWER(profiles.nickname) LIKE ? OR LOWER(profiles.holder_name) LIKE ? OR LOWER(profiles.account_number) LIKE ?",
+			searchPattern, searchPattern, searchPattern, searchPattern,
+		).Pluck("users.id", &matchingUserIDs)
+
+		if len(matchingUserIDs) > 0 {
+			query = query.Where("id IN ?", matchingUserIDs)
+		} else {
+			// No matches, return empty result
+			query = query.Where("1 = 0")
+		}
+	}
+
+	// Preload Profile after all filters
+	query = query.Preload("Profile")
+
+	// Get total count
+	var total int64
+	query.Model(&models.User{}).Count(&total)
+
+	// Apply pagination
+	offset := (page - 1) * perPage
+	var users []models.User
+	if err := query.Offset(offset).Limit(perPage).Order("updated_at DESC").Find(&users).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build response with calculated fields
+	members := make([]ConnectedMemberResponse, 0, len(users))
+	for _, user := range users {
+		member := ConnectedMemberResponse{
+			ID:                 user.ID,
+			Userid:             user.Userid,
+			Nickname:           user.Profile.Nickname,
+			Depositor:          user.Profile.HolderName,
+			AmountHeld:         user.Profile.Balance,
+			Point:              user.Profile.Point,
+			RollingGold:        user.Profile.Roll,
+			AccessDomain:       user.Domain,
+			ConnectionIP:       user.CurrentIP,
+			AccessDate:         &user.UpdatedAt,
+			DateOfRegistration: &user.CreatedAt,
+			OnlineStatus:       user.OnlineStatus,
+			ConnectionGame:     "-", // Placeholder - can be enhanced later with actual game tracking
+			BeDang:             user.EntireLosing,
+		}
+
+		// Calculate total approved deposits
+		var totalDeposit float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "deposit", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalDeposit)
+		member.Deposit = totalDeposit
+
+		// Calculate total approved withdrawals
+		var totalWithdrawal float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ? AND status = ?", user.ID, "withdrawal", "A").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalWithdrawal)
+		member.Withdrawal = totalWithdrawal
+
+		// Calculate entry and exit (deposit - withdrawal)
+		member.EntryAndExit = totalDeposit - totalWithdrawal
+
+		// Calculate total bet amount (from transactions where type = "bet")
+		var totalBet float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ?", user.ID, "bet").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalBet)
+		member.Bet = totalBet
+
+		// Calculate total winner amount (from transactions where type = "win")
+		var totalWinner float64
+		initializers.DB.Model(&models.Transaction{}).
+			Where("user_id = ? AND type = ?", user.ID, "win").
+			Select("COALESCE(SUM(amount), 0)").
+			Scan(&totalWinner)
+		member.Winner = totalWinner
+
+		members = append(members, member)
+	}
+
+	// Return response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    members,
+		"pagination": gin.H{
+			"current_page": page,
+			"from":         offset + 1,
+			"to":           offset + len(members),
+			"last_page":    (int(total) + perPage - 1) / perPage,
+			"per_page":     perPage,
+			"total":        total,
+		},
+	})
+}

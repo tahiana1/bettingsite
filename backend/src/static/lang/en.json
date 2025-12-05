@@ -2432,5 +2432,13 @@
   "losingToday" : "Losing Today",
   "viewAllLowerPart" : "View All Lower Part",
   "openOnlyToDirectMembers" : "Open only to direct members",
-  "subDistributorRegistration" : "Sub-distributor Registration"
+  "subDistributorRegistration" : "Sub-distributor Registration",
+  "connectedMember" : "Connected Member",
+  "connectedMembers" : "Connected Members",
+  "connectionGame" : "Connection Game",
+  "accessDomain" : "Access Domain",
+  "connectionIP" : "Connection IP",
+  "online" : "Online",
+  "offline" : "Offline",
+  "noData" : "No Data"
 } 
