@@ -2443,5 +2443,7 @@
   "connectionIP" : "Connection IP",
   "online" : "Online",
   "offline" : "Offline",
-  "noData" : "No Data"
+  "noData" : "No Data",
+  "directMemberDepositWithdrawal" : "Direct Member Deposit Withdrawal",
+  "entireMemberDepositWithdrawal" : "Entire Member Deposit Withdrawal"
 } 

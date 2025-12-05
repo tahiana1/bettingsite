@@ -433,6 +433,41 @@ export const partnerTransactionAPI = {
     });
   },
 
+  // Get point details transactions for direct members (point and pointDeposit types)
+  getDirectMemberPointsDetails: async (
+    params: GetPartnerPointDetailsParams = {}
+  ): Promise<PartnerPointDetailsResponse> => {
+    const queryParams = new URLSearchParams();
+
+    if (params.page) {
+      queryParams.append("page", params.page.toString());
+    }
+    if (params.perPage) {
+      queryParams.append("perPage", params.perPage.toString());
+    }
+    if (params.type && params.type !== "entire") {
+      queryParams.append("type", params.type);
+    }
+    if (params.search) {
+      queryParams.append("search", params.search);
+    }
+    if (params.dateFrom) {
+      queryParams.append("dateFrom", params.dateFrom);
+    }
+    if (params.dateTo) {
+      queryParams.append("dateTo", params.dateTo);
+    }
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `partner/member-management/direct-member-points-details?${queryString}`
+      : "partner/member-management/direct-member-points-details";
+
+    return api(url, {
+      method: "GET",
+    });
+  },
+
   // Get rolling history transactions for partner
   getRollingHistory: async (
     params: GetPartnerRollingHistoryParams = {}

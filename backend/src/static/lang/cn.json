@@ -2449,5 +2449,7 @@
   "connectionIP" : "连接IP",
   "online" : "在线",
   "offline" : "离线",
-  "noData" : "暂无数据"
+  "noData" : "暂无数据",
+  "directMemberDepositWithdrawal" : "直接会员存款/提款",
+  "entireMemberDepositWithdrawal" : "全部会员存款/提款"
 }
