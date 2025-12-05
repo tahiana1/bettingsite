@@ -1387,3 +1387,142 @@ func GetConnectedMembers(c *gin.Context) {
 		},
 	})
 }
+
+type WaitingForMemberApprovalResponse struct {
+	ID                 uint       `json:"id"`
+	Userid             string     `json:"userid"`
+	Nickname           string     `json:"nickname"`
+	SignUpPath         string     `json:"signUpPath"`         // Domain from user
+	SubscriptionIP     string     `json:"subscriptionIP"`     // IP from user (signup IP)
+	RegistrationDomain string     `json:"registrationDomain"` // Domain from user
+	DateOfRegistration *time.Time `json:"dateOfRegistration"` // createdAt from user
+}
+
+// GetWaitingForMemberApproval function is used to get pending members waiting for approval
+func GetWaitingForMemberApproval(c *gin.Context) {
+	// Get the authenticated partner user
+	authUser, exists := c.Get("authUser")
+	if !exists {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Unauthorized"))
+		return
+	}
+
+	partner, ok := authUser.(models.User)
+	if !ok {
+		format_errors.UnauthorizedError(c, fmt.Errorf("❌ Invalid user"))
+		return
+	}
+
+	// Get pagination parameters
+	pageStr := c.DefaultQuery("page", "1")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+
+	perPageStr := c.DefaultQuery("perPage", "25")
+	perPage, _ := strconv.Atoi(perPageStr)
+	if perPage < 1 {
+		perPage = 25
+	}
+
+	// Get filter parameters
+	searchQuery := c.Query("search")
+	dateFrom := c.Query("dateFrom")
+	dateTo := c.Query("dateTo")
+	memberStatusFilter := c.Query("memberStatus") // "pending" or "today"
+
+	// Build query for pending members (where parent_id = partner.ID and status = "P")
+	query := initializers.DB.Model(&models.User{}).
+		Where("parent_id = ?", partner.ID).
+		Where("status = ?", "P")
+
+	// Apply member status filter
+	if memberStatusFilter == "today" {
+		// Filter by pending users created today
+		today := time.Now()
+		startOfDay := time.Date(today.Year(), today.Month(), today.Day(), 0, 0, 0, 0, today.Location())
+		endOfDay := startOfDay.Add(24*time.Hour - time.Second)
+		query = query.Where("created_at >= ? AND created_at <= ?", startOfDay, endOfDay)
+	}
+
+	// Apply date range filter (registration date)
+	if dateFrom != "" {
+		query = query.Where("created_at >= ?", dateFrom)
+	}
+	if dateTo != "" {
+		// Add end of day to dateTo to include the entire day
+		if dateToTime, err := time.Parse("2006-01-02", dateTo); err == nil {
+			dateToTime = dateToTime.Add(23*time.Hour + 59*time.Minute + 59*time.Second)
+			query = query.Where("created_at <= ?", dateToTime)
+		} else {
+			query = query.Where("created_at <= ?", dateTo)
+		}
+	}
+
+	// Apply search filter (ID, nickname, account)
+	if searchQuery != "" {
+		searchPattern := "%" + strings.ToLower(searchQuery) + "%"
+		var matchingUserIDs []uint
+		initializers.DB.Model(&models.User{}).
+			Select("users.id").
+			Joins("LEFT JOIN profiles ON profiles.user_id = users.id").
+			Where("parent_id = ?", partner.ID).
+			Where("status = ?", "P").
+			Where(
+				"LOWER(users.userid) LIKE ? OR LOWER(profiles.nickname) LIKE ? OR LOWER(profiles.holder_name) LIKE ? OR LOWER(profiles.account_number) LIKE ?",
+				searchPattern, searchPattern, searchPattern, searchPattern,
+			).
+			Pluck("users.id", &matchingUserIDs)
+		if len(matchingUserIDs) > 0 {
+			query = query.Where("id IN ?", matchingUserIDs)
+		} else {
+			// No matches, return empty result
+			query = query.Where("1 = 0")
+		}
+	}
+
+	// Preload Profile after all filters
+	query = query.Preload("Profile")
+
+	// Get total count
+	var total int64
+	query.Model(&models.User{}).Count(&total)
+
+	// Apply pagination
+	offset := (page - 1) * perPage
+	var users []models.User
+	if err := query.Offset(offset).Limit(perPage).Order("created_at DESC").Find(&users).Error; err != nil {
+		format_errors.InternalServerError(c, err)
+		return
+	}
+
+	// Build response
+	members := make([]WaitingForMemberApprovalResponse, 0, len(users))
+	for _, user := range users {
+		member := WaitingForMemberApprovalResponse{
+			ID:                 user.ID,
+			Userid:             user.Userid,
+			Nickname:           user.Profile.Nickname,
+			SignUpPath:         user.Domain,
+			SubscriptionIP:     user.IP,
+			RegistrationDomain: user.Domain,
+			DateOfRegistration: &user.CreatedAt,
+		}
+		members = append(members, member)
+	}
+
+	// Return response
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data":    members,
+		"pagination": gin.H{
+			"current_page": page,
+			"from":         offset + 1,
+			"to":           offset + len(members),
+			"last_page":    (int(total) + perPage - 1) / perPage,
+			"per_page":     perPage,
+			"total":        total,
+		},
+	})
+}
