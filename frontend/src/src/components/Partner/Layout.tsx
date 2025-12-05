@@ -691,49 +691,33 @@ export default function PartnerRootLayout({
                         </tbody>
                       </table>
                     </Space.Compact>
-                    <Space.Compact direction="vertical" className="gap-0.5">
-                    <table style={{ 
-                        border: '1px solid #d9d9d9',
-                        borderRadius: '6px',
-                        fontSize: '12px',
-                        backgroundColor: '#ffffff',
-                        minWidth: '400px',
-                        borderCollapse: 'separate',
-                        borderSpacing: '0',
-                        marginRight: '10px',
-                      }}>
-                        <thead>
-                          <tr style={{ backgroundColor: '#f5f5f5', border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '0px', minWidth: '60px', height: '18px' }}>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLive")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMini")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationVirtual")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationMGM")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSportsLive")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("sportRebateList")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSlot")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationSport")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationLotus")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("notificationTouch")}</th>
-                            <th style={{border: '1px solid #d9d9d9', fontWeight: 'normal', padding: '2px 4px', minWidth: '60px', height: '18px', lineHeight: '14px', textWrap: 'nowrap' }}>{t("interestedMemberBetting")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr style={{ height: '18px' }}>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>0</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{ 0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', color: '#000000', fontWeight: 'normal' }}>0</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/partner/popup/sports-bet-alert', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: '#000000', fontWeight: 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{0}</td>
-                            <td style={{border: '1px solid #d9d9d9', padding: '2px 4px', textAlign: 'center', height: '18px', lineHeight: '14px', cursor: 'pointer', color: (newNotifications.numberOfBettingMembersToday || newNotifications.numberOfBetsToday) ? '#ff0000' : '#000000', fontWeight: (newNotifications.numberOfBettingMembersToday || newNotifications.numberOfBetsToday) ? 'bold' : 'normal' }} onClick={() => window.open('/', '_blank', 'width=screen.width,height=screen.height,toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no')}>{info.numberOfBettingMembersToday || 0}/{info.numberOfBetsToday || 0}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                    <Space.Compact className="flex justify-end w-full items-center gap-2">
+                      <Button 
+                        className="bg-red-500 text-white"
+                        onClick={() => router.push("/partner/deposit-request")}
+                      >
+                        {t("depoistRequest")}
+                      </Button>
+                      <Button 
+                        className="bg-blue-500 text-white"
+                        onClick={() => router.push("/partner/withdraw-request")}
+                      >
+                        {t("withdrawRequest")}
+                      </Button>
+                      <Button 
+                        className="bg-green-500 text-white"
+                        onClick={() => router.push("/partner/rolling-transition")}
+                      >
+                        {t("rollingTransition")}
+                      </Button>
+                      <Button 
+                        className="bg-purple-500 text-white"
+                        onClick={() => router.push("/partner/point-conversion")}
+                      >
+                        {t("pointConversion")}
+                      </Button>
                     </Space.Compact>
+                    
                   </Flex>
                   <Flex
                     align="flex-end"
@@ -791,7 +775,6 @@ export default function PartnerRootLayout({
         </LayoutContext.Provider>
           )
         }
-        
       </ConfigProvider>
     </ApolloProvider>
   ) : (

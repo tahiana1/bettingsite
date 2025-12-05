@@ -1186,7 +1186,7 @@ export default function AdminRootLayout({
                   </Space.Compact>
                 </>
               ) : null}
-              <Content className={pathname === "/admin/auth/login" ? "" : "p-2"}>
+              <Content className={pathname === "/admin/auth/login" || pathname === "/partner/auth/login" ? "" : "p-2"}>
                 {children}
               </Content>
             </Layout>

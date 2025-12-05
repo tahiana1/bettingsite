@@ -2464,5 +2464,6 @@
   "partner/amountHeld" : "Amount Held",
   "partner/rollingGold" : "Rolling Gold",
   "partner/losingMoney" : "Losing Money",
-  "admin/noData" : "Admin No Data"
+  "admin/noData" : "Admin No Data",
+  "depoistRequest" : "Deposit Request"
 } 
