@@ -316,10 +316,10 @@ export default function PartnerRootLayout({
           key: "partner/mySettlementManagement/pointConversion",
           label: t(`partner/menu/mySettlementManagement/pointConversion`),
         },
-        {
-          key: "partner/mySettlementManagement/settlementDetails",
-          label: t(`partner/menu/mySettlementManagement/settlementDetails`),
-        },
+        // {
+        //   key: "partner/mySettlementManagement/settlementDetails",
+        //   label: t(`partner/menu/mySettlementManagement/settlementDetails`),
+        // },
         {
           key: "partner/mySettlementManagement/moneyHistory",
           label: t(`partner/menu/mySettlementManagement/moneyHistory`),
